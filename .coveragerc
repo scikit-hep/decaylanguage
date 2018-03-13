@@ -1,0 +1,16 @@
+[paths]
+source =
+   src/decaylanguage
+   */site-packages/decaylanguage
+
+[run]
+branch = true
+source =
+    decaylanguage
+    tests
+parallel = true
+
+[report]
+show_missing = true
+precision = 2
+omit = *migrations*

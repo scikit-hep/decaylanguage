@@ -1,0 +1,53 @@
+# This file exists so you can easily regenerate your project.
+#
+# `cookiepatcher` is a convenient shim around `cookiecutter`
+# for regenerating projects (it will generate a .cookiecutterrc
+# automatically for any template). To use it:
+#
+#    pip install cookiepatcher
+#    cookiepatcher gh:ionelmc/cookiecutter-pylibrary project-path
+#
+# See:
+#    https://pypi.python.org/pypi/cookiepatcher
+#
+# Alternatively, you can run:
+#
+#    cookiecutter --overwrite-if-exists --config-file=project-path/.cookiecutterrc gh:ionelmc/cookiecutter-pylibrary
+
+default_context:
+
+    _template:                 'gh:ionelmc/cookiecutter-pylibrary'
+    appveyor:                  'yes'
+    c_extension_function:      'longest'
+    c_extension_module:        '_decaylanguage'
+    c_extension_optional:      'no'
+    c_extension_support:       'no'
+    codacy:                    'no'
+    codeclimate:               'no'
+    codecov:                   'no'
+    command_line_interface:    'no'
+    command_line_interface_bin_name: 'decaylanguage'
+    coveralls:                 'yes'
+    distribution_name:         'decaylanguage'
+    email:                     'henry.schreiner@cern.ch'
+    full_name:                 'Henry Fredrick Schreiner III'
+    github_username:           'henryiii'
+    landscape:                 'no'
+    license:                   'BSD 3-Clause License'
+    linter:                    'flake8'
+    package_name:              'decaylanguage'
+    project_name:              'decaylanguage'
+    project_short_description: 'A language to describe particle decays, and tools to work with them.'
+    release_date:              'today'
+    repo_name:                 'decaylanguage'
+    requiresio:                'yes'
+    scrutinizer:               'no'
+    sphinx_doctest:            'no'
+    sphinx_theme:              'sphinx-rtd-theme'
+    test_matrix_configurator:  'no'
+    test_matrix_separate_coverage: 'no'
+    test_runner:               'pytest'
+    travis:                    'yes'
+    version:                   '0.1.0'
+    website:                   'https://iscinumpy.gitlab.io'
+    year:                      'now'
