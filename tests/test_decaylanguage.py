@@ -1,5 +1,5 @@
 
-from decaylanguage import main
+import decaylanguage
 
 
 def test_main():

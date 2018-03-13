@@ -41,7 +41,7 @@ setup(
     zip_safe=False,
     classifiers=[
         # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'Development Status :: 5 - Production/Stable',
+        "Development Status :: 3 - Alpha",
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: Unix',
@@ -63,10 +63,11 @@ setup(
         'Topic :: Utilities',
     ],
     keywords=[
-        # eg: 'keyword1', 'keyword2', 'keyword3',
+        'particle', 'decay', 'HEP'
     ],
     install_requires=[
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
+        'attrs>=17.0', 'numpy>=1.12',  'pandas>=0.22', 'graphviz>=0.8.2'
     ],
     extras_require={
         # eg:
