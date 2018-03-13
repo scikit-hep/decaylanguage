@@ -244,7 +244,7 @@ class AmplitudeChain:
         return name
 
     @classmethod
-    def read_AmpGen(cls, filename):
+    def read_AmpGen(cls, filename=None, text=None):
         '''
         Read in an ampgen file
 
@@ -253,8 +253,13 @@ class AmplitudeChain:
         '''
 
         # Read the file in, ignore empty lines and comments
-        with open(filename) as f:
-            valid_lines =  [l.strip().rstrip(',') for l in f if l and not l.startswith('#')]
+        if filename is not None:
+            with open(filename) as f:
+                valid_lines =  [l.strip().rstrip(',') for l in f if l and not l.startswith('#')]
+        elif text is not None:
+            valid_lines =  [l.strip().rstrip(',') for l in text.splitlines() if l and not l.startswith('#')]
+        else:
+            raise RuntimeError("Must have filename or text")
 
         # Collect known options
         option_lines, valid_lines = filter_lines(ampline.settings, valid_lines)

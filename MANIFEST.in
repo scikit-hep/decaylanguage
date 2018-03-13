@@ -2,6 +2,8 @@ graft docs
 graft decaylangauge
 graft ci
 graft tests
+graft notebooks
+graft scripts
 
 include .bumpversion.cfg
 include .coveragerc
