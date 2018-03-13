@@ -1,5 +1,5 @@
 graft docs
-graft src
+graft decaylangauge
 graft ci
 graft tests
 
