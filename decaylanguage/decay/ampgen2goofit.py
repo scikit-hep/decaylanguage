@@ -6,10 +6,7 @@ from __future__ import division
 from __future__ import print_function
 
 import datetime
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
+from six import StringIO
 
 from functools import partial
 
