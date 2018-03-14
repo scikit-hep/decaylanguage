@@ -6,11 +6,10 @@ from __future__ import division
 from __future__ import print_function
 
 import datetime
-from six import StringIO
-
 from functools import partial
 
 from plumbum import colors
+from six import StringIO
 
 from decaylanguage.decay.goofit import GooFitChain
 from decaylanguage.decay.goofit import SF_4Body
@@ -45,7 +44,7 @@ def ampgen2goofit(filename, ret_output=False):
     printer('\n')
     for n, line in enumerate(lines):
         printer('{n:2} {line!s:<70} spinfactors: {lensf}  L: {line.L} [{Lr[0]}-{Lr[1]}]'
-              .format(n=n, line=line, lensf=len(line.spinfactors), Lr=line.L_range()))
+                .format(n=n, line=line, lensf=len(line.spinfactors), Lr=line.L_range()))
 
     # We can make the GooFit Intro code:
 

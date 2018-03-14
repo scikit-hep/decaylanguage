@@ -34,7 +34,7 @@ Overview
 
 .. |coveralls| image:: https://coveralls.io/repos/henryiii/decaylanguage/badge.svg?branch=master&service=github
     :alt: Coverage Status
-    :target: https://coveralls.io/r/henryiii/decaylanguage
+    :target: https://coveralls.io/github/henryiii/decaylanguage
 
 .. |version| image:: https://img.shields.io/pypi/v/decaylanguage.svg
     :alt: PyPI Package latest release
@@ -73,7 +73,7 @@ Installation
 Documentation
 =============
 
-https://decaylanguage.readthedocs.io/
+https://decaylanguage.readthedocs.io/en/latest/
 
 Development
 ===========

@@ -22,7 +22,7 @@ matrix:
     - python: '3.6'
       env:
         - TOXENV=py36,report,coveralls
-    - python: 'pypy-5.4'
+    - python: 'pypy2.7-5.10.0'
       env:
         - TOXENV=pypy,report,coveralls
 before_install:
