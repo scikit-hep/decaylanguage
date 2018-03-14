@@ -65,7 +65,7 @@ setup(
     ],
     install_requires=[
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
-        'attrs>=17.0', 'numpy>=1.12',  'pandas>=0.22', 'graphviz>=0.8.2'
+        'plumbum>=1.6.6', 'attrs>=17.0', 'numpy>=1.12',  'pandas>=0.22', 'graphviz>=0.8.2'
     ],
     extras_require={
         # eg:

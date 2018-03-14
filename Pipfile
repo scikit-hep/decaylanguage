@@ -10,6 +10,7 @@ name = "pypi"
 attrs = "*"
 pandas = "*"
 graphviz = "*"
+plumbum = "*"
 
 
 [dev-packages]
@@ -17,10 +18,8 @@ graphviz = "*"
 pytest = "*"
 "e1839a8" = {path = ".", editable = true}
 jupyter = {extras = ["all"]}
-plumbum = "*"
 sphinx = "*"
 sphinx-rtd-theme = "*"
-
 
 [requires]
 
