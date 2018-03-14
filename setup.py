@@ -48,7 +48,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -64,8 +63,14 @@ setup(
         'particle', 'decay', 'HEP'
     ],
     install_requires=[
-        # eg: 'aspectlib==1.1.1', 'six>=1.7',
-        'plumbum>=1.6.6', 'attrs>=17.0', 'numpy>=1.12',  'pandas>=0.22', 'graphviz>=0.8.2'
+        'plumbum>=1.6.6',
+        'attrs>=17.0',
+        'numpy>=1.12',
+        'pandas>=0.22',
+        'graphviz>=0.8.2'
+        'futures>=0.16; python_version<"3"'
+        'pathlib2>=2.3; python_version<"3.5"'
+        'enum34>=1.1; python_version<"3.4"'
     ],
     extras_require={
         # eg:

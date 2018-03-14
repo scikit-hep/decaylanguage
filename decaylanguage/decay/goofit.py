@@ -85,14 +85,14 @@ class GooFitChain(AmplitudeChain):
 
         for particle in final_particles:
             name=particle.programatic_name.upper()
-            header += f'    constexpr fptype {name:8} {{ {particle.mass!s:14} }};\n'
+            header += f'    constexpr fptype {name:8} {{ {particle.mass:<14.8g} }};\n'
 
         header += '\n'
 
         for particle in cls.all_particles - final_particles:
             name = particle.programatic_name
-            header += (f'''    Variable {name+'_M':15} {{ "{name+'_M"':20}, {particle.mass!s:10} }};\n'''
-                       f'''    Variable {name+'_W':15} {{ "{name+'_W"':20}, {particle.width!s:10} }};\n'''
+            header += (f'''    Variable {name+'_M':15} {{ "{name+'_M"':20}, {particle.mass:<10.8g} }};\n'''
+                       f'''    Variable {name+'_W':15} {{ "{name+'_W"':20}, {particle.width:<10.8g} }};\n'''
                        )
 
 
