@@ -45,6 +45,7 @@ $                                           # End of string
 ''', re.VERBOSE)
 
 class SpinType(IntEnum):
+    'The spin type of a particle'
     Scalar       =  1 # (0, 1)
     PseudoScalar = -1 # (0,-1)
     Vector       =  2 # (1,-1)
@@ -54,7 +55,7 @@ class SpinType(IntEnum):
     Unknown      =  0 # (0, 0)
 
 class Par(IntEnum):
-    'Parity or charge'
+    'Represents parity or charge'
     pp = 2
     p = 1
     o = 0
