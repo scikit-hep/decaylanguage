@@ -1,6 +1,6 @@
 [paths]
 source =
-   src/decaylanguage
+   decaylanguage
    */site-packages/decaylanguage
 
 [run]

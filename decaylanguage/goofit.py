@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+from __future__ import absolute_import, division, print_function
+
 from decaylanguage.decay.ampgen2goofit import ampgen2goofit
 
 from plumbum import cli

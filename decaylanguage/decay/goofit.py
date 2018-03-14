@@ -65,8 +65,10 @@ class DecayStructure(Enum):
 class GooFitChain(AmplitudeChain):
     __slots__ = ()
 
-    pars: pd.DataFrame
-    consts: pd.DataFrame
+    # pars: pd.DataFrame
+    # consts: pd.DataFrame
+    pars = None
+    consts = None
 
     @classmethod
     def make_intro(cls, all_states):

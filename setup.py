@@ -35,7 +35,7 @@ setup(
     author_email='henry.schreiner@cern.ch',
     url='https://github.com/henryiii/decaylanguage',
     packages=find_packages(),
-    #include_package_data=True,
+    include_package_data=True,
     zip_safe=True,
     classifiers=[
         # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers

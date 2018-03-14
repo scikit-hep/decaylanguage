@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+from __future__ import absolute_import, division, print_function
+
 from decaylanguage.particle import Particle, SpinType
 from decaylanguage.decay.goofit import GooFitChain, SF_4Body
 import datetime
@@ -35,7 +37,7 @@ def ampgen2goofit(filename, ret_output = False):
 
     print('\n')
     for spintype in SpinType:
-        ps = [format(str(p), '11') for p in GooFitChain.all_particles if p.spintype == spintype]
+        ps = [format(str(p), '11') for p in sorted(GooFitChain.all_particles) if p.spintype == spintype]
         print("{spintype.name:>12}:".format(spintype=spintype), *ps)
 
 
