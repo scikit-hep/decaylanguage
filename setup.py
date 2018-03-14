@@ -67,10 +67,10 @@ setup(
         'attrs>=17.0',
         'numpy>=1.12',
         'pandas>=0.22',
-        'graphviz>=0.8.2'
-        'futures>=0.16; python_version<"3"'
-        'pathlib2>=2.3; python_version<"3.5"'
-        'enum34>=1.1; python_version<"3.4"'
+        'graphviz>=0.8.2',
+        'futures>=0.16; python_version<"3"',
+        'pathlib2>=2.3; python_version<"3.5"',
+        'enum34>=1.1; python_version<"3.4"',
     ],
     extras_require={
         # eg:

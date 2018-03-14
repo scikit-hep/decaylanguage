@@ -36,12 +36,13 @@ def ampgen2goofit(filename, ret_output = False):
     print('\n')
     for spintype in SpinType:
         ps = [format(str(p), '11') for p in GooFitChain.all_particles if p.spintype == spintype]
-        print(f"{spintype.name:>12}:", *ps)
+        print("{spintype.name:>12}:".format(spintype=spintype), *ps)
 
 
     print('\n')
     for n, line in enumerate(lines):
-        print(f'{n:2} {str(line):<70} spinfactors: {len(line.spinfactors)}  L: {line.L} [{line.L_range()[0]}-{line.L_range()[1]}]')
+        print('{n:2} {line!s:<70} spinfactors: {lensf}  L: {line.L} [{Lr[0]}-{Lr[1]}]'
+                .format(n=n, line=line, lensf=len(line.spinfactors), Lr=line.L_range()))
 
     # We can make the GooFit Intro code:
 
