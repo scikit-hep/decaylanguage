@@ -1,4 +1,7 @@
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 
 def iter_flatten(iterable):
     '''
@@ -37,6 +40,7 @@ def split(x):
         elif x[i] == '}':
             c -= 1
         i += 1
+
 
 def filter_lines(matcher, input):
     '''

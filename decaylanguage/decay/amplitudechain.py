@@ -1,20 +1,23 @@
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from copy import copy
 from enum import Enum
-from itertools import product, combinations
+from itertools import combinations
+from itertools import product
 
-import graphviz
 import attr
-
+import graphviz
 import numpy as np
 import pandas as pd
 
-from .utilities import split, iter_flatten, filter_lines
-
-from ..particle import Particle, SpinType, Par_mapping
-
 from . import ampline
+from ..particle import Particle
+from .utilities import filter_lines
+from .utilities import iter_flatten
+from .utilities import split
+
 
 class LS(Enum):
     'Line shapes supported (currently)'
@@ -25,7 +28,7 @@ class LS(Enum):
 
 
 @attr.s(slots=True)
-class AmplitudeChain:
+class AmplitudeChain(object):
     particle = attr.ib()
     daughters = attr.ib([], convert=lambda x: x if x else [])
     lineshape = attr.ib(None)
@@ -46,7 +49,6 @@ class AmplitudeChain:
     # This is set class-wide, and only used when a line is made
     cartesian = False
 
-
     @classmethod
     def from_matched_line(cls, mat):
         '''
@@ -61,7 +63,8 @@ class AmplitudeChain:
             cls.all_particles |= {mat['particle']}
 
         if mat['daughters']:
-            mat['daughters'] = [cls.from_matched_line(ampline.partial.match(x).groupdict()) for x in split(mat['daughters'])]
+            mat['daughters'] = [cls.from_matched_line(ampline.partial.match(
+                x).groupdict()) for x in split(mat['daughters'])]
 
         # This is only true if not a parital line
         if 'fix_r' in mat:
@@ -79,15 +82,14 @@ class AmplitudeChain:
                 dA = float(mat['dA'])
                 theta = float(mat['theta'])
                 dtheta = float(mat['dtheta'])
-                mat['amp'] = A* np.exp(theta*1j)
+                mat['amp'] = A * np.exp(theta*1j)
 
-                mat['err'] = (  (dA*np.cos(theta) + A*np.sin(dtheta)   )
+                mat['err'] = ((dA*np.cos(theta) + A*np.sin(dtheta))
                               + (dA*np.sin(theta) + A*np.cos(dtheta))*1j)
 
             del mat['A'],  mat['dA'], mat['theta'], mat['dtheta']
 
         return cls(**mat)
-
 
     def expand_lines(self, linelist):
         '''
@@ -107,7 +109,8 @@ class AmplitudeChain:
             return retlist
 
         # If the tree ends
-        new_trees = [l for line in linelist if line.name == self.name for l in line.expand_lines(linelist)]
+        new_trees = [l for line in linelist if line.name ==
+                     self.name for l in line.expand_lines(linelist)]
         if new_trees:
             return new_trees
         else:
@@ -160,8 +163,7 @@ class AmplitudeChain:
         if self.spinfactor:
             return 'S P D F'.split().index(self.spinfactor)
         min_L, _ = self.L_range()
-        return min_L # Ground state unless specified
-
+        return min_L  # Ground state unless specified
 
     def __len__(self):
         return len(self.daughters)
@@ -228,7 +230,7 @@ class AmplitudeChain:
         if set(structure) - set(final_states):
             raise RuntimeError("The final states must encompass all particles in final states!")
 
-        possibilities = [[i for i,v in enumerate(final_states) if v == name] for name in structure]
+        possibilities = [[i for i, v in enumerate(final_states) if v == name] for name in structure]
         return [a for a in product(*possibilities) if len(set(a)) == len(a)]
 
     def __str__(self):
@@ -240,7 +242,7 @@ class AmplitudeChain:
         elif self.spinfactor:
             name += '[' + self.spinfactor + ']'
         if self.daughters:
-            name += '{'+','.join(map(str,self.daughters))+'}'
+            name += '{'+','.join(map(str, self.daughters))+'}'
         return name
 
     @classmethod
@@ -255,9 +257,10 @@ class AmplitudeChain:
         # Read the file in, ignore empty lines and comments
         if filename is not None:
             with open(filename) as f:
-                valid_lines =  [l.strip().rstrip(',') for l in f if l and not l.startswith('#')]
+                valid_lines = [l.strip().rstrip(',') for l in f if l and not l.startswith('#')]
         elif text is not None:
-            valid_lines =  [l.strip().rstrip(',') for l in text.splitlines() if l and not l.startswith('#')]
+            valid_lines = [l.strip().rstrip(',')
+                           for l in text.splitlines() if l and not l.startswith('#')]
         else:
             raise RuntimeError("Must have filename or text")
 
@@ -274,9 +277,8 @@ class AmplitudeChain:
         cart_lines, valid_lines = filter_lines(ampline.cartesian, valid_lines)
 
         # The other lines do not need explicit filtering
-        variable_lines =  [l for l in valid_lines if len(l.split()) == 4]
+        variable_lines = [l for l in valid_lines if len(l.split()) == 4]
         constant_lines = [l for l in valid_lines if len(l.split()) == 2]
-
 
         # Process the options
         all_states = None
@@ -296,28 +298,26 @@ class AmplitudeChain:
                 if a['cart'] == 'Re' and b['cart'] == 'Im':
                     pass
                 elif a['cart'] == 'Im' and b['cart'] == 'Re':
-                    a,b = b,a
+                    a, b = b, a
                 else:
                     raise RuntimeError("Can't process a line with *both* components Re or Im")
-                new_string = "{a[name]} {a[fix]} {a[amp]} {a[err]} {b[fix]} {b[amp]} {b[err]}".format(a=a,b=b)
+                new_string = "{a[name]} {a[fix]} {a[amp]} {a[err]} {b[fix]} {b[amp]} {b[err]}".format(
+                    a=a, b=b)
                 real_lines.append(ampline.dual.match(new_string).groupdict())
-
-
 
         # Make the partial lines and constants as dataframes
         parameters = pd.DataFrame(((v.strip() for v in p.split()) for p in variable_lines),
-                            columns='name fix value error'.split()).set_index('name')
+                                  columns='name fix value error'.split()).set_index('name')
 
         constants = pd.DataFrame(((v.strip() for v in p.split()) for p in constant_lines),
-                              columns='name value'.split()).set_index('name')
-
+                                 columns='name value'.split()).set_index('name')
 
         # Convert the matches into AmplitudeChains
         line_arr = [cls.from_matched_line(a) for a in real_lines]
 
         # Expand partial lines into complete lines
-        new_line_arr = [l for line in line_arr if line.particle == all_states[0] for l in line.expand_lines(line_arr)]
+        new_line_arr = [l for line in line_arr if line.particle == all_states[0]
+                        for l in line.expand_lines(line_arr)]
 
         # Return
         return new_line_arr, parameters, constants, all_states
-

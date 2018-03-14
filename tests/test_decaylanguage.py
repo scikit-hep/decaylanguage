@@ -3,4 +3,4 @@ import decaylanguage
 
 
 def test_main():
-    pass
+    assert decaylanguage is not None

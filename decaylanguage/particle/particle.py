@@ -1,20 +1,21 @@
 # -*- encoding: utf-8 -*-
 
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 # Python standard library
 import operator
-import re
 import os
-
+import re
 from copy import copy
-from functools import reduce, total_ordering
-from fractions import Fraction
-
 # Backport needed if Python 2 is used
 from enum import IntEnum
+from fractions import Fraction
+from functools import reduce
+from functools import total_ordering
 
-## External dependencies
+# External dependencies
 import attr
 import pandas as pd
 
@@ -29,10 +30,11 @@ FILE_EXTENDED = os.path.join(dir_path, 'MintDalitzSpecialParticles.csv')
 
 def programatic_name(name):
     'Return a name safe to use as a variable name'
-    return (name.replace('(','').replace(')','')
-            .replace('*','').replace('::', '_')
+    return (name.replace('(', '').replace(')', '')
+            .replace('*', '').replace('::', '_')
             .replace('-', 'm').replace('+', 'p')
             .replace('~', 'bar'))
+
 
 getname = re.compile(r'''
 ^                                           # Beginning of string
@@ -46,15 +48,17 @@ getname = re.compile(r'''
 $                                           # End of string
 ''', re.VERBOSE)
 
+
 class SpinType(IntEnum):
     'The spin type of a particle'
-    Scalar       =  1 # (0, 1)
-    PseudoScalar = -1 # (0,-1)
-    Vector       =  2 # (1,-1)
-    Axial        = -2 # (1, 1)
-    Tensor       =  3 # (2, 1)
-    PseudoTensor = -3 # (2,-1)
-    Unknown      =  0 # (0, 0)
+    Scalar = 1  # (0, 1)
+    PseudoScalar = -1  # (0,-1)
+    Vector = 2  # (1,-1)
+    Axial = -2  # (1, 1)
+    Tensor = 3  # (2, 1)
+    PseudoTensor = -3  # (2,-1)
+    Unknown = 0  # (0, 0)
+
 
 class Par(IntEnum):
     'Represents parity or charge'
@@ -65,13 +69,16 @@ class Par(IntEnum):
     mm = -2
     u = 5
 
+
 Charge = Par
+
 
 class Inv(IntEnum):
     'Definition of what happens when particle is inverted'
     Same = 0
     Full = 1
-    Barless =  2
+    Barless = 2
+
 
 class Status(IntEnum):
     'The status of the particle'
@@ -81,14 +88,17 @@ class Status(IntEnum):
     Further = 3
     Nonexistant = 4
 
+
 # Mappings that allow the above classes to be produced from text mappings
-Par_mapping = {'+':Par.p, '0':Par.o, '+2/3':Par.u, '++':Par.pp, '-':Par.m, '-1/3':Par.u, '?':Par.u, '':Par.o}
-Inv_mapping = {'':Inv.Same, 'F':Inv.Full, 'B':Inv.Barless}
-Status_mapping = {'R':Status.Common, 'D':Status.Rare, 'S':Status.Unsure, 'F':Status.Further}
+Par_mapping = {'+': Par.p, '0': Par.o, '+2/3': Par.u,
+               '++': Par.pp, '-': Par.m, '-1/3': Par.u, '?': Par.u, '': Par.o}
+Inv_mapping = {'': Inv.Same, 'F': Inv.Full, 'B': Inv.Barless}
+Status_mapping = {'R': Status.Common, 'D': Status.Rare, 'S': Status.Unsure, 'F': Status.Further}
 
 # Mappings that allow the above classes to be turned into text mappings
-Par_undo = {Par.pp:'++', Par.p:'+', Par.o:'0', Par.m:'-', Par.mm:'--', Par.u:'?'}
-Par_prog = {Par.pp:'pp', Par.p:'p', Par.o:'0', Par.m:'m', Par.mm:'mm', Par.u:'u'}
+Par_undo = {Par.pp: '++', Par.p: '+', Par.o: '0', Par.m: '-', Par.mm: '--', Par.u: '?'}
+Par_prog = {Par.pp: 'pp', Par.p: 'p', Par.o: '0', Par.m: 'm', Par.mm: 'mm', Par.u: 'u'}
+
 
 def get_from_latex(filename):
     'Produce a pandas series from a file with latex mappings in it'
@@ -97,6 +107,7 @@ def get_from_latex(filename):
     series_anti = latex_table.b
     series_anti.index = -series_anti.index
     return pd.concat([series_real, series_anti])
+
 
 def get_from_PDG(filename, latexes=(FILE_LATEX,)):
     'Read a file, plus a list of latex files, to produce a pandas DataFrame with particle information'
@@ -115,17 +126,16 @@ def get_from_PDG(filename, latexes=(FILE_LATEX,)):
         ID=lambda x: int(x.strip()) if x.strip() else -1,
         Status=unmap(Status_mapping),
         Name=lambda x: x.strip(),
-        I=lambda x: x.strip(),
+        I=lambda x: x.strip(),  # noqa: E741
         J=lambda x: x.strip(),
         Quarks=lambda x: x.strip()
     )
 
     # Read in the table, apply the converters, add names, ignore comments
-    pdg_table = pd.read_csv(filename, comment='*', names=
-        'Mass,MassUpper,MassLower,Width,WidthUpper,WidthLower,I,G,J,P,C,A,'
-        'ID,Charge,Rank,Status,Name,Quarks'.split(','),
-        converters=PDG_converters
-        )
+    pdg_table = pd.read_csv(filename, comment='*', names='Mass,MassUpper,MassLower,Width,WidthUpper,WidthLower,I,G,J,P,C,A,'
+                            'ID,Charge,Rank,Status,Name,Quarks'.split(','),
+                            converters=PDG_converters
+                            )
 
     # Filtering out non-particles (quarks, negative IDs)
     pdg_table = pdg_table[pdg_table.Charge != Par.u]
@@ -137,15 +147,16 @@ def get_from_PDG(filename, latexes=(FILE_LATEX,)):
     # Some post processing to produce inverted particles
     pdg_table_inv = pdg_table[(pdg_table.A == Inv.Full)
                               | ((pdg_table.A == Inv.Barless)
-                 # Maybe add?    & (pdg_table.Charge != Par.u)
+                                 # Maybe add?    & (pdg_table.Charge != Par.u)
                                  & (pdg_table.Charge != Par.o))].copy()
     pdg_table_inv.index = -pdg_table_inv.index
-    pdg_table_inv.loc[(pdg_table_inv.A != Inv.Same) & (pdg_table_inv.Charge != Par.u), 'Charge'] *= -1
+    pdg_table_inv.loc[(pdg_table_inv.A != Inv.Same) & (
+        pdg_table_inv.Charge != Par.u), 'Charge'] *= -1
     pdg_table_inv.Quarks = (pdg_table_inv.Quarks.str.swapcase()
-                             .str.replace('SQRT','sqrt')
-                             .str.replace('P','p').str.replace('Q','q')
-                             .str.replace('mAYBE NON', 'Maybe non')
-                             .str.replace('X','x').str.replace('Y','y'))
+                            .str.replace('SQRT', 'sqrt')
+                            .str.replace('P', 'p').str.replace('Q', 'q')
+                            .str.replace('mAYBE NON', 'Maybe non')
+                            .str.replace('X', 'x').str.replace('Y', 'y'))
 
     # Make a combined table with + and - ID numbers
     full = pd.concat([pdg_table, pdg_table_inv])
@@ -160,13 +171,14 @@ def get_from_PDG(filename, latexes=(FILE_LATEX,)):
 
 def mkul(upper, lower):
     'Utility to print out an uncertainty with different or identical upper/lower bounds'
-    if upper==lower:
-        if upper==0:
+    if upper == lower:
+        if upper == 0:
             return ''
         else:
             return '± {upper:g}'.format(upper=upper)
     else:
         return '+ {upper:g} - {lower:g}'.format(upper=upper, lower=lower)
+
 
 @total_ordering
 @attr.s(slots=True, cmp=False)
@@ -177,14 +189,14 @@ class Particle(object):
     mass = attr.ib()
     width = attr.ib()
     charge = attr.ib()
-    A = attr.ib() # Info about particle name for anti-particles
-    rank = attr.ib(0)
-    I = attr.ib(None) # Isospin
-    J = attr.ib(None) # Total angular momentum
-    G = attr.ib(Par.u) # Parity: '', +, -, or ?
-    P = attr.ib(Par.u) # Space parity
-    C = attr.ib(Par.u) # Charge conjugation parity
-                    # (B (just charge), F (add bar) , and '' (No change))
+    A = attr.ib()  # Info about particle name for anti-particles
+    rank = attr.ib(0)  # Next line is Isospin
+    I = attr.ib(None)  # noqa: E741
+    J = attr.ib(None)  # Total angular momentum
+    G = attr.ib(Par.u)  # Parity: '', +, -, or ?
+    P = attr.ib(Par.u)  # Space parity
+    C = attr.ib(Par.u)  # Charge conjugation parity
+    # (B (just charge), F (add bar) , and '' (No change))
     quarks = attr.ib('')
     status = attr.ib(Status.Nonexistant)
     latex = attr.ib('')
@@ -220,7 +232,6 @@ class Particle(object):
     def __hash__(self):
         return hash(self.val)
 
-
     @property
     def radius(self):
         'Particle radius, hard coded'
@@ -235,7 +246,7 @@ class Particle(object):
         return self.val < 0 and self.A == Inv.Full
 
     @property
-    def spintype(self) -> SpinType:
+    def spintype(self):  # -> SpinType:
         'Access the SpinType enum'
         if self.J in [0, 1, 2]:
             J = int(self.J)
@@ -258,10 +269,10 @@ class Particle(object):
 
             try:
                 other.quarks = (self.quarks.swapcase()
-                     .replace('SQRT','sqrt')
-                     .replace('P','p').replace('Q','q')
-                     .replace('mAYBE NON', 'Maybe non')
-                     .replace('X','x').replace('Y','y'))
+                                .replace('SQRT', 'sqrt')
+                                .replace('P', 'p').replace('Q', 'q')
+                                .replace('mAYBE NON', 'Maybe non')
+                                .replace('X', 'x').replace('Y', 'y'))
             except AttributeError:
                 pass
         return other
@@ -269,7 +280,7 @@ class Particle(object):
     # Pretty descriptions
 
     def __str__(self):
-        return self.name + ('~' if self.A==Inv.Full and self.val < 0 else '') + Par_undo[self.charge]
+        return self.name + ('~' if self.A == Inv.Full and self.val < 0 else '') + Par_undo[self.charge]
 
     def _repr_latex_(self):
         name = self.latex
@@ -282,7 +293,7 @@ class Particle(object):
         if self.val == 0:
             return "Name: Unknown"
 
-        val =  """Name: {self.name:<10} ID: {self.val:<12} Fullname: {self!s:<14} Latex: {self._repr_latex_()}
+        val = """Name: {self.name:<10} ID: {self.val:<12} Fullname: {self!s:<14} Latex: {self._repr_latex_()}
     Mass  = {self.mass!s:<10} {mass} GeV
     Width = {self.width!s:<10} {width} GeV
     I (isospin)       = {self.I!s:<6} G (parity)        = {Par_undo[self.G]:<5}  Q (charge)       = {Par_undo[self.charge]}
@@ -312,7 +323,7 @@ class Particle(object):
         name = re.sub(r'\_\{(.*?)\}', r'<SUB>\1</SUB>', name)
         name = re.sub(r'\\mathrm\{(.*?)\}', r'\1', name)
         name = re.sub(r'\\left\[(.*?)\\right\]', r'[\1] ', name)
-        name = name.replace(r'\pi','π').replace(r'\rho','ρ').replace(r'\omega','ω')
+        name = name.replace(r'\pi', 'π').replace(r'\rho', 'ρ').replace(r'\omega', 'ω')
         if self.bar:
             name += '~'
         return name
@@ -330,7 +341,7 @@ class Particle(object):
         else:
             col = cls.pdg_table().loc[val]
             J = Fraction(col.J) if col.J not in {'2or4', '?'} else col.J
-            I = Fraction(col.I) if col.I not in {'', '<2', '?'} else col.I
+            I = Fraction(col.I) if col.I not in {'', '<2', '?'} else col.I  # noqa: 741
             name = col.Name
             if abs(val) == 313:
                 name += '(892)'
@@ -340,14 +351,13 @@ class Particle(object):
                        Par(col.G), Par(col.P), Par(col.C),
                        col.Quarks, Status(col.Status),
                        latex=col.Latex,
-                      mass_upper=col.MassUpper/1000,
-                      mass_lower=col.MassLower/1000,
-                      width_upper=col.WidthUpper/1000,
-                      width_lower=col.WidthLower/1000,)
-
+                       mass_upper=col.MassUpper/1000,
+                       mass_lower=col.MassLower/1000,
+                       width_upper=col.WidthUpper/1000,
+                       width_lower=col.WidthLower/1000,)
 
     @classmethod
-    def from_search_list(cls, name=None, latex=None,  *, name_re=None, latex_re=None, particle=None, **search_terms):
+    def from_search_list(cls, name=None, latex=None, name_re=None, latex_re=None, particle=None, **search_terms):
         'Search for a particle, returning a list of candidates'
 
         for term in list(search_terms):
@@ -360,7 +370,7 @@ class Particle(object):
         if not isinstance(search_terms.get('J', ''), str):
             search_terms['I'] = str(search_terms['I'])
 
-        bools = [cls.pdg_table()[term]==match for term, match in search_terms.items()]
+        bools = [cls.pdg_table()[term] == match for term, match in search_terms.items()]
 
         if name is not None:
             bools.append(cls.pdg_table().Name.str.contains(str(name), regex=False))
@@ -377,9 +387,10 @@ class Particle(object):
         return [cls.from_pdg(r) for r in results.index]
 
     @classmethod
-    def from_search(cls, name=None, latex=None,  *, name_re=None, latex_re=None, **search_terms):
+    def from_search(cls, name=None, latex=None, name_re=None, latex_re=None, **search_terms):
         'Require that your each returns one and only one result'
-        results = cls.from_search_list(name, latex, name_re=name_re, latex_re=latex_re, **search_terms)
+        results = cls.from_search_list(name, latex, name_re=name_re,
+                                       latex_re=latex_re, **search_terms)
         if len(results) == 1:
             return results[0]
         elif len(results) == 0:
@@ -387,14 +398,13 @@ class Particle(object):
         else:
             raise RuntimeError("Found too many particles")
 
-
     @classmethod
     def from_AmpGen(cls, name):
         'Get a particle from an AmpGen style name'
         mat = getname.match(name)
         mat = mat.groupdict()
 
-        Par_mapping = {'++':2, '+':1, '0':0, '-':-1, '--':2}
+        Par_mapping = {'++': 2, '+': 1, '0': 0, '-': -1, '--': 2}
         particle = False if mat['bar'] is not None else (True if mat['charge'] == '0' else None)
 
         fullname = mat['name']
@@ -402,19 +412,19 @@ class Particle(object):
             fullname += '({mat[state]})'.format(mat=mat)
 
         if mat['mass']:
-            maxname = fullname +  '({mat[mass]})'.format(mat=mat)
+            maxname = fullname + '({mat[mass]})'.format(mat=mat)
         else:
             maxname = fullname
 
-        vals = cls.from_search_list(Name = maxname,
-                                    Charge = Par_mapping[mat['charge']],
-                                    particle = particle,
-                                    J = mat['state'])
+        vals = cls.from_search_list(Name=maxname,
+                                    Charge=Par_mapping[mat['charge']],
+                                    particle=particle,
+                                    J=mat['state'])
         if not vals:
-            vals = cls.from_search_list(Name = fullname,
-                                        Charge = Par_mapping[mat['charge']],
-                                        particle = particle,
-                                        J = mat['state'])
+            vals = cls.from_search_list(Name=fullname,
+                                        Charge=Par_mapping[mat['charge']],
+                                        particle=particle,
+                                        J=mat['state'])
 
         if len(vals) > 1 and mat['mass'] is not None:
             vals = [val for val in vals if mat['mass'] in val.latex]
@@ -423,5 +433,3 @@ class Particle(object):
             vals = sorted(vals)
 
         return vals[0]
-
-

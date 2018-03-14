@@ -6,10 +6,11 @@ A collection of regular expressions that pick out information about line.
 The regular expressions make named groups that you can access.
 '''
 
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import re
-
 
 inverted = re.compile(r'''
 ^                                          # Beginning of string

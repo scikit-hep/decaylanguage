@@ -5,11 +5,8 @@ from __future__ import print_function
 
 import io
 import re
-from glob import glob
-from os.path import basename
 from os.path import dirname
 from os.path import join
-from os.path import splitext
 
 from setuptools import find_packages
 from setuptools import setup
@@ -68,7 +65,7 @@ setup(
         'numpy>=1.12',
         'pandas>=0.22',
         'graphviz>=0.8.2',
-        'futures>=0.16; python_version<"3"',
+        'future>=0.16; python_version<"3"',
         'pathlib2>=2.3; python_version<"3.5"',
         'enum34>=1.1; python_version<"3.4"',
     ],
