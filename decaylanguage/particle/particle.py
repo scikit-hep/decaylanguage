@@ -161,9 +161,9 @@ def mkul(upper, lower):
         if upper==0:
             return ''
         else:
-            return f'± {upper!s}'
+            return '± {upper:g}'.format(upper=upper)
     else:
-        return f'+ {upper!s} - {lower!s}'
+        return '+ {upper:g} - {lower:g}'.format(upper=upper, lower=lower)
 
 @total_ordering
 @attr.s(slots=True, cmp=False)
@@ -279,19 +279,19 @@ class Particle(object):
         if self.val == 0:
             return "Name: Unknown"
 
-        val =  f"""Name: {self.name:<10} ID: {self.val:<12} Fullname: {self!s:<14} Latex: {self._repr_latex_()}
-    Mass  = {self.mass!s:<10} {mkul(self.mass_upper, self.mass_lower)} GeV
-    Width = {self.width!s:<10} {mkul(self.width_upper, self.width_lower)} GeV
+        val =  """Name: {self.name:<10} ID: {self.val:<12} Fullname: {self!s:<14} Latex: {self._repr_latex_()}
+    Mass  = {self.mass!s:<10} {mass} GeV
+    Width = {self.width!s:<10} {width} GeV
     I (isospin)       = {self.I!s:<6} G (parity)        = {Par_undo[self.G]:<5}  Q (charge)       = {Par_undo[self.charge]}
     J (total angular) = {self.J!s:<6} C (charge parity) = {Par_undo[self.C]:<5}  P (space parity) = {Par_undo[self.P]}
-"""
+""".format(self=self, Par_undo=Par_undo, mass=mkul(self.mass_upper, self.mass_lower), width=mkul(self.width_upper, self.width_lower))
 
         if self.spintype != SpinType.Unknown:
-            val += f"    SpinType: {self.spintype!s}\n"
+            val += "    SpinType: {self.spintype!s}\n".format(self=self)
         if self.quarks:
-            val += f"    Quarks: {self.quarks}\n"
-        val += f"    Antiparticle status: {self.A.name}\n"
-        val += f"    Radius: {self.radius} GeV"
+            val += "    Quarks: {self.quarks}\n".format(self=self)
+        val += "    Antiparticle status: {self.A.name}\n".format(self=self)
+        val += "    Radius: {self.radius} GeV".format(self=self)
         return val
 
     @property
@@ -396,10 +396,10 @@ class Particle(object):
 
         fullname = mat['name']
         if mat['state']:
-            fullname += f'({mat["state"]})'
+            fullname += '({mat[state]})'.format(mat=mat)
 
         if mat['mass']:
-            maxname = fullname +  f'({mat["mass"]})'
+            maxname = fullname +  '({mat[mass]})'.format(mat=mat)
         else:
             maxname = fullname
 
