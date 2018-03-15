@@ -313,7 +313,7 @@ class AmplitudeChain(object):
                                  columns='name value'.split()).set_index('name')
 
         # Convert the matches into AmplitudeChains
-        line_arr = [cls.from_matched_line(a) for a in real_lines]
+        line_arr = [cls.from_matched_line(c) for c in real_lines]
 
         # Expand partial lines into complete lines
         new_line_arr = [l for line in line_arr if line.particle == all_states[0]

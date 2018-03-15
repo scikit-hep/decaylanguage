@@ -26,7 +26,7 @@ Overview
 
 .. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/henryiii/decaylanguage?branch=master&svg=true
     :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/henryiii/decaylanguage
+    :target: https://ci.appveyor.com/project/HenrySchreiner/decaylanguage
 
 .. |requires| image:: https://requires.io/github/henryiii/decaylanguage/requirements.svg?branch=master
     :alt: Requirements Status
