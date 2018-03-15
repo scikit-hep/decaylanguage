@@ -49,7 +49,7 @@ DtoV1S2_V1toP1P2_S2toP3P4 : SF_4Body.DtoVS_VtoP1P2_StoP3P4 SF_4Body.FF_12_34_L1
 
 
       Scalar: PiPi00      PiPi10      PiPi20      PiPi30      KPi00       KPi10       KPi20 
-PseudoScalar: pi-         pi+         K-          D0          K(1460)~-
+PseudoScalar: pi+         pi-         K-          D0          K(1460)~-
       Vector: rho(770)0   omega(782)0 K(892)~0    rho(1450)0 
        Axial: K(1)(1270)~- a(1)(1260)+ K(1)(1400)~-
       Tensor: K(2)~-     

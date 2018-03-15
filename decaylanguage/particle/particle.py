@@ -221,10 +221,12 @@ class Particle(object):
             cls.load_pdg_table()
         return cls._pdg_table
 
-    # The following needed for total ordering (sort, etc)
+    # The following __le__ and __eq__ needed for total ordering (sort, etc)
 
     def __le__(self, other):
-        return abs(self.val) < (abs(other.val)-.5)
+        # Sort by absolute particle numbers
+        # The positive one should come first
+        return abs(self.val - .25) < abs(other.val - .25)
 
     def __eq__(self, other):
         return self.val == other.val
