@@ -14,6 +14,7 @@ from ..particle import SpinType
 from ..particle import programatic_name
 from .amplitudechain import LS
 from .amplitudechain import AmplitudeChain
+from .errors import LineFailure
 
 
 class SF_4Body(Enum):
@@ -148,7 +149,7 @@ class GooFitChain(AmplitudeChain):
             if self[0].daughters:
                 b = "{0}2".format(sprint(self[0][0].particle.spintype))
             else:
-                b = "ERROR"
+                raise LineFailure(self, "{0} has no daughters".format(self[0]))
             wave = "{self[0].spinfactor}wave".format(
                 self=self) if self[0].spinfactor and self[0].spinfactor != 'S' else ""
             return "Dto{a}P1_{a}to{b}P2{wave}_{b}toP3P4".format(a=a, b=b, wave=wave)
@@ -161,7 +162,7 @@ class GooFitChain(AmplitudeChain):
                 spinfactor.append(self.formfactor)
             return spinfactor
 
-        raise RuntimeError("Spinfactors not currenly included!: {spindet}".format(
+        raise LineFailure(self, "Spinfactors not currenly included!: {spindet}".format(
             spindet=self.spindetails()))
 
         # if self.decay_structure == DecayStructure.FF_12_34 :
