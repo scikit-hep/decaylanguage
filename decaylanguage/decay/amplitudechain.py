@@ -8,7 +8,6 @@ from itertools import combinations
 from itertools import product
 
 import attr
-import graphviz
 import numpy as np
 import pandas as pd
 
@@ -17,6 +16,11 @@ from ..particle import Particle
 from .utilities import filter_lines
 from .utilities import iter_flatten
 from .utilities import split
+
+try:
+    import graphviz
+except ImportError:
+    graphviz = None
 
 
 class LS(Enum):
@@ -189,14 +193,15 @@ class AmplitudeChain(object):
             drawing.edge(str(id(self)), str(id(p)))
             p._add_nodes(drawing)
 
-    def _make_graphvis(self):
-        d = graphviz.Digraph()
-        d.attr(labelloc='t', label=str(self))
-        self._add_nodes(d)
-        return d
+    if graphviz:
+        def _make_graphviz(self):
+            d = graphviz.Digraph()
+            d.attr(labelloc='t', label=str(self))
+            self._add_nodes(d)
+            return d
 
-    def _repr_svg_(self):
-        return self._make_graphvis()._repr_svg_()
+        def _repr_svg_(self):
+            return self._make_graphvis()._repr_svg_()
 
     @property
     def vertexes(self):
