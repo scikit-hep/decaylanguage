@@ -65,7 +65,7 @@ setup(
         'numpy>=1.12',
         'pandas>=0.22',
         'graphviz>=0.8.2',
-        'six>=1.11; python_version<"3"',
+        'six>=1.11',
         'pathlib2>=2.3; python_version<"3.5"',
         'enum34>=1.1; python_version<"3.4"',
     ],
