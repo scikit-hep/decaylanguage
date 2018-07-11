@@ -52,22 +52,49 @@
 
 A language to describe particle decays, and tools to work with them.
 
-* Free software: BSD 3-Clause License
 
 Installation
 ============
+
+Just run the following:
 
 ::
 
     pip install decaylanguage
 
-Documentation
-=============
 
-https://decaylanguage.readthedocs.io/en/latest/
+You can use a virtual environment through `pipenv` or `--user` if you know what those are.
+
+Usage
+=====
+
+This is a quick user guide; for full API docs, see https://decaylanguage.readthedocs.io/en/latest/
+
+DecayLanguage is a set of tools for building and transforming particle decays. The parts are:
+
+Particles
+`````````
+
+You can use a variety of methods to get particles; if you know the PDG number you can get a particle directly, or you can use a search::
+
+    Particle.from_pdg(211)
+    Particle.from_search_list(name='pi')[0]
+
+You can search for the properties, which are ``name``, ``mass``, ``width``, ``charge``, ``A``, ``rank``, ``I``, ``J``, ``G``, ``P``, ``quarks``, ``status``, ``latex``, ``mass_upper``, ``mass_lower``, ``width_upper``, and ``width_lower`` (some of those don't make sense). You can also use ``from_search`` to require only one match.
+
+Once you have a particle, any of the properties can be accessed, along with several methods. Though they are not real properties, you can access ``bar``, ``radius``, and ``spintype``. You can also ``invert()`` a particle. There are lots of printing choices, ``describe()``, ``programatic_name()``, ``html_name()``, html printing outs in notebooks, and of course ``repr``
+and ``str`` support.
+
+Decays
+``````
+
+
+Converters
+``````````
 
 Development
 ===========
+Decay Language is free software: BSD 3-Clause License.
 
 To run the all tests run::
 
