@@ -1,20 +1,11 @@
-========
-Overview
-========
+.. image:: images/DecayLanguage.png
+   :alt: DecayLanguage
+   :target: http://decaylanaguage.readthedocs.io/en/latest/
 
 .. start-badges
 
-.. list-table::
-    :stub-columns: 1
+|docs| |travis| |appveyor| |coveralls| |version| |supported-versions| |commits-since|
 
-    * - docs
-      - |docs|
-    * - tests
-      - | |travis| |appveyor| |requires|
-        | |coveralls|
-    * - package
-      - | |version| |wheel| |supported-versions| |supported-implementations|
-        | |commits-since|
 
 .. |docs| image:: https://readthedocs.org/projects/decaylanguage/badge/?style=flat
     :target: https://readthedocs.org/projects/decaylanguage

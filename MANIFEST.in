@@ -23,4 +23,8 @@ include tox.ini .travis.yml .appveyor.yml
 recursive-include decaylanguage *.csv
 recursive-include decaylanguage *.txt
 
+recursive-include images *.pdf
+recursive-include images *.png
+recursive-include images *.svg
+
 global-exclude *.py[cod] __pycache__ *.so *.dylib
