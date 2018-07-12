@@ -73,7 +73,7 @@ This is a quick user guide; for full API docs, see https://decaylanguage.readthe
 DecayLanguage is a set of tools for building and transforming particle decays. The parts are:
 
 Particles
-`````````
+---------
 
 You can use a variety of methods to get particles; if you know the PDG number you can get a particle directly, or you can use a search::
 
@@ -86,33 +86,16 @@ Once you have a particle, any of the properties can be accessed, along with seve
 and ``str`` support.
 
 Decays
-``````
+------
 
+The most common way to create a decay chain is to read in an AmpGen style syntax from a file or a string.
 
 Converters
-``````````
+----------
 
-Development
-===========
-Decay Language is free software: BSD 3-Clause License.
+You can output to a format (currently only GooFit supported, feel free to make a PR to add more). Use a subclass of `DecayChain`, in this case, `GooFitChain`.
 
-To run the all tests run::
+Acknowledgements
+================
+Decay Language is free software released under a BSD 3-Clause License. It was originally developed by Henry Schreiner.
 
-    tox
-
-Note, to combine the coverage data from all the tox environments run:
-
-.. list-table::
-    :widths: 10 90
-    :stub-columns: 1
-
-    - - Windows
-      - ::
-
-            set PYTEST_ADDOPTS=--cov-append
-            tox
-
-    - - Other
-      - ::
-
-            PYTEST_ADDOPTS=--cov-append tox
