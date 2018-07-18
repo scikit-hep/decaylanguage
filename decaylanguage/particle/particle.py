@@ -28,7 +28,7 @@ FILE_MASSES = os.path.join(dir_path, 'mass_width.csv')
 FILE_EXTENDED = os.path.join(dir_path, 'MintDalitzSpecialParticles.csv')
 
 
-def programatic_name(name):
+def programmatic_name(name):
     'Return a name safe to use as a variable name'
     return (name.replace('(', '').replace(')', '')
             .replace('*', '').replace('::', '_')
@@ -311,11 +311,11 @@ class Particle(object):
         return val
 
     @property
-    def programatic_name(self):
+    def programmatic_name(self):
         'This name could be used for a variable name'
         name = self.name
         name += '_' + Par_prog[self.charge]
-        return programatic_name(name)
+        return programmatic_name(name)
 
     @property
     def html_name(self):

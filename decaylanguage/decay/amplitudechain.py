@@ -13,9 +13,9 @@ import pandas as pd
 
 from . import ampline
 from ..particle import Particle
-from .utilities import filter_lines
-from .utilities import iter_flatten
-from .utilities import split
+from ..utils import filter_lines
+from ..utils import iter_flatten
+from ..utils import split
 
 try:
     import graphviz
