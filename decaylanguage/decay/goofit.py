@@ -12,9 +12,9 @@ import pandas as pd
 
 from ..particle import SpinType
 from ..particle import programmatic_name
+from ..utils import LineFailure
 from .amplitudechain import LS
 from .amplitudechain import AmplitudeChain
-from ..utils import LineFailure
 
 
 class SF_4Body(Enum):
