@@ -73,4 +73,6 @@ setup(
         #   'rst': ['docutils>=0.11'],
         #   ':python_version=="2.6"': ['argparse'],
     },
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest']
 )
