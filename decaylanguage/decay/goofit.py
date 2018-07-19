@@ -11,10 +11,10 @@ from enum import Enum
 import pandas as pd
 
 from ..particle import SpinType
-from ..particle import programatic_name
+from ..particle import programmatic_name
+from ..utils import LineFailure
 from .amplitudechain import LS
 from .amplitudechain import AmplitudeChain
-from .errors import LineFailure
 
 
 class SF_4Body(Enum):
@@ -98,14 +98,14 @@ class GooFitChain(AmplitudeChain):
         final_particles = set(all_states)
 
         for particle in final_particles:
-            name = particle.programatic_name.upper()
+            name = particle.programmatic_name.upper()
             header += '    constexpr fptype {name:8} {{ {particle.mass:<14.8g} }};\n'.format(
                 name=name, particle=particle)
 
         header += '\n'
 
         for particle in cls.all_particles - final_particles:
-            name = particle.programatic_name
+            name = particle.programmatic_name
             header += '    Variable {name:15} {{ {nameQ:21}, {particle.mass:<10.8g} }};\n'.format(
                 name=name+'_M', nameQ='"'+name+'_M"', particle=particle)
             header += '    Variable {name:15} {{ {nameQ:21}, {particle.width:<10.8g} }};\n'.format(
@@ -114,7 +114,7 @@ class GooFitChain(AmplitudeChain):
         header += '\n'
         header += '    DK3P_DI.meson_radius = 5;\n'
         header += '    DK3P_DI.particle_masses = {{{}}};\n'.format(
-            ', '.join(x.programatic_name.upper() for x in all_states))
+            ', '.join(x.programmatic_name.upper() for x in all_states))
 
         return header
 
@@ -189,7 +189,7 @@ class GooFitChain(AmplitudeChain):
         header = ''
 
         for name, par in cls.pars.iterrows():
-            pname = programatic_name(name)
+            pname = programmatic_name(name)
             if par.fix == 2:
                 headerlist.append('    Variable {pname} {{"{name}", {par.value}, {par.error} }};'.format(
                     pname=pname, name=name, par=par))
@@ -201,14 +201,14 @@ class GooFitChain(AmplitudeChain):
             mysplines = pars.index[pars.index.str.contains(begin, regex=False)]
             vals = convert(mysplines.str.slice(len(begin))).astype(int)
             series = pd.Series(mysplines, vals).sort_index()
-            return ',\n'.join(series.map(lambda x: '        '+programatic_name(x)))
+            return ',\n'.join(series.map(lambda x: '        '+programmatic_name(x)))
 
         splines = GooFitChain.consts.index[GooFitChain.consts.index.str.contains("Spline")]
         splines = set(splines.str.rstrip("::Spline::N").str.rstrip(
             "::Spline::Min").str.rstrip("::Spline::Max"))
 
         for spline in splines:
-            header += '\n    std::vector<Variable> ' + programatic_name(spline) + "_SplineArr {{\n"
+            header += '\n    std::vector<Variable> ' + programmatic_name(spline) + "_SplineArr {{\n"
             header += strip_pararray(GooFitChain.pars,
                                      "{spline}::Spline::Gamma::".format(spline=spline))
             header += '\n    }};\n'
@@ -235,7 +235,7 @@ class GooFitChain(AmplitudeChain):
 
     def make_lineshape(self, structure):
         name = self.name
-        par = self.particle.programatic_name
+        par = self.particle.programmatic_name
         a = structure[0]+1
         b = structure[1]+1
         L = self.L
@@ -247,7 +247,7 @@ class GooFitChain(AmplitudeChain):
             min = self.__class__.consts.loc["{self.name}::Spline::Min".format(self=self), "value"]
             max = self.__class__.consts.loc["{self.name}::Spline::Max".format(self=self), "value"]
             N = self.__class__.consts.loc["{self.name}::Spline::N".format(self=self), "value"]
-            AdditionalVars = programatic_name(self.name) + "_SplineArr"
+            AdditionalVars = programmatic_name(self.name) + "_SplineArr"
             return '''new Lineshapes::GSpline("{name}", {par}_M, {par}_W, {L}, M_{a}{b}, FF::BL2,
             {radius}, {AdditionalVars}, Lineshapes::spline_t({min},{max},{N}))'''.format(
                     name=name, par=par, L=L, a=a, b=b, radius=radius, AdditionalVars=AdditionalVars, min=min, max=max, N=N)

@@ -82,7 +82,7 @@ You can use a variety of methods to get particles; if you know the PDG number yo
 
 You can search for the properties, which are ``name``, ``mass``, ``width``, ``charge``, ``A``, ``rank``, ``I``, ``J``, ``G``, ``P``, ``quarks``, ``status``, ``latex``, ``mass_upper``, ``mass_lower``, ``width_upper``, and ``width_lower`` (some of those don't make sense). You can also use ``from_search`` to require only one match.
 
-Once you have a particle, any of the properties can be accessed, along with several methods. Though they are not real properties, you can access ``bar``, ``radius``, and ``spintype``. You can also ``invert()`` a particle. There are lots of printing choices, ``describe()``, ``programatic_name()``, ``html_name()``, html printing outs in notebooks, and of course ``repr``
+Once you have a particle, any of the properties can be accessed, along with several methods. Though they are not real properties, you can access ``bar``, ``radius``, and ``spintype``. You can also ``invert()`` a particle. There are lots of printing choices, ``describe()``, ``programmatic_name()``, ``html_name()``, html printing outs in notebooks, and of course ``repr``
 and ``str`` support.
 
 Decays
