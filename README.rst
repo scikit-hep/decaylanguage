@@ -65,6 +65,26 @@ Just run the following:
 
 You can use a virtual environment through `pipenv` or `--user` if you know what those are.
 
+
+Strict dependencies:
+====================
+
+- `Python <http://docs.python-guide.org/en/latest/starting/installation/>`__ (2.6+, 3.4+)
+- `Numpy <https://scipy.org/install.html>`__
+- `attrs <https://github.com/python-attrs/attrs>`__
+- `enum34 <https://bitbucket.org/stoneleaf/enum34>`__ if using a Python version < 3.4
+- `pandas <https://pandas.pydata.org/>`__
+- `pathlib2 <https://github.com/mcmtroffaes/pathlib2>`__ if using a Python version < 3.5
+- `plumbum <https://github.com/tomerfiliba/plumbum>`__
+- `six <https://github.com/benjaminp/six>`__
+
+
+Recommended dependencies:
+=========================
+
+- `graphviz <https://gitlab.com/graphviz/graphviz/>`__ to render (DOT language) graph descriptions of decay chains.
+
+
 Usage
 =====
 
@@ -80,10 +100,14 @@ You can use a variety of methods to get particles; if you know the PDG number yo
     Particle.from_pdg(211)
     Particle.from_search_list(name='pi')[0]
 
-You can search for the properties, which are ``name``, ``mass``, ``width``, ``charge``, ``A``, ``rank``, ``I``, ``J``, ``G``, ``P``, ``quarks``, ``status``, ``latex``, ``mass_upper``, ``mass_lower``, ``width_upper``, and ``width_lower`` (some of those don't make sense). You can also use ``from_search`` to require only one match.
+You can search for the properties, which are ``name``, ``mass``, ``width``, ``charge``, ``A``, ``rank``, ``I``, ``J``, ``G``, ``P``,
+``quarks``, ``status``, ``latex``, ``mass_upper``, ``mass_lower``, ``width_upper``, and ``width_lower`` (some of those don't make sense).
+You can also use ``from_search`` to require only one match.
 
-Once you have a particle, any of the properties can be accessed, along with several methods. Though they are not real properties, you can access ``bar``, ``radius``, and ``spin_type``. You can also ``invert()`` a particle. There are lots of printing choices, ``describe()``, ``programmatic_name()``, ``html_name()``, html printing outs in notebooks, and of course ``repr``
-and ``str`` support.
+Once you have a particle, any of the properties can be accessed, along with several methods.
+Though they are not real properties, you can access ``bar``, ``radius``, and ``spin_type``.
+You can also ``invert()`` a particle. There are lots of printing choices, ``describe()``, ``programmatic_name()``, ``html_name()``,
+html printing outs in notebooks, and of course ``repr`` and ``str`` support.
 
 Decays
 ------

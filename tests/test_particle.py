@@ -1,5 +1,18 @@
+from decaylanguage.particle import Charge
 from decaylanguage.particle import Par
 from decaylanguage.particle import Particle
+from decaylanguage.particle import SpinType
+
+
+def test_enums_Charge():
+    assert Charge.p + Charge.m == Charge.o
+    assert Charge.pp + Charge.mm == Charge.o
+
+
+def test_enums_SpinType():
+    assert SpinType.PseudoScalar == - SpinType.Scalar
+    assert SpinType.Axial == - SpinType.Vector
+    assert SpinType.PseudoTensor == - SpinType.Tensor
 
 
 def test_pdg():
