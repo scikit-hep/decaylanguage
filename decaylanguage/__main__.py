@@ -10,13 +10,16 @@ from plumbum import cli
 from decaylanguage.decay.ampgen2goofit import ampgen2goofit
 
 
-class AmpGen2GooFit(cli.Application):
+class DecayLanguageDecay(cli.Application):
+    generator = cli.SwitchAttr('-G,--generator', cli.Set('goofit'))
+
     def main(self, filename):
-        ampgen2goofit(filename)
+        if self.generator == 'goofit':
+            ampgen2goofit(filename)
 
 
 def main():
-    AmpGen2GooFit.run()
+    DecayLanguageDecay.run()
 
 
 if __name__ == "__main__":

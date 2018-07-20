@@ -1,5 +1,9 @@
-#!/usr/bin/env python
 # coding: utf-8
+
+'''
+This is a function that takes a filename and either prints out or returns
+a string output with the converted set of decay chains and variables.
+'''
 
 from __future__ import absolute_import
 from __future__ import division

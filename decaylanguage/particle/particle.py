@@ -19,13 +19,12 @@ from functools import total_ordering
 import attr
 import pandas as pd
 
+from ..data import get_latex
+from ..data import get_mass_width
+from ..data import get_special
+
 # The path of this file (used to load data files)
 dir_path = os.path.dirname(os.path.realpath(__file__))
-
-# Default files to load
-FILE_LATEX = os.path.join(dir_path, 'pdgID_to_latex.txt')
-FILE_MASSES = os.path.join(dir_path, 'mass_width.csv')
-FILE_EXTENDED = os.path.join(dir_path, 'MintDalitzSpecialParticles.csv')
 
 
 def programmatic_name(name):
@@ -105,14 +104,14 @@ def get_from_latex(filename):
     Produce a pandas series from a file with latex mappings in itself.
     The file format is the following: PDGID ParticleLatexName AntiparticleLatexName.
     """
-    latex_table = pd.read_csv(filename, delim_whitespace=True, names='id a b'.split(), index_col=0)
-    series_real = latex_table.a
-    series_anti = latex_table.b
+    latex_table = pd.read_csv(filename, index_col=0)
+    series_real = latex_table.particle
+    series_anti = latex_table.antiparticle
     series_anti.index = -series_anti.index
     return pd.concat([series_real, series_anti])
 
 
-def get_from_pdg(filename, latexes=(FILE_LATEX,)):
+def get_from_pdg(filename, latexes=None):
     'Read a file, plus a list of latex files, to produce a pandas DataFrame with particle information'
 
     def unmap(mapping):
@@ -165,6 +164,8 @@ def get_from_pdg(filename, latexes=(FILE_LATEX,)):
     full = pd.concat([pdg_table, pdg_table_inv])
 
     # Add the latex
+    if latexes is None:
+        latexes = (get_latex(),)
     latex_series = pd.concat([get_from_latex(latex) for latex in latexes])
     full = full.assign(Latex=latex_series)
 
@@ -212,8 +213,10 @@ class Particle(object):
     _pdg_table = None
 
     @classmethod
-    def load_pdg_table(cls, files=(FILE_MASSES, FILE_EXTENDED), latexes=(FILE_LATEX,)):
+    def load_pdg_table(cls, files=None, latexes=None):
         'Load a PDG table. Will be called on first access to the PDG table'
+        if files is None:
+            files = (get_mass_width(), get_special())
         tables = [get_from_pdg(f, latexes) for f in files]
         cls._pdg_table = pd.concat(tables)
 
