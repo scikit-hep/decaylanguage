@@ -1,7 +1,13 @@
+'''
+A class representing a set of decays. Can be subclassed to provide custom converters.
+'''
+
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import warnings
 from copy import copy
 from enum import Enum
 from itertools import combinations
@@ -21,6 +27,7 @@ try:
     import graphviz
 except ImportError:
     graphviz = None
+    warnings.warn("Graphvis not installed. Line display not available.")
 
 
 class LS(Enum):
@@ -33,6 +40,7 @@ class LS(Enum):
 
 @attr.s(slots=True)
 class AmplitudeChain(object):
+    'This is a chain of decays (a "line")'
     particle = attr.ib()
     daughters = attr.ib([], convert=lambda x: x if x else [])
     lineshape = attr.ib(None)
@@ -201,7 +209,7 @@ class AmplitudeChain(object):
             return d
 
         def _repr_svg_(self):
-            return self._make_graphvis()._repr_svg_()
+            return self._make_graphviz()._repr_svg_()
 
     @property
     def vertexes(self):
@@ -255,7 +263,8 @@ class AmplitudeChain(object):
         '''
         Read in an ampgen file
 
-        :param filename: Filename
+        :param filename: Filename to read
+        :param text: Text to read (use instead of filename)
         :return: array of AmplitudeChains, parameters, constants, event type
         '''
 
