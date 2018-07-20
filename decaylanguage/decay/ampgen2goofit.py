@@ -38,7 +38,7 @@ def ampgen2goofit(filename, ret_output=False):
     printer('\n')
     for spintype in SpinType:
         ps = [format(str(p), '11')
-              for p in sorted(GooFitChain.all_particles) if p.spintype == spintype]
+              for p in sorted(GooFitChain.all_particles) if p.spin_type == spintype]
         printer("{spintype.name:>12}:".format(spintype=spintype), *ps)
 
     printer('\n')

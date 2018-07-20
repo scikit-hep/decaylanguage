@@ -139,15 +139,15 @@ class GooFitChain(AmplitudeChain):
 
     def spindetails(self):
         if self.decay_structure == DecayStructure.FF_12_34:
-            a = "{0}1".format(sprint(self[0].particle.spintype))
-            b = "{0}2".format(sprint(self[1].particle.spintype))
+            a = "{0}1".format(sprint(self[0].particle.spin_type))
+            b = "{0}2".format(sprint(self[1].particle.spin_type))
             return ("Dto{a}{b}_{a}toP1P2_{b}toP3P4"
                     + ("_{self.spinfactor}" if self.spinfactor and self.spinfactor != 'S' else "")
                     ).format(self=self, a=a, b=b)
         else:
-            a = "{0}1".format(sprint(self[0].particle.spintype))
+            a = "{0}1".format(sprint(self[0].particle.spin_type))
             if self[0].daughters:
-                b = "{0}2".format(sprint(self[0][0].particle.spintype))
+                b = "{0}2".format(sprint(self[0][0].particle.spin_type))
             else:
                 raise LineFailure(self, "{0} has no daughters".format(self[0]))
             wave = "{self[0].spinfactor}wave".format(
@@ -166,8 +166,8 @@ class GooFitChain(AmplitudeChain):
             spindet=self.spindetails()))
 
         # if self.decay_structure == DecayStructure.FF_12_34 :
-        #    if (self[0].particle.spintype in {SpinType.Vector, SpinType.Axial}
-        #        and self[1].particle.spintype in {SpinType.Vector, SpinType.Axial}):
+        #    if (self[0].particle.spin_type in {SpinType.Vector, SpinType.Axial}
+        #        and self[1].particle.spin_type in {SpinType.Vector, SpinType.Axial}):
         #
         #        if self.spinfactor == 'D':
         #            return (SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_D, SF_4Body.FF_12_34_L2)
@@ -176,8 +176,8 @@ class GooFitChain(AmplitudeChain):
         #        elif self.spinfactor == 'S':
         #            return (SF_4Body.DtoV1V2_V1toP1P2_V2toP3P4_S,)
         # else:
-        #    if (self[0].particle.spintype == SpinType.Axial and
-        #        self[0][0].particle.spintype == SpinType.Vector):
+        #    if (self[0].particle.spin_type == SpinType.Axial and
+        #        self[0][0].particle.spin_type == SpinType.Vector):
         #        if self.spinfactor == 'D':
         #            return (SF_4Body.DtoAP1_AtoVP2Dwave_VtoP3P4, SF_4Body.FF_12_34_L2)
         #        else:

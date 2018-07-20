@@ -101,7 +101,10 @@ Par_prog = {Par.pp: 'pp', Par.p: 'p', Par.o: '0', Par.m: 'm', Par.mm: 'mm', Par.
 
 
 def get_from_latex(filename):
-    'Produce a pandas series from a file with latex mappings in it'
+    """
+    Produce a pandas series from a file with latex mappings in itself.
+    The file format is the following: PDGID ParticleLatexName AntiparticleLatexName.
+    """
     latex_table = pd.read_csv(filename, delim_whitespace=True, names='id a b'.split(), index_col=0)
     series_real = latex_table.a
     series_anti = latex_table.b
@@ -109,7 +112,7 @@ def get_from_latex(filename):
     return pd.concat([series_real, series_anti])
 
 
-def get_from_PDG(filename, latexes=(FILE_LATEX,)):
+def get_from_pdg(filename, latexes=(FILE_LATEX,)):
     'Read a file, plus a list of latex files, to produce a pandas DataFrame with particle information'
 
     def unmap(mapping):
@@ -211,7 +214,7 @@ class Particle(object):
     @classmethod
     def load_pdg_table(cls, files=(FILE_MASSES, FILE_EXTENDED), latexes=(FILE_LATEX,)):
         'Load a PDG table. Will be called on first access to the PDG table'
-        tables = [get_from_PDG(f, latexes) for f in files]
+        tables = [get_from_pdg(f, latexes) for f in files]
         cls._pdg_table = pd.concat(tables)
 
     @classmethod
@@ -248,7 +251,7 @@ class Particle(object):
         return self.val < 0 and self.A == Inv.Full
 
     @property
-    def spintype(self):  # -> SpinType:
+    def spin_type(self):  # -> SpinType:
         'Access the SpinType enum'
         if self.J in [0, 1, 2]:
             J = int(self.J)
@@ -302,8 +305,8 @@ class Particle(object):
     J (total angular) = {self.J!s:<6} C (charge parity) = {Par_undo[self.C]:<5}  P (space parity) = {Par_undo[self.P]}
 """.format(self=self, Par_undo=Par_undo, mass=mkul(self.mass_upper, self.mass_lower), width=mkul(self.width_upper, self.width_lower))
 
-        if self.spintype != SpinType.Unknown:
-            val += "    SpinType: {self.spintype!s}\n".format(self=self)
+        if self.spin_type != SpinType.Unknown:
+            val += "    SpinType: {self.spin_type!s}\n".format(self=self)
         if self.quarks:
             val += "    Quarks: {self.quarks}\n".format(self=self)
         val += "    Antiparticle status: {self.A.name}\n".format(self=self)
@@ -336,8 +339,8 @@ class Particle(object):
         return cls(0, 'Unknown', 0., 0., 0, Inv.Same)
 
     @classmethod
-    def from_pdg(cls, val):
-        'Get a particle from a PDG number'
+    def from_pdgid(cls, val):
+        'Get a particle from a PDGID.'
         if val == 0:
             return cls.empty()
         else:
@@ -386,7 +389,7 @@ class Particle(object):
             bools.append(cls.pdg_table().index > 0 if particle else cls.pdg_table().index < 0)
 
         results = cls.pdg_table()[reduce(operator.and_, bools)]
-        return [cls.from_pdg(r) for r in results.index]
+        return [cls.from_pdgid(r) for r in results.index]
 
     @classmethod
     def from_search(cls, name=None, latex=None, name_re=None, latex_re=None, **search_terms):

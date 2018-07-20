@@ -16,16 +16,16 @@ def test_enums_SpinType():
 
 
 def test_pdg():
-    assert Particle.from_pdg(211).val == 211
+    assert Particle.from_pdgid(211).val == 211
 
 
 def test_str():
-    pi = Particle.from_pdg(211)
+    pi = Particle.from_pdgid(211)
     assert str(pi) == 'pi+'
 
 
 def test_rep():
-    pi = Particle.from_pdg(211)
+    pi = Particle.from_pdgid(211)
     assert 'val=211' in repr(pi)
     assert "name='pi'" in repr(pi)
     assert 'mass=0.13957' in repr(pi)
@@ -33,7 +33,7 @@ def test_rep():
 
 
 def test_prop():
-    pi = Particle.from_pdg(211)
+    pi = Particle.from_pdgid(211)
     assert pi.name == 'pi'
     assert pi.val == 211
     assert pi.charge == Par.p

@@ -97,7 +97,7 @@ Particles
 
 You can use a variety of methods to get particles; if you know the PDG number you can get a particle directly, or you can use a search::
 
-    Particle.from_pdg(211)
+    Particle.from_pdgid(211)
     Particle.from_search_list(name='pi')[0]
 
 You can search for the properties, which are ``name``, ``mass``, ``width``, ``charge``, ``A``, ``rank``, ``I``, ``J``, ``G``, ``P``,
@@ -105,7 +105,7 @@ You can search for the properties, which are ``name``, ``mass``, ``width``, ``ch
 You can also use ``from_search`` to require only one match.
 
 Once you have a particle, any of the properties can be accessed, along with several methods.
-Though they are not real properties, you can access ``bar``, ``radius``, and ``spintype``.
+Though they are not real properties, you can access ``bar``, ``radius``, and ``spin_type``.
 You can also ``invert()`` a particle. There are lots of printing choices, ``describe()``, ``programmatic_name()``, ``html_name()``,
 html printing outs in notebooks, and of course ``repr`` and ``str`` support.
 
