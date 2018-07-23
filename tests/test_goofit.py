@@ -3,7 +3,7 @@ from decaylanguage.particle import Particle
 
 
 def test_simple():
-    lines, all_states = GooFitChain.read_AmpGen(text='''
+    lines, all_states = GooFitChain.read_ampgen(text='''
 
     # This is a test (should not affect output)
 
