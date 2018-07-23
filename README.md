@@ -82,7 +82,7 @@ style syntax from a file or a string. You can use:
 
 ```python
 from decaylanguage.decay import AmplitudeChain
-lines, parameters, constants, states = AmplitudeChain.read_AmpGen(text='''
+lines, parameters, constants, states = AmplitudeChain.read_ampgen(text='''
 EventType D0 K- pi+ pi+ pi-
 
 D0[D]{K*(892)bar0{K-,pi+},rho(770)0{pi+,pi-}}                            0 1 0.1 0 1 0.1

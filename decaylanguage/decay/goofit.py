@@ -316,7 +316,7 @@ class GooFitChain(AmplitudeChain):
                 + self.make_amplitude(final_states))
 
     @classmethod
-    def read_AmpGen(cls, *args, **kargs):
+    def read_ampgen(cls, *args, **kargs):
         line_arr, GooFitChain.pars, GooFitChain.consts, all_states = super(
-            GooFitChain, cls).read_AmpGen(*args, **kargs)
+            GooFitChain, cls).read_ampgen(*args, **kargs)
         return line_arr, all_states

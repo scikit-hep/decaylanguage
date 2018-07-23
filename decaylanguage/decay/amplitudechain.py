@@ -259,7 +259,7 @@ class AmplitudeChain(object):
         return name
 
     @classmethod
-    def read_AmpGen(cls, filename=None, text=None):
+    def read_ampgen(cls, filename=None, text=None):
         '''
         Read in an ampgen file
 
