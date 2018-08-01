@@ -4,7 +4,6 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import io
-import re
 from os.path import dirname
 from os.path import join
 
@@ -24,13 +23,10 @@ setup(
     version='0.1.0',
     license='BSD 3-Clause License',
     description='A language to describe particle decays, and tools to work with them.',
-    long_description='%s\n%s' % (
-        re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
-        re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
-    ),
+    long_description=read('README.md'),
     author='Henry Fredrick Schreiner III',
     author_email='henry.schreiner@cern.ch',
-    url='https://github.com/henryiii/decaylanguage',
+    url='https://github.com/scikit-hep/decaylanguage',
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,

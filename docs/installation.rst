@@ -2,12 +2,12 @@
 Installation
 ============
 
-At the command line (not active until the first release)::
+At the command line::
 
     pip install decaylanguage
 
 Or::
 
-    pip install https://github.com/henryiii/decaylanguage.git
+    pip install https://github.com/scikit-hep/decaylanguage.git
 
 
