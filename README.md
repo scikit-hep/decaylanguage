@@ -1,12 +1,12 @@
 [![DecayLanguage](images/DecayLanguage.png)](http://decaylanaguage.readthedocs.io/en/latest/)
 
 [![Documentation Status](https://readthedocs.org/projects/decaylanguage/badge/?style=flat)](https://readthedocs.org/projects/decaylanguage)
-[![Travis-CI Build Status](https://travis-ci.org/henryiii/decaylanguage.svg?branch=master)](https://travis-ci.org/henryiii/decaylanguage)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/henryiii/decaylanguage?branch=master&svg=true)](https://ci.appveyor.com/project/HenrySchreiner/decaylanguage)
-[![Coverage Status](https://coveralls.io/repos/henryiii/decaylanguage/badge.svg?branch=master&service=github)](https://coveralls.io/github/henryiii/decaylanguage)
+[![Travis-CI Build Status](https://travis-ci.org/scikit-hep/decaylanguage.svg?branch=master)](https://travis-ci.org/scikit-hep/decaylanguage)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/scikit-hep/decaylanguage?branch=master&svg=true)](https://ci.appveyor.com/project/HenrySchreiner/decaylanguage)
+[![Coverage Status](https://coveralls.io/repos/scikit-hep/decaylanguage/badge.svg?branch=master&service=github)](https://coveralls.io/github/scikit-hep/decaylanguage)
 [![PyPI Package latest release](https://img.shields.io/pypi/v/decaylanguage.svg)](https://pypi.python.org/pypi/decaylanguage)
 [![Supported versions](https://img.shields.io/pypi/pyversions/decaylanguage.svg)](https://pypi.python.org/pypi/decaylanguage)
-[![Commits since latest release](https://img.shields.io/github/commits-since/henryiii/decaylanguage/v0.1.0.svg)](https://github.com/henryiii/decaylanguage/compare/v0.1.0...master)
+[![Commits since latest release](https://img.shields.io/github/commits-since/scikit-hep/decaylanguage/v0.1.0.svg)](https://github.com/scikit-hep/decaylanguage/compare/v0.1.0...master)
 
 A language to describe particle decays, and tools to work with them.
 
