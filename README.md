@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/scikit-hep/decaylanguage/badge.svg?branch=master&service=github)](https://coveralls.io/github/scikit-hep/decaylanguage)
 [![PyPI Package latest release](https://img.shields.io/pypi/v/decaylanguage.svg)](https://pypi.python.org/pypi/decaylanguage)
 [![Supported versions](https://img.shields.io/pypi/pyversions/decaylanguage.svg)](https://pypi.python.org/pypi/decaylanguage)
-[![Commits since latest release](https://img.shields.io/github/commits-since/scikit-hep/decaylanguage/v0.1.0.svg)](https://github.com/scikit-hep/decaylanguage/compare/v0.1.0...master)
+[![Commits since latest release](https://img.shields.io/github/commits-since/scikit-hep/decaylanguage/vv0.1.0..svg)](https://github.com/scikit-hep/decaylanguage/compare/vv0.1.0....master)
 
 A language to describe particle decays, and tools to work with them.
 
