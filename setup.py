@@ -24,6 +24,7 @@ setup(
     license='BSD 3-Clause License',
     description='A language to describe particle decays, and tools to work with them.',
     long_description=read('README.md'),
+    long_description_content_type="text/markdown",
     author='Henry Fredrick Schreiner III',
     author_email='henry.schreiner@cern.ch',
     url='https://github.com/scikit-hep/decaylanguage',
