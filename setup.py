@@ -20,7 +20,7 @@ def read(*names, **kwargs):
 
 setup(
     name='decaylanguage',
-    version='version='0.2.0'',
+    version='0.2.0',
     license='BSD 3-Clause License',
     description='A language to describe particle decays, and tools to work with them.',
     long_description=read('README.md') + '\n\n' + read('CHANGELOG.md'),

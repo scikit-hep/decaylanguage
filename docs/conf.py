@@ -26,7 +26,7 @@ project = 'decaylanguage'
 year = '2018'
 author = 'Henry Fredrick Schreiner III'
 copyright = '{0}, {1}'.format(year, author)
-version = release = 'version = release = '0.2.0''
+version = release = '0.2.0'
 
 pygments_style = 'trac'
 templates_path = ['.']
