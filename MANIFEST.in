@@ -1,10 +1,12 @@
 graft docs
-graft decaylangauge
 graft ci
 graft tests
 graft notebooks
 graft scripts
 graft models
+
+prune docs/html
+prune notebooks/.ipynb_checkpoints
 
 include .bumpversion.cfg
 include .coveragerc
@@ -20,6 +22,7 @@ include Pipfile
 
 include tox.ini .travis.yml .appveyor.yml
 
+recursive-include decaylanguage *.py
 recursive-include decaylanguage *.csv
 recursive-include decaylanguage *.txt
 
