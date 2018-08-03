@@ -29,7 +29,6 @@ def test_rep():
     assert 'val=211' in repr(pi)
     assert "name='pi'" in repr(pi)
     assert 'mass=0.13957' in repr(pi)
-    assert 'charge=<Par.p: 1>' in repr(pi)
 
 
 def test_prop():

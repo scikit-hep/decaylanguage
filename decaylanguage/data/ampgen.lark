@@ -1,0 +1,60 @@
+start : _NEWLINE? (line _NEWLINE)+
+
+?line : cplx_decay_line | cart_decay_line | invert_line | constant | variable | options | event_type
+
+options : fast_coherent_sum | output | nevents
+
+fast_coherent_sum : "FastCoherentSum::UseCartesian" INT
+output : "Output" ESCAPED_STRING
+nevents : "nEvents" INT
+event_type : "EventType" particle particle+
+
+constant : particle SIGNED_NUMBER
+variable : particle fix SIGNED_NUMBER SIGNED_NUMBER
+cplx_decay_line : decay fixed_cplx fixed_cplx
+cart_decay_line : decay fixed_cplx 
+
+// Particle could have a number in front
+// TODO: This could pull out the - or -NUMBER* part
+invert_line : particle "=" particle
+
+fixed_cplx : fix SIGNED_NUMBER SIGNED_NUMBER
+
+fix : "0" -> free
+    | "2" -> fixed
+
+decay : particle ( decaytype? subdecay )?
+
+decaytype : "[" (spinfactor | lineshape) (";" lineshape)? "]"
+
+spinfactor : SPIN
+lineshape : LINESHAPE
+
+particle : LABEL
+
+subdecay : "{" decay "," decay "}"
+
+// Terminal defintions
+
+%import common.WS_INLINE
+%import common.SIGNED_NUMBER
+%import common.DIGIT
+%import common.INT
+%import common.LETTER
+%import common.ESCAPED_STRING
+
+SPIN : "S" | "P" | "D"
+LINESHAPE : CHAR (CHAR | ".")+
+CHAR : LETTER | DIGIT | "_" | "/"
+PRIME : "'"
+STAR : "*"
+PARENS : "(" | ")"
+LABEL : ( CHAR | DIGIT | PRIME | STAR | "::" | "+" | "-" | PARENS )+
+COMMENT : /[#][^\n]*/
+_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
+
+// We should ignore comments
+%ignore COMMENT
+
+// Disregard spaces in text
+%ignore WS_INLINE

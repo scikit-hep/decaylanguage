@@ -191,23 +191,23 @@ class Particle(object):
     val = attr.ib()
     name = attr.ib()
     mass = attr.ib()
-    width = attr.ib()
-    charge = attr.ib()
-    A = attr.ib()  # Info about particle name for anti-particles
-    rank = attr.ib(0)  # Next line is Isospin
-    I = attr.ib(None)  # noqa: E741
-    J = attr.ib(None)  # Total angular momentum
-    G = attr.ib(Par.u)  # Parity: '', +, -, or ?
-    P = attr.ib(Par.u)  # Space parity
-    C = attr.ib(Par.u)  # Charge conjugation parity
+    width = attr.ib(repr=False)
+    charge = attr.ib(repr=False)
+    A = attr.ib(repr=False)  # Info about particle name for anti-particles
+    rank = attr.ib(0, repr=False)  # Next line is Isospin
+    I = attr.ib(None, repr=False)  # noqa: E741
+    J = attr.ib(None, repr=False)  # Total angular momentum
+    G = attr.ib(Par.u, repr=False)  # Parity: '', +, -, or ?
+    P = attr.ib(Par.u, repr=False)  # Space parity
+    C = attr.ib(Par.u, repr=False)  # Charge conjugation parity
     # (B (just charge), F (add bar) , and '' (No change))
-    quarks = attr.ib('')
-    status = attr.ib(Status.Nonexistant)
-    latex = attr.ib('')
-    mass_upper = attr.ib(0.0)
-    mass_lower = attr.ib(0.0)
-    width_upper = attr.ib(0.0)
-    width_lower = attr.ib(0.0)
+    quarks = attr.ib('', repr=False)
+    status = attr.ib(Status.Nonexistant, repr=False)
+    latex = attr.ib('', repr=False)
+    mass_upper = attr.ib(0.0, repr=False)
+    mass_lower = attr.ib(0.0, repr=False)
+    width_upper = attr.ib(0.0, repr=False)
+    width_lower = attr.ib(0.0, repr=False)
 
     # Make a class level property that holds the PDG table. Loads on first access (via method)
     _pdg_table = None
@@ -289,7 +289,7 @@ class Particle(object):
 
     def __str__(self):
         return self.name + ('~' if self.A == Inv.Full and self.val < 0 else '') + Par_undo[self.charge]
-
+    
     def _repr_latex_(self):
         name = self.latex
         if self.bar:

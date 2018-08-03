@@ -1,0 +1,14 @@
+particle : PNAME spin? star? mass? bar? charge
+
+spin : "(" DIGIT ")"
+mass : "(" MASS ")"
+bar : BAR
+star : STAR
+PRIME : "'"
+STAR : "*"
+
+MASS : DIGIT DIGIT+
+BAR : "bar"
+PNAME : (LETTER | "/")+
+CHARGE : "--" | "+" | "0" | "-" | "--"
+

@@ -11,6 +11,7 @@ numpy = ">=1.12"
 six = ">=1.11"
 pathlib2 = {version = ">=2.3", markers="python_version < '3.5'"}
 enum34 = {version = ">=1.1", markers="python_version < '3.4'"}
+lark-parser = ">=0.6.3"
 
 [dev-packages]
 graphviz = ">=0.8.2"
