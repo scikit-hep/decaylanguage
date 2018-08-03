@@ -17,13 +17,21 @@ def read(*names, **kwargs):
         encoding=kwargs.get('encoding', 'utf8')
     ).read()
 
+def proc_readme(text):
+    text = text.split('<!-- break -->')[-1]
+    return '''
+    ![[DecayLanguage](https://github.com/scikit-hep/decaylanguage)](https://github.com/scikit-hep/decaylanguage/raw/master/images/DecayLanguage.png)
+
+    ''' + text
+
+
 
 setup(
     name='decaylanguage',
     version='0.2.0',
     license='BSD 3-Clause License',
     description='A language to describe particle decays, and tools to work with them.',
-    long_description=read('README.md') + '\n\n' + read('CHANGELOG.md'),
+    long_description=proc_readme(read('README.md')) + '\n\n' + read('CHANGELOG.md'),
     long_description_content_type="text/markdown",
     author='Henry Fredrick Schreiner III',
     author_email='henry.schreiner@cern.ch',
