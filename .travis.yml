@@ -3,37 +3,45 @@ sudo: false
 cache: pip
 env:
   global:
-    - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
-    - SEGFAULT_SIGNALS=all
+  - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
+  - SEGFAULT_SIGNALS=all
   matrix:
-    - TOXENV=check
+  - TOXENV=check
 matrix:
   include:
-    - python: '2.7'
-      env:
-        - TOXENV=py27,report,coveralls
-    - python: '3.5'
-      env:
-        - TOXENV=py35
-    - python: '3.6'
-      env:
-        - TOXENV=py36,report,coveralls
+  - python: '2.7'
+    env:
+    - TOXENV=py27,report,coveralls
+  - python: '3.5'
+    env:
+    - TOXENV=py35
+  - python: '3.6'
+    env:
+    - TOXENV=py36,report,coveralls
+    after_success:
+    - if [
 before_install:
-  - python --version
-  - uname -a
-  - lsb_release -a
+- python --version
+- uname -a
+- lsb_release -a
 install:
-  - pip install tox
-  - virtualenv --version
-  - easy_install --version
-  - pip --version
-  - tox --version
+- pip install -U tox-travis
 script:
-  - tox -v
+- tox
 after_failure:
-  - more .tox/log/* | cat
-  - more .tox/*/log/* | cat
+- more .tox/log/* | cat
+- more .tox/*/log/* | cat
 notifications:
   email:
     on_success: never
     on_failure: always
+deploy:
+  provider: pypi
+  distributions: sdist bdist_wheel
+  user: henryiii
+  password:
+    secure: exCR/I0hvlVC8pEekvOiBaSVqpsXpkkGjMIOOF/GAoi/MPk2qXJJ3Z1u5O4zHO9wSsl5vUswVhYFTPweopoSzewfkqVmYI+lGGV3mflWsKeHdRXbojOcxza+9sFkY5qVCyg7DrksnA9uPeoT/QaMvoMgLRafBTYQ2ZHa1KuNbGENTgmGTrO2RU4IeGrvOAZKRPF5U0WqqjoWDGzw3azDC2a0YVleqZUGONW4T8nHD9D+pxHjPwKhlY4tJ3YFUO8/MKMv08CElWqw21PbNs5XefXvuiNsBRgIyzca3+hiBcd3tVjW5FUQ+ViZTG3xN+xCEluc58ZK94PBUjtrhBndqA3lOxPqJeqBCXrINFJ0iJUFvy0w72I5lyLFzVhpX1WLOqvmsKr1UMdF5NCizVEcs3r36/rgxTwR+fqhf8CqaVqpOQg0v7QDB5DWONAkwbOGNZzV1+fE96jgoDSRBkGE73PTAy9NVb5GeXh8Oe8o0IvyQUyPjaJXbnT1aBZAK8KlsWSLaBqClaeBIDyhxRLiKTaJzGmgITBJe6dHscIYMW2Rd5wrslg32eu3tMMNeOl9fH3+PF3yixHyJTL9yHJ83KM2Zt0jNZpWZyEldaPt2nzmI9CWDhKmKkbT4xSBnPb14RTxXrilxldmH7TJw7VEONdD4spSQa9/XezdV4KWCzM=
+  on:
+    tags: true
+    repo: scikit-hep/decaylanguage
+    python: 3.6
