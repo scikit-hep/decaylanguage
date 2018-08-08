@@ -95,6 +95,8 @@ Status_mapping = {'R': Status.Common, 'D': Status.Rare, 'S': Status.Unsure, 'F':
 Par_undo = {Par.pp: '++', Par.p: '+', Par.o: '0', Par.m: '-', Par.mm: '--', Par.u: '?'}
 Par_prog = {Par.pp: 'pp', Par.p: 'p', Par.o: '0', Par.m: 'm', Par.mm: 'mm', Par.u: 'u'}
 
+class ParticleNotFound(RuntimeError):
+    pass
 
 def get_from_latex(filename):
     """
@@ -163,7 +165,7 @@ def get_from_pdg(filename, latexes=None):
     # Add the latex
     if latexes is None:
         latexes = (open_text(data, 'pdgID_to_latex.txt'),)
-        
+
     latex_series = pd.concat([get_from_latex(latex) for latex in latexes])
     full = full.assign(Latex=latex_series)
 
@@ -287,7 +289,7 @@ class Particle(object):
 
     def __str__(self):
         return self.name + ('~' if self.A == Inv.Full and self.val < 0 else '') + Par_undo[self.charge]
-    
+
     def _repr_latex_(self):
         name = self.latex
         if self.bar:
@@ -298,13 +300,20 @@ class Particle(object):
         'Make a nice high-density string for a particle\'s properties.'
         if self.val == 0:
             return "Name: Unknown"
-
-        val = """Name: {self.name:<10} ID: {self.val:<12} Fullname: {self!s:<14} Latex: {self._repr_latex_()}
-    Mass  = {self.mass!s:<10} {mass} GeV
-    Width = {self.width!s:<10} {width} GeV
-    I (isospin)       = {self.I!s:<6} G (parity)        = {Par_undo[self.G]:<5}  Q (charge)       = {Par_undo[self.charge]}
-    J (total angular) = {self.J!s:<6} C (charge parity) = {Par_undo[self.C]:<5}  P (space parity) = {Par_undo[self.P]}
-""".format(self=self, Par_undo=Par_undo, mass=mkul(self.mass_upper, self.mass_lower), width=mkul(self.width_upper, self.width_lower))
+        
+        val = """Name: {self.name:<10} ID: {self.val:<12} Fullname: {self!s:<14} Latex: {latex}
+Mass  = {self.mass:<10.9g} {mass} GeV
+Width = {self.width:<10.9g} {width} GeV
+I (isospin)       = {self.I!s:<6} G (parity)        = {G:<5}  Q (charge)       = {Q}
+J (total angular) = {self.J!s:<6} C (charge parity) = {C:<5}  P (space parity) = {P}
+""".format(self=self,
+           G=Par_undo[self.G],
+           C=Par_undo[self.C],
+           Q=Par_undo[self.charge],
+           P=Par_undo[self.P],
+           mass=mkul(self.mass_upper, self.mass_lower),
+           width=mkul(self.width_upper, self.width_lower),
+           latex = self._repr_latex_())
 
         if self.spin_type != SpinType.Unknown:
             val += "    SpinType: {self.spin_type!s}\n".format(self=self)
@@ -400,14 +409,16 @@ class Particle(object):
         if len(results) == 1:
             return results[0]
         elif len(results) == 0:
-            raise RuntimeError('Did not find particle')
+            raise ParticleNotFound('Did not find particle')
         else:
             raise RuntimeError("Found too many particles")
 
     @classmethod
-    def from_AmpGen(cls, name):
+    def from_string(cls, name):
         'Get a particle from an AmpGen style name'
         mat = getname.match(name)
+        if mat is None:
+            raise ParticleNotFound("Could not find {0}".format(name))
         mat = mat.groupdict()
 
         Par_mapping = {'++': 2, '+': 1, '0': 0, '-': -1, '--': 2}

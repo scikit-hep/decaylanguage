@@ -63,7 +63,7 @@ class AmplitudeChain(Decay):
         :param mat: The groupdict output of a match
         :return: A new amplitude chain instance
         '''
-        mat['particle'] = Particle.from_AmpGen(mat['name'])
+        mat['particle'] = Particle.from_string(mat['name'])
 
         if mat['particle'] not in cls.all_particles:
             cls.all_particles |= {mat['particle']}
@@ -208,7 +208,7 @@ class AmplitudeChain(Decay):
         variables = get_from_parser(parsed, 'variable')
         constants = get_from_parser(parsed, 'constant')
 
-        all_states = [Particle.from_AmpGen(n) for n in event_type]
+        all_states = [Particle.from_string(n) for n in event_type]
 
         fcs = get_from_parser(parsed, 'fast_coherent_sum')
         if fcs:
