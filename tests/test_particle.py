@@ -36,3 +36,16 @@ def test_prop():
     assert pi.name == 'pi'
     assert pi.val == 211
     assert pi.charge == Par.p
+
+
+def test_ampgen_style_names():
+    assert Particle.from_string('pi+').val == 211
+    assert Particle.from_string('K~*0').val == -313
+    assert Particle.from_string('a(1)(1260)+').val == 20213
+
+
+def test_decfile_style_names():
+    assert Particle.from_string('anti-K*0').val == -313
+    assert Particle.from_string('a_1(1260)+').val == 20213
+    # "D'_1+"
+    # "D_2*+"

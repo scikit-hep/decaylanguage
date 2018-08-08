@@ -7,6 +7,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import sys
 from copy import copy
 from enum import Enum
 from itertools import combinations
@@ -63,7 +64,12 @@ class AmplitudeChain(Decay):
         :param mat: The groupdict output of a match
         :return: A new amplitude chain instance
         '''
-        mat['particle'] = Particle.from_string(mat['name'])
+        try:
+            mat['particle'] = Particle.from_string(mat['name'])
+        except:
+            print("Failed to find particle with parsed dictionary:", mat, file=sys.stderr)
+            raise
+
 
         if mat['particle'] not in cls.all_particles:
             cls.all_particles |= {mat['particle']}

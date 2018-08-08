@@ -35,11 +35,12 @@ def programmatic_name(name):
 getname = re.compile(r'''
 ^                                           # Beginning of string
       (?P<name>       \w+?        )         # One or more characters, non-greedy
+(?:\( (?P<family>    [udsctb][\w]*) \) )?   # Optional family like (s)
 (?:\( (?P<state>      \d+         ) \)      # Optional state in ()
       (?=             \*? \(      )  )?     #   - lookahead for mass
       (?P<star>       \*          )?        # Optional star
 (?:\( (?P<mass>       \d+         ) \) )?   # Optional mass in ()
-      (?P<bar>        bar         )?        # Optional bar
+      (?P<bar>        (bar|~)     )?        # Optional bar
       (?P<charge>     [0\+\-][+-]?)         # Required 0, -, --, or +, ++
 $                                           # End of string
 ''', re.VERBOSE)
@@ -109,6 +110,10 @@ def get_from_latex(filename):
     series_anti.index = -series_anti.index
     return pd.concat([series_real, series_anti])
 
+def update_from_mcd(filename):
+    'Read in a current table, update existing particles only'
+
+    mcd_table = pandas.read_fwf()
 
 def get_from_pdg(filename, latexes=None):
     'Read a file, plus a list of latex files, to produce a pandas DataFrame with particle information'
@@ -288,7 +293,9 @@ class Particle(object):
     # Pretty descriptions
 
     def __str__(self):
-        return self.name + ('~' if self.A == Inv.Full and self.val < 0 else '') + Par_undo[self.charge]
+        tilde = '~' if self.A == Inv.Full and self.val < 0 else ''
+        # star = '*' if self.J == 1 else ''
+        return self.name + tilde + Par_undo[self.charge]
 
     def _repr_latex_(self):
         name = self.latex
@@ -300,7 +307,7 @@ class Particle(object):
         'Make a nice high-density string for a particle\'s properties.'
         if self.val == 0:
             return "Name: Unknown"
-        
+
         val = """Name: {self.name:<10} ID: {self.val:<12} Fullname: {self!s:<14} Latex: {latex}
 Mass  = {self.mass:<10.9g} {mass} GeV
 Width = {self.width:<10.9g} {width} GeV
@@ -373,7 +380,20 @@ J (total angular) = {self.J!s:<6} C (charge parity) = {C:<5}  P (space parity) =
 
     @classmethod
     def from_search_list(cls, name=None, latex=None, name_re=None, latex_re=None, particle=None, **search_terms):
-        'Search for a particle, returning a list of candidates'
+        '''
+        Search for a particle, returning a list of candidates
+
+        Terms are:
+           Upper case: Search for this match exactly in the PDG table
+
+           name: A loose match (extra terms allowed) for Name
+           name_re: A regular expression for Name
+           latex: A loose match (extra terms allowed) for Latex
+           latex_re: A regular expression for Latex
+           particle: True/False, for particle/antiparticle
+
+        This method returns a list; also see from_search, which throws an error if the particle is not found or too many found.
+        '''
 
         for term in list(search_terms):
             if search_terms[term] is None:
@@ -402,31 +422,63 @@ J (total angular) = {self.J!s:<6} C (charge parity) = {C:<5}  P (space parity) =
         return [cls.from_pdgid(r) for r in results.index]
 
     @classmethod
-    def from_search(cls, name=None, latex=None, name_re=None, latex_re=None, **search_terms):
-        'Require that your each returns one and only one result'
-        results = cls.from_search_list(name, latex, name_re=name_re,
-                                       latex_re=latex_re, **search_terms)
+    def from_search(cls, **search_terms):
+        '''
+        Require that your each returns one and only one result
+
+        See from_search_list for full listing of parameters
+        '''
+
+        results = cls.from_search_list(**search_terms)
+
         if len(results) == 1:
             return results[0]
         elif len(results) == 0:
-            raise ParticleNotFound('Did not find particle')
+            raise ParticleNotFound('Did not find particle matching query: {}'.format(search_terms))
         else:
             raise RuntimeError("Found too many particles")
 
     @classmethod
     def from_string(cls, name):
         'Get a particle from an AmpGen style name'
+
+        # Forcable override
+        bar = False
+
+        if name.startswith('anti-'):
+            name = name[5:]
+            bar = True
+
+        if '~' in name:
+            name = name.replace('~','')
+            bar = True
+
+
+
         mat = getname.match(name)
         if mat is None:
-            raise ParticleNotFound("Could not find {0}".format(name))
+            return cls.from_search(Name=name, particle=False if bar else None)
         mat = mat.groupdict()
+
+        if bar:
+            mat['bar'] = 'bar'
+
+        if '_' in mat['name']:
+            mat['name'], mat['family'] = mat['name'].split('_')
 
         Par_mapping = {'++': 2, '+': 1, '0': 0, '-': -1, '--': 2}
         particle = False if mat['bar'] is not None else (True if mat['charge'] == '0' else None)
 
         fullname = mat['name']
+        if mat['family']:
+            fullname += '({mat[family]})'.format(mat=mat)
         if mat['state']:
             fullname += '({mat[state]})'.format(mat=mat)
+
+        if mat['star'] and not mat['state']:
+            J = 1
+        else:
+            J = mat['state']
 
         if mat['mass']:
             maxname = fullname + '({mat[mass]})'.format(mat=mat)
@@ -436,12 +488,14 @@ J (total angular) = {self.J!s:<6} C (charge parity) = {C:<5}  P (space parity) =
         vals = cls.from_search_list(Name=maxname,
                                     Charge=Par_mapping[mat['charge']],
                                     particle=particle,
-                                    J=mat['state'])
+                                    J=J)
         if not vals:
             vals = cls.from_search_list(Name=fullname,
                                         Charge=Par_mapping[mat['charge']],
                                         particle=particle,
-                                        J=mat['state'])
+                                        J=J)
+        if not vals:
+            raise ParticleNotFound("Could not find particle {0} or {1}".format(maxname, fullname))
 
         if len(vals) > 1 and mat['mass'] is not None:
             vals = [val for val in vals if mat['mass'] in val.latex]
