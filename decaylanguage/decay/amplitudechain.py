@@ -21,7 +21,8 @@ from ..particle import Particle
 from ..utils import filter_lines
 from ..utils import split
 
-from ..data import open_text_file
+from ..data import open_text
+from .. import data
 
 
 from lark import Lark
@@ -187,7 +188,7 @@ class AmplitudeChain(Decay):
         '''
 
         if grammar is None:
-            grammar = open_text_file('ampgen.lark')
+            grammar = open_text(data, 'ampgen.lark')
 
         # Read the file in, ignore empty lines and comments
         if filename is not None:
@@ -237,9 +238,6 @@ class AmplitudeChain(Decay):
         constants = pd.DataFrame(constants,
                                  columns='name value'.split()).set_index('name')
 
-
-        #from IPython.core.debugger import Pdb
-        #Pdb().set_trace()
         # Convert the matches into AmplitudeChains
         line_arr = [cls.from_matched_line(c) for c in cplx_decay_lines]
 

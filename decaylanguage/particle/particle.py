@@ -9,23 +9,20 @@ import operator
 import os
 import re
 from copy import copy
-# Backport needed if Python 2 is used
-from enum import IntEnum
+
 from fractions import Fraction
 from functools import reduce
 from functools import total_ordering
+
+# Backport needed if Python 2 is used
+from enum import IntEnum
 
 # External dependencies
 import attr
 import pandas as pd
 
-from ..data import get_latex
-from ..data import get_mass_width
-from ..data import get_special
-
-# The path of this file (used to load data files)
-dir_path = os.path.dirname(os.path.realpath(__file__))
-
+from .. import data
+from ..data import open_text
 
 def programmatic_name(name):
     'Return a name safe to use as a variable name'
@@ -165,7 +162,8 @@ def get_from_pdg(filename, latexes=None):
 
     # Add the latex
     if latexes is None:
-        latexes = (get_latex(),)
+        latexes = (open_text(data, 'pdgID_to_latex.txt'),)
+        
     latex_series = pd.concat([get_from_latex(latex) for latex in latexes])
     full = full.assign(Latex=latex_series)
 
@@ -216,7 +214,7 @@ class Particle(object):
     def load_pdg_table(cls, files=None, latexes=None):
         'Load a PDG table. Will be called on first access to the PDG table'
         if files is None:
-            files = (get_mass_width(), get_special())
+            files = (open_text(data, 'mass_width_2008.csv'), open_text(data, 'MintDalitzSpecialParticles.csv'))
         tables = [get_from_pdg(f, latexes) for f in files]
         cls._pdg_table = pd.concat(tables)
 
