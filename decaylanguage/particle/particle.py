@@ -442,6 +442,10 @@ J (total angular) = {self.J!s:<6} C (charge parity) = {C:<5}  P (space parity) =
     def from_string(cls, name):
         'Get a particle from an AmpGen style name'
 
+        # Patch in common names
+        if name == 'Upsilon':
+            name = 'Upsilon(1S)'
+
         # Forcable override
         bar = False
 
@@ -504,3 +508,4 @@ J (total angular) = {self.J!s:<6} C (charge parity) = {C:<5}  P (space parity) =
             vals = sorted(vals)
 
         return vals[0]
+
