@@ -1,4 +1,4 @@
-[![DecayLanguage](images/DecayLanguage.png)](http://decaylanaguage.readthedocs.io/en/latest/)
+[![DecayLanguage](images/DecayLanguage.png)](http://decaylanguage.readthedocs.io/en/latest/)
 
 [![Documentation Status](https://readthedocs.org/projects/decaylanguage/badge/?style=flat)](https://readthedocs.org/projects/decaylanguage)
 [![Travis-CI Build Status](https://travis-ci.org/scikit-hep/decaylanguage.svg?branch=master)](https://travis-ci.org/scikit-hep/decaylanguage)
