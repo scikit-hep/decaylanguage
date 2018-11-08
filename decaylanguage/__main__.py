@@ -11,7 +11,7 @@ from decaylanguage.decay.ampgen2goofit import ampgen2goofit
 
 
 class DecayLanguageDecay(cli.Application):
-    generator = cli.SwitchAttr('-G,--generator', cli.Set('goofit'))
+    generator = cli.SwitchAttr(['-G', '--generator'], cli.Set('goofit'))
 
     def main(self, filename):
         if self.generator == 'goofit':
