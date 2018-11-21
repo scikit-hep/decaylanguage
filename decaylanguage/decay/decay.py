@@ -27,15 +27,15 @@ class Decay(object):
     This describes a decay very generally, with search and print features.
     Subclassed for futher usage.
     '''
-    
+
     particle = attr.ib()
-    daughters = attr.ib([], convert=lambda x: x if x else [])
+    daughters = attr.ib([], converter=lambda x: x if x else [])
     name = attr.ib(None)
-    
+
     def __attrs_post_init__(self):
         if self.name is None:
             self.name = self.particle.name
-        
+
     def is_vertex(self):
         return len(self) == 2
 
@@ -43,13 +43,13 @@ class Decay(object):
         if not self.is_vertex():
             return None
         return set(self.particle.quarks) == set(self[0].particle.quarks).union(set(self[1].particle.quarks))
-    
+
     def __len__(self):
         return len(self.daughters)
 
     def __getitem__(self, item):
         return self.daughters[item]
-    
+
     def _get_html(self):
         '''
         Get the html dot representation of this node only. Override in subclasses.
@@ -62,8 +62,8 @@ class Decay(object):
         for p in self.daughters:
             drawing.edge(str(id(self)), str(id(p)))
             p._add_nodes(drawing)
-        
-    
+
+
     @property
     def vertexes(self):
         verts = []
@@ -72,7 +72,7 @@ class Decay(object):
                 verts.append(d)
                 verts += d.vertexes
         return verts
-    
+
     @property
     def structure(self):
         '''
@@ -82,7 +82,7 @@ class Decay(object):
             return [d.structure for d in self.daughters]
         else:
             return self.particle
-        
+
     def list_structure(self, final_states):
         '''
         The structure in the form [(0,1,2,3)], where the dual-list is used
@@ -98,14 +98,14 @@ class Decay(object):
 
         possibilities = [[i for i, v in enumerate(final_states) if v == name] for name in structure]
         return [a for a in product(*possibilities) if len(set(a)) == len(a)]
-    
+
     def __str__(self):
         name = str(self.particle)
-        
+
         if self.daughters:
             name += '{'+','.join(map(str, self.daughters))+'}'
         return name
-    
+
     if graphviz:
         def _make_graphviz(self):
             d = graphviz.Digraph()
