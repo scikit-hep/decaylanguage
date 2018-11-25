@@ -23,6 +23,7 @@ import pandas as pd
 
 from .. import data
 from ..data import open_text
+from .regex import getname, getdec
 
 def programmatic_name(name):
     'Return a name safe to use as a variable name'
@@ -30,20 +31,6 @@ def programmatic_name(name):
             .replace('*', '').replace('::', '_')
             .replace('-', 'm').replace('+', 'p')
             .replace('~', 'bar'))
-
-
-getname = re.compile(r'''
-^                                           # Beginning of string
-      (?P<name>       \w+?        )         # One or more characters, non-greedy
-(?:\( (?P<family>    [udsctb][\w]*) \) )?   # Optional family like (s)
-(?:\( (?P<state>      \d+         ) \)      # Optional state in ()
-      (?=             \*? \(      )  )?     #   - lookahead for mass
-      (?P<star>       \*          )?        # Optional star
-(?:\( (?P<mass>       \d+         ) \) )?   # Optional mass in ()
-      (?P<bar>        (bar|~)     )?        # Optional bar
-      (?P<charge>     [0\+\-][+-]?)         # Required 0, -, --, or +, ++
-$                                           # End of string
-''', re.VERBOSE)
 
 
 class SpinType(IntEnum):
@@ -240,7 +227,10 @@ class Particle(object):
         return abs(self.val - .25) < abs(other.val - .25)
 
     def __eq__(self, other):
-        return self.val == other.val
+        try:
+            return self.val == other.val
+        except AttributeError:
+            return self.val == other
 
     def __hash__(self):
         return hash(self.val)
@@ -439,8 +429,20 @@ J (total angular) = {self.J!s:<6} C (charge parity) = {C:<5}  P (space parity) =
             raise RuntimeError("Found too many particles")
 
     @classmethod
+    def from_dec(cls, name):
+        'Get a particle from a DecFile style name'
+
+        mat = getdec.match(name)
+        if mat is None:
+            return cls.from_search(Name=name)
+        mat = mat.groupdict()
+
+        return cls._from_group_dict(mat)
+
+
+    @classmethod
     def from_string(cls, name):
-        'Get a particle from an AmpGen style name'
+        'Get a particle from an AmpGen (PDG) style name'
 
         # Patch in common names
         if name == 'Upsilon':
@@ -449,15 +451,9 @@ J (total angular) = {self.J!s:<6} C (charge parity) = {C:<5}  P (space parity) =
         # Forcable override
         bar = False
 
-        if name.startswith('anti-'):
-            name = name[5:]
-            bar = True
-
         if '~' in name:
             name = name.replace('~','')
             bar = True
-
-
 
         mat = getname.match(name)
         if mat is None:
@@ -467,8 +463,13 @@ J (total angular) = {self.J!s:<6} C (charge parity) = {C:<5}  P (space parity) =
         if bar:
             mat['bar'] = 'bar'
 
-        if '_' in mat['name']:
-            mat['name'], mat['family'] = mat['name'].split('_')
+        return cls._from_group_dict(mat)
+
+    @classmethod
+    def _from_group_dict(cls, mat):
+
+        #if '_' in mat['name']:
+        #    mat['name'], mat['family'] = mat['name'].split('_')
 
         Par_mapping = {'++': 2, '+': 1, '0': 0, '-': -1, '--': 2}
         particle = False if mat['bar'] is not None else (True if mat['charge'] == '0' else None)

@@ -40,12 +40,22 @@ def test_prop():
 
 def test_ampgen_style_names():
     assert Particle.from_string('pi+').val == 211
+    assert Particle.from_string('pi-').val == -211
     assert Particle.from_string('K~*0').val == -313
+    assert Particle.from_string('K*(892)bar0').val == -313
     assert Particle.from_string('a(1)(1260)+').val == 20213
+
+    # Direct comparison to integer works too
+    assert Particle.from_string('rho(1450)0') == 100113
+    assert Particle.from_string('rho(770)0') == 113
+
+    assert Particle.from_string('K(1)(1270)bar-') == -10323
+    assert Particle.from_string('K(1460)bar-') == -100321
+
 
 
 def test_decfile_style_names():
-    assert Particle.from_string('anti-K*0').val == -313
-    assert Particle.from_string('a_1(1260)+').val == 20213
-    # "D'_1+"
-    # "D_2*+"
+    assert Particle.from_dec('anti-K*0').val == -313
+    assert Particle.from_dec('a_1(1260)+').val == 20213
+    #assert Particle.from_dec("D'_1+").val == 7
+    #assert Particle.from_dec("D_2*+").val == 8
