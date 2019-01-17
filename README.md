@@ -77,6 +77,14 @@ particle. There are lots of printing choices, `describe()`,
 `programmatic_name()`, `html_name()`, html printing outs in notebooks,
 and of course `repr` and `str` support.
 
+You can quickly search for particles from the command line with:
+
+```
+python -m decaylanguage.particle 311
+```
+
+You can put one or more PDG ID numbers here, or string names.
+
 ## Decays
 
 The most common way to create a decay chain is to read in an [AmpGen]

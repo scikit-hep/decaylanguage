@@ -1,0 +1,35 @@
+# Forms:
+#   ampgen
+#   decfile
+
+start : prebar? name family? spin? mass? bar? charge
+
+name : PNAME
+charge : CHARGE
+prebar : "anti-"
+bar : "~"
+
+spin : spin_brackets | spin_underscore | spin_star
+family : family_brackets | family_underscore
+
+spin_brackets : "(" DIGIT ")"
+spin_underscore : "_" DIGIT
+spin_star : "*"
+
+family_brackets : "(" CNAME ")"
+
+mass : "(" MASS ")"
+
+bar : BAR
+star : STAR
+prime : PRIME
+PRIME : "'"
+STAR : "*"
+
+MASS : DIGIT DIGIT+
+BAR : "bar"
+PNAME : (LETTER | "/")+
+CHARGE : "--" | "+" | "0" | "-" | "--"
+
+%import common.CNAME
+%import common.DIGIT

@@ -66,6 +66,7 @@ setup(
         'numpy>=1.12',
         'pandas>=0.22',
         'six>=1.11',
+        'lark-parser>=0.6.3',
         'pathlib2>=2.3; python_version<"3.5"',
         'enum34>=1.1; python_version<"3.4"',
         'importlib_resources>=1.0; python_version<"3.7"',

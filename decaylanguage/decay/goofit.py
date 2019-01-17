@@ -250,7 +250,8 @@ class GooFitChain(AmplitudeChain):
             AdditionalVars = programmatic_name(self.name) + "_SplineArr"
             return '''new Lineshapes::GSpline("{name}", {par}_M, {par}_W, {L}, M_{a}{b}, FF::BL2,
             {radius}, {AdditionalVars}, Lineshapes::spline_t({min},{max},{N}))'''.format(
-                    name=name, par=par, L=L, a=a, b=b, radius=radius, AdditionalVars=AdditionalVars, min=min, max=max, N=N)
+                    name=name, par=par, L=L, a=a, b=b, radius=radius, AdditionalVars=AdditionalVars, min=min, max=max, N=int(N))
+
         elif self.ls_enum == LS.kMatrix:
             _, poleprod, pterm = self.lineshape.split('.')
             is_pole = 'true' if poleprod == 'pole' else 'false'

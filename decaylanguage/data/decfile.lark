@@ -1,0 +1,56 @@
+start : _NEWLINE? (line _NEWLINE)+ ("End" _NEWLINE)?
+?line : define | pythia_def | alias | chargeconj | commands | decay | cdecay | setlspw
+
+pythia_def : "PythiaBothParam" LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)
+
+setlspw : "SetLineshapePW" label label label value
+
+cdecay : "CDecay" label
+
+define : "Define" label value
+
+alias : "Alias" label label
+
+chargeconj : "ChargeConj" label label
+
+?commands : global_photos
+
+global_photos : boolean_photos
+
+boolean_photos : "yesPhotos" -> yes
+                | "noPhotos"  -> no
+
+decay : "Decay" particle _NEWLINE decayline+ "Enddecay"
+decayline : value particle* photos? model _NEWLINE // There is always a ; here
+value : SIGNED_NUMBER
+photos : "PHOTOS"
+
+label : LABEL
+particle : LABEL // Add full particle parsing here
+
+model : MODEL_NAME model_options?
+model_options : (value | LABEL)+
+
+// model : model_generic
+// model_helamp : "HELAMP" (SIGNED_NUMBER SIGNED_NUMBER)+
+
+// Terminal defintions
+// To use a fast parser, we need to avoid conflicts
+
+%import common.WS_INLINE
+%import common.SIGNED_NUMBER
+
+// New lines filter our comments too, and multiple new lines
+_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
+
+// We must set priorities here to use lalr - match model name above label, and label above something else
+MODEL_NAME.2 : "BaryonPCR"|"BTO3PI_CP"|"BTOSLLALI"|"BTOSLLBALL"|"BTOXSGAMMA"|"BTOXSLL"|"CB3PI-MPP"|"CB3PI-P00"|"D_DALITZ"|"ETA_DALITZ"|"GOITY_ROBERTS"|"HELAMP"|"HQET"|"ISGW2"|"OMEGA_DALITZ"|"PARTWAVE"|"PHSP"|"PI0_DALITZ"|"PYTHIA"|"SLN"|"STS"|"SVP_HELAMP"|"SVS"|"SVV_HELAMP"|"TAUHADNU"|"TAULNUNU"|"TAUSCALARNU"|"TAUVECTORNU"|"TSS"|"TVS_PWAVE"|"VLL"|"VSP_PWAVE"|"VSS"|"VSS_BMIX"|"VUB"|"VVP"|"VVPIPI"|"VVS_PWAVE"
+
+LABEL : /[a-zA-Z0-9\/\-+*_()']+/
+COMMENT : /[;#][^\n]*/
+
+// We should ignore comments
+%ignore COMMENT
+
+// Disregard spaces in text
+%ignore WS_INLINE

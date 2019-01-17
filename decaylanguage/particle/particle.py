@@ -9,23 +9,21 @@ import operator
 import os
 import re
 from copy import copy
-# Backport needed if Python 2 is used
-from enum import IntEnum
+
 from fractions import Fraction
 from functools import reduce
 from functools import total_ordering
+
+# Backport needed if Python 2 is used
+from enum import IntEnum
 
 # External dependencies
 import attr
 import pandas as pd
 
-from ..data import get_latex
-from ..data import get_mass_width
-from ..data import get_special
-
-# The path of this file (used to load data files)
-dir_path = os.path.dirname(os.path.realpath(__file__))
-
+from .. import data
+from ..data import open_text
+from .regex import getname, getdec
 
 def programmatic_name(name):
     'Return a name safe to use as a variable name'
@@ -33,19 +31,6 @@ def programmatic_name(name):
             .replace('*', '').replace('::', '_')
             .replace('-', 'm').replace('+', 'p')
             .replace('~', 'bar'))
-
-
-getname = re.compile(r'''
-^                                           # Beginning of string
-      (?P<name>       \w+?        )         # One or more characters, non-greedy
-(?:\( (?P<state>      \d+         ) \)      # Optional state in ()
-      (?=             \*? \(      )  )?     #   - lookahead for mass
-      (?P<star>       \*          )?        # Optional star
-(?:\( (?P<mass>       \d+         ) \) )?   # Optional mass in ()
-      (?P<bar>        bar         )?        # Optional bar
-      (?P<charge>     [0\+\-][+-]?)         # Required 0, -, --, or +, ++
-$                                           # End of string
-''', re.VERBOSE)
 
 
 class SpinType(IntEnum):
@@ -98,6 +83,8 @@ Status_mapping = {'R': Status.Common, 'D': Status.Rare, 'S': Status.Unsure, 'F':
 Par_undo = {Par.pp: '++', Par.p: '+', Par.o: '0', Par.m: '-', Par.mm: '--', Par.u: '?'}
 Par_prog = {Par.pp: 'pp', Par.p: 'p', Par.o: '0', Par.m: 'm', Par.mm: 'mm', Par.u: 'u'}
 
+class ParticleNotFound(RuntimeError):
+    pass
 
 def get_from_latex(filename):
     """
@@ -110,6 +97,10 @@ def get_from_latex(filename):
     series_anti.index = -series_anti.index
     return pd.concat([series_real, series_anti])
 
+def update_from_mcd(filename):
+    'Read in a current table, update existing particles only'
+
+    mcd_table = pandas.read_fwf()
 
 def get_from_pdg(filename, latexes=None):
     'Read a file, plus a list of latex files, to produce a pandas DataFrame with particle information'
@@ -165,7 +156,8 @@ def get_from_pdg(filename, latexes=None):
 
     # Add the latex
     if latexes is None:
-        latexes = (get_latex(),)
+        latexes = (open_text(data, 'pdgID_to_latex.txt'),)
+
     latex_series = pd.concat([get_from_latex(latex) for latex in latexes])
     full = full.assign(Latex=latex_series)
 
@@ -191,23 +183,23 @@ class Particle(object):
     val = attr.ib()
     name = attr.ib()
     mass = attr.ib()
-    width = attr.ib()
-    charge = attr.ib()
-    A = attr.ib()  # Info about particle name for anti-particles
-    rank = attr.ib(0)  # Next line is Isospin
-    I = attr.ib(None)  # noqa: E741
-    J = attr.ib(None)  # Total angular momentum
-    G = attr.ib(Par.u)  # Parity: '', +, -, or ?
-    P = attr.ib(Par.u)  # Space parity
-    C = attr.ib(Par.u)  # Charge conjugation parity
+    width = attr.ib(repr=False)
+    charge = attr.ib(repr=False)
+    A = attr.ib(repr=False)  # Info about particle name for anti-particles
+    rank = attr.ib(0, repr=False)  # Next line is Isospin
+    I = attr.ib(None, repr=False)  # noqa: E741
+    J = attr.ib(None, repr=False)  # Total angular momentum
+    G = attr.ib(Par.u, repr=False)  # Parity: '', +, -, or ?
+    P = attr.ib(Par.u, repr=False)  # Space parity
+    C = attr.ib(Par.u, repr=False)  # Charge conjugation parity
     # (B (just charge), F (add bar) , and '' (No change))
-    quarks = attr.ib('')
-    status = attr.ib(Status.Nonexistant)
-    latex = attr.ib('')
-    mass_upper = attr.ib(0.0)
-    mass_lower = attr.ib(0.0)
-    width_upper = attr.ib(0.0)
-    width_lower = attr.ib(0.0)
+    quarks = attr.ib('', repr=False)
+    status = attr.ib(Status.Nonexistant, repr=False)
+    latex = attr.ib('', repr=False)
+    mass_upper = attr.ib(0.0, repr=False)
+    mass_lower = attr.ib(0.0, repr=False)
+    width_upper = attr.ib(0.0, repr=False)
+    width_lower = attr.ib(0.0, repr=False)
 
     # Make a class level property that holds the PDG table. Loads on first access (via method)
     _pdg_table = None
@@ -216,7 +208,7 @@ class Particle(object):
     def load_pdg_table(cls, files=None, latexes=None):
         'Load a PDG table. Will be called on first access to the PDG table'
         if files is None:
-            files = (get_mass_width(), get_special())
+            files = (open_text(data, 'mass_width_2008.csv'), open_text(data, 'MintDalitzSpecialParticles.csv'))
         tables = [get_from_pdg(f, latexes) for f in files]
         cls._pdg_table = pd.concat(tables)
 
@@ -235,7 +227,10 @@ class Particle(object):
         return abs(self.val - .25) < abs(other.val - .25)
 
     def __eq__(self, other):
-        return self.val == other.val
+        try:
+            return self.val == other.val
+        except AttributeError:
+            return self.val == other
 
     def __hash__(self):
         return hash(self.val)
@@ -288,7 +283,9 @@ class Particle(object):
     # Pretty descriptions
 
     def __str__(self):
-        return self.name + ('~' if self.A == Inv.Full and self.val < 0 else '') + Par_undo[self.charge]
+        tilde = '~' if self.A == Inv.Full and self.val < 0 else ''
+        # star = '*' if self.J == 1 else ''
+        return self.name + tilde + Par_undo[self.charge]
 
     def _repr_latex_(self):
         name = self.latex
@@ -301,12 +298,19 @@ class Particle(object):
         if self.val == 0:
             return "Name: Unknown"
 
-        val = """Name: {self.name:<10} ID: {self.val:<12} Fullname: {self!s:<14} Latex: {self._repr_latex_()}
-    Mass  = {self.mass!s:<10} {mass} GeV
-    Width = {self.width!s:<10} {width} GeV
-    I (isospin)       = {self.I!s:<6} G (parity)        = {Par_undo[self.G]:<5}  Q (charge)       = {Par_undo[self.charge]}
-    J (total angular) = {self.J!s:<6} C (charge parity) = {Par_undo[self.C]:<5}  P (space parity) = {Par_undo[self.P]}
-""".format(self=self, Par_undo=Par_undo, mass=mkul(self.mass_upper, self.mass_lower), width=mkul(self.width_upper, self.width_lower))
+        val = """Name: {self.name:<10} ID: {self.val:<12} Fullname: {self!s:<14} Latex: {latex}
+Mass  = {self.mass:<10.9g} {mass} GeV
+Width = {self.width:<10.9g} {width} GeV
+I (isospin)       = {self.I!s:<6} G (parity)        = {G:<5}  Q (charge)       = {Q}
+J (total angular) = {self.J!s:<6} C (charge parity) = {C:<5}  P (space parity) = {P}
+""".format(self=self,
+           G=Par_undo[self.G],
+           C=Par_undo[self.C],
+           Q=Par_undo[self.charge],
+           P=Par_undo[self.P],
+           mass=mkul(self.mass_upper, self.mass_lower),
+           width=mkul(self.width_upper, self.width_lower),
+           latex = self._repr_latex_())
 
         if self.spin_type != SpinType.Unknown:
             val += "    SpinType: {self.spin_type!s}\n".format(self=self)
@@ -366,7 +370,20 @@ class Particle(object):
 
     @classmethod
     def from_search_list(cls, name=None, latex=None, name_re=None, latex_re=None, particle=None, **search_terms):
-        'Search for a particle, returning a list of candidates'
+        '''
+        Search for a particle, returning a list of candidates
+
+        Terms are:
+           Upper case: Search for this match exactly in the PDG table
+
+           name: A loose match (extra terms allowed) for Name
+           name_re: A regular expression for Name
+           latex: A loose match (extra terms allowed) for Latex
+           latex_re: A regular expression for Latex
+           particle: True/False, for particle/antiparticle
+
+        This method returns a list; also see from_search, which throws an error if the particle is not found or too many found.
+        '''
 
         for term in list(search_terms):
             if search_terms[term] is None:
@@ -395,29 +412,78 @@ class Particle(object):
         return [cls.from_pdgid(r) for r in results.index]
 
     @classmethod
-    def from_search(cls, name=None, latex=None, name_re=None, latex_re=None, **search_terms):
-        'Require that your each returns one and only one result'
-        results = cls.from_search_list(name, latex, name_re=name_re,
-                                       latex_re=latex_re, **search_terms)
+    def from_search(cls, **search_terms):
+        '''
+        Require that your each returns one and only one result
+
+        See from_search_list for full listing of parameters
+        '''
+
+        results = cls.from_search_list(**search_terms)
+
         if len(results) == 1:
             return results[0]
         elif len(results) == 0:
-            raise RuntimeError('Did not find particle')
+            raise ParticleNotFound('Did not find particle matching query: {}'.format(search_terms))
         else:
             raise RuntimeError("Found too many particles")
 
     @classmethod
-    def from_AmpGen(cls, name):
-        'Get a particle from an AmpGen style name'
-        mat = getname.match(name)
+    def from_dec(cls, name):
+        'Get a particle from a DecFile style name'
+
+        mat = getdec.match(name)
+        if mat is None:
+            return cls.from_search(Name=name)
         mat = mat.groupdict()
+
+        return cls._from_group_dict(mat)
+
+
+    @classmethod
+    def from_string(cls, name):
+        'Get a particle from an AmpGen (PDG) style name'
+
+        # Patch in common names
+        if name == 'Upsilon':
+            name = 'Upsilon(1S)'
+
+        # Forcable override
+        bar = False
+
+        if '~' in name:
+            name = name.replace('~','')
+            bar = True
+
+        mat = getname.match(name)
+        if mat is None:
+            return cls.from_search(Name=name, particle=False if bar else None)
+        mat = mat.groupdict()
+
+        if bar:
+            mat['bar'] = 'bar'
+
+        return cls._from_group_dict(mat)
+
+    @classmethod
+    def _from_group_dict(cls, mat):
+
+        #if '_' in mat['name']:
+        #    mat['name'], mat['family'] = mat['name'].split('_')
 
         Par_mapping = {'++': 2, '+': 1, '0': 0, '-': -1, '--': 2}
         particle = False if mat['bar'] is not None else (True if mat['charge'] == '0' else None)
 
         fullname = mat['name']
+        if mat['family']:
+            fullname += '({mat[family]})'.format(mat=mat)
         if mat['state']:
             fullname += '({mat[state]})'.format(mat=mat)
+
+        if mat['star'] and not mat['state']:
+            J = 1
+        else:
+            J = mat['state']
 
         if mat['mass']:
             maxname = fullname + '({mat[mass]})'.format(mat=mat)
@@ -427,12 +493,14 @@ class Particle(object):
         vals = cls.from_search_list(Name=maxname,
                                     Charge=Par_mapping[mat['charge']],
                                     particle=particle,
-                                    J=mat['state'])
+                                    J=J)
         if not vals:
             vals = cls.from_search_list(Name=fullname,
                                         Charge=Par_mapping[mat['charge']],
                                         particle=particle,
-                                        J=mat['state'])
+                                        J=J)
+        if not vals:
+            raise ParticleNotFound("Could not find particle {0} or {1}".format(maxname, fullname))
 
         if len(vals) > 1 and mat['mass'] is not None:
             vals = [val for val in vals if mat['mass'] in val.latex]
@@ -441,3 +509,4 @@ class Particle(object):
             vals = sorted(vals)
 
         return vals[0]
+

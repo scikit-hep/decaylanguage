@@ -7,7 +7,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import warnings
+import sys
 from copy import copy
 from enum import Enum
 from itertools import combinations
@@ -17,18 +17,17 @@ import attr
 import numpy as np
 import pandas as pd
 
-from . import ampline
+from .decay import Decay
 from ..particle import Particle
 from ..utils import filter_lines
-from ..utils import iter_flatten
 from ..utils import split
 
-try:
-    import graphviz
-except ImportError:
-    graphviz = None
-    warnings.warn("Graphvis not installed. Line display not available.")
+from ..data import open_text
+from .. import data
 
+
+from lark import Lark
+from .ampgentransform import AmpGenTransformer, get_from_parser
 
 class LS(Enum):
     'Line shapes supported (currently)'
@@ -39,10 +38,9 @@ class LS(Enum):
 
 
 @attr.s(slots=True)
-class AmplitudeChain(object):
+class AmplitudeChain(Decay):
     'This is a chain of decays (a "line")'
-    particle = attr.ib()
-    daughters = attr.ib([], convert=lambda x: x if x else [])
+
     lineshape = attr.ib(None)
     spinfactor = attr.ib(None)
     amp = attr.ib(1+0j, cmp=False, validator=attr.validators.instance_of(complex))
@@ -50,9 +48,6 @@ class AmplitudeChain(object):
     fix = attr.ib(True, cmp=False, validator=attr.validators.instance_of(bool))
     name = attr.ib(None)
 
-    def __attrs_post_init__(self):
-        if self.name is None:
-            self.name = self.particle.name
 
     # Class members keep track of additions
     all_particles = set()
@@ -69,37 +64,31 @@ class AmplitudeChain(object):
         :param mat: The groupdict output of a match
         :return: A new amplitude chain instance
         '''
-        mat['particle'] = Particle.from_AmpGen(mat['name'])
+        try:
+            mat['particle'] = Particle.from_string(mat['name'])
+        except:
+            print("Failed to find particle with parsed dictionary:", mat, file=sys.stderr)
+            raise
+
 
         if mat['particle'] not in cls.all_particles:
             cls.all_particles |= {mat['particle']}
 
         if mat['daughters']:
-            mat['daughters'] = [cls.from_matched_line(ampline.partial.match(
-                x).groupdict()) for x in split(mat['daughters'])]
+            mat['daughters'] = [cls.from_matched_line(d) for d in mat['daughters']]
 
-        # This is only true if not a parital line
-        if 'fix_r' in mat:
-            # Slightly odd, since we use cartesian, so fixing theta or mag
-            # of amplitude only doesn't work
-            mat['fix'] = mat['fix_r'] == '2' and mat['fix_i'] == '2'
-            del mat['fix_r'], mat['fix_i']
+        # if master line only
+        if 'amp' in mat and not cls.cartesian:
+            A = mat['amp'].real
+            dA = mat['err'].real
+            theta = mat['amp'].imag
+            dtheta = mat['err'].imag
 
-            if cls.cartesian:
-                mat['amp'] = float(mat['A']) + float(mat['theta'])*1j
-                mat['err'] = float(mat['theta']) + float(mat['dtheta'])*1j
+            mat['amp'] = A * np.exp(theta*1j)
 
-            else:
-                A = float(mat['A'])
-                dA = float(mat['dA'])
-                theta = float(mat['theta'])
-                dtheta = float(mat['dtheta'])
-                mat['amp'] = A * np.exp(theta*1j)
+            mat['err'] = ((dA*np.cos(theta) + A*np.sin(dtheta))
+                          + (dA*np.sin(theta) + A*np.cos(dtheta))*1j)
 
-                mat['err'] = ((dA*np.cos(theta) + A*np.sin(dtheta))
-                              + (dA*np.sin(theta) + A*np.cos(dtheta))*1j)
-
-            del mat['A'],  mat['dA'], mat['theta'], mat['dtheta']
 
         return cls(**mat)
 
@@ -149,13 +138,6 @@ class AmplitudeChain(object):
             amp *= d.full_amp
         return amp
 
-    def is_vertex(self):
-        return len(self) == 2
-
-    def is_strong(self):
-        if not self.is_vertex():
-            return None
-        return set(self.particle.quarks) == set(self[0].particle.quarks).union(set(self[1].particle.quarks))
 
     def L_range(self, conserveParity=False):
         S = self.particle.J
@@ -177,11 +159,6 @@ class AmplitudeChain(object):
         min_L, _ = self.L_range()
         return min_L  # Ground state unless specified
 
-    def __len__(self):
-        return len(self.daughters)
-
-    def __getitem__(self, item):
-        return self.daughters[item]
 
     def _get_html(self):
         name = self.particle.html_name
@@ -193,58 +170,6 @@ class AmplitudeChain(object):
         if self.lineshape:
             name += '<font color="red">[' + self.lineshape + ']</font>'
         return name
-
-    def _add_nodes(self, drawing):
-        name = self._get_html()
-        drawing.node(str(id(self)), "<" + name + ">")
-        for p in self.daughters:
-            drawing.edge(str(id(self)), str(id(p)))
-            p._add_nodes(drawing)
-
-    if graphviz:
-        def _make_graphviz(self):
-            d = graphviz.Digraph()
-            d.attr(labelloc='t', label=str(self))
-            self._add_nodes(d)
-            return d
-
-        def _repr_svg_(self):
-            return self._make_graphviz()._repr_svg_()
-
-    @property
-    def vertexes(self):
-        verts = []
-        for d in self.daughters:
-            if d.is_vertex():
-                verts.append(d)
-                verts += d.vertexes
-        return verts
-
-    @property
-    def structure(self):
-        '''
-        The structure of the decay chain, simplified to only final state particles
-        '''
-        if self.daughters:
-            return [d.structure for d in self.daughters]
-        else:
-            return self.particle
-
-    def list_structure(self, final_states):
-        '''
-        The structure in the form [(0,1,2,3)], where the dual-list is used
-        for permutations for bose symmatrization.
-        So for final_states=[a,b,c,c], [a,c,[c,b]] would be:
-        [(0,2,3,1),(0,3,2,1)]
-        '''
-
-        structure = list(iter_flatten(self.structure))
-
-        if set(structure) - set(final_states):
-            raise RuntimeError("The final states must encompass all particles in final states!")
-
-        possibilities = [[i for i, v in enumerate(final_states) if v == name] for name in structure]
-        return [a for a in product(*possibilities) if len(set(a)) == len(a)]
 
     def __str__(self):
         name = str(self.particle)
@@ -259,7 +184,7 @@ class AmplitudeChain(object):
         return name
 
     @classmethod
-    def read_ampgen(cls, filename=None, text=None):
+    def read_ampgen(cls, filename=None, text=None, grammar=None, parser='lalr', **kargs):
         '''
         Read in an ampgen file
 
@@ -268,66 +193,59 @@ class AmplitudeChain(object):
         :return: array of AmplitudeChains, parameters, constants, event type
         '''
 
+        if grammar is None:
+            grammar = open_text(data, 'ampgen.lark')
+
         # Read the file in, ignore empty lines and comments
         if filename is not None:
             with open(filename) as f:
-                valid_lines = [l.strip().rstrip(',') for l in f if l and not l.startswith('#')]
-        elif text is not None:
-            valid_lines = [l.strip().rstrip(',')
-                           for l in text.splitlines() if l and not l.startswith('#')]
-        else:
+                text = f.read()
+        elif text is None:
             raise RuntimeError("Must have filename or text")
 
-        # Collect known options
-        option_lines, valid_lines = filter_lines(ampline.settings, valid_lines)
+        lark = Lark(grammar, parser=parser, transformer=AmpGenTransformer(), **kargs)
+        parsed = lark.parse(text)
 
-        # Collect lines with an = in them
-        relation_lines, valid_lines = filter_lines(ampline.inverted, valid_lines)
+        event_type, = get_from_parser(parsed, 'event_type')
 
-        # Collect "normal" non-Cartesian lines
-        real_lines, valid_lines = filter_lines(ampline.dual, valid_lines)
+        invert_lines = get_from_parser(parsed, 'invert_line')
+        cplx_decay_lines = get_from_parser(parsed, 'cplx_decay_line')
+        cart_decay_lines = get_from_parser(parsed, 'cart_decay_line')
+        variables = get_from_parser(parsed, 'variable')
+        constants = get_from_parser(parsed, 'constant')
 
-        # Collect Cartesian lines (need combining)
-        cart_lines, valid_lines = filter_lines(ampline.cartesian, valid_lines)
+        all_states = [Particle.from_string(n) for n in event_type]
 
-        # The other lines do not need explicit filtering
-        variable_lines = [l for l in valid_lines if len(l.split()) == 4]
-        constant_lines = [l for l in valid_lines if len(l.split()) == 2]
+        fcs = get_from_parser(parsed, 'fast_coherent_sum')
+        if fcs:
+            fcs, = fcs
+            fcs, = fcs.children
+            cls.cartesian = bool(fcs)
 
-        # Process the options
-        all_states = None
-        for mat in option_lines:
-            if mat['name'] == 'EventType':
-                all_states = [Particle.from_AmpGen(name) for name in mat['value'].split()]
-            elif mat['name'] == 'FastCoherentSum::UseCartesian':
-                cls.cartesian = bool(mat['value'])
 
-        # Make sure this exists!
-        if all_states is None:
-            raise RuntimeError("EventType is missing! Cannot compute decay.")
-
+        # TODO: re-enable this
         # Combine dual line Cartesian lines into traditional cartesian lines
-        for a, b in combinations(cart_lines, 2):
-            if a['name'] == b['name']:
-                if a['cart'] == 'Re' and b['cart'] == 'Im':
-                    pass
-                elif a['cart'] == 'Im' and b['cart'] == 'Re':
-                    a, b = b, a
-                else:
-                    raise RuntimeError("Can't process a line with *both* components Re or Im")
-                new_string = "{a[name]} {a[fix]} {a[amp]} {a[err]} {b[fix]} {b[amp]} {b[err]}".format(
-                    a=a, b=b)
-                real_lines.append(ampline.dual.match(new_string).groupdict())
+        # for a, b in combinations(cart_decay_lines, 2):
+        #     if a['name'] == b['name']:
+        #        if a['cart'] == 'Re' and b['cart'] == 'Im':
+        #            pass
+        #        elif a['cart'] == 'Im' and b['cart'] == 'Re':
+        #            a, b = b, a
+        #        else:
+        #            raise RuntimeError("Can't process a line with *both* components Re or Im")
+        #        new_string = "{a[name]} {a[fix]} {a[amp]} {a[err]} {b[fix]} {b[amp]} {b[err]}".format(
+        #            a=a, b=b)
+        #        real_lines.append(ampline.dual.match(new_string).groupdict())
 
         # Make the partial lines and constants as dataframes
-        parameters = pd.DataFrame(((v.strip() for v in p.split()) for p in variable_lines),
+        parameters = pd.DataFrame(variables,
                                   columns='name fix value error'.split()).set_index('name')
 
-        constants = pd.DataFrame(((v.strip() for v in p.split()) for p in constant_lines),
+        constants = pd.DataFrame(constants,
                                  columns='name value'.split()).set_index('name')
 
         # Convert the matches into AmplitudeChains
-        line_arr = [cls.from_matched_line(c) for c in real_lines]
+        line_arr = [cls.from_matched_line(c) for c in cplx_decay_lines]
 
         # Expand partial lines into complete lines
         new_line_arr = [l for line in line_arr if line.particle == all_states[0]

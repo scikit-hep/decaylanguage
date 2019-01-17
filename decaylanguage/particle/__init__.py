@@ -8,5 +8,6 @@ from .particle import Particle
 from .particle import SpinType
 from .particle import Status
 from .particle import programmatic_name
+from .particle import ParticleNotFound
 
 __all__ = (Particle, SpinType, Par_mapping, Par, Charge, Inv, Status, programmatic_name)
