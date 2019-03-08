@@ -1,5 +1,7 @@
+from particle import Particle
+from particle.particle.particle import  ParticleNotFound
+
 from decaylanguage import data
-from decaylanguage.particle import Particle, ParticleNotFound
 from decaylanguage.dec import dec
 from lark import Lark, Transformer, Tree
 

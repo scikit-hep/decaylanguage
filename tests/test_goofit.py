@@ -1,5 +1,6 @@
+from particle import Particle
+
 from decaylanguage.decay.goofit import GooFitChain
-from decaylanguage.particle import Particle
 
 
 def test_simple():
@@ -20,5 +21,3 @@ def test_simple():
 
     assert len(lines) == 1
     line, = lines
-
-

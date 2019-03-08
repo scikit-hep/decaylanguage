@@ -2,7 +2,6 @@
 A class representing a set of decays. Can be subclassed to provide custom converters.
 '''
 
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -17,16 +16,17 @@ import attr
 import numpy as np
 import pandas as pd
 
+from lark import Lark
+
+from particle import Particle
+
 from .decay import Decay
-from ..particle import Particle
 from ..utils import filter_lines
 from ..utils import split
 
 from ..data import open_text
 from .. import data
 
-
-from lark import Lark
 from .ampgentransform import AmpGenTransformer, get_from_parser
 
 class LS(Enum):

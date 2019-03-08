@@ -6,9 +6,10 @@ from __future__ import print_function, division, absolute_import
 #    import cmd2 as cmd
 #except:
 import cmd
-
-from ..particle import Particle
 import os
+
+from particle import Particle
+
 
 DIR = os.path.dirname(__file__)
 
