@@ -20,6 +20,8 @@ from lark import Lark
 
 from particle import Particle
 
+import os
+
 from .decay import Decay
 from ..utils import filter_lines
 from ..utils import split
@@ -66,7 +68,9 @@ class AmplitudeChain(Decay):
         '''
         Particle.table()
         if 998100 not in Particle.table():
-            Particle.load_table(open_text(data, 'MintDalitzSpecialParticles.csv'), append=True)
+            data_dir = os.path.dirname(os.path.realpath(__file__))
+            special_filename = os.path.join(data_dir, '..', 'data', 'MintDalitzSpecialParticles.csv')
+            Particle.load_table(special_filename, append=True)
 
         try:
             mat['particle'] = Particle.from_string(mat['name'])
