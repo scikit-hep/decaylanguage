@@ -66,7 +66,7 @@ class AmplitudeChain(Decay):
         '''
         Particle.table()
         if 998100 not in Particle.table():
-            Particle.load_table('MintDalitzSpecialParticles.csv', append=True)
+            Particle.load_table(open_text(data, 'MintDalitzSpecialParticles.csv'), append=True)
 
         try:
             mat['particle'] = Particle.from_string(mat['name'])
