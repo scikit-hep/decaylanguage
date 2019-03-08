@@ -61,8 +61,8 @@ setup(
         'particle', 'decay', 'HEP'
     ],
     install_requires=[
+        'attrs>=17.4',
         'plumbum>=1.6.6',
-        'attrs>=17.0',
         'numpy>=1.12',
         'pandas>=0.22',
         'six>=1.11',
