@@ -64,6 +64,10 @@ class AmplitudeChain(Decay):
         :param mat: The groupdict output of a match
         :return: A new amplitude chain instance
         '''
+        Particle.table()
+        if 998100 not in Particle.table():
+            Particle.load_table('MintDalitzSpecialParticles.csv', append=True)
+
         try:
             mat['particle'] = Particle.from_string(mat['name'])
         except:
