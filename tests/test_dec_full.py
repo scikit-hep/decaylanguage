@@ -1,5 +1,4 @@
-from particle import Particle
-from particle.particle.particle import  ParticleNotFound
+from particle import Particle, ParticleNotFound
 
 from decaylanguage import data
 from decaylanguage.dec import dec
