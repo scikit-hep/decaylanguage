@@ -24,7 +24,10 @@ def proc_readme(text):
 
     ''' + text
 
-
+extras = {
+    'test': ['pytest'],
+    'notebook': ['graphviz'],
+}
 
 setup(
     name='decaylanguage',
@@ -72,9 +75,7 @@ setup(
         'importlib_resources>=1.0; python_version<"3.7"',
         'particle'
     ],
-    extras_require={
-        'notebook': ['graphviz'],
-    },
+    extras_require=extras,
     setup_requires=['pytest-runner'],
-    tests_require=['pytest']
+    tests_require=extras['test']
 )
