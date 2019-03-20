@@ -78,7 +78,7 @@ class AmplitudeChain(Decay):
         try:
             mat['particle'] = Particle.from_string(mat['name'])
         except:
-            print("Failed to find particle with parsed dictionary:", mat, file=sys.stderr)
+            print("Failed to find particle", mat['name'], "with parsed dictionary:", mat, file=sys.stderr)
             raise
 
 
@@ -225,7 +225,11 @@ class AmplitudeChain(Decay):
         variables = get_from_parser(parsed, 'variable')
         constants = get_from_parser(parsed, 'constant')
 
-        all_states = [Particle.from_string(n) for n in event_type]
+        try:
+            all_states = [Particle.from_string(n) for n in event_type]
+        except:
+            print("Did not find at least one of the state particles from", *event_type)
+            raise
 
         fcs = get_from_parser(parsed, 'fast_coherent_sum')
         if fcs:
