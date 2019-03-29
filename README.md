@@ -21,7 +21,7 @@ pip install decaylanguage
 ```
 
 You can use a virtual environment through pipenv or with `--user` if you know
-what those are. [Python 2.7 and 3.4+](http://docs.python-guide.org/en/latest/starting/installation) are supported. 
+what those are. [Python 2.7 and 3.4+](http://docs.python-guide.org/en/latest/starting/installation) are supported.
 
 <details><summary>Dependencies: (click to expand)</summary><p>
 
@@ -29,10 +29,12 @@ Required and compatibility dependencies will be automatically installed by pip.
 
 ### Required dependencies:
 
+-   [particle](https://github.com/scikit-hep/particle): PDG particle data and identification codes
 -   [Numpy](https://scipy.org/install.html): The numerical library for Python
 -   [pandas](https://pandas.pydata.org/): Tabular data in Python
 -   [attrs](https://github.com/python-attrs/attrs): DataClasses for Python
 -   [plumbum](https://github.com/tomerfiliba/plumbum): Command line tools
+-   [lark-parser](https://github.com/lark-parser/lark): A modern parsing library for Python
 
 ### Python compatibility:
 -   [six](https://github.com/benjaminp/six): Compatibility library
@@ -56,34 +58,9 @@ decays. The parts are:
 
 ## Particles
 
-You can use a variety of methods to get particles; if you know the PDG
-number you can get a particle directly, or you can use a search:
-
-```python
-Particle.from_pdgid(211)
-Particle.from_search_list(name='pi')[0]
-```
-
-You can search for the properties, which are `name`, `mass`, `width`,
-`charge`, `A`, `rank`, `I`, `J`, `G`, `P`, `quarks`, `status`, `latex`,
-`mass_upper`, `mass_lower`, `width_upper`, and `width_lower` (some of
-those don\'t make sense). You can also use `from_search` to require only
-one match.
-
-Once you have a particle, any of the properties can be accessed, along
-with several methods. Though they are not real properties, you can
-access `bar`, `radius`, and `spin_type`. You can also `invert()` a
-particle. There are lots of printing choices, `describe()`,
-`programmatic_name()`, `html_name()`, html printing outs in notebooks,
-and of course `repr` and `str` support.
-
-You can quickly search for particles from the command line with:
-
-```
-python -m decaylanguage.particle 311
-```
-
-You can put one or more PDG ID numbers here, or string names.
+Particles are a key component when dealing with decays.
+Refer to the [particle package](https://github.com/scikit-hep/particle)
+for how to deal with particles and PDG identification codes.
 
 ## Decays
 
@@ -106,7 +83,7 @@ a(1)(1260)+::Spline::N 34
 ''')
 ```
 
-Here, `lines` will be a list of AmplitudeChain lines (pretty print supported in Jupyter notebooks), 
+Here, `lines` will be a list of AmplitudeChain lines (pretty print supported in Jupyter notebooks),
 `parameters` will be a table of parameters (ranged parameters not yet supported),
 `constants` will be a table of constants,
 and `states` will be the list of known states (EventType).

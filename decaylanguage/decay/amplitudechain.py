@@ -2,7 +2,6 @@
 A class representing a set of decays. Can be subclassed to provide custom converters.
 '''
 
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -17,16 +16,19 @@ import attr
 import numpy as np
 import pandas as pd
 
+from lark import Lark
+
+from particle import Particle
+
+import os
+
 from .decay import Decay
-from ..particle import Particle
 from ..utils import filter_lines
 from ..utils import split
 
 from ..data import open_text
 from .. import data
 
-
-from lark import Lark
 from .ampgentransform import AmpGenTransformer, get_from_parser
 
 class LS(Enum):
@@ -64,10 +66,19 @@ class AmplitudeChain(Decay):
         :param mat: The groupdict output of a match
         :return: A new amplitude chain instance
         '''
+        # Make sure particles are loaded
+        Particle.table()
+
+        # Check to see if new particles loaded; if not, load them.
+        if 998100 not in Particle.table():
+            data_dir = os.path.dirname(os.path.realpath(__file__))
+            special_filename = os.path.join(data_dir, '..', 'data', 'MintDalitzSpecialParticles.csv')
+            Particle.load_table(special_filename, append=True)
+
         try:
             mat['particle'] = Particle.from_string(mat['name'])
         except:
-            print("Failed to find particle with parsed dictionary:", mat, file=sys.stderr)
+            print("Failed to find particle", mat['name'], "with parsed dictionary:", mat, file=sys.stderr)
             raise
 
 
@@ -214,7 +225,11 @@ class AmplitudeChain(Decay):
         variables = get_from_parser(parsed, 'variable')
         constants = get_from_parser(parsed, 'constant')
 
-        all_states = [Particle.from_string(n) for n in event_type]
+        try:
+            all_states = [Particle.from_string(n) for n in event_type]
+        except:
+            print("Did not find at least one of the state particles from", *event_type)
+            raise
 
         fcs = get_from_parser(parsed, 'fast_coherent_sum')
         if fcs:

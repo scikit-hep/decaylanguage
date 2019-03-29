@@ -10,8 +10,9 @@ from enum import Enum
 
 import pandas as pd
 
-from ..particle import SpinType
-from ..particle import programmatic_name
+from particle import SpinType
+from particle.particle.utilities import programmatic_name
+
 from ..utils import LineFailure
 from .amplitudechain import LS
 from .amplitudechain import AmplitudeChain
