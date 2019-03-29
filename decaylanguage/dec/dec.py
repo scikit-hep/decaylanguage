@@ -1,15 +1,11 @@
-from ..data import open_text
-from .. import data
-from ..decay.decay import Decay
-
-from enum import Enum
+from __future__ import absolute_import, division, print_function
 
 from lark import Lark, Transformer, Tree
 
-
-class ProtosEnum(Enum):
-    no = 0
-    yes = 1
+from ..data import open_text
+from .. import data
+from ..decay.decay import Decay
+from .enums import PhotosEnum
 
 
 class TreeToDec(Transformer):
@@ -19,7 +15,7 @@ class TreeToDec(Transformer):
         return False
     def global_photos(self, items):
         item, = items
-        return ProtosEnum.yes if item else ProtosEnum.no
+        return PhotosEnum.yes if item else PhotosEnum.no
     def value(self, items):
         item, = items
         return float(item)
@@ -27,10 +23,10 @@ class TreeToDec(Transformer):
         item, = items
         return str(item)
     def photos(self, items):
-        return ProtosEnum.yes
+        return PhotosEnum.yes
 
-    
-    
+
+
 
 def define(transformed):
     return {x.children[0]:x.children[1] for x in transformed.find_data('define')}
