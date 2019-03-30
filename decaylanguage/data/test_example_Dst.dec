@@ -1,0 +1,37 @@
+# Example decay chain for testing purposes
+
+Alias      D0sig             D0
+Alias      anti-D0sig        anti-D0
+ChargeConj D0sig             anti-D0sig
+
+Alias      D*+sig            D*+
+Alias      D*-sig            D*-
+ChargeConj D*+sig            D*-sig
+
+
+Decay D*+
+0.6770    D0  pi+                    VSS;
+0.3070    D+  pi0                    VSS;
+0.0160    D+  gamma                  VSP_PWAVE;
+Enddecay
+
+Decay D*-
+0.6770    anti-D0  pi-                VSS;
+0.3070    D-       pi0                VSS;
+0.0160    D-       gamma              VSP_PWAVE;
+Enddecay
+
+Decay D0
+1.0   K-      pi+                  PHSP;
+Enddecay
+
+Decay D+
+1.0   K-   pi+   pi+   pi0    PHSP;
+Enddecay
+
+Decay pi0
+0.988228297   gamma   gamma                   PHSP;
+0.011738247   e+      e-      gamma           PI0_DALITZ;
+0.000033392   e+      e+      e-      e-      PHSP;
+0.000000065   e+      e-                      PHSP;
+Enddecay
