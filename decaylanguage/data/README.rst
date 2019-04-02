@@ -12,6 +12,12 @@ Copy of the LHCb experiment master decay file for EvtGen, which describes
 all generic particle decays.
 
 
+``test_X.dec``
+--------------
+
+Decay files used for testing purposes.
+
+
 ``decfile.lark``
 ----------------
 Lark parser grammar definition file for parsing .dec decay files.
