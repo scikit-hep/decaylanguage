@@ -20,7 +20,7 @@ try:
     import graphviz
 except ImportError:
     graphviz = None
-    warnings.warn("Graphvis not installed. Line display not available.")
+    warnings.warn("Graphviz is not installed. Line display not available.")
 
 @attr.s(slots=True)
 class Decay(object):
