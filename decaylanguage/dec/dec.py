@@ -24,8 +24,8 @@ class DecFileParser(object):
 
     Example
     -------
-    >>> p = DecFileParser('my-decay-file.dec')
-    >>> p.parse()
+    >>> parser = DecFileParser('my-decay-file.dec')
+    >>> parser.parse()
     """
     def __init__(self, decay_file):
         """
@@ -49,6 +49,12 @@ class DecFileParser(object):
         self._parsed_decays = None  # Particle decays found in the decay file
 
     def parse(self):
+        """
+        Parse the given .dec decay file according to the default Lark options.
+
+        See method 'load_grammar' for how to explicitly set the Lark parser
+        and the parsing options.
+        """
         # Has a fine been parsed already?
         if self._parsed_decays is not None:
             warnings.warn("Input file being re-parsed ...")
@@ -71,9 +77,16 @@ class DecFileParser(object):
 
         return self._grammar
 
-    def load_grammar(self, filename=None, parser='lalr', lexer='standard'):
+    def load_grammar(self, filename=None, parser='lalr', lexer='standard', **options):
         """
         Load a Lark grammar definition file.
+
+        Parameters
+        ----------
+        filename: str
+            Input .dec decay file name.
+        options: keyword arguments
+            See Lark's Lark class for a description of available options.
         """
         if filename is None:
             filename = 'decfile.lark'
@@ -110,7 +123,7 @@ class DecFileParser(object):
 
     @property
     def number_of_decays(self):
-        """Returns the number of particle decays defined in the parsed .dec file."""
+        """Return the number of particle decays defined in the parsed .dec file."""
         self._check_parsing()
 
         return len(self._parsed_decays)
@@ -130,6 +143,16 @@ class DecFileParser(object):
         raise DecayNotFound("Decays of particle '%s' not found in .dec file!" % mother)
 
     def list_decay_modes(self, mother):
+        """
+        Return a list of decay modes for the given mother particle.
+
+        Example
+        -------
+        >>> parser = DecFileParser('my-decay-file.dec')
+        >>> parser.parse()
+        >>> parser.list_decay_mother_names()  # Inspect what decays are defined
+        >>> parser.list_decay_modes('pi0')
+        """
         return [get_final_state_particle_names(mode)
                 for mode in self._find_decay_modes(mother)]
 
@@ -147,7 +170,7 @@ class DecFileParser(object):
         return (bf, fsp_names, model, model_params)
 
     def print_decay_modes(self, mother):
-        """Pretty print of the decay modes of a given particle."""
+        """Pretty print (debugging) of the decay modes of a given particle."""
         dms = self._find_decay_modes(mother)
 
         for dm in dms:
@@ -219,6 +242,66 @@ def get_model_parameters(decay_mode):
 
     lmo = list(decay_mode.find_data('model_options'))
     return lmo if len(lmo) == 1 else ''
+
+def get_definitions(parsed_file):
+    """
+    Return a dictionary of all definitions in the input parsed file, of the form
+    "Define <NAME> <VALUE>" as {'NAME1': VALUE1, 'NAME2': VALUE2, ...}.
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+    """
+    if not isinstance(parsed_file, Tree) :
+        raise RuntimeError("Input not an instance of a Tree!")
+
+    try:
+        return {tree.children[0].children[0].value:float(tree.children[1].children[0].value)
+            for tree in parsed_file.find_data('define')}
+    except:
+        warnings.error("Input parsed file does not seem to have the expected structure.")
+
+
+def get_aliases(parsed_file):
+    """
+    Return a dictionary of all aliases in the input parsed file, of the form
+    "Alias <NAME> <ALIAS>" as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+    """
+    if not isinstance(parsed_file, Tree) :
+        raise RuntimeError("Input not an instance of a Tree!")
+
+    try:
+        return {tree.children[0].children[0].value:tree.children[1].children[0].value
+            for tree in parsed_file.find_data('alias')}
+    except:
+        warnings.error("Input parsed file does not seem to have the expected structure.")
+
+
+def get_charge_conjugate_defs(parsed_file):
+    """
+    Return a dictionary of all aliases in the input parsed file, of the form
+    "ChargeConj <PARTICLE> <CC_PARTICLE>" as
+    {'PARTICLE1': CC_PARTICLE1, 'PARTICLE2': CC_PARTICLE2, ...}.
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+    """
+    if not isinstance(parsed_file, Tree) :
+        raise RuntimeError("Input not an instance of a Tree!")
+
+    try:
+        return {tree.children[0].children[0].value:tree.children[1].children[0].value
+            for tree in parsed_file.find_data('chargeconj')}
+    except:
+        warnings.error("Input parsed file does not seem to have the expected structure.")
 
 
 class TreeToDec(Transformer):
