@@ -31,15 +31,6 @@ def test_non_existent_decay():
         p.list_decay_modes('XYZ')
 
 
-def test_simple_dec():
-    p = DecFileParser(DIR / '../decaylanguage/data/test_example_Dst.dec')
-    p.parse()
-
-    assert p.list_decay_mother_names() == ['D*+', 'D*-', 'D0', 'D+', 'pi0']
-
-    assert p.list_decay_modes('D0') == [['K-', 'pi+']]
-
-
 def test_default_grammar_loading():
     p = DecFileParser(DIR / '../decaylanguage/data/test_example_Dst.dec')
 
@@ -60,3 +51,29 @@ def test_string_representation():
 
         p.parse()
         assert "n_decays=5" in p.__str__()
+
+
+def test_simple_dec():
+    p = DecFileParser(DIR / '../decaylanguage/data/test_example_Dst.dec')
+    p.parse()
+
+    assert p.list_decay_mother_names() == ['D*+', 'D*-', 'D0', 'D+', 'pi0']
+
+    assert p.list_decay_modes('D0') == [['K-', 'pi+']]
+
+
+def test_decay_mode_details():
+    p = DecFileParser(DIR / '../decaylanguage/data/test_example_Dst.dec')
+    p.parse()
+
+    tree_Dp = p._find_decay_modes('D+')[0]
+    output = (1.0, ['K-', 'pi+', 'pi+', 'pi0'], 'PHSP', '')
+    assert p._decay_mode_details(tree_Dp) == output
+
+
+def test_build_decay_chain():
+    p = DecFileParser(DIR / '../decaylanguage/data/test_example_Dst.dec')
+    p.parse()
+
+    output = {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'm': 'PHSP', 'mp': ''}]}
+    assert p.build_decay_chain('D+', stable_particles=['pi0']) == output
