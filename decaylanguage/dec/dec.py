@@ -29,7 +29,7 @@ class DecFileParser(object):
     """
     def __init__(self, decay_file):
         """
-        Constructor.
+        Parser constructor.
 
         Parameters
         ----------
@@ -71,6 +71,11 @@ class DecFileParser(object):
         """
         This accesses the internal Lark grammar definition file,
         loading it from the default location if needed.
+
+        Returns
+        -------
+        out: str
+            The Lark grammar definition file.
         """
         if not self.grammar_loaded:
             self.load_grammar()
@@ -83,10 +88,16 @@ class DecFileParser(object):
 
         Parameters
         ----------
-        filename: str
-            Input .dec decay file name.
-        options: keyword arguments
-            See Lark's Lark class for a description of available options.
+        filename: str, optional, default=None
+            Input .dec decay file name. By default 'data/decfile.lark' is loaded.
+        parser: str, optional, default='lalr'
+            The Lark parser engine name.
+        lexer: str, optional, default='standard'
+            The Lark parser lexer mode to use.
+        options: keyword arguments, optional
+            Extra options to pass on to the parsing algorithm.
+        See Lark's Lark class for a description of available options
+        for parser, lexer and options.
         """
         if filename is None:
             filename = 'decfile.lark'
@@ -95,7 +106,7 @@ class DecFileParser(object):
         else:
             self._grammar = open(filename).read()
 
-        self._grammar_info = dict(lark_file=filename, parser=parser, lexer=lexer)
+        self._grammar_info = dict(lark_file=filename, parser=parser, lexer=lexer, **options)
 
     @property
     def grammar_loaded(self):
@@ -113,6 +124,7 @@ class DecFileParser(object):
         return self._parsed_decays
 
     def _check_parsing(self):
+        """Has the .parse() method been called already?"""
         if self._parsed_dec_file is None:
             raise DecFileNotParsed("Hint: call 'parse()'!")
 
@@ -178,6 +190,83 @@ class DecFileParser(object):
             print('%12g : %50s %15s %s' % (dm_details[0], '  '.\
                 join(p for p in dm_details[1]), dm_details[2], dm_details[3]))
 
+    def build_decay_chain(self, mother, stable_particles=[]):
+        """
+        Iteratively build the whole decay chain of a given mother particle,
+        optionally considering certain particles as stable.
+
+        Parameters
+        ----------
+        mother: str
+            Input mother particle name.
+        stable_particles: iterable, optional, default=[]
+            If provided, stops the decay-chain parsing, taking the "list" as particles to be considered stable.
+
+        Returns
+        -------
+        out: dict
+            Decay chain as a dictionary of the form
+            {mother: [{'bf': float, 'fs': list, 'm': str, 'mp': str}]}
+            where
+            'bf' stands for the deca mode branching fraction,
+            'fs' is a list of final-state particle names (strings)
+            and/or dictionaries of the same form as the decay chain above,
+            'm' is the model name, if found, else '',
+            'mp' are the model parameters, if specified, else ''
+
+        Examples
+        --------
+        >>> parser = DecFileParser('a-Dplus-decay-file.dec')
+        >>> parser.parse()
+        >>> parser.build_decay_chain('D+')
+        {'D+': [{'bf': 1.0,
+           'fs': ['K-',
+            'pi+',
+            'pi+',
+            {'pi0': [{'bf': 0.988228297,
+               'fs': ['gamma', 'gamma'],
+               'm': 'PHSP',
+               'mp': ''},
+              {'bf': 0.011738247,
+               'fs': ['e+', 'e-', 'gamma'],
+               'm': 'PI0_DALITZ',
+               'mp': ''},
+              {'bf': 3.3392e-05,
+              'fs': ['e+', 'e+', 'e-', 'e-'],
+              'm': 'PHSP',
+              'mp': ''},
+              {'bf': 6.5e-08, 'fs': ['e+', 'e-'], 'm': 'PHSP', 'mp': ''}]}],
+           'm': 'PHSP',
+           'mp': ''}]}
+        >>> p.build_decay_chain('D+', stable_particles=['pi0'])
+        {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'm': 'PHSP', 'mp': ''}]}
+        """
+        keys = ('bf', 'fs', 'm', 'mp')
+
+        info = list()
+        for dm in (self._find_decay_modes(mother)):
+            list_dm_details = self.get_decay_mode_details(dm)
+            d = dict(zip(keys,list_dm_details))
+
+            for i, fs in enumerate(d['fs']):
+                if fs in stable_particles:
+                    continue
+
+                try:
+                    # This throws a DecayNotFound exception
+                    # if fs does not have decays defined in the parsed file
+                    _n_dms = len(self._find_decay_modes(fs))
+
+                    _info = self.build_decay_chain(fs, stable_particles)
+                    d['fs'][i] = _info
+                except DecayNotFound:
+                    pass
+
+            info.append(d)
+
+        info = {mother:info}
+        return info
+
     def __repr__(self):
         if self._parsed_dec_file is not None:
             return "<{self.__class__.__name__}: decfile='{decfile}', n_decays={n_decays}>".format(
@@ -242,6 +331,7 @@ def get_model_parameters(decay_mode):
 
     lmo = list(decay_mode.find_data('model_options'))
     return lmo if len(lmo) == 1 else ''
+
 
 def get_definitions(parsed_file):
     """
