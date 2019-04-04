@@ -168,7 +168,7 @@ class DecFileParser(object):
         return [get_final_state_particle_names(mode)
                 for mode in self._find_decay_modes(mother)]
 
-    def get_decay_mode_details(self, decay_mode):
+    def decay_mode_details(self, decay_mode):
         """
         Parse a decay mode (Tree instance)
         and return the relevant bits of information in it.
@@ -186,7 +186,7 @@ class DecFileParser(object):
         dms = self._find_decay_modes(mother)
 
         for dm in dms:
-            dm_details = self.get_decay_mode_details(dm)
+            dm_details = self.decay_mode_details(dm)
             print('%12g : %50s %15s %s' % (dm_details[0], '  '.\
                 join(p for p in dm_details[1]), dm_details[2], dm_details[3]))
 
@@ -245,7 +245,7 @@ class DecFileParser(object):
 
         info = list()
         for dm in (self._find_decay_modes(mother)):
-            list_dm_details = self.get_decay_mode_details(dm)
+            list_dm_details = self.decay_mode_details(dm)
             d = dict(zip(keys,list_dm_details))
 
             for i, fs in enumerate(d['fs']):
@@ -330,7 +330,7 @@ def get_model_parameters(decay_mode):
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
     lmo = list(decay_mode.find_data('model_options'))
-    return lmo if len(lmo) == 1 else ''
+    return [float(tree.children[0].value) for tree in lmo[0].children] if len(lmo) == 1 else ''
 
 
 def get_definitions(parsed_file):
