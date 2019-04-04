@@ -168,7 +168,7 @@ class DecFileParser(object):
         return [get_final_state_particle_names(mode)
                 for mode in self._find_decay_modes(mother)]
 
-    def decay_mode_details(self, decay_mode):
+    def _decay_mode_details(self, decay_mode):
         """
         Parse a decay mode (Tree instance)
         and return the relevant bits of information in it.
@@ -186,7 +186,7 @@ class DecFileParser(object):
         dms = self._find_decay_modes(mother)
 
         for dm in dms:
-            dm_details = self.decay_mode_details(dm)
+            dm_details = self._decay_mode_details(dm)
             print('%12g : %50s %15s %s' % (dm_details[0], '  '.\
                 join(p for p in dm_details[1]), dm_details[2], dm_details[3]))
 
@@ -245,7 +245,7 @@ class DecFileParser(object):
 
         info = list()
         for dm in (self._find_decay_modes(mother)):
-            list_dm_details = self.decay_mode_details(dm)
+            list_dm_details = self._decay_mode_details(dm)
             d = dict(zip(keys,list_dm_details))
 
             for i, fs in enumerate(d['fs']):
