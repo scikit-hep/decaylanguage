@@ -9,6 +9,12 @@ from decaylanguage import data
 from decaylanguage.dec.dec import DecFileParser
 from decaylanguage.dec.dec import DecFileNotParsed, DecayNotFound
 
+# New in Python 3
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
+
 
 DIR = Path(__file__).parent.resolve()
 
