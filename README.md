@@ -1,9 +1,9 @@
 [![DecayLanguage](images/DecayLanguage.png)](http://decaylanguage.readthedocs.io/en/latest/)
 
 [![Documentation Status](https://readthedocs.org/projects/decaylanguage/badge/?style=flat)](https://readthedocs.org/projects/decaylanguage)
-[![Azure Build Status](https://dev.azure.com/scikit-hep/decaylanguage/_apis/build/status/scikit-hep.decaylanguage?branchName=master)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=1?branchName=master)
-[![Coverage Status](https://img.shields.io/azure-devops/coverage/scikit-hep/decaylanguage/1.svg)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=1?branchName=master)
-[![Tests Status](https://img.shields.io/azure-devops/tests/scikit-hep/decaylanguage/1.svg)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=1?branchName=master)
+[![Azure Build Status](https://dev.azure.com/scikit-hep/decaylanguage/_apis/build/status/scikit-hep.decaylanguage?branchName=master)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=3?branchName=master)
+[![Coverage Status](https://img.shields.io/azure-devops/coverage/scikit-hep/decaylanguage/3.svg)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=3?branchName=master)
+[![Tests Status](https://img.shields.io/azure-devops/tests/scikit-hep/decaylanguage/3.svg)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=3?branchName=master)
 [![Travis-CI Build Status](https://travis-ci.org/scikit-hep/decaylanguage.svg?branch=master)](https://travis-ci.org/scikit-hep/decaylanguage)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/scikit-hep/decaylanguage?branch=master&svg=true)](https://ci.appveyor.com/project/HenrySchreiner/decaylanguage)
 [![Coverage Status](https://coveralls.io/repos/scikit-hep/decaylanguage/badge.svg?branch=master&service=github)](https://coveralls.io/github/scikit-hep/decaylanguage)
