@@ -1,0 +1,48 @@
+# Example decay chain for testing purposes:
+# B0 -> D*- D+, D*- -> D- (pi0, gamma), D- -> K+ pi- pi- or D- -> K+K-pi- & cc
+
+# --------------------------------------
+# DEFINE THE ALIASES & CHARGE CONJUGATES
+# --------------------------------------
+Alias      B0sig             B0
+Alias      anti-B0sig        anti-B0
+ChargeConj B0sig             anti-B0sig
+
+Alias             MyD*-       D*-
+Alias             MyD*+       D*+
+ChargeConj        MyD*+       MyD*-
+
+# --------------------
+# DEFINE THE D+ AND D-
+# --------------------
+Alias             MyD-        D-
+Alias             MyD+        D+
+ChargeConj        MyD+        MyD-
+
+# ---------------
+# DECAY OF THE B0
+# ---------------
+Decay B0sig
+  1.000     MyD*-     MyD+       SVS;
+Enddecay
+CDecay anti-B0sig
+
+# ----------------
+# DECAY OF THE D*-
+# ----------------
+Decay MyD*-
+  0.9505     MyD-     pi0         VSS;
+  0.0495     MyD-     gamma       VSP_PWAVE;
+Enddecay
+CDecay MyD*+
+
+# ---------------
+# DECAY OF THE D-
+# ---------------
+Decay MyD-
+  0.905     K+     pi-     pi-     D_DALITZ;
+  0.095     K+     K-      pi-     D_DALITZ;
+Enddecay
+CDecay MyD+
+
+End
