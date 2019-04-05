@@ -8,6 +8,9 @@ branch = true
 source =
     decaylanguage
 parallel = true
+omit =
+    # omit certain files
+    decaylanguage/__main__.py
 
 [report]
 show_missing = true
