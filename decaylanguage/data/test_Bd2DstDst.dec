@@ -1,0 +1,85 @@
+# Example decay chain for testing purposes:
+# [B0 -> D*- D*+]cc
+# with
+# D*- -> D- (pi0, gamma), D*+ -> D0 pi+
+# and
+# D- -> K+ pi- pi- or D- -> K+ K- pi- and D0 -> K- pi- pi+ pi+
+
+# -----------------------------------------------
+# DEFINE THE ALIASES & CHARGE CONJUGATES of the B
+# -----------------------------------------------
+Alias       B0sig           B0
+Alias       anti-B0sig      anti-B0
+ChargeConj  B0sig           anti-B0sig
+
+# --------------------------------------------------
+# DEFINE THE D* decaying to charged D and neutral pi
+# --------------------------------------------------
+Alias             MyFirstD*-       D*-
+Alias             MyFirstD*+       D*+
+ChargeConj        MyFirstD*+       MyFirstD*-
+
+# --------------------------------------------------
+# DEFINE THE D* decaying to neutral D and charged pi
+# --------------------------------------------------
+Alias             MySecondD*-       D*-
+Alias             MySecondD*+       D*+
+ChargeConj        MySecondD*+       MySecondD*-
+
+# --------------------
+# DEFINE THE D+ AND D-
+# --------------------
+Alias             MyD-        D-
+Alias             MyD+        D+
+ChargeConj        MyD+        MyD-
+
+# ---------------------
+# DEFINE THE D0 AND D~0
+# ---------------------
+Alias       MyD0        D0
+Alias       Myanti-D0   anti-D0
+ChargeConj  MyD0        Myanti-D0
+
+# ---------------
+# DECAY OF THE B0
+# ---------------
+Decay B0sig
+  1.000     MyFirstD*-    MySecondD*+            SVV_HELAMP 0.0 0.0 0.0 0.0 1.0 0.0;
+Enddecay
+CDecay anti-B0sig
+
+# -------------------------------------------
+# DECAY OF THE D* to charged D and neutral pi
+# -------------------------------------------
+Decay MyFirstD*-
+  0.9505    MyD-  pi0                            VSS;
+  0.0495    MyD-  gamma                          VSP_PWAVE;
+Enddecay
+CDecay MyFirstD*+
+
+# -------------------------------------------
+# DECAY OF THE D* to neutral D and charged pi
+# -------------------------------------------
+Decay MySecondD*+
+  1.000    MyD0  pi+                VSS;
+Enddecay
+CDecay MySecondD*-
+
+# ---------------
+# DECAY OF THE D-
+# ---------------
+Decay MyD-
+  0.700    K+  pi-  pi-                D_DALITZ;
+  0.300    K+  K-   pi-                D_DALITZ;
+Enddecay
+CDecay MyD+
+
+# ---------------
+# DECAY OF THE D0
+# ---------------
+Decay MyD0
+  1.00        K-  pi-  pi+  pi+  				LbAmpGen DtoKpipipi_v1 ;
+Enddecay
+CDecay Myanti-D0
+
+End
