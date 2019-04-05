@@ -10,6 +10,13 @@ from ..decay.decay import Decay
 from .enums import PhotosEnum
 
 
+# New in Python 3
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
+
+
 class DecFileNotParsed(RuntimeError):
     pass
 
@@ -27,6 +34,13 @@ class DecFileParser(object):
     >>> parser = DecFileParser('my-decay-file.dec')
     >>> parser.parse()
     """
+
+    __slots__ = ("_grammar",
+                 "_grammar_info",
+                 "_decay_file",
+                 "_parsed_dec_file",
+                 "_parsed_decays")
+
     def __init__(self, decay_file):
         """
         Parser constructor.
@@ -36,6 +50,9 @@ class DecFileParser(object):
         decay_file: str
             Input .dec decay file.
         """
+        # Conversion to handle pathlib on Python < 3.6:
+        decay_file = str(decay_file)
+
         # Check input file
         if not os.path.exists(decay_file):
             raise FileNotFoundError("'{0}'!".format(decay_file))
@@ -99,11 +116,15 @@ class DecFileParser(object):
         See Lark's Lark class for a description of available options
         for parser, lexer and options.
         """
+
         if filename is None:
             filename = 'decfile.lark'
             with data.open_text(data, filename) as f:
                 self._grammar = f.read()
         else:
+            # Conversion to handle pathlib on Python < 3.6:
+            filename = str(filename)
+
             self._grammar = open(filename).read()
 
         self._grammar_info = dict(lark_file=filename, parser=parser, lexer=lexer, **options)
