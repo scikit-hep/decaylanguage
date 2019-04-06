@@ -1,0 +1,22 @@
+# Example decay chain for testing purposes:
+# [B_c+ -> (B_s0 -> K+ K-) pi+]cc
+
+Alias      B_c+sig        B_c+
+Alias      B_c-sig        B_c-
+ChargeConj B_c+sig        B_c-sig
+
+Alias      MyB_s0         B_s0
+Alias      Myanti-B_s0    anti-B_s0
+ChargeConj MyB_s0         Myanti-B_s0
+
+Decay B_c+sig
+  1.000     MyB_s0     pi+     PHOTOS PHSP;
+Enddecay
+CDecay B_c-sig
+
+Decay MyB_s0
+    1.000     K+     K-     SSD_CP 20.e12 0.1 1.0 0.04 9.6 -0.8 8.4 -0.6;
+Enddecay
+CDecay Myanti-B_s0
+
+End

@@ -1,0 +1,42 @@
+# Example decay chain for testing purposes:
+# Descriptor: [B0 -> (D- -> pi- pi+ pi- pi0) (tau+ -> mu+ nu_mu anti-nu_tau) nu_tau]cc
+
+Alias      B0sig             B0
+Alias      anti-B0sig        anti-B0
+ChargeConj B0sig             anti-B0sig
+
+Alias 		  MyD+ 		D+
+Alias  	  	MyD-		D-
+ChargeConj	MyD+		MyD-
+
+Alias       Mya_1-     a_1-
+Alias       Mya_1+     a_1+
+ChargeConj  Mya_1+     Mya_1-
+
+Alias      MyTau-   tau-
+Alias      MyTau+   tau+
+ChargeConj MyTau-   MyTau+
+
+Decay B0sig
+  1.00       MyD-       MyTau+       nu_tau          ISGW2;
+Enddecay
+CDecay anti-B0sig
+
+Decay MyD-
+  0.15     pi-      pi+     pi-     pi0     PHSP;
+  0.60     Mya_1-   pi0                     SVS;
+  0.25     rho-     rho0                    SVV_HELAMP  1.0 0.0 1.0 0.0 1.0 0.0;
+Enddecay
+CDecay MyD+
+
+Decay MyTau-
+  1.00     mu-   nu_tau   anti-nu_mu      PHOTOS   TAULNUNU;
+Enddecay
+CDecay MyTau+
+
+Decay Mya_1+
+  1.000     rho0     pi+                   VVS_PWAVE  1.0 0.0 0.0 0.0 0.0 0.0;
+Enddecay
+CDecay Mya_1-
+
+End

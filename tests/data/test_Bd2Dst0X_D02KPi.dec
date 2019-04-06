@@ -1,0 +1,127 @@
+# Example decay chain for testing purposes:
+# B0 -> D*0 X, i.e. inclusive production of D*0 mesons
+# (sum of exclusive modes), with D0 forced to the K- pi+ final state.
+
+Alias       B0sig             B0
+Alias       anti-B0sig        anti-B0
+ChargeConj  B0sig             anti-B0sig
+
+Alias       myD*0      D*0
+Alias       myanti-D*0 anti-D*0
+ChargeConj  myD*0   myanti-D*0
+
+Alias       myD0      D0
+Alias       myanti-D0 anti-D0
+ChargeConj  myD0   myanti-D0
+
+Alias       myD_1+   D_1+
+Alias       myD_1-   D_1-
+ChargeConj  myD_1+   myD_1-
+
+Alias      myD'_1+   D'_1+
+Alias      myD'_1-   D'_1-
+ChargeConj  myD'_1-  myD'_1+
+
+Alias       myD_2*+  D_2*+
+Alias       myD_2*-  D_2*-
+ChargeConj  myD_2*+  myD_2*-
+
+Decay anti-B0sig
+  0.00346684  myD_1+    e-         anti-nu_e      PHOTOS       ISGW2;
+  0.00553361  myD'_1+   e-         anti-nu_e      PHOTOS       ISGW2;
+  0.0004807   myD_2*+   e-         anti-nu_e      PHOTOS       ISGW2;
+  0.0007      myD*0     pi+   e-   anti-nu_e      PHOTOS       GOITY_ROBERTS;
+
+  0.00346684  myD_1+         mu-   anti-nu_mu      PHOTOS       ISGW2;
+  0.00553361  myD'_1+        mu-   anti-nu_mu      PHOTOS       ISGW2;
+  0.0004807   myD_2*+        mu-   anti-nu_mu      PHOTOS       ISGW2;
+  0.0007      myD*0    pi+   mu-   anti-nu_mu      PHOTOS       GOITY_ROBERTS;
+
+  0.00086671  myD_1+    tau-   anti-nu_tau             ISGW2;
+  0.0013334   myD'_1+   tau-   anti-nu_tau             ISGW2;
+  0.000418    myD_2*+   tau-   anti-nu_tau             ISGW2;
+
+  0.0004     myD'_1+   D_s-            SVS;
+  0.0008     myD'_1+   D_s*-           SVV_HELAMP 0.48 0.0 0.734 0.0 0.48 0.0;
+  0.0008     myD_1+    D_s-            SVS;
+  0.0016     myD_1+    D_s*-           SVV_HELAMP 0.48 0.0 0.734 0.0 0.48 0.0;
+  0.0008778  myD_2*+   D_s-            STS;
+  0.000836   myD_2*+   D_s*-           PHSP;
+
+  0.0049   D+    myanti-D*0    K-             PHSP;
+  0.0100   D*+   myanti-D*0    K-             PHSP;
+
+  0.0005   myD*0    anti-D0       anti-K0              PHSP;
+  0.0015   D0       myanti-D*0    anti-K0              PHSP;
+  0.0015   myD*0    anti-D*0      anti-K0              PHSP;
+  0.0015   D*0      myanti-D*0    anti-K0              PHSP;
+
+  0.0025   D+     myanti-D*0    K*-                    PHSP;
+  0.0050   D*+    myanti-D*0    K*-                    PHSP;
+
+  0.0005   anti-D0       myD*0    anti-K*0             PHSP;
+  0.0005   myanti-D*0    D0       anti-K*0             PHSP;
+  0.0010   myanti-D*0    D*0      anti-K*0             PHSP;
+  0.0010   anti-D*0      myD*0    anti-K*0             PHSP;
+
+  0.0003     myD*0     pi+     pi-            PHSP;
+  0.0005     myD*0     pi0     pi0            PHSP;
+
+  0.0010     myD*0     pi+     pi-     pi0        PHSP;
+  0.0001     myD*0     pi0     pi0     pi0        PHSP;
+
+  0.0004        myD_1+      pi- 			SVS;
+  0.00006667    myD'_1+     pi- 			SVS;
+  0.0001881     myD_2*+     pi- 			STS;
+  0.00026668    myD_1+      rho-			PHSP;
+  0.00086671    myD'_1+     rho-			PHSP;
+  0.0004598     myD_2*+     rho-			PHSP;
+
+  0.00004     myD*0          K0             SVS;
+  0.00004     myD*0          anti-K*0       SVV_HELAMP 1. 0. 1. 0. 1. 0.;
+  0.00001     myanti-D*0     anti-K*0       SVV_HELAMP 1. 0. 1. 0. 1. 0.;
+
+  0.00027     myD*0     pi0          SVS;
+  0.00029     myD*0     rho0         SVV_HELAMP 0.228 0.0 0.932 0.0 0.283 0.0;
+  0.00026     myD*0     eta          SVS;
+  0.00017     myD*0     eta'         SVS;
+  0.00042     myD*0     omega        SVV_HELAMP 0.228 0.0  0.932 0.0 0.283 0.0;
+Enddecay
+CDecay B0sig
+
+Decay myD*0
+  0.6190     myD0     pi0       VSS;
+  0.3810     myD0     gamma     VSP_PWAVE;
+Enddecay
+CDecay myanti-D*0
+
+Decay myD0
+  1.0     K-     pi+     PHSP;
+Enddecay
+CDecay myanti-D0
+
+Decay myD_1+
+  1.0     myD*0     pi+     VVS_PWAVE 0.0 0.0 0.0 0.0 1.0 0.0;
+Enddecay
+
+Decay myD_1-
+  1.0     myanti-D*0     pi-     VVS_PWAVE 0.0 0.0 0.0 0.0 1.0 0.0;
+Enddecay
+
+Decay myD'_1+
+  1.0     myD*0     pi+     VVS_PWAVE 1.0 0.0 0.0 0.0 0.0 0.0;
+Enddecay
+
+Decay myD'_1-
+  1.0     myanti-D*0     pi-     VVS_PWAVE 1.0 0.0 0.0 0.0 0.0 0.0;
+Enddecay
+
+Decay myD_2*+
+  1.0     myD*0     pi+     TVS_PWAVE 0.0 0.0 1.0 0.0 0.0 0.0;
+Enddecay
+
+Decay myD_2*-
+  1.0     myanti-D*0     pi-     TVS_PWAVE 0.0 0.0 1.0 0.0 0.0 0.0;
+Enddecay
+
+End
