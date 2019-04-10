@@ -3,7 +3,7 @@ Usage
 =====
 
 Particles are a key component when dealing with decays.
-Refer to the `particle package`_ for how to deal with particles and PDG identification codes.
+Refer to the `Particle package`_ for how to deal with particles and PDG identification codes.
 
 
 DecFiles
