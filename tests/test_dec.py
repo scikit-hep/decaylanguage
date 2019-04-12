@@ -19,14 +19,24 @@ except NameError:
 DIR = Path(__file__).parent.resolve()
 
 
+def test_default_constructor():
+    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    assert p is not None
+
+
+def test_from_file():
+    p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
+    assert p is not None
+
+
 def test_unknown_decfile():
     with pytest.raises(FileNotFoundError):
-        p = DecFileParser('non-existent.dec')
+        p = DecFileParser.from_file('non-existent.dec')
 
 
 def test_non_parsed_decfile():
     with pytest.raises(DecFileNotParsed):
-        p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+        p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
         p.list_decay_mother_names()
 
 
@@ -38,20 +48,19 @@ def test_non_existent_decay():
 
 
 def test_default_grammar_loading():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
-
+    p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
     assert p.grammar is not None
 
 
 def test_explicit_grammar_loading():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
     p.load_grammar(DIR / '../decaylanguage/data/decfile.lark')
 
     assert p.grammar_loaded is True
 
 
 def test_string_representation():
-        p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+        p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
 
         assert "n_decays" not in p.__str__()
 
@@ -60,7 +69,7 @@ def test_string_representation():
 
 
 def test_simple_dec():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
     p.parse()
 
     assert p.list_decay_mother_names() == ['D*+', 'D*-', 'D0', 'D+', 'pi0']
@@ -69,7 +78,7 @@ def test_simple_dec():
 
 
 def test_decay_mode_details():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
     p.parse()
 
     tree_Dp = p._find_decay_modes('D+')[0]
@@ -78,7 +87,7 @@ def test_decay_mode_details():
 
 
 def test_build_decay_chain():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
     p.parse()
 
     output = {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'm': 'PHSP', 'mp': ''}]}
