@@ -31,8 +31,7 @@ class DecFileParser(object):
 
     Example
     -------
-    >>> parser = DecFileParser('my-decay-file.dec')
-    >>> parser.parse()
+    >>> parsed_file = DecFileParser.from_file('my-decay-file.dec')
     """
 
     __slots__ = ("_grammar",
@@ -41,49 +40,66 @@ class DecFileParser(object):
                  "_parsed_dec_file",
                  "_parsed_decays")
 
-    def __init__(self, decay_file):
+    def __init__(self, filename):
         """
-        Parser constructor.
+        Default constructor.
 
         Parameters
         ----------
-        decay_file: str
-            Input .dec decay file.
+        filename: str
+            Input .dec decay file name.
         """
-        # Conversion to handle pathlib on Python < 3.6:
-        decay_file = str(decay_file)
-
-        # Check input file
-        if not os.path.exists(decay_file):
-            raise FileNotFoundError("'{0}'!".format(decay_file))
-
         self._grammar = None       # Loaded Lark grammar definition file
         self._grammar_info = None  # Name of Lark grammar definition file
 
-        self._decay_file = decay_file  # Name of the input decay file
+        self._decay_file = filename  # Name of the input decay file
         self._parsed_dec_file = None   # Parsed decay file
 
         self._parsed_decays = None  # Particle decays found in the decay file
 
+    @classmethod
+    def from_file(cls, filename):
+        """
+        Parse a .dec decay file.
+
+        Parameters
+        ----------
+        decay_file: str
+            Input .dec decay file name.
+        """
+        # Conversion to handle pathlib on Python < 3.6:
+        filename = str(filename)
+
+        # Check input file
+        if not os.path.exists(filename):
+            raise FileNotFoundError("'{0}'!".format(filename))
+
+        return cls(filename)
+
     def parse(self):
         """
-        Parse the given .dec decay file according to the default Lark options.
+        Parse the given .dec decay file according to default Lark options
+            parser = 'lalr'
+            lexer = 'standard'
 
         See method 'load_grammar' for how to explicitly set the Lark parser
         and the parsing options.
         """
-        # Has a fine been parsed already?
+        # Has a file been parsed already?
         if self._parsed_decays is not None:
             warnings.warn("Input file being re-parsed ...")
 
-        decay_file = open(self._decay_file).read()
-        parser = Lark(self.grammar, parser='lalr', lexer='standard')
+        # Retrieve all info on the default Lark grammar and its default options,
+        # effectively loading it
+        opts = self.grammar_info()
 
+        parser = Lark(self.grammar(), parser=opts['parser'], lexer=opts['lexer'])
+
+        decay_file = open(self._decay_file).read()
         self._parsed_dec_file = parser.parse(decay_file)
 
         self._find_parsed_decays()
 
-    @property
     def grammar(self):
         """
         This accesses the internal Lark grammar definition file,
@@ -98,6 +114,15 @@ class DecFileParser(object):
             self.load_grammar()
 
         return self._grammar
+
+    def grammar_info(self):
+        """
+
+        """
+        if not self.grammar_loaded:
+            self.load_grammar()
+
+        return self._grammar_info
 
     def load_grammar(self, filename=None, parser='lalr', lexer='standard', **options):
         """
