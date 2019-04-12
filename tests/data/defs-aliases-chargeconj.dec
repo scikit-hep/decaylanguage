@@ -1,0 +1,262 @@
+# File for testing purposes.
+# Contains definitions and aliases extracted from a
+# typical DECAY.DEC file from LHCb.
+
+Define qoverp_incohMix_B_s0 1.0
+Define dm_incohMix_B_s0 17.8e12
+Define qoverp_incohMix_B0 1.0
+Define dm_incohMix_B0 0.507e12
+# Old definition of dm still in some decay models
+Define dm 0.507e12
+# Activate incoherent Mixing
+# define the values of the CKM angles  (alpha=70, beta=40)
+Define alpha 1.365
+Define beta  0.39
+Define gamma 1.387
+Define twoBetaPlusGamma  2.167
+Define betaPlusHalfGamma 1.0835
+Define minusGamma -1.387
+Define minusTwoBeta -0.78
+
+# New definitions for psiKstar modes (Lange, July 26, 2000)
+Define PKHplus  0.159
+Define PKHzero  0.775
+Define PKHminus 0.612
+Define PKphHplus  1.563
+Define PKphHzero  0.0
+Define PKphHminus 2.712
+
+Define Aplus  0.490
+Define Azero  1.10
+Define Aminus 0.4
+
+Define phAplus  2.5
+Define phAzero  0.0
+Define phAminus -0.17
+
+# These particle aliases are used in for CP violating decays
+# in which the decay distributions depends on how the K* decayed.
+#
+Alias K*L       K*0
+Alias K*S       K*0
+Alias K*BL       anti-K*0
+Alias K*BS       anti-K*0
+Alias K*0T      K*0
+Alias anti-K*0T anti-K*0
+Alias K*BR  anti-K*0
+Alias K*0R  K*0
+Alias anti-K_0*0N anti-K_0*0
+Alias K_0*0N K_0*0
+
+ChargeConj K*L    K*BL
+ChargeConj K*S    K*BS
+ChargeConj K*0T    anti-K*0T
+ChargeConj K_0*0N  anti-K_0*0N
+ChargeConj K*0R    K*BR
+#
+#  PR LHCb: Alias for signal productions in LHCb
+#
+Alias      B0sig             B0
+Alias      anti-B0sig        anti-B0
+ChargeConj B0sig             anti-B0sig
+Alias      B+sig             B+
+Alias      B-sig             B-
+ChargeConj B+sig             B-sig
+Alias      B_s0sig           B_s0
+Alias      anti-B_s0sig      anti-B_s0
+ChargeConj B_s0sig           anti-B_s0sig
+Alias      B_c+sig           B_c+
+Alias      B_c-sig           B_c-
+ChargeConj B_c+sig           B_c-sig
+Alias      eta_bsig          eta_b
+ChargeConj eta_bsig          eta_bsig
+Alias      h_bsig            h_b
+ChargeConj h_bsig            h_bsig
+Alias      Sigma_b-sig       Sigma_b-
+Alias      anti-Sigma_b+sig  anti-Sigma_b+
+ChargeConj Sigma_b-sig       anti-Sigma_b+sig
+Alias      Lambda_b0sig      Lambda_b0
+Alias      anti-Lambda_b0sig anti-Lambda_b0
+ChargeConj Lambda_b0sig      anti-Lambda_b0sig
+Alias      Omega_b-sig       Omega_b-
+Alias      anti-Omega_b+sig  anti-Omega_b+
+ChargeConj Omega_b-sig       anti-Omega_b+sig
+Alias      Xi_b-sig          Xi_b-
+Alias      anti-Xi_b+sig     anti-Xi_b+
+ChargeConj Xi_b-sig          anti-Xi_b+sig
+Alias      Xi_b0sig          Xi_b0
+Alias      anti-Xi_b0sig     anti-Xi_b0
+ChargeConj Xi_b0sig          anti-Xi_b0sig
+Alias      eta_csig          eta_c
+ChargeConj eta_csig          eta_csig
+Alias      J/psisig          J/psi
+ChargeConj J/psisig          J/psisig
+Alias      chi_c0sig         chi_c0
+ChargeConj chi_c0sig         chi_c0sig
+Alias      chi_c1sig         chi_c1
+ChargeConj chi_c1sig         chi_c1sig
+Alias      chi_c2sig         chi_c2
+ChargeConj chi_c2sig         chi_c2sig
+Alias      psi(2S)sig        psi(2S)
+ChargeConj psi(2S)sig        psi(2S)sig
+Alias      psi(3770)sig      psi(3770)
+ChargeConj psi(3770)sig      psi(3770)sig
+Alias      D*+sig            D*+
+Alias      D*-sig            D*-
+ChargeConj D*+sig            D*-sig
+Alias      D*0sig            D*0
+Alias      anti-D*0sig       anti-D*0
+ChargeConj D*0sig            anti-D*0sig
+Alias      D0sig             D0
+Alias      anti-D0sig        anti-D0
+ChargeConj D0sig             anti-D0sig
+Alias      D+sig             D+
+Alias      D-sig             D-
+ChargeConj D+sig             D-sig
+Alias      D_s+sig           D_s+
+Alias      D_s-sig           D_s-
+ChargeConj D_s+sig           D_s-sig
+Alias      Lambda_c+sig      Lambda_c+
+Alias      anti-Lambda_c-sig anti-Lambda_c-
+ChargeConj Lambda_c+sig      anti-Lambda_c-sig
+Alias      tau+sig           tau+
+Alias      tau-sig           tau-
+ChargeConj tau+sig           tau-sig
+Alias      Upsilonsig        Upsilon
+ChargeConj Upsilonsig        Upsilonsig
+Alias      Upsilon(2S)sig    Upsilon(2S)
+ChargeConj Upsilon(2S)sig    Upsilon(2S)sig
+Alias      Upsilon(3S)sig    Upsilon(3S)
+ChargeConj Upsilon(3S)sig    Upsilon(3S)sig
+Alias      Upsilon(4S)sig    Upsilon(4S)
+ChargeConj Upsilon(4S)sig    Upsilon(4S)sig
+Alias      Upsilon(5S)sig    Upsilon(5S)
+ChargeConj Upsilon(5S)sig    Upsilon(5S)sig
+Alias      X_1(3872)sig      X_1(3872)
+ChargeConj X_1(3872)sig      X_1(3872)sig
+Alias      h_csig            h_c
+ChargeConj h_csig            h_csig
+Alias      Sigma+sig         Sigma+
+Alias      anti-Sigma-sig    anti-Sigma-
+ChargeConj Sigma+sig         anti-Sigma-sig
+Alias      K+sig             K+
+Alias      K-sig             K-
+ChargeConj K+sig             K-sig
+Alias      Lambda0sig        Lambda0
+Alias      anti-Lambda0sig   anti-Lambda0
+ChargeConj Lambda0sig        anti-Lambda0sig
+Alias      B_10sig           B_10
+Alias      anti-B_10sig      anti-B_10
+ChargeConj B_10sig           anti-B_10sig
+Alias      B_2*0sig          B_2*0
+Alias      anti-B_2*0sig     anti-B_2*0
+ChargeConj B_2*0sig          anti-B_2*0sig
+Alias      B_s10sig          B_s10
+Alias      anti-B_s10sig     anti-B_s10
+ChargeConj B_s10sig          anti-B_s10sig
+Alias      B_s2*0sig         B_s2*0
+Alias      anti-B_s2*0sig    anti-B_s2*0
+ChargeConj B_s2*0sig         anti-B_s2*0sig
+Alias      B_1+sig           B_1+
+Alias      B_1-sig           B_1-
+ChargeConj B_1+sig           B_1-sig
+Alias      B_2*+sig          B_2*+
+Alias      B_2*-sig          B_2*-
+ChargeConj B_2*+sig          B_2*-sig
+Alias      K_S0sig           K_S0
+ChargeConj K_S0sig           K_S0sig
+Alias      K_L0sig           K_L0
+ChargeConj K_L0sig           K_L0sig
+Alias      phisig            phi
+ChargeConj phisig            phisig
+Alias	   Xi_cc+sig        Xi_cc+
+Alias	   anti-Xi_cc-sig   anti-Xi_cc-
+ChargeConj Xi_cc+sig		anti-Xi_cc-sig
+Alias      D_s0*+sig           D_s0*+
+Alias      D_s0*-sig           D_s0*-
+ChargeConj D_s0*+sig           D_s0*-sig
+Alias      D'_s1+sig           D'_s1+
+Alias      D'_s1-sig           D'_s1-
+ChargeConj D'_s1+sig           D'_s1-sig
+Alias      D_s1+sig           D_s1+
+Alias      D_s1-sig           D_s1-
+ChargeConj D_s1+sig           D_s1-sig
+Alias      chi_b0sig         chi_b0
+ChargeConj chi_b0sig         chi_b0sig
+Alias      chi_b1sig         chi_b1
+ChargeConj chi_b1sig         chi_b1sig
+Alias      chi_b2sig         chi_b2
+ChargeConj chi_b2sig         chi_b2sig
+Alias      Sigma_c0sig          Sigma_c0
+Alias      anti-Sigma_c0sig     anti-Sigma_c0
+ChargeConj Sigma_c0sig          anti-Sigma_c0sig
+Alias      Sigma_c+sig          Sigma_c+
+Alias      anti-Sigma_c-sig     anti-Sigma_c-
+ChargeConj Sigma_c+sig          anti-Sigma_c-sig
+Alias      Sigma_c++sig         Sigma_c++
+Alias      anti-Sigma_c--sig    anti-Sigma_c--
+ChargeConj Sigma_c++sig         anti-Sigma_c--sig
+Alias      Sigma_c*0sig         Sigma_c*0
+Alias      anti-Sigma_c*0sig    anti-Sigma_c*0
+ChargeConj Sigma_c*0sig         anti-Sigma_c*0sig
+Alias      Sigma_c*+sig         Sigma_c*+
+Alias      anti-Sigma_c*-sig    anti-Sigma_c*-
+ChargeConj Sigma_c*+sig         anti-Sigma_c*-sig
+Alias      Sigma_c*++sig        Sigma_c*++
+Alias      anti-Sigma_c*--sig   anti-Sigma_c*--
+ChargeConj Sigma_c*++sig        anti-Sigma_c*--sig
+Alias      Xi_c0sig             Xi_c0
+Alias      anti-Xi_c0sig        anti-Xi_c0
+ChargeConj Xi_c0sig             anti-Xi_c0sig
+Alias      Xi_c+sig             Xi_c+
+Alias      anti-Xi_c-sig        anti-Xi_c-
+ChargeConj Xi_c+sig             anti-Xi_c-sig
+Alias      D_2*0sig             D_2*0
+Alias      anti-D_2*0sig        anti-D_2*0
+ChargeConj D_2*0sig             anti-D_2*0sig
+Alias      D_2*-sig             D_2*-
+Alias      D_2*+sig             D_2*+
+ChargeConj D_2*+sig             D_2*-sig
+Alias      D_s2*-sig            D_s2*-
+Alias      D_s2*+sig            D_s2*+
+ChargeConj D_s2*+sig            D_s2*-sig
+Alias      D_s*-sig             D_s*-
+Alias      D_s*+sig             D_s*+
+ChargeConj D_s*+sig             D_s*-sig
+Alias      Omega-sig            Omega-
+Alias      anti-Omega+sig       anti-Omega+
+ChargeConj Omega-sig            anti-Omega+sig
+Alias      Sigma_b0sig          Sigma_b0
+Alias      anti-Sigma_b0sig     anti-Sigma_b0
+ChargeConj Sigma_b0sig          anti-Sigma_b0sig
+Alias      Sigma_b+sig          Sigma_b+
+Alias      anti-Sigma_b-sig     anti-Sigma_b-
+ChargeConj Sigma_b+sig          anti-Sigma_b-sig
+Alias      Xi_bc0sig            Xi_bc0
+Alias      anti-Xi_bc0sig       anti-Xi_bc0
+ChargeConj Xi_bc0sig            anti-Xi_bc0sig
+Alias      Xi_bc+sig            Xi_bc+
+Alias      anti-Xi_bc-sig       anti-Xi_bc-
+ChargeConj Xi_bc+sig            anti-Xi_bc-sig
+Alias	     Xi_cc++sig           Xi_cc++
+Alias	     anti-Xi_cc--sig      anti-Xi_cc--
+ChargeConj Xi_cc++sig           anti-Xi_cc--sig
+Alias      Xi-sig               Xi-
+Alias      anti-Xi+sig          anti-Xi+
+ChargeConj Xi-sig               anti-Xi+sig
+Alias      Xi0sig               Xi0
+Alias      anti-Xi0sig          anti-Xi0
+ChargeConj Xi0sig               anti-Xi0sig
+Alias      Omega_cc+sig         Omega_cc+
+Alias      anti-Omega_cc-sig    anti-Omega_cc-
+ChargeConj Omega_cc+sig         anti-Omega_cc-sig
+
+#(Very important that there are no blank spaces in the parameter string!)
+#Turn off B0-B0B mixing in Pythia
+PythiaBothParam ParticleDecays:mixB=off
+PythiaBothParam Init:showChangedSettings=off
+PythiaBothParam Init:showChangedParticleData=off
+PythiaBothParam Next:numberShowEvent=0
+
+# Turn on PHOTOS for all decays
+yesPhotos

@@ -68,6 +68,13 @@ def test_string_representation():
         assert "n_decays=5" in p.__str__()
 
 
+def test_parse_definitions():
+    p = DecFileParser.from_file(DIR / 'data/defs-aliases-chargeconj.dec')
+    p.parse()
+
+    assert len(p.dict_definitions()) == 24
+
+
 def test_simple_dec():
     p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
     p.parse()

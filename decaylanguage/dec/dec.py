@@ -52,8 +52,9 @@ class DecFileParser(object):
         self._grammar = None       # Loaded Lark grammar definition file
         self._grammar_info = None  # Name of Lark grammar definition file
 
-        self._decay_file = filename  # Name of the input decay file
-        self._parsed_dec_file = None   # Parsed decay file
+        # Conversion to handle pathlib on Python < 3.6:
+        self._decay_file = str(filename)  # Name of the input decay file
+        self._parsed_dec_file = None      # Parsed decay file
 
         self._parsed_decays = None  # Particle decays found in the decay file
 
@@ -158,6 +159,15 @@ class DecFileParser(object):
     def grammar_loaded(self):
         """Check to see if the Lark grammar definition file is loaded."""
         return self._grammar is not None
+
+    def dict_definitions(self):
+        """
+        Return a dictionary of all definitions in the input parsed file,
+        of the form "Define <NAME> <VALUE>",
+        as {'NAME1': VALUE1, 'NAME2': VALUE2, ...}.
+        """
+        return get_definitions(self._parsed_dec_file)
+
 
     def _find_parsed_decays(self):
         """Find all Tree instances of Tree.data='decay'."""
@@ -382,7 +392,7 @@ def get_model_parameters(decay_mode):
 def get_definitions(parsed_file):
     """
     Return a dictionary of all definitions in the input parsed file, of the form
-    "Define <NAME> <VALUE>" as {'NAME1': VALUE1, 'NAME2': VALUE2, ...}.
+    "Define <NAME> <VALUE>", as {'NAME1': VALUE1, 'NAME2': VALUE2, ...}.
 
     Parameters
     ----------
@@ -393,8 +403,8 @@ def get_definitions(parsed_file):
         raise RuntimeError("Input not an instance of a Tree!")
 
     try:
-        return {tree.children[0].children[0].value:float(tree.children[1].children[0].value)
-            for tree in parsed_file.find_data('define')}
+        return sorted({tree.children[0].children[0].value:float(tree.children[1].children[0].value)
+            for tree in parsed_file.find_data('define')})
     except:
         warnings.error("Input parsed file does not seem to have the expected structure.")
 
