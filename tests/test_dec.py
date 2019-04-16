@@ -68,11 +68,35 @@ def test_string_representation():
         assert "n_decays=5" in p.__str__()
 
 
-def test_parse_definitions():
+def test_definitions_parsing():
     p = DecFileParser.from_file(DIR / 'data/defs-aliases-chargeconj.dec')
     p.parse()
 
     assert len(p.dict_definitions()) == 24
+
+
+def test_aliases_parsing():
+    p = DecFileParser.from_file(DIR / 'data/defs-aliases-chargeconj.dec')
+    p.parse()
+
+    assert len(p.dict_aliases()) == 132
+
+
+def test_charge_conjugates_parsing():
+    p = DecFileParser.from_file(DIR / 'data/defs-aliases-chargeconj.dec')
+    p.parse()
+
+    assert len(p.dict_charge_conjugates()) == 77
+
+
+def test_pythia_definitions_parsing():
+    p = DecFileParser.from_file(DIR / 'data/defs-aliases-chargeconj.dec')
+    p.parse()
+
+    assert p.dict_pythia_definitions() == {'ParticleDecays:mixB': 'off',
+                                           'Init:showChangedSettings': 'off',
+                                           'Init:showChangedParticleData': 'off',
+                                           'Next:numberShowEvent': 0.0}
 
 
 def test_simple_dec():

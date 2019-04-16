@@ -168,6 +168,33 @@ class DecFileParser(object):
         """
         return get_definitions(self._parsed_dec_file)
 
+    def dict_aliases(self):
+        """
+        Return a dictionary of all alias definitions in the input parsed file,
+        of the form "Alias <NAME> <ALIAS>",
+        as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
+        """
+        return get_aliases(self._parsed_dec_file)
+
+    def dict_charge_conjugates(self):
+        """
+        Return a dictionary of all charge conjugate definitions
+        in the input parsed file, of the form
+        "ChargeConj <PARTICLE> <CC_PARTICLE>", as
+        {'PARTICLE1': CC_PARTICLE1, 'PARTICLE2': CC_PARTICLE2, ...}.
+        """
+        return get_charge_conjugate_defs(self._parsed_dec_file)
+
+    def dict_pythia_definitions(self):
+        """
+        Return a dictionary of all Pythia definitions in the input parsed file,
+        of the form
+        "PythiaBothParam <NAME>=<LABEL>"
+        or
+        "PythiaBothParam <NAME>=<NUMBER>",
+        as {'NAME1': 'LABEL1', 'NAME2': VALUE2, ...}.
+        """
+        return get_pythia_definitions(self._parsed_dec_file)
 
     def _find_parsed_decays(self):
         """Find all Tree instances of Tree.data='decay'."""
@@ -406,13 +433,13 @@ def get_definitions(parsed_file):
         return sorted({tree.children[0].children[0].value:float(tree.children[1].children[0].value)
             for tree in parsed_file.find_data('define')})
     except:
-        warnings.error("Input parsed file does not seem to have the expected structure.")
+        RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
 def get_aliases(parsed_file):
     """
     Return a dictionary of all aliases in the input parsed file, of the form
-    "Alias <NAME> <ALIAS>" as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
+    "Alias <NAME> <ALIAS>", as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
 
     Parameters
     ----------
@@ -426,14 +453,14 @@ def get_aliases(parsed_file):
         return {tree.children[0].children[0].value:tree.children[1].children[0].value
             for tree in parsed_file.find_data('alias')}
     except:
-        warnings.error("Input parsed file does not seem to have the expected structure.")
+        RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
 def get_charge_conjugate_defs(parsed_file):
     """
-    Return a dictionary of all aliases in the input parsed file, of the form
-    "ChargeConj <PARTICLE> <CC_PARTICLE>" as
-    {'PARTICLE1': CC_PARTICLE1, 'PARTICLE2': CC_PARTICLE2, ...}.
+    Return a dictionary of all charge conjugate definitions
+    in the input parsed file, of the form "ChargeConj <PARTICLE> <CC_PARTICLE>",
+    as {'PARTICLE1': CC_PARTICLE1, 'PARTICLE2': CC_PARTICLE2, ...}.
 
     Parameters
     ----------
@@ -447,7 +474,37 @@ def get_charge_conjugate_defs(parsed_file):
         return {tree.children[0].children[0].value:tree.children[1].children[0].value
             for tree in parsed_file.find_data('chargeconj')}
     except:
-        warnings.error("Input parsed file does not seem to have the expected structure.")
+        RuntimeError("Input parsed file does not seem to have the expected structure.")
+
+
+def get_pythia_definitions(parsed_file):
+    """
+    Return a dictionary of all Pythia definitions in the input parsed file,
+    of the form
+    "PythiaBothParam <NAME>=<LABEL>"
+    or
+    "PythiaBothParam <NAME>=<NUMBER>",
+    as {'NAME1': 'LABEL1', 'NAME2': VALUE2, ...}.
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+    """
+    if not isinstance(parsed_file, Tree) :
+        raise RuntimeError("Input not an instance of a Tree!")
+
+    def str_or_float(arg):
+        try:
+            return float(arg)
+        except:
+            return arg
+
+    try:
+        return {'{0}:{1}'.format(tree.children[0].value, tree.children[1].value):str_or_float(tree.children[2].value)
+            for tree in parsed_file.find_data('pythia_def')}
+    except:
+        RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
 class TreeToDec(Transformer):

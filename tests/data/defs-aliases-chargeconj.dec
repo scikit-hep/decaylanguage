@@ -54,7 +54,7 @@ ChargeConj K*0T    anti-K*0T
 ChargeConj K_0*0N  anti-K_0*0N
 ChargeConj K*0R    K*BR
 #
-#  PR LHCb: Alias for signal productions in LHCb
+#  Aliases for signal productions in LHCb
 #
 Alias      B0sig             B0
 Alias      anti-B0sig        anti-B0
@@ -260,3 +260,12 @@ PythiaBothParam Next:numberShowEvent=0
 
 # Turn on PHOTOS for all decays
 yesPhotos
+
+SetLineshapePW D_1+ D*+ pi0 2
+SetLineshapePW D_1+ D*0 pi+ 2
+SetLineshapePW D_1- D*- pi0 2
+SetLineshapePW D_1- anti-D*0 pi- 2
+SetLineshapePW D_10 D*0 pi0 2
+SetLineshapePW D_10 D*+ pi- 2
+SetLineshapePW anti-D_10 anti-D*0 pi0 2
+SetLineshapePW anti-D_10 D*- pi+ 2
