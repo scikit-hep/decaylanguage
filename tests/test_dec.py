@@ -99,6 +99,34 @@ def test_pythia_definitions_parsing():
                                            'Next:numberShowEvent': 0.0}
 
 
+def test_list_lineshape_definitions():
+    p = DecFileParser.from_file(DIR / 'data/defs-aliases-chargeconj.dec')
+    p.parse()
+
+    assert p.list_lineshape_definitions() == [(['D_1+', 'D*+', 'pi0'], 2),
+                                              (['D_1+', 'D*0', 'pi+'], 2),
+                                              (['D_1-', 'D*-', 'pi0'], 2),
+                                              (['D_1-', 'anti-D*0', 'pi-'], 2),
+                                              (['D_10', 'D*0', 'pi0'], 2),
+                                              (['D_10', 'D*+', 'pi-'], 2),
+                                              (['anti-D_10', 'anti-D*0', 'pi0'], 2),
+                                              (['anti-D_10', 'D*-', 'pi+'], 2)]
+
+
+def test_global_photos_flag():
+    p = DecFileParser.from_file(DIR / 'data/defs-aliases-chargeconj.dec')
+    p.parse()
+
+    assert p.global_photos_flag() == True
+
+
+def test_list_charge_conjugate_decays():
+    p = DecFileParser.from_file(DIR / 'data/test_Bd2DmTauNu_Dm23PiPi0_Tau2MuNu.dec')
+    p.parse()
+
+    assert p.list_charge_conjugate_decays() == ['MyD+', 'MyTau+', 'Mya_1-', 'anti-B0sig']
+
+
 def test_simple_dec():
     p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
     p.parse()

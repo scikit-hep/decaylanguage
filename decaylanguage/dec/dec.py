@@ -196,6 +196,46 @@ class DecFileParser(object):
         """
         return get_pythia_definitions(self._parsed_dec_file)
 
+    def list_lineshape_definitions(self):
+        """
+        Return a dictionary of all SetLineshapePW definitions in the input parsed file,
+        of the form
+        "SetLineshapePW <MOTHER> <DAUGHTER1> <DAUGHTER2> <VALUE>",
+        as
+        [(['MOTHER1', 'DAUGHTER1-1', 'DAUGHTER1-2'], VALUE1),
+        (['MOTHER2', 'DAUGHTER2-1', 'DAUGHTER2-2'], VALUE2),
+        ...]
+        """
+        return get_lineshape_definitions(self._parsed_dec_file)
+
+    def global_photos_flag(self):
+        """
+        Return a boolean-like PhotosEnum enum specifying whether or not PHOTOS
+        has been enabled.
+
+        Note: PHOTOS is turned on(off) for all decays with the global flag
+        yesPhotos(noPhotos).
+
+        Returns
+        -------
+        out: PhotosEnum
+            PhotosEnum.yes / PhotosEnum.no if PHOTOS enabled / disabled
+        """
+        return get_global_photos_flag(self._parsed_dec_file)
+
+    def list_charge_conjugate_decays(self):
+        """
+        Return a list of all CP conjugate decay definitions in the input parsed file,
+        of the form "CDecay <MOTHER>", as
+        ['MOTHER1', 'MOTHER2', ...]
+
+        Parameters
+        ----------
+        parsed_file: Lark Tree instance
+            Input parsed file.
+        """
+        return get_charge_conjugate_decays(self._parsed_dec_file)
+
     def _find_parsed_decays(self):
         """Find all Tree instances of Tree.data='decay'."""
         if self._parsed_dec_file is not None:
@@ -503,6 +543,89 @@ def get_pythia_definitions(parsed_file):
     try:
         return {'{0}:{1}'.format(tree.children[0].value, tree.children[1].value):str_or_float(tree.children[2].value)
             for tree in parsed_file.find_data('pythia_def')}
+    except:
+        RuntimeError("Input parsed file does not seem to have the expected structure.")
+
+
+def get_lineshape_definitions(parsed_file):
+    """
+    Return a dictionary of all SetLineshapePW definitions in the input parsed file,
+    of the form
+    "SetLineshapePW <MOTHER> <DAUGHTER1> <DAUGHTER2> <VALUE>",
+    as
+    [(['MOTHER1', 'DAUGHTER1-1', 'DAUGHTER1-2'], VALUE1),
+     (['MOTHER2', 'DAUGHTER2-1', 'DAUGHTER2-2'], VALUE2),
+     ...]
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+    """
+    if not isinstance(parsed_file, Tree) :
+        raise RuntimeError("Input not an instance of a Tree!")
+
+    try:
+        d = list()
+        for tree in parsed_file.find_data('setlspw'):
+            particles = [p.children[0].value for p in tree.children[:-1]]
+            val = int(tree.children[3].children[0].value)
+            d.append((particles, val))
+        return d
+    except:
+        RuntimeError("Input parsed file does not seem to have the expected structure.")
+
+
+def get_global_photos_flag(parsed_file):
+    """
+    Return a boolean-like PhotosEnum enum specifying whether or not PHOTOS
+    has been enabled.
+
+    Note: PHOTOS is turned on(off) for all decays with the global flag
+    yesPhotos(noPhotos).
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+
+    Returns
+    -------
+    out: PhotosEnum
+        PhotosEnum.yes / PhotosEnum.no if PHOTOS enabled / disabled
+    """
+    if not isinstance(parsed_file, Tree) :
+        raise RuntimeError("Input not an instance of a Tree!")
+
+    # Check if the flag is not set more than once, just in case ...
+    tree = tuple(parsed_file.find_data('global_photos'))
+    if len(tree) != 1:
+            warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
+    tree = tree[-1]
+
+    try:
+        val = tree.children[0].data
+        return PhotosEnum.yes if val=='yes' else PhotosEnum.no
+    except:
+        RuntimeError("Input parsed file does not seem to have the expected structure.")
+
+
+def get_charge_conjugate_decays(parsed_file):
+    """
+    Return a list of all CP conjugate decay definitions in the input parsed file,
+    of the form "CDecay <MOTHER>", as
+    ['MOTHER1', 'MOTHER2', ...]
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+    """
+    if not isinstance(parsed_file, Tree) :
+        raise RuntimeError("Input not an instance of a Tree!")
+
+    try:
+        return sorted([tree.children[0].children[0].value for tree in parsed_file.find_data('cdecay')])
     except:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
