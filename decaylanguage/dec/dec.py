@@ -36,7 +36,7 @@ class DecFileParser(object):
 
     __slots__ = ("_grammar",
                  "_grammar_info",
-                 "_decay_file",
+                 "_dec_file_name",
                  "_parsed_dec_file",
                  "_parsed_decays")
 
@@ -53,7 +53,7 @@ class DecFileParser(object):
         self._grammar_info = None  # Name of Lark grammar definition file
 
         # Conversion to handle pathlib on Python < 3.6:
-        self._decay_file = str(filename)  # Name of the input decay file
+        self._dec_file_name = str(filename)  # Name of the input decay file
         self._parsed_dec_file = None      # Parsed decay file
 
         self._parsed_decays = None  # Particle decays found in the decay file
@@ -65,7 +65,7 @@ class DecFileParser(object):
 
         Parameters
         ----------
-        decay_file: str
+        filename: str
             Input .dec decay file name.
         """
         # Conversion to handle pathlib on Python < 3.6:
@@ -79,12 +79,13 @@ class DecFileParser(object):
 
     def parse(self):
         """
-        Parse the given .dec decay file according to default Lark options
-            parser = 'lalr'
-            lexer = 'standard'
+        Parse the given .dec decay file according to default Lark parser
+        and specified options, i.e.,
+            parser = 'lalr',
+            lexer = 'standard'.
 
-        See method 'load_grammar' for how to explicitly set the Lark parser
-        and the parsing options.
+        See method 'load_grammar' for how to explicitly define the grammar
+        and set the Lark parsing options.
         """
         # Has a file been parsed already?
         if self._parsed_decays is not None:
@@ -94,16 +95,18 @@ class DecFileParser(object):
         # effectively loading it
         opts = self.grammar_info()
 
+        # Instantiate the Lark parser according to chosen settings
         parser = Lark(self.grammar(), parser=opts['parser'], lexer=opts['lexer'])
 
-        decay_file = open(self._decay_file).read()
-        self._parsed_dec_file = parser.parse(decay_file)
+        dec_file = open(self._dec_file_name).read()
+        self._parsed_dec_file = parser.parse(dec_file)
 
+        # At last, find all particle decays defined in the .dec decay file
         self._find_parsed_decays()
 
     def grammar(self):
         """
-        This accesses the internal Lark grammar definition file,
+        Access the internal Lark grammar definition file,
         loading it from the default location if needed.
 
         Returns
@@ -118,7 +121,13 @@ class DecFileParser(object):
 
     def grammar_info(self):
         """
+        Access the internal Lark grammar definition file name and
+        parser options, loading the grammar from the default location if needed.
 
+        Returns
+        -------
+        out: dict
+            The Lark grammar definition file name and parser options.
         """
         if not self.grammar_loaded:
             self.load_grammar()
@@ -127,7 +136,8 @@ class DecFileParser(object):
 
     def load_grammar(self, filename=None, parser='lalr', lexer='standard', **options):
         """
-        Load a Lark grammar definition file.
+        Load a Lark grammar definition file, either the default one,
+        or a user-specified one, optionally setting Lark parsing options.
 
         Parameters
         ----------
@@ -139,6 +149,7 @@ class DecFileParser(object):
             The Lark parser lexer mode to use.
         options: keyword arguments, optional
             Extra options to pass on to the parsing algorithm.
+
         See Lark's Lark class for a description of available options
         for parser, lexer and options.
         """
@@ -237,14 +248,23 @@ class DecFileParser(object):
         return get_charge_conjugate_decays(self._parsed_dec_file)
 
     def _find_parsed_decays(self):
-        """Find all Tree instances of Tree.data='decay'."""
+        """
+        Return a tuple of all decay definitions in the input parsed file,
+        of the form
+        "Decay <MOTHER>",
+        as a tuple of Lark Tree instances with Tree.data=='decay', i.e.,
+        (Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER1>]), ...),
+        Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER2>]), ...)).
+
+        Note
+        ----
+        Method not meant to be used directly!
+        """
         if self._parsed_dec_file is not None:
-            self._parsed_decays = tuple(self._parsed_dec_file.find_data('decay'))
+            self._parsed_decays = get_decays(self._parsed_dec_file)
 
         # Check for duplicates - should be considered a bug in the .dec file!
         self._check_parsed_decays()
-
-        return self._parsed_decays
 
     def _check_parsing(self):
         """Has the .parse() method been called already?"""
@@ -393,10 +413,10 @@ class DecFileParser(object):
     def __repr__(self):
         if self._parsed_dec_file is not None:
             return "<{self.__class__.__name__}: decfile='{decfile}', n_decays={n_decays}>".format(
-                self=self, decfile=self._decay_file, n_decays=self.number_of_decays)
+                self=self, decfile=self._dec_file_name, n_decays=self.number_of_decays)
         else:
             return "<{self.__class__.__name__}: decfile='{decfile}'>"\
-                    .format(self=self, decfile=self._decay_file)
+                    .format(self=self, decfile=self._dec_file_name)
 
     def __str__(self):
         return repr(self)
@@ -454,6 +474,29 @@ def get_model_parameters(decay_mode):
 
     lmo = list(decay_mode.find_data('model_options'))
     return [float(tree.children[0].value) for tree in lmo[0].children] if len(lmo) == 1 else ''
+
+
+def get_decays(parsed_file):
+    """
+    Return a tuple of all decay definitions in the input parsed file,
+    of the form
+    "Decay <MOTHER>",
+    as a tuple of Lark Tree instances with Tree.data=='decay', i.e.,
+    (Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER1>]), ...),
+     Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER2>]), ...)).
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+    """
+    if not isinstance(parsed_file, Tree) :
+        raise RuntimeError("Input not an instance of a Tree!")
+
+    try:
+        return tuple(parsed_file.find_data('decay'))
+    except:
+        RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
 def get_definitions(parsed_file):
@@ -599,8 +642,12 @@ def get_global_photos_flag(parsed_file):
 
     # Check if the flag is not set more than once, just in case ...
     tree = tuple(parsed_file.find_data('global_photos'))
-    if len(tree) != 1:
+    print('TREE:', tree)
+    if len(tree) == 0:
+        return PhotosEnum.no
+    elif len(tree) > 1:
             warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
+
     tree = tree[-1]
 
     try:

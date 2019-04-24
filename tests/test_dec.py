@@ -119,6 +119,11 @@ def test_global_photos_flag():
 
     assert p.global_photos_flag() == True
 
+def test_missing_global_photos_flag():
+    p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
+    p.parse()
+
+    assert p.global_photos_flag() == False
 
 def test_list_charge_conjugate_decays():
     p = DecFileParser.from_file(DIR / 'data/test_Bd2DmTauNu_Dm23PiPi0_Tau2MuNu.dec')
