@@ -229,7 +229,7 @@ class DecFileParser(object):
 
         Returns
         -------
-        out: PhotosEnum
+        out: PhotosEnum, default=PhotosEnum.no
             PhotosEnum.yes / PhotosEnum.no if PHOTOS enabled / disabled
         """
         return get_global_photos_flag(self._parsed_dec_file)
@@ -634,7 +634,7 @@ def get_global_photos_flag(parsed_file):
 
     Returns
     -------
-    out: PhotosEnum
+    out: PhotosEnum, default=PhotosEnum.no
         PhotosEnum.yes / PhotosEnum.no if PHOTOS enabled / disabled
     """
     if not isinstance(parsed_file, Tree) :
