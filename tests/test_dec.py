@@ -5,9 +5,15 @@ try:
 except ImportError:
     from pathlib import Path
 
+from lark import Tree, Token
+
 from decaylanguage import data
+
 from decaylanguage.dec.dec import DecFileParser
 from decaylanguage.dec.dec import DecFileNotParsed, DecayNotFound
+from decaylanguage.dec.dec import CPConjugateReplacement
+from decaylanguage.dec.dec import get_decay_mother_name
+from decaylanguage.dec.dec import get_final_state_particle_names
 
 # New in Python 3
 try:
@@ -150,9 +156,32 @@ def test_decay_mode_details():
     assert p._decay_mode_details(tree_Dp) == output
 
 
+def test_duplicate_decay_definitions():
+    p = DecFileParser(DIR / 'data/duplicate-decays.dec')
+    p.parse()
+
+    assert p.number_of_decays == 2
+
+    assert p.list_decay_mother_names() == ['Sigma(1775)0', 'anti-Sigma(1775)0']
+
+
 def test_build_decay_chain():
     p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
     p.parse()
 
     output = {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'm': 'PHSP', 'mp': ''}]}
     assert p.build_decay_chain('D+', stable_particles=['pi0']) == output
+
+
+def test_Lark_CPConjugateReplacement_Visitor():
+    t = Tree('decay', [Tree('particle', [Token('LABEL', 'D0')]),
+            Tree('decayline', [Tree('value', [Token('SIGNED_NUMBER', '1.0')]),
+            Tree('particle', [Token('LABEL', 'K-')]),
+            Tree('particle', [Token('LABEL', 'pi+')]),
+            Tree('model', [Token('MODEL_NAME', 'PHSP')])])])
+
+    CPConjugateReplacement().visit(t)
+
+    assert get_decay_mother_name(t) == 'D~0'
+
+    assert get_final_state_particle_names(t.children[1]) == ['K+', 'pi-']

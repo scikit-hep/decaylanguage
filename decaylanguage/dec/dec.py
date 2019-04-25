@@ -6,7 +6,7 @@ import warnings
 from lark import Lark
 from lark import Tree, Transformer, Visitor
 
-from particle import Particle
+from particle import Particle, ParticleNotFound
 
 from ..data import open_text
 from .. import data
@@ -100,6 +100,7 @@ class DecFileParser(object):
         include_cdecays: boolean, optional, default=True
             Choose whether or not to consider charge-conjugate decays,
             which are specified via "CDecay <MOTHER>".
+            Make sure you understand the consequences of ignoring CP conj. decays!
         """
         # Has a file been parsed already?
         if self._parsed_decays is not None:
@@ -120,8 +121,12 @@ class DecFileParser(object):
         dec_file = open(self._dec_file_name).read()
         self._parsed_dec_file = parser.parse(dec_file)
 
-        # At last, find all particle decays defined in the .dec decay file
+        # At last, find all particle decays defined in the .dec decay file ...
         self._find_parsed_decays()
+
+        # ... and create on the fly the CP conjugate decays, if requested
+        if self._include_cdecays:
+            self._add_charge_conjugate_decays()
 
     def grammar(self):
         """
@@ -270,17 +275,65 @@ class DecFileParser(object):
         (Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER1>]), ...),
         Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER2>]), ...)).
 
+        Duplicate definitions (a bug, of course) are removed, issuing a warning.
+
         Note
         ----
         1) Method not meant to be used directly!
         2) CP conjugates need to be dealt with differently,
-        see 'list_charge_conjugate_decays()'.
+        see 'self._add_charge_conjugate_decays()'.
         """
         if self._parsed_dec_file is not None:
             self._parsed_decays = get_decays(self._parsed_dec_file)
 
         # Check for duplicates - should be considered a bug in the .dec file!
         self._check_parsed_decays()
+
+    def _add_charge_conjugate_decays(self):
+        """
+        If requested (see the 'self._include_cdecays' class attribute),
+        create the Lark Tree instances describing the CP conjugate decays
+        specified in the input parsed file via the statements of the form
+        "CDecay <MOTHER>".
+        These are added to the internal list of decays stored in the class
+        in variable 'self._parsed_decays', performing a CP transformation
+        on each CP-related decay, which is cloned.
+
+        Note
+        ----
+        Method not meant to be used directly!
+        """
+        # Cross-check - make sure CP conjugate decays are not defined
+        # with both 'Decay' and 'CDecay' statements!
+        mother_names_decays = [get_decay_mother_name(tree)
+                               for tree in self._parsed_decays]
+        mother_names_cdecays = self.list_charge_conjugate_decays()
+        duplicates = [n for n in mother_names_cdecays if n in mother_names_decays]
+        if len(duplicates) > 0:
+            msg = """The following particles are defined in the input .dec file with both 'Decay' and 'CDecay': {0}!
+The 'CDecay' definition(s) will be ignored ...""".format(', '.join(d for d in duplicates))
+            warnings.warn(msg)
+
+        # If that's the case, proceed using the decay definitions specified
+        # via the 'Decay' statement, hence discard/remove the definition
+        # via the 'CDecay' statement.
+        for d in duplicates:
+            mother_names_cdecays.remove(d)
+
+        # At last, create the CP conjugate decays:
+        # First, make a (deep) copy of the list of Tree instances
+        # describing the parsed decays.
+        # By construction, there are no CP conjugate decays in there.
+        cdecays = [ tree.__deepcopy__(None) for tree in self._parsed_decays]
+
+        # Take care of CP conjugate decays defined via aliases,
+        # passing them as CP conjugates to be processed manually ...
+        dict_cdecay_names = self.dict_charge_conjugates()
+
+        # Finally, perform all particle -> CP(particle) replacements in one go!
+        [CPConjugateReplacement(charge_conj_defs=dict_cdecay_names).visit(t)
+        for t in cdecays]
+
 
     def _check_parsing(self):
         """Has the .parse() method been called already?"""
@@ -291,22 +344,39 @@ class DecFileParser(object):
         """
         Is the number of decays parsed consistent with the number of
         decay mother names? An inconsistency can arise if decays are redefined.
+
+        Duplicates are removed, starting from the second occurrence.
         """
+        # Issue a helpful warning if duplicates are found
         lmn = self.list_decay_mother_names()
+        duplicates = []
         if self.number_of_decays != len(set(lmn)):
-            warnings.warn("Input .dec file redefines decays for particle(s) {0}!".format(set([n for n in lmn if lmn.count(n)>1])))
+            duplicates = set([n for n in lmn if lmn.count(n)>1])
+            msg = """The following particle(s) is(are) redefined in the input .dec file with 'Decay': {0}!
+All but the first occurence will be discarded/removed ...""".format(', '.join(d for d in duplicates))
+            warnings.warn(msg)
+
+        # Create a list with all occurrences to remove
+        # (duplications means multiple instances to remove)
+        duplicates_to_remove = []
+        for item in duplicates:
+            c = lmn.count(item)
+            if c>1:
+                duplicates_to_remove.extend([item]*(c-1))
+
+        # Actually remove all but the first occurence of duplicate decays
+        for tree in reversed(self._parsed_decays):
+            val = tree.children[0].children[0].value
+            if val in duplicates_to_remove:
+                duplicates_to_remove.remove(val)
+                self._parsed_decays.remove(tree)
 
     @property
     def number_of_decays(self):
         """Return the number of particle decays defined in the parsed .dec file."""
         self._check_parsing()
 
-        n = len(self._parsed_decays)
-
-        if self._include_cdecays:
-            n += len(self.list_charge_conjugate_decays())
-
-        return n
+        return len(self._parsed_decays)
 
     def list_decay_mother_names(self):
         """
@@ -314,12 +384,7 @@ class DecFileParser(object):
         """
         self._check_parsing()
 
-        names = [get_decay_mother_name(d) for d in self._parsed_decays]
-
-        if self._include_cdecays:
-            names += self.list_charge_conjugate_decays()
-
-        return names
+        return [get_decay_mother_name(d) for d in self._parsed_decays]
 
     def _find_decay_modes(self, mother):
         """
@@ -476,6 +541,12 @@ class CPConjugateReplacement(Visitor):
     (search done via the Particle class in the particle package),
     its CP conjugate name is denoted as 'CPConj(UNKOWN)'.
 
+    Parameters
+    ----------
+    charge_conj_defs: dict, optional, default={}
+        Dictionary with the charge conjugate particle definitions
+        in the parsed file. Argument to be passed to the class constructor.
+
     Examples
     --------
     >>> from lark import Tree, Token
@@ -489,13 +560,19 @@ class CPConjugateReplacement(Visitor):
     [Tree(value, [Token(SIGNED_NUMBER, '1.0')]), Tree(particle, [Token(LABEL, 'K+')]),
     Tree(particle, [Token(LABEL, 'pi-')]), Tree(model, [Token(MODEL_NAME, 'PHSP')])])])
     """
+    def __init__(self, charge_conj_defs=dict()):
+        self.charge_conj_defs = charge_conj_defs
+
     # Method for the rule (here, a replacement) we wish to implement
     def particle(self, tree):
         assert tree.data == 'particle'
-        try:
-            tree.children[0].value = Particle.from_dec(tree.children[0].value).invert().name
-        except:
-            tree.children[0].value = 'CPConj({0})'.format(val)
+        if tree.children[0].value in self.charge_conj_defs:
+            tree.children[0].value = self.charge_conj_defs[tree.children[0].value]
+        else:
+            try:
+                tree.children[0].value = Particle.from_dec(tree.children[0].value).invert().name
+            except ParticleNotFound:
+                tree.children[0].value = 'CPConj({0})'.format(tree.children[0].value)
 
 
 def get_decay_mother_name(decay_tree):

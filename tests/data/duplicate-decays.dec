@@ -1,0 +1,40 @@
+# File for testing purposes.
+# Example bug taken from an old DECAY.DEC file ;-) :
+# a particle decay is duplicated and the CP conjugate definition with
+# 'CDecay anti-Sigma(1775)0' is effectively a different way of defining what is
+# already defined via 'Decay anti-Sigma(1775)0' !
+
+Decay Sigma(1775)0
+0.215  p+             K-              PHSP;
+0.215  n0             anti-K0         PHSP;
+0.20   Lambda0        pi0             PHSP;
+0.02   Sigma+         pi-             PHSP;
+0.02   Sigma-         pi+             PHSP;
+0.055  Sigma*+        pi-             PHSP;
+0.055  Sigma*-        pi+             PHSP;
+0.22   Lambda(1520)0  pi0             PHSP;
+Enddecay
+
+Decay anti-Sigma(1775)0
+0.215  anti-p-             K+         PHSP;
+0.215  anti-n0             K0         PHSP;
+0.20   anti-Lambda0        pi0        PHSP;
+0.02   anti-Sigma+         pi-        PHSP;
+0.02   anti-Sigma-         pi+        PHSP;
+0.055  anti-Sigma*+        pi-        PHSP;
+0.055  anti-Sigma*-        pi+        PHSP;
+0.22   anti-Lambda(1520)0  pi0        PHSP;
+Enddecay
+
+Decay Sigma(1775)0    # PDG 3216
+  0.23   Lambda0 pi0 PHSP;
+  0.23   Lambda(1405)0 pi0 PHSP;
+  0.2    p+       K-        PHSP;
+  0.1    n0       K_S0      PHSP;
+  0.1    n0       K_L0      PHSP;
+  0.05   Sigma*+  pi-       PHSP;
+  0.05   Sigma*-  pi+       PHSP;
+  0.02   Sigma+   pi-       PHSP;
+  0.02   Sigma-   pi+       PHSP;
+Enddecay
+CDecay anti-Sigma(1775)0
