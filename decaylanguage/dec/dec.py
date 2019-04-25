@@ -2,7 +2,9 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import warnings
-from lark import Lark, Transformer, Tree
+
+from lark import Lark
+from lark import Tree, Transformer, Visitor
 
 from particle import Particle
 
@@ -460,6 +462,40 @@ class DecFileParser(object):
 
     def __str__(self):
         return repr(self)
+
+
+class CPConjugateReplacement(Visitor):
+    """
+    Lark Visitor implementing the replacement of all particle names
+    with their CP conjugate particle names
+    in a Lark Tree of name 'particle' (Tree.data == 'particle').
+
+    Note
+    ----
+    If a particle name, say 'UNKOWN', is not found
+    (search done via the Particle class in the particle package),
+    its CP conjugate name is denoted as 'CPConj(UNKOWN)'.
+
+    Examples
+    --------
+    >>> from lark import Tree, Token
+    >>> ...
+    >>> t = Tree('decay', [Tree('particle', [Token('LABEL', 'D0')]), Tree('decayline', [Tree
+    ... ('value', [Token('SIGNED_NUMBER', '1.0')]), Tree('particle', [Token('LABEL', 'K-')])
+    ... , Tree('particle', [Token('LABEL', 'pi+')]), Tree('model', [Token('MODEL_NAME', 'PHS
+    ... P')])])])
+    >>> CPConjugateReplacement().visit(t)
+    Tree(decay, [Tree(particle, [Token(LABEL, 'D~0')]), Tree(decayline,
+    [Tree(value, [Token(SIGNED_NUMBER, '1.0')]), Tree(particle, [Token(LABEL, 'K+')]),
+    Tree(particle, [Token(LABEL, 'pi-')]), Tree(model, [Token(MODEL_NAME, 'PHSP')])])])
+    """
+    # Method for the rule (here, a replacement) we wish to implement
+    def particle(self, tree):
+        assert tree.data == 'particle'
+        try:
+            tree.children[0].value = Particle.from_dec(tree.children[0].value).invert().name
+        except:
+            tree.children[0].value = 'CPConj({0})'.format(val)
 
 
 def get_decay_mother_name(decay_tree):
