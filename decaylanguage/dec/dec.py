@@ -4,6 +4,8 @@ import os
 import warnings
 from lark import Lark, Transformer, Tree
 
+from particle import Particle
+
 from ..data import open_text
 from .. import data
 from ..decay.decay import Decay
@@ -38,7 +40,8 @@ class DecFileParser(object):
                  "_grammar_info",
                  "_dec_file_name",
                  "_parsed_dec_file",
-                 "_parsed_decays")
+                 "_parsed_decays",
+                 "_include_cdecays")
 
     def __init__(self, filename):
         """
@@ -57,6 +60,9 @@ class DecFileParser(object):
         self._parsed_dec_file = None      # Parsed decay file
 
         self._parsed_decays = None  # Particle decays found in the decay file
+
+        # By default, consider charge-conjugate decays when parsing
+        self._include_cdecays = True
 
     @classmethod
     def from_file(cls, filename):
@@ -77,7 +83,7 @@ class DecFileParser(object):
 
         return cls(filename)
 
-    def parse(self):
+    def parse(self, include_cdecays=True):
         """
         Parse the given .dec decay file according to default Lark parser
         and specified options, i.e.,
@@ -86,14 +92,25 @@ class DecFileParser(object):
 
         See method 'load_grammar' for how to explicitly define the grammar
         and set the Lark parsing options.
+
+        Parameters
+        ----------
+        include_cdecays: boolean, optional, default=True
+            Choose whether or not to consider charge-conjugate decays,
+            which are specified via "CDecay <MOTHER>".
         """
         # Has a file been parsed already?
         if self._parsed_decays is not None:
             warnings.warn("Input file being re-parsed ...")
 
+        # Override the parsing settings for charge conjugate decays
+        self._include_cdecays = include_cdecays if include_cdecays else False
+
         # Retrieve all info on the default Lark grammar and its default options,
         # effectively loading it
         opts = self.grammar_info()
+        extraopts = dict((k, v) for k, v in opts.items()
+                         if k not in ('lark_file', 'parser','lexer'))
 
         # Instantiate the Lark parser according to chosen settings
         parser = Lark(self.grammar(), parser=opts['parser'], lexer=opts['lexer'])
@@ -238,12 +255,7 @@ class DecFileParser(object):
         """
         Return a list of all CP conjugate decay definitions in the input parsed file,
         of the form "CDecay <MOTHER>", as
-        ['MOTHER1', 'MOTHER2', ...]
-
-        Parameters
-        ----------
-        parsed_file: Lark Tree instance
-            Input parsed file.
+        ['MOTHER1', 'MOTHER2', ...].
         """
         return get_charge_conjugate_decays(self._parsed_dec_file)
 
@@ -258,7 +270,9 @@ class DecFileParser(object):
 
         Note
         ----
-        Method not meant to be used directly!
+        1) Method not meant to be used directly!
+        2) CP conjugates need to be dealt with differently,
+        see 'list_charge_conjugate_decays()'.
         """
         if self._parsed_dec_file is not None:
             self._parsed_decays = get_decays(self._parsed_dec_file)
@@ -272,6 +286,10 @@ class DecFileParser(object):
             raise DecFileNotParsed("Hint: call 'parse()'!")
 
     def _check_parsed_decays(self):
+        """
+        Is the number of decays parsed consistent with the number of
+        decay mother names? An inconsistency can arise if decays are redefined.
+        """
         lmn = self.list_decay_mother_names()
         if self.number_of_decays != len(set(lmn)):
             warnings.warn("Input .dec file redefines decays for particle(s) {0}!".format(set([n for n in lmn if lmn.count(n)>1])))
@@ -281,14 +299,36 @@ class DecFileParser(object):
         """Return the number of particle decays defined in the parsed .dec file."""
         self._check_parsing()
 
-        return len(self._parsed_decays)
+        n = len(self._parsed_decays)
+
+        if self._include_cdecays:
+            n += len(self.list_charge_conjugate_decays())
+
+        return n
 
     def list_decay_mother_names(self):
+        """
+        Return a list of all decay mother names found in the parsed decay file.
+        """
         self._check_parsing()
 
-        return [get_decay_mother_name(d) for d in self._parsed_decays]
+        names = [get_decay_mother_name(d) for d in self._parsed_decays]
+
+        if self._include_cdecays:
+            names += self.list_charge_conjugate_decays()
+
+        return names
 
     def _find_decay_modes(self, mother):
+        """
+        Return a tuple of Lark Tree instances describing all the decay modes
+        of the input mother particle as defined in the parsed .dec file.
+
+        Parameters
+        ----------
+        mother: str
+            Input mother particle name.
+        """
         self._check_parsing()
 
         for decay_Tree in self._parsed_decays:
@@ -423,6 +463,15 @@ class DecFileParser(object):
 
 
 def get_decay_mother_name(decay_tree):
+    """
+    Return the mother particle name for the decay mode defined
+    in the input Tree of name 'decay'.
+
+    Parameters
+    ----------
+    decay_tree: Lark Tree instance
+        Input Tree satisfying Tree.data=='decay'.
+    """
     if not isinstance(decay_tree, Tree) or decay_tree.data != 'decay':
         raise RuntimeError("Input not an instance of a 'decay' Tree!")
 
@@ -432,6 +481,15 @@ def get_decay_mother_name(decay_tree):
 
 
 def get_branching_fraction(decay_mode):
+    """
+    Return the branching fraction (float) for the decay mode defined
+    in the input Tree of name 'decayline'.
+
+    Parameters
+    ----------
+    decay_mode: Lark Tree instance
+        Input Tree satisfying Tree.data=='decayline'.
+    """
     if not isinstance(decay_mode, Tree) or decay_mode.data != 'decayline':
         raise RuntimeError("Check your input, not an instance of a 'decayline' Tree!")
 
@@ -444,6 +502,25 @@ def get_branching_fraction(decay_mode):
 
 
 def get_final_state_particles(decay_mode):
+    """
+    Return a list of Lark Tree instances describing the final-state particles
+    for the decay mode defined in the input Tree of name 'decayline'.
+
+    Parameters
+    ----------
+    decay_mode: Lark Tree instance
+        Input Tree satisfying Tree.data=='decayline'.
+
+    Examples
+    --------
+    For a decay
+        Decay MyB_s0
+            1.000     K+     K-     SSD_CP 20.e12 0.1 1.0 0.04 9.6 -0.8 8.4 -0.6;
+        Enddecay
+    the list
+        [Tree(particle, [Token(LABEL, 'K+')]), Tree(particle, [Token(LABEL, 'K-')])]
+    will be returned.
+    """
     if not isinstance(decay_mode, Tree) or decay_mode.data != 'decayline':
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
@@ -452,6 +529,23 @@ def get_final_state_particles(decay_mode):
 
 
 def get_final_state_particle_names(decay_mode):
+    """
+    Return a list of final-state particle names for the decay mode defined
+    in the input Tree of name 'decayline'.
+
+    Parameters
+    ----------
+    decay_mode: Lark Tree instance
+        Input Tree satisfying Tree.data=='decayline'.
+
+    Examples
+    --------
+    For a decay
+        Decay MyB_s0
+            1.000     K+     K-     SSD_CP 20.e12 0.1 1.0 0.04 9.6 -0.8 8.4 -0.6;
+        Enddecay
+    the list ['K+', 'K-'] will be returned.
+    """
     if not isinstance(decay_mode, Tree) or decay_mode.data != 'decayline':
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
@@ -461,6 +555,22 @@ def get_final_state_particle_names(decay_mode):
 
 
 def get_model_name(decay_mode):
+    """
+    Return the decay model name in a Tree of name 'decayline'.
+
+    Parameters
+    ----------
+    decay_mode: Lark Tree instance
+        Input Tree satisfying Tree.data=='decayline'.
+
+    Examples
+    --------
+    For a decay
+        Decay MyB_s0
+            1.000     K+     K-     SSD_CP 20.e12 0.1 1.0 0.04 9.6 -0.8 8.4 -0.6;
+        Enddecay
+    the string 'SSD_CP' will be returned.
+    """
     if not isinstance(decay_mode, Tree) or decay_mode.data != 'decayline':
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
@@ -469,6 +579,25 @@ def get_model_name(decay_mode):
 
 
 def get_model_parameters(decay_mode):
+    """
+    Return a list of decay model parameters in a Tree of name 'decayline',
+    if defined, else an empty string.
+
+    Parameters
+    ----------
+    decay_mode: Lark Tree instance
+        Input Tree satisfying Tree.data=='decayline'.
+
+    Examples
+    --------
+    For a decay
+        Decay MyB_s0
+            1.000     K+     K-     SSD_CP 20.e12 0.1 1.0 0.04 9.6 -0.8 8.4 -0.6;
+        Enddecay
+    the list
+        [20000000000000.0, 0.1, 1.0, 0.04, 9.6, -0.8, 8.4, -0.6]
+    will be returned.
+    """
     if not isinstance(decay_mode, Tree) or decay_mode.data != 'decayline':
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
@@ -478,12 +607,12 @@ def get_model_parameters(decay_mode):
 
 def get_decays(parsed_file):
     """
-    Return a tuple of all decay definitions in the input parsed file,
+    Return a list of all decay definitions in the input parsed file,
     of the form
     "Decay <MOTHER>",
     as a tuple of Lark Tree instances with Tree.data=='decay', i.e.,
-    (Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER1>]), ...),
-     Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER2>]), ...)).
+    [Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER1>]), ...),
+     Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER2>]), ...)].
 
     Parameters
     ----------
@@ -494,7 +623,27 @@ def get_decays(parsed_file):
         raise RuntimeError("Input not an instance of a Tree!")
 
     try:
-        return tuple(parsed_file.find_data('decay'))
+        return list(parsed_file.find_data('decay'))
+    except:
+        RuntimeError("Input parsed file does not seem to have the expected structure.")
+
+
+def get_charge_conjugate_decays(parsed_file):
+    """
+    Return a list of all CP conjugate decay definitions in the input parsed file,
+    of the form "CDecay <MOTHER>", as
+    ['MOTHER1', 'MOTHER2', ...]
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+    """
+    if not isinstance(parsed_file, Tree) :
+        raise RuntimeError("Input not an instance of a Tree!")
+
+    try:
+        return sorted([tree.children[0].children[0].value for tree in parsed_file.find_data('cdecay')])
     except:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
@@ -653,26 +802,6 @@ def get_global_photos_flag(parsed_file):
     try:
         val = tree.children[0].data
         return PhotosEnum.yes if val=='yes' else PhotosEnum.no
-    except:
-        RuntimeError("Input parsed file does not seem to have the expected structure.")
-
-
-def get_charge_conjugate_decays(parsed_file):
-    """
-    Return a list of all CP conjugate decay definitions in the input parsed file,
-    of the form "CDecay <MOTHER>", as
-    ['MOTHER1', 'MOTHER2', ...]
-
-    Parameters
-    ----------
-    parsed_file: Lark Tree instance
-        Input parsed file.
-    """
-    if not isinstance(parsed_file, Tree) :
-        raise RuntimeError("Input not an instance of a Tree!")
-
-    try:
-        return sorted([tree.children[0].children[0].value for tree in parsed_file.find_data('cdecay')])
     except:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
