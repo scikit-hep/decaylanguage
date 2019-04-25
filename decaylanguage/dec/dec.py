@@ -301,13 +301,24 @@ class DecFileParser(object):
 
         Note
         ----
-        Method not meant to be used directly!
+        1) If a decay file only defines 'Decay' decays and no 'CDecay',
+        then no CP conjugate decays will be created!
+        This seems correct given the "instructions" in the decay file,
+        though the latter should be considered incomplete, hence buggy!
+        2) Method not meant to be used directly!
         """
+
+        # Do not add any CP conjugate decays if the input parsed file
+        # does not define any!
+        mother_names_cdecays = self.list_charge_conjugate_decays()
+        if len(mother_names_cdecays) == 0:
+            return
+
         # Cross-check - make sure CP conjugate decays are not defined
         # with both 'Decay' and 'CDecay' statements!
         mother_names_decays = [get_decay_mother_name(tree)
                                for tree in self._parsed_decays]
-        mother_names_cdecays = self.list_charge_conjugate_decays()
+
         duplicates = [n for n in mother_names_cdecays if n in mother_names_decays]
         if len(duplicates) > 0:
             msg = """The following particles are defined in the input .dec file with both 'Decay' and 'CDecay': {0}!
@@ -320,20 +331,42 @@ The 'CDecay' definition(s) will be ignored ...""".format(', '.join(d for d in du
         for d in duplicates:
             mother_names_cdecays.remove(d)
 
+        # We're done if there are no more 'CDecay' decays to treat!
+        if len(mother_names_cdecays) == 0:
+            return
+
         # At last, create the CP conjugate decays:
-        # First, make a (deep) copy of the list of Tree instances
-        # describing the parsed decays.
-        # By construction, there are no CP conjugate decays in there.
-        cdecays = [ tree.__deepcopy__(None) for tree in self._parsed_decays]
+        # First, make a (deep) copy of the list of relevant Tree instances.
+        # Example:
+        # if mother_names_cdecays = ['anti-M1', 'anti-M2'],
+        # the relevant Trees are the ones describing the decays of ['M1', 'M2'].
+        dict_cc_names = self.dict_charge_conjugates()
 
-        # Take care of CP conjugate decays defined via aliases,
-        # passing them as CP conjugates to be processed manually ...
-        dict_cdecay_names = self.dict_charge_conjugates()
+        def find_charge_conjugate(ccname):
+            for p, ccp in dict_cc_names.items():
+                if ccp == ccname:
+                    return p
+                 # Yes, both 'ChargeConj P CCP' and 'ChargeConj CCP P' are found !
+                elif p == ccname:
+                    return ccp
 
-        # Finally, perform all particle -> CP(particle) replacements in one go!
-        [CPConjugateReplacement(charge_conj_defs=dict_cdecay_names).visit(t)
+        trees_to_conjugate = []
+        for ccname in mother_names_cdecays:
+            name = find_charge_conjugate(ccname)
+            trees_to_conjugate.extend(list(self._parsed_dec_file.find_pred(
+                lambda t: t.data=='decay' and t.children[0].children[0].value == name)))
+
+        cdecays = [ tree.__deepcopy__(None) for tree in trees_to_conjugate]
+        #cdecays = [ tree.__deepcopy__(None) for tree in self._parsed_decays]
+
+        # Finally, perform all particle -> CP(particle) replacements,
+        # taking care of CP conjugate decays defined via aliases,
+        # passing them as CP conjugates to be processed manually.
+        [CPConjugateReplacement(charge_conj_defs=dict_cc_names).visit(t)
         for t in cdecays]
 
+        # ... and add all these CP-conjugate decays to the list of decays!
+        self._parsed_decays.extend(cdecays)
 
     def _check_parsing(self):
         """Has the .parse() method been called already?"""

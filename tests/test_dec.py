@@ -185,3 +185,17 @@ def test_Lark_CPConjugateReplacement_Visitor():
     assert get_decay_mother_name(t) == 'D~0'
 
     assert get_final_state_particle_names(t.children[1]) == ['K+', 'pi-']
+
+
+def test_Lark_CPConjugateReplacement_Visitor_with_aliases():
+        p = DecFileParser.from_file(DIR / 'data/test_Bd2DstDst.dec')
+        p.parse()
+
+        assert p.number_of_decays == 10
+
+
+def test_Lark_CPConjugateReplacement_Visitor_no_CDecay_defs():
+        p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
+        p.parse()
+
+        assert p.number_of_decays == 5
