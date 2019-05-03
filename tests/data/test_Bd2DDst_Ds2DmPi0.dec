@@ -1,5 +1,5 @@
 # Example decay chain for testing purposes:
-# B0 -> D*- D+, D*- -> D- (pi0, gamma), D- -> K+ pi- pi- or D- -> K+K-pi- & cc
+# B0 -> D*- D+, D*- -> D- (pi0, gamma), D- -> K+ pi- pi- or D- -> K+ K- pi- & cc
 
 # --------------------------------------
 # DEFINE THE ALIASES & CHARGE CONJUGATES
@@ -12,9 +12,6 @@ Alias             MyD*-       D*-
 Alias             MyD*+       D*+
 ChargeConj        MyD*+       MyD*-
 
-# --------------------
-# DEFINE THE D+ AND D-
-# --------------------
 Alias             MyD-        D-
 Alias             MyD+        D+
 ChargeConj        MyD+        MyD-
@@ -44,5 +41,13 @@ Decay MyD-
   0.095     K+     K-      pi-     D_DALITZ;
 Enddecay
 CDecay MyD+
+
+# ----------------
+# DECAY OF THE pi0
+# ----------------
+Decay pi0
+0.99   gamma   gamma                   PHSP;
+0.01   e+      e-      gamma           PI0_DALITZ;
+Enddecay
 
 End
