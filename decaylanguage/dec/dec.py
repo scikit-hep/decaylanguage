@@ -411,7 +411,7 @@ The 'CDecay' definition(s) will be ignored ...""".format(', '.join(d for d in du
         if self.number_of_decays != len(set(lmn)):
             duplicates = set([n for n in lmn if lmn.count(n)>1])
             msg = """The following particle(s) is(are) redefined in the input .dec file with 'Decay': {0}!
-All but the first occurence will be discarded/removed ...""".format(', '.join(d for d in duplicates))
+All but the first occurrence will be discarded/removed ...""".format(', '.join(d for d in duplicates))
             warnings.warn(msg)
 
         # Create a list with all occurrences to remove
@@ -422,7 +422,7 @@ All but the first occurence will be discarded/removed ...""".format(', '.join(d 
             if c>1:
                 duplicates_to_remove.extend([item]*(c-1))
 
-        # Actually remove all but the first occurence of duplicate decays
+        # Actually remove all but the first occurrence of duplicate decays
         for tree in reversed(self._parsed_decays):
             val = tree.children[0].children[0].value
             if val in duplicates_to_remove:
