@@ -1,13 +1,6 @@
 # Example decay chain for testing purposes
-
-Alias      D0sig             D0
-Alias      anti-D0sig        anti-D0
-ChargeConj D0sig             anti-D0sig
-
-Alias      D*+sig            D*+
-Alias      D*-sig            D*-
-ChargeConj D*+sig            D*-sig
-
+# Considered by itself, this file in in fact incomplete,
+# as there are no instructions on how to decay the anti-D0 and the D-!
 
 Decay D*+
 0.6770    D0  pi+                    VSS;
