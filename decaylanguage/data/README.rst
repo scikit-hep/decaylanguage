@@ -1,4 +1,4 @@
-DecayLanguage Data folder contents
+DecayLanguage data folder contents
 ==================================
 
 You can ``import decaylanguage.data``, then use ``decaylanguage.data.open_text(decaylanguage.data, <A_FILE>)``
@@ -6,16 +6,10 @@ to access data reliably regardless of how you have installed or are running the 
 
 
 ``DECAY_LHCB.DEC``
--------------------
+------------------
 
 Copy of the LHCb experiment master decay file for EvtGen, which describes
 all generic particle decays.
-
-
-``test_X.dec``
---------------
-
-Decay files used for testing purposes.
 
 
 ``decfile.lark``
