@@ -1,3 +1,31 @@
+"""
+Submodule with classes and utilities to deal with and parse .dec decay files.
+
+Basic assumptions
+-----------------
+
+1) For standard (non-alias) particle (names):
+    - Decay modes defined via a 'Decay' statement.
+    - Related antiparticle decay modes either defined via a 'CDecay' statement
+      or via a 'Decay' statement. The latter option is often used if CP matters.
+2) For particle names defined via aliases:
+    - Particle decay modes defined as above.
+    - Related antiparticle decay modes defined with either options above,
+      *but* there needs to be a 'ChargeConj' statement specifying the
+      particle-antiparticle match. Typically::
+
+        Alias MyP+ P+
+        Alias MyP- P-
+        ChargeConj MyP+ MyP-
+        Decay MyP+
+        ...
+        Enddecay
+        CDecay MyP-
+
+3) As a consequence, particles that are self-conjugate should not be used
+   in 'CDecay' statements, obviously.
+"""
+
 from __future__ import absolute_import, division, print_function
 
 import os
@@ -43,7 +71,7 @@ class DecFileParser(object):
                  "_dec_file_name",
                  "_parsed_dec_file",
                  "_parsed_decays",
-                 "_include_cdecays")
+                 "_include_ccdecays")
 
     def __init__(self, filename):
         """
@@ -64,7 +92,7 @@ class DecFileParser(object):
         self._parsed_decays = None  # Particle decays found in the decay file
 
         # By default, consider charge-conjugate decays when parsing
-        self._include_cdecays = True
+        self._include_ccdecays = True
 
     @classmethod
     def from_file(cls, filename):
@@ -85,7 +113,7 @@ class DecFileParser(object):
 
         return cls(filename)
 
-    def parse(self, include_cdecays=True):
+    def parse(self, include_ccdecays=True):
         """
         Parse the given .dec decay file according to default Lark parser
         and specified options, i.e.,
@@ -97,17 +125,18 @@ class DecFileParser(object):
 
         Parameters
         ----------
-        include_cdecays: boolean, optional, default=True
+        include_ccdecays: boolean, optional, default=True
             Choose whether or not to consider charge-conjugate decays,
             which are specified via "CDecay <MOTHER>".
-            Make sure you understand the consequences of ignoring CP conj. decays!
+            Make sure you understand the consequences of ignoring
+            charge conjugate decays - you won't have a complete picture!
         """
         # Has a file been parsed already?
         if self._parsed_decays is not None:
             warnings.warn("Input file being re-parsed ...")
 
         # Override the parsing settings for charge conjugate decays
-        self._include_cdecays = include_cdecays if include_cdecays else False
+        self._include_ccdecays = include_ccdecays if include_ccdecays else False
 
         # Retrieve all info on the default Lark grammar and its default options,
         # effectively loading it
@@ -124,8 +153,8 @@ class DecFileParser(object):
         # At last, find all particle decays defined in the .dec decay file ...
         self._find_parsed_decays()
 
-        # ... and create on the fly the CP conjugate decays, if requested
-        if self._include_cdecays:
+        # ... and create on the fly the charge conjugate decays, if requested
+        if self._include_ccdecays:
             self._add_charge_conjugate_decays()
 
     def grammar(self):
@@ -260,8 +289,8 @@ class DecFileParser(object):
 
     def list_charge_conjugate_decays(self):
         """
-        Return a list of all CP conjugate decay definitions in the input parsed file,
-        of the form "CDecay <MOTHER>", as
+        Return a (sorted) list of all charge conjugate decay definitions
+        in the input parsed file, of the form "CDecay <MOTHER>", as
         ['MOTHER1', 'MOTHER2', ...].
         """
         return get_charge_conjugate_decays(self._parsed_dec_file)
@@ -280,7 +309,7 @@ class DecFileParser(object):
         Note
         ----
         1) Method not meant to be used directly!
-        2) CP conjugates need to be dealt with differently,
+        2) charge conjugates need to be dealt with differently,
         see 'self._add_charge_conjugate_decays()'.
         """
         if self._parsed_dec_file is not None:
@@ -291,35 +320,37 @@ class DecFileParser(object):
 
     def _add_charge_conjugate_decays(self):
         """
-        If requested (see the 'self._include_cdecays' class attribute),
-        create the Lark Tree instances describing the CP conjugate decays
+        If requested (see the 'self._include_ccdecays' class attribute),
+        create the Lark Tree instances describing the charge conjugate decays
         specified in the input parsed file via the statements of the form
         "CDecay <MOTHER>".
         These are added to the internal list of decays stored in the class
-        in variable 'self._parsed_decays', performing a CP transformation
-        on each CP-related decay, which is cloned.
+        in variable 'self._parsed_decays', performing a charge conjugate (CC)
+        transformation on each CC-related decay, which is cloned.
 
         Note
         ----
         1) If a decay file only defines 'Decay' decays and no 'CDecay',
-        then no CP conjugate decays will be created!
-        This seems correct given the "instructions" in the decay file,
-        though the latter should be considered incomplete, hence buggy!
+        then no charge conjugate decays will be created!
+        This seems correct given the "instructions" in the decay file:
+        - There is no 'CDecay' statement related to a 'Decay' statement
+          for a self-conjugate decaying particle such as the pi0.
+        - Else the decay file should be considered incomplete, hence buggy.
         2) Method not meant to be used directly!
         """
 
-        # Do not add any CP conjugate decays if the input parsed file
+        # Do not add any charge conjugate decays if the input parsed file
         # does not define any!
-        mother_names_cdecays = self.list_charge_conjugate_decays()
-        if len(mother_names_cdecays) == 0:
+        mother_names_ccdecays = self.list_charge_conjugate_decays()
+        if len(mother_names_ccdecays) == 0:
             return
 
-        # Cross-check - make sure CP conjugate decays are not defined
+        # Cross-check - make sure charge conjugate decays are not defined
         # with both 'Decay' and 'CDecay' statements!
         mother_names_decays = [get_decay_mother_name(tree)
                                for tree in self._parsed_decays]
 
-        duplicates = [n for n in mother_names_cdecays if n in mother_names_decays]
+        duplicates = [n for n in mother_names_ccdecays if n in mother_names_decays]
         if len(duplicates) > 0:
             msg = """The following particles are defined in the input .dec file with both 'Decay' and 'CDecay': {0}!
 The 'CDecay' definition(s) will be ignored ...""".format(', '.join(d for d in duplicates))
@@ -329,43 +360,37 @@ The 'CDecay' definition(s) will be ignored ...""".format(', '.join(d for d in du
         # via the 'Decay' statement, hence discard/remove the definition
         # via the 'CDecay' statement.
         for d in duplicates:
-            mother_names_cdecays.remove(d)
+            mother_names_ccdecays.remove(d)
 
         # We're done if there are no more 'CDecay' decays to treat!
-        if len(mother_names_cdecays) == 0:
+        if len(mother_names_ccdecays) == 0:
             return
 
-        # At last, create the CP conjugate decays:
+        # At last, create the charge conjugate decays:
         # First, make a (deep) copy of the list of relevant Tree instances.
         # Example:
-        # if mother_names_cdecays = ['anti-M1', 'anti-M2'],
+        # if mother_names_ccdecays = ['anti-M1', 'anti-M2'],
         # the relevant Trees are the ones describing the decays of ['M1', 'M2'].
         dict_cc_names = self.dict_charge_conjugates()
 
-        def find_charge_conjugate(ccname):
-            for p, ccp in dict_cc_names.items():
-                if ccp == ccname:
-                    return p
-                 # Yes, both 'ChargeConj P CCP' and 'ChargeConj CCP P' are found !
-                elif p == ccname:
-                    return ccp
-
+        i = 0
         trees_to_conjugate = []
-        for ccname in mother_names_cdecays:
-            name = find_charge_conjugate(ccname)
-            trees_to_conjugate.extend(list(self._parsed_dec_file.find_pred(
-                lambda t: t.data=='decay' and t.children[0].children[0].value == name)))
+        for ccname in mother_names_ccdecays:
+            name = find_charge_conjugate_match(ccname, dict_cc_names)
+            i += 1
+            match = list(self._parsed_dec_file.find_pred(
+                lambda t: t.data=='decay' and t.children[0].children[0].value == name))
+            trees_to_conjugate.extend(match)
 
         cdecays = [ tree.__deepcopy__(None) for tree in trees_to_conjugate]
-        #cdecays = [ tree.__deepcopy__(None) for tree in self._parsed_decays]
 
-        # Finally, perform all particle -> CP(particle) replacements,
-        # taking care of CP conjugate decays defined via aliases,
-        # passing them as CP conjugates to be processed manually.
-        [CPConjugateReplacement(charge_conj_defs=dict_cc_names).visit(t)
+        # Finally, perform all particle -> anti(particle) replacements,
+        # taking care of charge conjugate decays defined via aliases,
+        # passing them as charge conjugates to be processed manually.
+        [ChargeConjugateReplacement(charge_conj_defs=dict_cc_names).visit(t)
         for t in cdecays]
 
-        # ... and add all these CP-conjugate decays to the list of decays!
+        # ... and add all these charge-conjugate decays to the list of decays!
         self._parsed_decays.extend(cdecays)
 
     def _check_parsing(self):
@@ -562,17 +587,20 @@ All but the first occurence will be discarded/removed ...""".format(', '.join(d 
         return repr(self)
 
 
-class CPConjugateReplacement(Visitor):
+class ChargeConjugateReplacement(Visitor):
     """
     Lark Visitor implementing the replacement of all particle names
-    with their CP conjugate particle names
+    with their charge conjugate particle names
     in a Lark Tree of name 'particle' (Tree.data == 'particle').
 
     Note
     ----
-    If a particle name, say 'UNKOWN', is not found
+    1) There is no check of whether the mother particle is self-conjugate or not.
+    It is the responsibility of the caller to make sure the operation
+    is not trivial, meaning returning the same (self-conjugate) decay!
+    2) If a particle name (say, 'UNKOWN') is not found or known,
     (search done via the Particle class in the particle package),
-    its CP conjugate name is denoted as 'CPConj(UNKOWN)'.
+    its charge conjugate name is denoted as 'ChargeConj(UNKOWN)'.
 
     Parameters
     ----------
@@ -588,7 +616,7 @@ class CPConjugateReplacement(Visitor):
     ... ('value', [Token('SIGNED_NUMBER', '1.0')]), Tree('particle', [Token('LABEL', 'K-')])
     ... , Tree('particle', [Token('LABEL', 'pi+')]), Tree('model', [Token('MODEL_NAME', 'PHS
     ... P')])])])
-    >>> CPConjugateReplacement().visit(t)
+    >>> ChargeConjugateReplacement().visit(t)
     Tree(decay, [Tree(particle, [Token(LABEL, 'D~0')]), Tree(decayline,
     [Tree(value, [Token(SIGNED_NUMBER, '1.0')]), Tree(particle, [Token(LABEL, 'K+')]),
     Tree(particle, [Token(LABEL, 'pi-')]), Tree(model, [Token(MODEL_NAME, 'PHSP')])])])
@@ -596,16 +624,51 @@ class CPConjugateReplacement(Visitor):
     def __init__(self, charge_conj_defs=dict()):
         self.charge_conj_defs = charge_conj_defs
 
-    # Method for the rule (here, a replacement) we wish to implement
+    # TODO: this can be improved!
+    def _last_chance_matching(self, pname):
+        try:
+            return Particle.from_dec(pname).invert().name
+        except ParticleNotFound:
+            return 'ChargeConj({0})'.format(pname)
+
     def particle(self, tree):
+        """
+        Method for the rule (here, a replacement) we wish to implement.
+        """
         assert tree.data == 'particle'
-        if tree.children[0].value in self.charge_conj_defs:
-            tree.children[0].value = self.charge_conj_defs[tree.children[0].value]
+        pname = tree.children[0].value
+        if len(self.charge_conj_defs) > 0:
+            for p, ccp in self.charge_conj_defs.items():
+                if ccp == pname:
+                    tree.children[0].value = p
+                # Yes, both 'ChargeConj P CCP' and 'ChargeConj CCP P' are relevant
+                elif p == pname:
+                    tree.children[0].value = ccp
+                else:
+                    tree.children[0].value = self._last_chance_matching(tree.children[0].value)
+        else:
+            tree.children[0].value = self._last_chance_matching(tree.children[0].value)
+
+
+def find_charge_conjugate_match(ccname, dict_cc_names=dict()):
+    # TODO: this can be improved! To be revisited ...
+    if len(dict_cc_names) > 0:
+        for p, ccp in dict_cc_names.items():
+            if ccp == ccname:
+                return p
+            # Yes, both 'ChargeConj P CCP' and 'ChargeConj CCP P' are relevant
+            elif p == ccname:
+                return ccp
         else:
             try:
-                tree.children[0].value = Particle.from_dec(tree.children[0].value).invert().name
+                return Particle.from_dec(ccname).invert().name
             except ParticleNotFound:
-                tree.children[0].value = 'CPConj({0})'.format(tree.children[0].value)
+                return 'ChargeConj({0})'.format(ccname)
+    else:
+        try:
+            return Particle.from_dec(ccname).invert().name
+        except ParticleNotFound:
+            return 'ChargeConj({0})'.format(ccname)
 
 
 def get_decay_mother_name(decay_tree):
@@ -776,9 +839,9 @@ def get_decays(parsed_file):
 
 def get_charge_conjugate_decays(parsed_file):
     """
-    Return a list of all CP conjugate decay definitions in the input parsed file,
-    of the form "CDecay <MOTHER>", as
-    ['MOTHER1', 'MOTHER2', ...]
+    Return a (sorted) list of all charge conjugate decay definitions
+    in the input parsed file, of the form "CDecay <MOTHER>", as
+    ['MOTHER1', 'MOTHER2', ...].
 
     Parameters
     ----------
@@ -808,8 +871,8 @@ def get_definitions(parsed_file):
         raise RuntimeError("Input not an instance of a Tree!")
 
     try:
-        return sorted({tree.children[0].children[0].value:float(tree.children[1].children[0].value)
-            for tree in parsed_file.find_data('define')})
+        return {tree.children[0].children[0].value:float(tree.children[1].children[0].value)
+            for tree in parsed_file.find_data('define')}
     except:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 

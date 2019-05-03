@@ -11,7 +11,7 @@ from decaylanguage import data
 
 from decaylanguage.dec.dec import DecFileParser
 from decaylanguage.dec.dec import DecFileNotParsed, DecayNotFound
-from decaylanguage.dec.dec import CPConjugateReplacement
+from decaylanguage.dec.dec import ChargeConjugateReplacement
 from decaylanguage.dec.dec import get_decay_mother_name
 from decaylanguage.dec.dec import get_final_state_particle_names
 
@@ -173,29 +173,72 @@ def test_build_decay_chain():
     assert p.build_decay_chain('D+', stable_particles=['pi0']) == output
 
 
-def test_Lark_CPConjugateReplacement_Visitor():
+def test_Lark_ChargeConjugateReplacement_Visitor():
+    """
+    A simple example usage of the ChargeConjugateReplacement implementation
+    of a Lark's Visitor, here replacing all particles in a 'decay' Tree
+    by their antiparticles.
+    """
     t = Tree('decay', [Tree('particle', [Token('LABEL', 'D0')]),
             Tree('decayline', [Tree('value', [Token('SIGNED_NUMBER', '1.0')]),
             Tree('particle', [Token('LABEL', 'K-')]),
             Tree('particle', [Token('LABEL', 'pi+')]),
             Tree('model', [Token('MODEL_NAME', 'PHSP')])])])
 
-    CPConjugateReplacement().visit(t)
+    ChargeConjugateReplacement().visit(t)
 
     assert get_decay_mother_name(t) == 'D~0'
-
     assert get_final_state_particle_names(t.children[1]) == ['K+', 'pi-']
 
 
-def test_Lark_CPConjugateReplacement_Visitor_with_aliases():
-        p = DecFileParser.from_file(DIR / 'data/test_Bd2DstDst.dec')
-        p.parse()
+def test_Lark_ChargeConjugateReplacement_Visitor_with_aliases():
+    """
+    Example with a D0 decay specified via an alias (MyD0).
+    As such, it is necessary to state what the particle-antiparticle match is,
+    which in decay files would mean the following lines:
+       Alias       MyD0        D0
+       Alias       MyAnti-D0   anti-D0
+       ChargeConj  MyD0        MyAnti-D0
+    A dictionary of matches should be passed to the Lark Visitor instance.
+    """
+    t = Tree('decay', [Tree('particle', [Token('LABEL', 'MyD0')]),
+            Tree('decayline', [Tree('value', [Token('SIGNED_NUMBER', '1.0')]),
+            Tree('particle', [Token('LABEL', 'K-')]),
+            Tree('particle', [Token('LABEL', 'pi+')]),
+            Tree('model', [Token('MODEL_NAME', 'PHSP')])])])
 
-        assert p.number_of_decays == 10
+    dict_ChargeConj_defs = {'MyD0': 'MyAnti-D0'}
+
+    ChargeConjugateReplacement(charge_conj_defs=dict_ChargeConj_defs).visit(t)
+
+    assert get_decay_mother_name(t) == 'MyAnti-D0'
+    assert get_final_state_particle_names(t.children[1]) == ['K+', 'pi-']
 
 
-def test_Lark_CPConjugateReplacement_Visitor_no_CDecay_defs():
-        p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
-        p.parse()
+def test_creation_charge_conjugate_decays_in_decfile_with_aliases():
+    """
+    Decay file contains 5 particle decays defined via a 'Decay' statement
+    and the 5 charge-conjugate decays defined via a 'CDecay' statement.
+    The decay modes for the latter 5 should be created on the fly,
+    hence providing in total 10 sets of particle decays parsed.
+    """
+    p = DecFileParser.from_file(DIR / 'data/test_Bd2DstDst.dec')
+    p.parse()
 
-        assert p.number_of_decays == 5
+    assert p.number_of_decays == 10
+
+
+def test_creation_charge_conjugate_decays_in_decfile_without_CDecay_defs():
+    """
+    Decay file contains 5 particle decays defined via a 'Decay' statement,
+    but no related charge-conjugate (CC) decays defined via a 'CDecay' statement
+    since the CC particle decays are also defined via a 'Decay' statement
+    for all cases except self-conjugate (mother) particles, obviously ;-).
+    This being said, this decay file is in fact incomplete by itself,
+    as there are no instructions on how to decay the anti-D0 and the D-!
+    In short, there should only be 5 sets of decay modes parsed.
+    """
+    p = DecFileParser.from_file(DIR / 'data/test_example_Dst.dec')
+    p.parse()
+
+    assert p.number_of_decays == 5
