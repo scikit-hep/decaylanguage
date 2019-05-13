@@ -204,15 +204,16 @@ class GooFitChain(AmplitudeChain):
             series = pd.Series(mysplines, vals).sort_index()
             return ',\n'.join(series.map(lambda x: '        '+programmatic_name(x)))
 
-        splines = GooFitChain.consts.index[GooFitChain.consts.index.str.contains("Spline")]
-        splines = set(splines.str.rstrip("::Spline::N").str.rstrip(
-            "::Spline::Min").str.rstrip("::Spline::Max"))
+        if not GooFitChain.consts.empty:
+            splines = GooFitChain.consts.index[GooFitChain.consts.index.str.contains("Spline")]
+            splines = set(splines.str.rstrip("::Spline::N").str.rstrip(
+                "::Spline::Min").str.rstrip("::Spline::Max"))
 
-        for spline in splines:
-            header += '\n    std::vector<Variable> ' + programmatic_name(spline) + "_SplineArr {{\n"
-            header += strip_pararray(GooFitChain.pars,
-                                     "{spline}::Spline::Gamma::".format(spline=spline))
-            header += '\n    }};\n'
+            for spline in splines:
+                header += '\n    std::vector<Variable> ' + programmatic_name(spline) + "_SplineArr {{\n"
+                header += strip_pararray(GooFitChain.pars,
+                                         "{spline}::Spline::Gamma::".format(spline=spline))
+                header += '\n    }};\n'
 
         f_scatt = GooFitChain.pars.index[GooFitChain.pars.index.str.contains("f_scatt")]
         if len(f_scatt):

@@ -15,6 +15,7 @@ from itertools import product
 import attr
 import numpy as np
 import pandas as pd
+import re
 
 from lark import Lark
 
@@ -173,6 +174,7 @@ class AmplitudeChain(Decay):
 
     def _get_html(self):
         name = self.particle.html_name
+        name = re.sub(r'<SPAN STYLE="text-decoration:overline">(.*)</SPAN>', u'\\1\u0305', name)
 
         if self.spinfactor or self.lineshape:
             name += '<br/><br/>'
