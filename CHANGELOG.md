@@ -10,14 +10,16 @@ Under development
   - Lark parser files added, for ``.dec`` decay files.
   - ``DecFileParser`` class introduced, with doc and test suite.
   - Various ``.dec`` test decay files added.
+  - Make list of known decay models available to users.
 * Package dependencies:
-  - Package made dependent on Scikit-HEP's ``Particle`` package
+  - Package made dependent on Scikit-HEP's ``Particle`` package.
   - Redundant code removed.
 * Continuous integration:
   - CI with Azure pipelines introduced.
-  - Simplification of ``.travis.yml`` file.
+  - CI with Travis and AppVeyor removed.
 * Miscellaneous:
-  - Minor bug fixes.
+  - Demo notebook added, with a launcher for Binder.
+  - General clean-up and minor bug fixes.
 
 
 ## Version 0.2.0 (2018-08-02)
