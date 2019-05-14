@@ -30,11 +30,14 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import warnings
+import re
 
 from lark import Lark
 from lark import Tree, Transformer, Visitor
 
 from particle import Particle, ParticleNotFound
+from particle.particle.enums import Charge, Charge_undo, Charge_mapping
+from particle.particle.regex import getdec
 
 from ..data import open_text
 from .. import data
@@ -369,26 +372,46 @@ The 'CDecay' definition(s) will be ignored ...""".format(', '.join(d for d in du
         # At last, create the charge conjugate decays:
         # First, make a (deep) copy of the list of relevant Tree instances.
         # Example:
-        # if mother_names_ccdecays = ['anti-M1', 'anti-M2'],
-        # the relevant Trees are the ones describing the decays of ['M1', 'M2'].
+        # if mother_names_ccdecays = ['anti-M10', 'anti-M2+'],
+        # the relevant Trees are the ones describing the decays of ['M10', 'M2-'].
         dict_cc_names = self.dict_charge_conjugates()
 
-        i = 0
+        # match name -> position in list self._parsed_decays
+        name2treepos = {t.children[0].children[0].value:i for i, t in enumerate(self._parsed_decays)}
+
         trees_to_conjugate = []
+        misses = []
         for ccname in mother_names_ccdecays:
             name = find_charge_conjugate_match(ccname, dict_cc_names)
-            i += 1
-            match = list(self._parsed_dec_file.find_pred(
-                lambda t: t.data=='decay' and t.children[0].children[0].value == name))
-            trees_to_conjugate.extend(match)
+            try:
+                match = self._parsed_decays[name2treepos[name]]
+                trees_to_conjugate.append(match)
+            except:
+                misses.append(ccname)
+        if len(misses) > 0:
+            msg = """\nCorresponding 'Decay' statement for 'CDecay' statement(s) of following particle(s) not found:\n{0}.
+Skipping creation of these charge-conjugate decay trees.""".format('\n'.join([m for m in misses]))
+            warnings.warn(msg)
 
         cdecays = [ tree.__deepcopy__(None) for tree in trees_to_conjugate]
 
         # Finally, perform all particle -> anti(particle) replacements,
         # taking care of charge conjugate decays defined via aliases,
         # passing them as charge conjugates to be processed manually.
+        def _is_not_self_conj(t):
+            try:
+                mname = t.children[0].children[0].value
+                if Particle.from_dec(mname).is_self_conjugate:
+                    msg = """Found 'CDecay' statement for self-conjugate particle {0}. This is a bug!
+Skipping creation of charge-conjugate decay Tree.""".format(mname)
+                    warnings.warn(msg)
+                    return False
+                else:
+                    return True
+            except:
+                return True
         [ChargeConjugateReplacement(charge_conj_defs=dict_cc_names).visit(t)
-        for t in cdecays]
+        for t in cdecays if _is_not_self_conj(t)]
 
         # ... and add all these charge-conjugate decays to the list of decays!
         self._parsed_decays.extend(cdecays)
@@ -637,38 +660,64 @@ class ChargeConjugateReplacement(Visitor):
         """
         assert tree.data == 'particle'
         pname = tree.children[0].value
+        ccpname = self._particle(pname)
+        # Will be able to use the following line once the method is fully robust
+        #ccpname = find_charge_conjugate_match(pname, self.charge_conj_defs)
+        tree.children[0].value = ccpname
+
+    def _particle(self, pname):
         if len(self.charge_conj_defs) > 0:
+            match = self.charge_conj_defs.get(pname)
+            if match is not None:
+                return match
             for p, ccp in self.charge_conj_defs.items():
                 if ccp == pname:
-                    tree.children[0].value = p
+                    return p
                 # Yes, both 'ChargeConj P CCP' and 'ChargeConj CCP P' are relevant
                 elif p == pname:
-                    tree.children[0].value = ccp
-                else:
-                    tree.children[0].value = self._last_chance_matching(tree.children[0].value)
+                    return ccp
+            # Cache particle-antiparticle matching pairs, to speed-up
+            ccpname = self._last_chance_matching(pname)
+            self.charge_conj_defs[pname] = ccpname
+            return ccpname
         else:
-            tree.children[0].value = self._last_chance_matching(tree.children[0].value)
+            return self._last_chance_matching(pname)
 
+def find_charge_conjugate_match(pname, dict_cc_names=dict()):
+    """
 
-def find_charge_conjugate_match(ccname, dict_cc_names=dict()):
-    # TODO: this can be improved! To be revisited ...
+    """
+    # Special case/name
+    if pname == 'anti-c-hadron' or pname == 'anti-Omega_c0':
+        ccpname = re.sub('anti-', '', pname)
+        dict_cc_names[pname] = ccpname
+        return ccpname
+
+    # Next, check the list of particle-antiparticle matches provided ;-)
     if len(dict_cc_names) > 0:
+        match = dict_cc_names.get(pname)
+        if match is not None:
+            return match
+        # Yes, both 'ChargeConj P CCP' and 'ChargeConj CCP P' are relevant
         for p, ccp in dict_cc_names.items():
-            if ccp == ccname:
+            if ccp == pname:
                 return p
-            # Yes, both 'ChargeConj P CCP' and 'ChargeConj CCP P' are relevant
-            elif p == ccname:
-                return ccp
-        else:
-            try:
-                return Particle.from_dec(ccname).invert().name
-            except ParticleNotFound:
-                return 'ChargeConj({0})'.format(ccname)
-    else:
-        try:
-            return Particle.from_dec(ccname).invert().name
-        except ParticleNotFound:
-            return 'ChargeConj({0})'.format(ccname)
+
+    # Many names can be easily matched
+    _pname = re.sub('anti-', '', pname)
+    mat = getdec.match(_pname).groupdict()
+    if mat and mat['charge']:
+        newcharge = Charge_undo[Charge(Charge_mapping[mat['charge']]*-1)]
+        ccpname = _pname.replace(mat['charge'], newcharge)
+        dict_cc_names[pname] = ccpname
+        return ccpname
+
+    # Search EvtGen names via the Particle class
+    try:
+        return Particle.from_dec(pname).invert().name
+    # If anything else fails ...
+    except ParticleNotFound:
+        return 'ChargeConj({0})'.format(pname)
 
 
 def get_decay_mother_name(decay_tree):

@@ -242,3 +242,10 @@ def test_creation_charge_conjugate_decays_in_decfile_without_CDecay_defs():
     p.parse()
 
     assert p.number_of_decays == 5
+
+
+def test_master_DECAYdotDEC_file():
+    p = DecFileParser.from_file(DIR / '../decaylanguage/data/DECAY_LHCB.DEC')
+    p.parse()
+
+    assert p.number_of_decays == 506
