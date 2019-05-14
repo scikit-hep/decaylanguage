@@ -4,12 +4,11 @@
 [![Azure Build Status](https://dev.azure.com/scikit-hep/decaylanguage/_apis/build/status/scikit-hep.decaylanguage?branchName=master)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=3?branchName=master)
 [![Coverage Status](https://img.shields.io/azure-devops/coverage/scikit-hep/decaylanguage/3.svg)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=3?branchName=master)
 [![Tests Status](https://img.shields.io/azure-devops/tests/scikit-hep/decaylanguage/3.svg)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=3?branchName=master)
-[![Travis-CI Build Status](https://travis-ci.org/scikit-hep/decaylanguage.svg?branch=master)](https://travis-ci.org/scikit-hep/decaylanguage)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/scikit-hep/decaylanguage?branch=master&svg=true)](https://ci.appveyor.com/project/HenrySchreiner/decaylanguage)
-[![Coverage Status](https://coveralls.io/repos/scikit-hep/decaylanguage/badge.svg?branch=master&service=github)](https://coveralls.io/github/scikit-hep/decaylanguage)
 [![PyPI Package latest release](https://img.shields.io/pypi/v/decaylanguage.svg)](https://pypi.python.org/pypi/decaylanguage)
 [![Supported versions](https://img.shields.io/pypi/pyversions/decaylanguage.svg)](https://pypi.python.org/pypi/decaylanguage)
 [![Commits since latest release](https://img.shields.io/github/commits-since/scikit-hep/decaylanguage/v0.2.0.svg)](https://github.com/scikit-hep/decaylanguage/compare/v0.2.0...master)
+[![Binder demo](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scikit-hep/decaylanguage/master?urlpath=lab/tree/notebooks/DecayLanguageDemo.ipynb)
+
 
 <!-- break -->
 
