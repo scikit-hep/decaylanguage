@@ -376,9 +376,8 @@ The 'CDecay' definition(s) will be ignored ...""".format(', '.join(d for d in du
         # the relevant Trees are the ones describing the decays of ['M10', 'M2-'].
         dict_cc_names = self.dict_charge_conjugates()
 
-        name2treepos = {}  # match name -> position in list self._parsed_decays
-        for i, t in enumerate(self._parsed_decays):
-             name2treepos[t.children[0].children[0].value] = i
+        # match name -> position in list self._parsed_decays
+        name2treepos = {t.children[0].children[0].value:i for i, t in enumerate(self._parsed_decays)}
 
         trees_to_conjugate = []
         misses = []
