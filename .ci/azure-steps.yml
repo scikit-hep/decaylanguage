@@ -7,7 +7,7 @@ steps:
 - script: |
     python -m pip install --upgrade pip
     python -m pip install --upgrade pytest
-    python -m pip install pytest-cov
+    python -m pip install pytest-cov pytest-runner pytest-azurepipelines
   displayName: 'Install dependencies'
 
 - script: |
@@ -20,17 +20,6 @@ steps:
   displayName: 'Install package'
 
 - script: |
-    python -m pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=decaylanguage --cov-report=xml --cov-report=html
+    python -m pytest ./tests --doctest-modules --cov=decaylanguage --cov-report=html
   displayName: 'Test with pytest and collect coverage metrics'
 
-- task: PublishTestResults@2
-  inputs:
-    testResultsFiles: '**/test-*.xml'
-    testRunTitle: 'Publish test results for Python $(python.version)'
-  condition: succeededOrFailed()
-
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: Cobertura
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
-    reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'
