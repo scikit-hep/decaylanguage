@@ -41,7 +41,7 @@ class LS(Enum):
 
 
 @attr.s(slots=True)
-class AmplitudeChain(Decay):
+class AmplitudeChain(ModelDecay):
     'This is a chain of decays (a "line")'
 
     lineshape = attr.ib(None)
