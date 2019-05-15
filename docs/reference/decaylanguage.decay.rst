@@ -3,38 +3,31 @@ decaylanguage.decay
 
 .. testsetup::
 
-    from decaylanguage.decay.amplitudechain import *
-    from decaylanguage.decay.goofit import *
-    from decaylanguage.decay.utilities import *
-    from decaylanguage.decay.decay import *
-    from decaylanguage.decay.ampgentransform import *
+    from decaylanguage.modeling.amplitudechain import *
+    from decaylanguage.modeling.goofit import *
+    from decaylanguage.modeling.decay import *
+    from decaylanguage.modeling.ampgentransform import *
 
-decaylanguage.decay.decay
+decaylanguage.modeling.decay
 -------------------------
 
-.. automodule:: decaylanguage.decay.decay
+.. automodule:: decaylanguage.modeling.decay
     :members:
 
-decaylanguage.decay.ampgentransform
+decaylanguage.modeling.ampgentransform
 -----------------------------------
 
-.. automodule:: decaylanguage.decay.ampgentransform
+.. automodule:: decaylanguage.modeling.ampgentransform
     :members:
 
-decaylanguage.decay.amplitudechain
+decaylanguage.modeling.amplitudechain
 ----------------------------------
 
-.. automodule:: decaylanguage.decay.amplitudechain
+.. automodule:: decaylanguage.modeling.amplitudechain
     :members:
 
-decaylanguage.decay.goofit
+decaylanguage.modeling.goofit
 --------------------------
 
-.. automodule:: decaylanguage.decay.goofit
-    :members:
-
-decaylanguage.decay.utilities
------------------------------
-
-.. automodule:: decaylanguage.decay.utilities
+.. automodule:: decaylanguage.modeling.goofit
     :members:
