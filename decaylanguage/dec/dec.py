@@ -41,7 +41,6 @@ from particle.particle.regex import getdec
 
 from ..data import open_text
 from .. import data
-from ..decay.decay import Decay
 from .enums import PhotosEnum
 
 
