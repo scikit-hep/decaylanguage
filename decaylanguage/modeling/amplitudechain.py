@@ -23,7 +23,7 @@ from particle import Particle
 
 import os
 
-from .modeling import ModelDecay
+from .decay import ModelDecay
 from ..utils import filter_lines
 from ..utils import split
 
