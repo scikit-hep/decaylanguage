@@ -523,7 +523,10 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
     def build_decay_chain(self, mother, stable_particles=[]):
         """
         Iteratively build the whole decay chain of a given mother particle,
-        optionally considering certain particles as stable.
+        optionally considering, on the fly, certain particles as stable.
+        This way, for example, only the B -> D E F part in a decay chain
+        A -> B (-> D E F (-> G H)) C
+        can be trivially selected for inspection.
 
         Parameters
         ----------
