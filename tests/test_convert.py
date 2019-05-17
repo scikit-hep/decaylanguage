@@ -1,4 +1,4 @@
-from decaylanguage.decay.ampgen2goofit import ampgen2goofit
+from decaylanguage.modeling.ampgen2goofit import ampgen2goofit
 
 try:
     from pathlib2 import Path

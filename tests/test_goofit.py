@@ -1,6 +1,6 @@
 from particle import Particle
 
-from decaylanguage.decay.goofit import GooFitChain
+from decaylanguage.modeling.goofit import GooFitChain
 
 
 def test_simple():

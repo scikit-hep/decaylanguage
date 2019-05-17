@@ -7,7 +7,7 @@ from __future__ import print_function
 
 from plumbum import cli
 
-from decaylanguage.decay.ampgen2goofit import ampgen2goofit
+from decaylanguage.modeling.ampgen2goofit import ampgen2goofit
 
 
 class DecayLanguageDecay(cli.Application):

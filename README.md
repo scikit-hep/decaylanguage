@@ -55,7 +55,7 @@ Required and compatibility dependencies will be automatically installed by pip.
 
 This is a quick user guide; for full API docs, go [here](https://decaylanguage.readthedocs.io/en/latest/).
 
-DecayLanguage is a set of tools for building and transforming particle
+``DecayLanguage`` is a set of tools for building and transforming particle
 decays. The parts are:
 
 ## Particles
@@ -70,7 +70,7 @@ The most common way to create a decay chain is to read in an [AmpGen]
 style syntax from a file or a string. You can use:
 
 ```python
-from decaylanguage.decay import AmplitudeChain
+from decaylanguage.modeling import AmplitudeChain
 lines, parameters, constants, states = AmplitudeChain.read_ampgen(text='''
 EventType D0 K- pi+ pi+ pi-
 
@@ -97,7 +97,7 @@ to make a PR to add more). Use a subclass of DecayChain, in this case,
 GooFitChain. To use the [GooFit] output, type from the shell:
 
 ```bash
-python -m decaylanguage.decay -G goofit myinput.opts
+python -m decaylanguage -G goofit myinput.opts
 ```
 
 # Acknowledgements

@@ -23,7 +23,7 @@ except ImportError:
     warnings.warn("Graphviz is not installed. Line display not available.")
 
 @attr.s(slots=True)
-class Decay(object):
+class ModelDecay(object):
     '''
     This describes a decay very generally, with search and print features.
     Subclassed for futher usage.

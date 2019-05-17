@@ -18,8 +18,8 @@ from six import StringIO
 
 from particle import SpinType
 
-from decaylanguage.decay.goofit import GooFitChain
-from decaylanguage.decay.goofit import SF_4Body
+from decaylanguage.modeling.goofit import GooFitChain
+from decaylanguage.modeling.goofit import SF_4Body
 
 
 def ampgen2goofit(filename, ret_output=False):

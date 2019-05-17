@@ -23,7 +23,7 @@ from particle import Particle
 
 import os
 
-from .decay import Decay
+from .decay import ModelDecay
 from ..utils import filter_lines
 from ..utils import split
 
@@ -41,7 +41,7 @@ class LS(Enum):
 
 
 @attr.s(slots=True)
-class AmplitudeChain(Decay):
+class AmplitudeChain(ModelDecay):
     'This is a chain of decays (a "line")'
 
     lineshape = attr.ib(None)
