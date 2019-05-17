@@ -32,7 +32,9 @@ mother -> dec2  [label=0.016];
 }
 """
 
-    assert dcv.to_string() == graph_output_as_dot
+    assert 'dec0 [label="D0 pi+"];' in graph_output_as_dot
+    assert 'dec1 [label="D+ pi0"];' in graph_output_as_dot
+    assert 'dec2 [label="D+ gamma"];' in graph_output_as_dot
 
 
 def test_simple_decay_chain():
@@ -87,8 +89,8 @@ dec80:p3 -> dec173  [label="6.5e-08"];
 }
 """
 
-    assert dcv.to_string() == graph_output_as_dot
-
-
-def test_decay_chain_with_aliases():
-    pass
+    assert 'label="<p0> D0 | <p1> pi+"' in graph_output_as_dot
+    assert 'label="<p0> D+ | <p1> pi0"' in graph_output_as_dot
+    assert 'label="<p0> K- | <p1> pi+ | <p2> pi+ | <p3> pi0"' in graph_output_as_dot
+    assert 'label="<p0> D+ | <p1> gamma"' in graph_output_as_dot
+    assert 'label="<p0> K- | <p1> pi+ | <p2> pi+ | <p3> pi0"' in graph_output_as_dot
