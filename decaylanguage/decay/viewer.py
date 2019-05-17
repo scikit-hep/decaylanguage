@@ -94,7 +94,7 @@ class DecayChainViewer(object):
             return r
 
         def iterate_chain(subchain, top_node=None, offset=0, link_pos=None):
-            if not top_node: top_node = node_m1
+            if not top_node: top_node = node_mother
             n_decaymodes = len(subchain)
             for idm in range(n_decaymodes):
                 _list_parts = subchain[idm]['fs']
@@ -124,11 +124,9 @@ class DecayChainViewer(object):
         has_subdecay = lambda ds: not all([isinstance(p,str) for p in ds])
 
         k = list(self._chain.keys())[0]
-        i = 0
-        list_fs = self._chain[k][i]['fs']
 
-        node_m1 = pydot.Node("Node A", style="filled", fillcolor="#568dba", shape='box', label=str(k))
-        self._graph.add_node(node_m1)
+        node_mother = pydot.Node("mother", style="filled", fillcolor="#568dba", shape='box', label=str(k))
+        self._graph.add_node(node_mother)
         sc = self._chain[k]
 
         # Actually build the whole decay chain, iteratively
