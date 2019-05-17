@@ -7,6 +7,7 @@ steps:
 - script: |
     python -m pip install --upgrade pip
     python -m pip install --upgrade pytest
+    python -m pip install pydot
     python -m pip install pytest-cov pytest-runner pytest-azurepipelines
   displayName: 'Install dependencies'
 
@@ -22,4 +23,3 @@ steps:
 - script: |
     python -m pytest ./tests --doctest-modules --cov=decaylanguage --cov-report=html
   displayName: 'Test with pytest and collect coverage metrics'
-

@@ -32,8 +32,8 @@ def get_version():
     return g["__version__"]
 
 extras = {
-    'test': ['pytest'],
-    'notebook': ['graphviz'],
+    'test': ['pytest', 'pydot'],
+    'notebook': ['graphviz', 'pydot'],
 }
 
 setup(
