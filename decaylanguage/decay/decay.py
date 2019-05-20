@@ -87,10 +87,36 @@ class DecayMode(object):
         """
         Default constructor.
 
-        Example
+        Parameters
+        ----------
+        bf: float, optional, default=0
+            Decay mode branching fraction
+        daughters: DaughtersDict, optional, default=None
+            The final-state particles
+        info: keyword arguments, optional
+            Decay mode model information and/or user metadata (aka extra info)
+            By default the following elements are always created:
+            dict(model=None, model_params=None)
+            The user can provide any metadata, see the examples below.
+
+        Examples
         --------
         >>> # A 'default' and hence empty, decay mode
         >>> dm = DecayMode()
+
+        >>> # Decay mode with minimal input information
+        >>> dd = DaughtersDict('K+ K-')
+        >>> dm = DecayMode(0.5, dd)
+
+        >>> # Decay mode with decay model information
+        >>> dd = DaughtersDict('pi- pi0 nu_tau')
+        >>> dm = DecayMode(0.2551, dd,
+                           model='TAUHADNU',
+                           model_params=[-0.108, 0.775, 0.149, 1.364, 0.400])
+
+        >>> # Decay mode with user metadata
+        >>> dd = DaughtersDict('K+ K-')
+        >>> dm = DecayMode(0.5, dd, model='PHSP', study='toy', year=2019)
         """
         self.bf = bf
         self.daughters = daughters if daughters is not None else DaughtersDict()
@@ -100,6 +126,13 @@ class DecayMode(object):
 
     @classmethod
     def from_pdgids(cls, bf, daughters, **info):
+        """
+        Constructor for a final state given as a list of particle PDG IDs.
+
+        Examples
+        --------
+        >>> dm = DecayMode.from_pdgids(0.5, [321, -321])
+        """
         # Check inputs
         try:
             from particle import Particle, ParticleNotFound
