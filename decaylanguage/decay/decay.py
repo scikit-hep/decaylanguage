@@ -149,9 +149,7 @@ class DecayMode(object):
         Make a nice high-density string for all decay-mode properties and info.
         """
         val = """Daughters: {daughters} , BF: {bf:<15.8g}
-    Decay model: {model} {model_params}
-    Extra info:
-""".format(daughters=' '.join(self.daughters),
+    Decay model: {model} {model_params}""".format(daughters=' '.join(self.daughters),
            bf=self.bf,
            model=self.metadata['model'],
            model_params=self.metadata['model_params']
@@ -159,6 +157,8 @@ class DecayMode(object):
 
         keys = [k for k in self.metadata
               if k not in ('model', 'model_params')]
+        if len(keys) > 0:
+            val += "\n    Extra info:\n"
         for key in keys:
             val += "        {k}: {v}\n".format(k=key, v=self.metadata[key])
 

@@ -82,8 +82,7 @@ def test_DecayMode_constructor_with_user_model_info():
 def test_DecayMode_describe_simple():
     dd = DaughtersDict('pi- pi0 nu_tau')
     dm = DecayMode(0.2551, dd, model='TAUHADNU', model_params=[-0.108, 0.775, 0.149, 1.364, 0.400])
-    description = """Daughters: pi- pi0 nu_tau,
-       BF: 0.2551          decay model: TAUHADNU [-0.108, 0.775, 0.149, 1.364, 0.4]"""
+    description = 'Daughters: pi- pi0 nu_tau , BF: 0.2551         \n    Decay model: TAUHADNU [-0.108, 0.775, 0.149, 1.364, 0.4]'
     assert dm.describe() == description
 
 
