@@ -31,12 +31,6 @@ class DaughtersDict(Counter):
 
         >>> # Constructor from a string representing the final state
         >>> dd = DaughtersDict('K+ K- pi0')
-
-        Parameters
-        ----------
-        in: dict
-            Final state particles represented as a dictionary,
-            e.g. ``{'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1}``.
         """
         if iterable and isinstance(iterable, str):
             iterable = iterable.split()
@@ -51,11 +45,8 @@ class DaughtersDict(Counter):
 
     def to_string(self):
         """
-        Return the daughters as a string representation ordered list of names.
+        Return the daughters as a string representation (ordered list of names).
         """
-        strs = []
-        for d in sorted(self):
-            strs += [d]*self[d]
         return ' '.join(list(self.elements()))
 
     def __repr__(self):
@@ -76,6 +67,9 @@ class DaughtersDict(Counter):
         return sum(n for n in self.values())
 
     def __add__(self, other):
+        """
+        Add two final states, particle-type-wise.
+        """
         dd = super(DaughtersDict, self).__add__(other)
         return DaughtersDict(dd)
 
