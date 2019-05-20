@@ -18,12 +18,28 @@ class DaughtersDict(Counter):
         """
         Default constructor.
 
+        Examples
+        --------
+        >>> # An empty final state
+        >>> dd = DaughtersDict()
+
+        >>> # Constructor from a dictionary
+        dd = DaughtersDict({'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1})
+
+        >>> # Constructor from a list of particle names
+        >>> dd = DaughtersDict.from_list(['K+', 'K-', 'K-', 'pi+', 'pi0'])
+
+        >>> # Constructor from a string representing the final state
+        >>> dd = DaughtersDict('K+ K- pi0')
+
         Parameters
         ----------
         in: dict
             Final state particles represented as a dictionary,
             e.g. ``{'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1}``.
         """
+        if iterable and isinstance(iterable, str):
+            iterable = iterable.split()
         super(DaughtersDict, self).__init__(iterable, **kwds)
 
     @classmethod
@@ -60,9 +76,8 @@ class DaughtersDict(Counter):
         return sum(n for n in self.values())
 
     def __add__(self, other):
-        dd = self.copy()
-        dd += other
-        return dd
+        dd = super(DaughtersDict, self).__add__(other)
+        return DaughtersDict(dd)
 
     def __iter__(self):
         return self.elements()

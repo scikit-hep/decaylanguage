@@ -11,6 +11,11 @@ def test_DaughtersDict_constructor_from_list():
     assert dd == {'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1}
 
 
+def test_DaughtersDict_constructor_from_string():
+    dd = DaughtersDict('K+ K- pi0')
+    assert dd == {'K+': 1, 'K-': 1, 'pi0': 1}
+
+
 def test_DaughtersDict_string_repr():
     dd = DaughtersDict.from_list(['K+', 'K-', 'K-', 'pi+', 'pi0'])
     assert dd.__str__() == "<DaughtersDict: ['K+', 'K-', 'K-', 'pi+', 'pi0']>"
