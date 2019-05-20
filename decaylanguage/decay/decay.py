@@ -66,3 +66,82 @@ class DaughtersDict(Counter):
 
     def __iter__(self):
         return self.elements()
+
+
+class DecayMode(object):
+    """
+    Class holding a particle decay mode, which is typically a branching fraction
+    and a list of final-state particles.
+    The class can also contain metadata such as decay model and optional
+    decay-model parameters, as defined for example in .dec decay files.
+
+    This class is a building block for the digital representation
+    of full decay chains.
+    """
+
+    __slots__ = ("bf",
+                 "daughters",
+                 "metadata")
+
+    def __init__(self, bf = 0, daughters = None, **info):
+        """
+        Default constructor.
+
+        Example
+        --------
+        >>> # A 'default' and hence empty, decay mode
+        >>> dm = DecayMode()
+        """
+        self.bf = bf
+        self.daughters = daughters if daughters is not None else DaughtersDict()
+
+        self.metadata = dict(model=None, model_params=None)
+        self.metadata.update(**info)
+
+    @classmethod
+    def from_pdgids(cls, bf, daughters, **info):
+        # Check inputs
+        try:
+            from particle import Particle, ParticleNotFound
+            daughters = [Particle.from_pdgid(d).name for d in daughters]
+        except ParticleNotFound:
+            raise ParticleNotFound('Please check your input PDG IDs!')
+        daughters = DaughtersDict(daughters)
+
+        # Override the default settings with the user input, if any
+        return cls(bf=bf, daughters=daughters, **info)
+
+    def describe(self):
+        """
+        Make a nice high-density string for all decay-mode properties and info.
+        """
+        val = """Daughters: {daughters} , BF: {bf:<15.8g}
+    Decay model: {model} {model_params}
+    Extra info:
+""".format(daughters=' '.join(self.daughters),
+           bf=self.bf,
+           model=self.metadata['model'],
+           model_params=self.metadata['model_params']
+                        if self.metadata['model_params'] is not None else '')
+
+        keys = [k for k in self.metadata
+              if k not in ('model', 'model_params')]
+        for key in keys:
+            val += "        {k}: {v}\n".format(k=key, v=self.metadata[key])
+
+        return val
+
+    def __len__(self):
+        """
+        The "length" of a decay mode is the number of final-state particles.
+        """
+        return len(self.daughters)
+
+    def __repr__(self):
+        return "<{self.__class__.__name__}: daughters={daughters}, BF={bf}>".format(
+                self=self,
+                daughters=self.daughters.to_string() if len(self.daughters)>0 else '[]',
+                bf=self.bf)
+
+    def __str__(self):
+        return repr(self)
