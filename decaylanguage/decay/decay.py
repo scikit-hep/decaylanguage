@@ -53,7 +53,7 @@ class DaughtersDict(Counter):
 
         Note
         ----
-        This is general *not* the number of dictionary elements.
+        This is generally *not* the number of dictionary elements.
         """
         return sum(n for n in self.values())
 
