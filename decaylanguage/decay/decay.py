@@ -38,7 +38,7 @@ class DaughtersDict(Counter):
         """
         Return the daughters as a string representation (ordered list of names).
         """
-        return ' '.join(list(self.elements()))
+        return ' '.join(sorted(self.elements()))
 
     def __repr__(self):
         return "<{self.__class__.__name__}: {daughters}>".format(
