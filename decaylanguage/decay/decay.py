@@ -22,7 +22,7 @@ class DaughtersDict(Counter):
         >>> dd = DaughtersDict()
 
         >>> # Constructor from a dictionary
-        dd = DaughtersDict({'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1})
+        >>> dd = DaughtersDict({'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1})
 
         >>> # Constructor from a list of particle names
         >>> dd = DaughtersDict(['K+', 'K-', 'K-', 'pi+', 'pi0'])
