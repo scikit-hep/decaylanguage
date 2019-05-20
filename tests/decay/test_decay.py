@@ -89,10 +89,9 @@ def test_DecayMode_describe_simple():
 def test_DecayMode_describe_with_extra_info():
     dd = DaughtersDict('K+ K-')
     dm = DecayMode(1.e-6, dd, model='PHSP', study='toy', year=2019)
-    assert """
-    Extra info:
-        study: toy
-        year: 2019""" in dm.describe()
+    assert 'Extra info:' in dm.describe()
+    assert 'study: toy' in dm.describe()
+    assert 'year: 2019' in dm.describe()
 
 
 def test_DecayMode_string_repr():
