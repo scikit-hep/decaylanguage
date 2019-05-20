@@ -1,4 +1,5 @@
 from decaylanguage.decay.decay import DaughtersDict
+from decaylanguage.decay.decay import DecayMode
 
 
 def test_DaughtersDict_constructor_from_dict():
@@ -36,3 +37,71 @@ def test_DaughtersDict_add():
 def test_DaughtersDict_to_string():
     dd1 = DaughtersDict({'K+': 1, 'K-': 2, 'pi0': 3})
     assert dd1.to_string() == 'K+ K- K- pi0 pi0 pi0'
+
+
+def test_DecayMode_constructor_default():
+    dm = DecayMode()
+    assert dm.bf == 0
+    assert dm.daughters == DaughtersDict()
+    assert dm.metadata == dict(model=None, model_params=None)
+
+
+def test_DecayMode_constructor_simple():
+    dd = DaughtersDict('K+ K-')
+    dm = DecayMode(0.1234, dd)
+    assert dm.bf == 0.1234
+    assert dm.daughters == DaughtersDict('K+ K-')
+    assert dm.metadata == dict(model=None, model_params=None)
+
+
+def test_DecayMode_constructor_from_pdgids():
+    dm = DecayMode.from_pdgids(0.5, [321, -321],
+                               model='TAUHADNU',
+                               model_params=[-0.108, 0.775, 0.149, 1.364, 0.400])
+    assert dm.daughters == DaughtersDict('K+ K-')
+
+
+def test_DecayMode_constructor_with_model_info():
+    dd = DaughtersDict('pi- pi0 nu_tau')
+    dm = DecayMode(0.2551, dd,
+                   model='TAUHADNU',
+                   model_params=[-0.108, 0.775, 0.149, 1.364, 0.400])
+    assert dm.metadata == {'model': 'TAUHADNU',
+                           'model_params': [-0.108, 0.775, 0.149, 1.364, 0.4]}
+
+
+def test_DecayMode_constructor_with_model_info():
+    dd = DaughtersDict('pi- pi0 nu_tau')
+    dm = DecayMode(0.2551, dd, model='TAUHADNU', model_params=[-0.108, 0.775, 0.149, 1.364, 0.400])
+    description = """Daughters: pi- pi0 nu_tau,
+       BF: 0.2551          decay model: TAUHADNU [-0.108, 0.775, 0.149, 1.364, 0.4]"""
+    assert dm.describe() == description
+
+def test_DecayMode_constructor_with_model_info():
+    dd = DaughtersDict('K+ K-')
+    dm = DecayMode(0.5, dd, model='PHSP', study='toy', year=2019)
+    assert dm.metadata == {'model': 'PHSP',
+                           'model_params': None,
+                           'study': 'toy',
+                           'year': 2019}
+
+
+def test_DecayMode_describe():
+    dd = DaughtersDict('K+ K-')
+    dm = DecayMode(1.e-6, dd, model='PHSP', study='toy', year=2019)
+    assert """
+    Extra info:
+        study: toy
+        year: 2019""" in dm.describe()
+
+
+def test_DaughtersDict_string_repr():
+    dd = DaughtersDict('p p~ K+ pi-')
+    dm = DecayMode(1.e-6, dd, model='PHSP')
+    assert dm.__str__() == "<DecayMode: daughters=K+ p pi- p~, BF=1e-06>"
+
+
+def test_DecayMode_number_of_final_states():
+    dd = DaughtersDict('p p~ K+ pi-')
+    dm = DecayMode(1.e-6, dd, model='PHSP')
+    assert len(dm) == 4
