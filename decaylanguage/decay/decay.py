@@ -27,7 +27,7 @@ class DaughtersDict(Counter):
         dd = DaughtersDict({'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1})
 
         >>> # Constructor from a list of particle names
-        >>> dd = DaughtersDict.from_list(['K+', 'K-', 'K-', 'pi+', 'pi0'])
+        >>> dd = DaughtersDict(['K+', 'K-', 'K-', 'pi+', 'pi0'])
 
         >>> # Constructor from a string representing the final state
         >>> dd = DaughtersDict('K+ K- pi0')
@@ -35,13 +35,6 @@ class DaughtersDict(Counter):
         if iterable and isinstance(iterable, str):
             iterable = iterable.split()
         super(DaughtersDict, self).__init__(iterable, **kwds)
-
-    @classmethod
-    def from_list(cls, daughters):
-        """
-        Constructor from a list of particle names.
-        """
-        return cls({k:daughters.count(k) for k in set(daughters)})
 
     def to_string(self):
         """
@@ -71,7 +64,7 @@ class DaughtersDict(Counter):
         Add two final states, particle-type-wise.
         """
         dd = super(DaughtersDict, self).__add__(other)
-        return DaughtersDict(dd)
+        return self.__class__(dd)
 
     def __iter__(self):
         return self.elements()

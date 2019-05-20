@@ -1,13 +1,13 @@
 from decaylanguage.decay.decay import DaughtersDict
 
 
-def test_DaughtersDict_constructor():
+def test_DaughtersDict_constructor_from_dict():
     dd = DaughtersDict({'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1})
     assert dd == {'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1}
 
 
 def test_DaughtersDict_constructor_from_list():
-    dd = DaughtersDict.from_list(['K+', 'K-', 'K-', 'pi+', 'pi0'])
+    dd = DaughtersDict(['K+', 'K-', 'K-', 'pi+', 'pi0'])
     assert dd == {'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1}
 
 
@@ -17,7 +17,7 @@ def test_DaughtersDict_constructor_from_string():
 
 
 def test_DaughtersDict_string_repr():
-    dd = DaughtersDict.from_list(['K+', 'K-', 'K-', 'pi+', 'pi0'])
+    dd = DaughtersDict(['K+', 'K-', 'K-', 'pi+', 'pi0'])
     assert dd.__str__() == "<DaughtersDict: ['K+', 'K-', 'K-', 'pi+', 'pi0']>"
 
 
