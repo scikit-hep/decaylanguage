@@ -12,8 +12,6 @@ class DaughtersDict(Counter):
     ``{'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1}``.
     """
 
-    __slots__ = ('_daughters')
-
     def __init__(self, iterable=None, **kwds):
         """
         Default constructor.
