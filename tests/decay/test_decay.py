@@ -97,7 +97,7 @@ def test_DecayMode_describe_with_extra_info():
 def test_DecayMode_string_repr():
     dd = DaughtersDict('p p~ K+ pi-')
     dm = DecayMode(1.e-6, dd, model='PHSP')
-    assert dm.__str__() == "<DecayMode: daughters=K+ p pi- p~, BF=1e-06>"
+    assert str(dm) == "<DecayMode: daughters=K+ p pi- p~, BF=1e-06>"
 
 
 def test_DecayMode_number_of_final_states():
