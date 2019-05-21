@@ -1,5 +1,7 @@
 [![DecayLanguage](images/DecayLanguage.png)](http://decaylanguage.readthedocs.io/en/latest/)
 
+## DecayLanguage: describe, manipulate and convert particle decays
+
 [![Documentation Status](https://readthedocs.org/projects/decaylanguage/badge/?style=flat)](https://readthedocs.org/projects/decaylanguage)
 [![Azure Build Status](https://dev.azure.com/scikit-hep/decaylanguage/_apis/build/status/scikit-hep.decaylanguage?branchName=master)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=3?branchName=master)
 [![Coverage Status](https://img.shields.io/azure-devops/coverage/scikit-hep/decaylanguage/3.svg)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=3?branchName=master)
@@ -12,9 +14,16 @@
 
 <!-- break -->
 
-A language to describe particle decays, and tools to work with them.
+DecayLanguage implements a language to describe and convert particle decays
+between digital representations, effectively making it possible to interoperate
+several fitting programs. Particular interest is given to programs dedicated
+to amplitude analyses.
 
-# Installation
+DecayLanguage provides tools to parse so-called .dec decay files,
+and manipulat and visualize decay chains.
+
+
+### Installation
 
 Just run the following:
 
@@ -29,7 +38,7 @@ what those are. [Python 2.7 and 3.4+](http://docs.python-guide.org/en/latest/sta
 
 Required and compatibility dependencies will be automatically installed by pip.
 
-### Required dependencies:
+#### Required dependencies:
 
 -   [particle](https://github.com/scikit-hep/particle): PDG particle data and identification codes
 -   [Numpy](https://scipy.org/install.html): The numerical library for Python
@@ -38,33 +47,54 @@ Required and compatibility dependencies will be automatically installed by pip.
 -   [plumbum](https://github.com/tomerfiliba/plumbum): Command line tools
 -   [lark-parser](https://github.com/lark-parser/lark): A modern parsing library for Python
 
-### Python compatibility:
+#### Python compatibility:
 -   [six](https://github.com/benjaminp/six): Compatibility library
 -   [pathlib2](https://github.com/mcmtroffaes/pathlib2) backport if using Python 2.7
 -   [enum34](https://bitbucket.org/stoneleaf/enum34) backport if using Python /< 3.5
 -   [importlib_resources](http://importlib-resources.readthedocs.io/en/latest/) backport if using Python /< 3.7
 
 
-### Recommended dependencies:
+#### Recommended dependencies:
 -   [graphviz](https://gitlab.com/graphviz/graphviz/) to render (DOT
     language) graph descriptions of decay chains.
 </p></details>
 
 
-# Usage
+### Usage
 
-This is a quick user guide; for full API docs, go [here](https://decaylanguage.readthedocs.io/en/latest/).
+This is a quick user guide. For a full API docs, go [here](https://decaylanguage.readthedocs.io/en/latest/).
 
 ``DecayLanguage`` is a set of tools for building and transforming particle
 decays. The parts are:
 
-## Particles
+#### Particles
 
 Particles are a key component when dealing with decays.
 Refer to the [particle package](https://github.com/scikit-hep/particle)
 for how to deal with particles and PDG identification codes.
 
-## Decays
+#### Decay files
+
+Decay .dec files can be parsed simply with
+
+```python
+from decaylanguage import DecFileParser
+
+parser = DecFileParser('my-decay-file.dec')
+parser.parse()
+
+# Inspect what decays are defined
+parser.list_decay_mother_names()
+
+# Print decay modes ...
+```
+
+The class implements a series of methods giving access to all the information
+stored in decay files: the decays themselves, particle aliases,
+definitions of charge-conjugate particles, variable and Pythia-specific
+definitions.
+
+#### Decay modeling
 
 The most common way to create a decay chain is to read in an [AmpGen]
 style syntax from a file or a string. You can use:
@@ -90,7 +120,7 @@ Here, `lines` will be a list of AmplitudeChain lines (pretty print supported in 
 `constants` will be a table of constants,
 and `states` will be the list of known states (EventType).
 
-## Converters
+#### Converters
 
 You can output to a format (currently only [GooFit] supported, feel free
 to make a PR to add more). Use a subclass of DecayChain, in this case,
@@ -100,7 +130,7 @@ GooFitChain. To use the [GooFit] output, type from the shell:
 python -m decaylanguage -G goofit myinput.opts
 ```
 
-# Acknowledgements
+### Acknowledgements
 
 DecayLanguage is free software released under a BSD 3-Clause License.
 It was originally developed by Henry Schreiner.
