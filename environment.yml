@@ -13,3 +13,5 @@ dependencies:
     - particle>=0.4.4
     - lark-parser>=0.6.3
     - plumbum>=1.6.6
+    - RISE
+    - graphvis

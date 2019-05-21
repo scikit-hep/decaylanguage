@@ -16,7 +16,6 @@ def test_single_decay():
 
     chain = p.build_decay_chain('D*+', stable_particles=['D+', 'D0', 'pi0'])
     dcv = DecayChainViewer(chain)
-    dcv.build_decay_graph()
 
     graph_output_as_dot = """digraph DecayChainGraph {
 graph [graph_name=DecayChainGraph, rankdir=LR];
@@ -43,7 +42,6 @@ def test_simple_decay_chain():
 
     chain = p.build_decay_chain('D*+')
     dcv = DecayChainViewer(chain)
-    dcv.build_decay_graph()
 
     graph_output_as_dot = """digraph DecayChainGraph {
 graph [graph_name=DecayChainGraph, rankdir=LR];
