@@ -66,3 +66,115 @@ class DaughtersDict(Counter):
 
     def __iter__(self):
         return self.elements()
+
+
+class DecayMode(object):
+    """
+    Class holding a particle decay mode, which is typically a branching fraction
+    and a list of final-state particles.
+    The class can also contain metadata such as decay model and optional
+    decay-model parameters, as defined for example in .dec decay files.
+
+    This class is a building block for the digital representation
+    of full decay chains.
+    """
+
+    __slots__ = ("bf",
+                 "daughters",
+                 "metadata")
+
+    def __init__(self, bf = 0, daughters = None, **info):
+        """
+        Default constructor.
+
+        Parameters
+        ----------
+        bf: float, optional, default=0
+            Decay mode branching fraction
+        daughters: DaughtersDict, optional, default=None
+            The final-state particles
+        info: keyword arguments, optional
+            Decay mode model information and/or user metadata (aka extra info)
+            By default the following elements are always created:
+            dict(model=None, model_params=None)
+            The user can provide any metadata, see the examples below.
+
+        Examples
+        --------
+        >>> # A 'default' and hence empty, decay mode
+        >>> dm = DecayMode()
+
+        >>> # Decay mode with minimal input information
+        >>> dd = DaughtersDict('K+ K-')
+        >>> dm = DecayMode(0.5, dd)
+
+        >>> # Decay mode with decay model information
+        >>> dd = DaughtersDict('pi- pi0 nu_tau')
+        >>> dm = DecayMode(0.2551, dd,
+                           model='TAUHADNU',
+                           model_params=[-0.108, 0.775, 0.149, 1.364, 0.400])
+
+        >>> # Decay mode with user metadata
+        >>> dd = DaughtersDict('K+ K-')
+        >>> dm = DecayMode(0.5, dd, model='PHSP', study='toy', year=2019)
+        """
+        self.bf = bf
+        self.daughters = daughters if daughters is not None else DaughtersDict()
+
+        self.metadata = dict(model=None, model_params=None)
+        self.metadata.update(**info)
+
+    @classmethod
+    def from_pdgids(cls, bf, daughters, **info):
+        """
+        Constructor for a final state given as a list of particle PDG IDs.
+
+        Examples
+        --------
+        >>> dm = DecayMode.from_pdgids(0.5, [321, -321])
+        """
+        # Check inputs
+        try:
+            from particle import Particle, ParticleNotFound
+            daughters = [Particle.from_pdgid(d).name for d in daughters]
+        except ParticleNotFound:
+            raise ParticleNotFound('Please check your input PDG IDs!')
+        daughters = DaughtersDict(daughters)
+
+        # Override the default settings with the user input, if any
+        return cls(bf=bf, daughters=daughters, **info)
+
+    def describe(self):
+        """
+        Make a nice high-density string for all decay-mode properties and info.
+        """
+        val = """Daughters: {daughters} , BF: {bf:<15.8g}
+    Decay model: {model} {model_params}""".format(daughters=' '.join(self.daughters),
+           bf=self.bf,
+           model=self.metadata['model'],
+           model_params=self.metadata['model_params']
+                        if self.metadata['model_params'] is not None else '')
+
+        keys = [k for k in self.metadata
+              if k not in ('model', 'model_params')]
+        if len(keys) > 0:
+            val += "\n    Extra info:\n"
+        for key in keys:
+            val += "        {k}: {v}\n".format(k=key, v=self.metadata[key])
+
+        return val
+
+    def __len__(self):
+        """
+        The "length" of a decay mode is the number of final-state particles.
+        """
+        return len(self.daughters)
+
+    def __repr__(self):
+        return "<{self.__class__.__name__}: daughters={daughters}, BF={bf}>".format(
+                self=self,
+                daughters=self.daughters.to_string() if len(self.daughters)>0 else '[]',
+                bf=self.bf)
+
+    def __str__(self):
+        return repr(self)
