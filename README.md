@@ -20,7 +20,7 @@ several fitting programs. Particular interest is given to programs dedicated
 to amplitude analyses.
 
 DecayLanguage provides tools to parse so-called .dec decay files,
-and manipulat and visualize decay chains.
+and manipulate and visualize decay chains.
 
 
 ### Installation
@@ -86,13 +86,17 @@ parser.parse()
 # Inspect what decays are defined
 parser.list_decay_mother_names()
 
-# Print decay modes ...
+# Print decay modes, etc. ...
 ```
 
-The class implements a series of methods giving access to all the information
-stored in decay files: the decays themselves, particle aliases,
+A copy of the master DECAY.DEC file used by the LHCb experiment is provided
+[here](https://github.com/scikit-hep/decaylanguage/tree/master/decaylanguage/data)
+for convenience.
+
+The `DecFileParser` class implements a series of methods giving access to all
+information stored in decay files: the decays themselves, particle name aliases,
 definitions of charge-conjugate particles, variable and Pythia-specific
-definitions.
+definitions, etc.
 
 #### Decay modeling
 
