@@ -57,6 +57,8 @@ Required and compatibility dependencies will be automatically installed by pip.
 #### Recommended dependencies:
 -   [graphviz](https://gitlab.com/graphviz/graphviz/) to render (DOT
     language) graph descriptions of decay chains.
+-   [pydot](https://github.com/pydot/pydot), a Python interface to
+    Graphviz's Dot language, used to visualize particle decay chains.
 </p></details>
 
 
