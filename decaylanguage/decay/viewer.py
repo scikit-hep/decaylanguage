@@ -4,8 +4,6 @@ Decay chains are typically provided by the parser of .dec decay files,
 see the `DecFileParser` class.
 """
 
-import warnings
-
 try:
     import pydot
 except ImportError:
@@ -55,7 +53,7 @@ class DecayChainViewer(object):
         args.update(**attrs)
         self._graph_attributes = args
 
-        self._graph = None
+        self._build_decay_graph()
 
     def visualize_decay_graph(self, format='png'):
         """
@@ -73,7 +71,7 @@ class DecayChainViewer(object):
         tmpf.close()
         return webbrowser.open(tmpf.name)
 
-    def build_decay_graph(self):
+    def _build_decay_graph(self):
         """
         Recursively navigate the decay chain tree and produce a Graph
         in the DOT language.
@@ -132,24 +130,19 @@ class DecayChainViewer(object):
         # Actually build the whole decay chain, iteratively
         iterate_chain(sc)
 
-    def get_digraph(self):
+    @property
+    def graph(self):
         """
         Get the actual Graph. The user now has full control ...
         """
-        if self._graph is not None:
-            return self._graph
-        return None
+        return self._graph
 
     def to_string(self):
         """
         Return a string representation of the built Graph in the DOT language.
         The function is simply `Graph.to_string()`.
         """
-        g = self.get_digraph()
-        if g is not None:
-            return g.to_string()
-        else:
-            warnings.warn("You first need to trigger the build of a Graph ...")
+        return self.graph.to_string()
 
     def _instantiate_digraph(self):
         """
@@ -166,11 +159,6 @@ class DecayChainViewer(object):
 
         return g
 
-    def _check_graph(self):
-        """Has the Graph been built already?"""
-        if self._graph is None:
-            raise GraphNotBuiltError("Hint: you first need to trigger the build of the graph ...!")
-
     def _get_digraph_defaults(self):
         return dict(graph_name='DecayChainGraph', rankdir='LR')
 
@@ -180,3 +168,11 @@ class DecayChainViewer(object):
 
     def _get_edge_defaults(self):
         return dict(fontcolor='#4c4c4c', fontsize=11)
+
+    def _repr_svg_(self):
+        """
+        IPython display
+        """
+
+        return self.graph.create_svg().decode('UTF-8')
+

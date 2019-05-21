@@ -67,11 +67,11 @@ class AmplitudeChain(ModelDecay):
         :param mat: The groupdict output of a match
         :return: A new amplitude chain instance
         '''
-        # Make sure particles are loaded
-        Particle.table()
+
+        getall = 'all' if hasattr(Particle, 'all') else 'table' # Support 0.4.4
 
         # Check to see if new particles loaded; if not, load them.
-        if 998100 not in Particle.table():
+        if 998100 not in getattr(Particle, getall)():
             data_dir = os.path.dirname(os.path.realpath(__file__))
             special_filename = os.path.join(data_dir, '..', 'data', 'MintDalitzSpecialParticles.csv')
             Particle.load_table(special_filename, append=True)
