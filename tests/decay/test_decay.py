@@ -46,6 +46,13 @@ def test_DecayMode_constructor_default():
     assert dm.metadata == dict(model=None, model_params=None)
 
 
+def test_DecayMode_constructor_simplest():
+    dm = DecayMode(0.1234, 'K+ K-')
+    assert dm.bf == 0.1234
+    assert dm.daughters == DaughtersDict('K+ K-')
+    assert dm.metadata == dict(model=None, model_params=None)
+
+
 def test_DecayMode_constructor_simple():
     dd = DaughtersDict('K+ K-')
     dm = DecayMode(0.1234, dd)
@@ -92,6 +99,15 @@ def test_DecayMode_describe_with_extra_info():
     assert 'Extra info:' in dm.describe()
     assert 'study: toy' in dm.describe()
     assert 'year: 2019' in dm.describe()
+
+
+def test_DecayMode_charge_conjugate():
+    dd = DaughtersDict('pi- pi0 nu(tau)')
+    dm = DecayMode(0.2551, dd, model='TAUHADNU', model_params=[-0.108, 0.775, 0.149, 1.364, 0.400])
+    dm_cc = dm.charge_conjugate()
+    assert dm_cc.daughters == DaughtersDict('pi+ pi0 nu(tau)~')
+    assert 'BF: 0.2551' in dm.describe()
+    assert 'Decay model: TAUHADNU [-0.108, 0.775, 0.149, 1.364, 0.4]' in dm.describe()
 
 
 def test_DecayMode_string_repr():
