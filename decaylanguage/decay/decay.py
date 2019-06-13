@@ -1,4 +1,19 @@
 from collections import Counter
+from cachetools import cached, LFUCache
+
+from particle import Particle, ParticleNotFound
+
+
+@cached(cache=LFUCache(maxsize=256))
+def charge_conjugate(pname):
+    """
+    Return the charge-conjugate particle name matching the given PDG name.
+    If no matching is found, return "ChargeConj(pname)".
+    """
+    try:
+        return Particle.from_string(pname).invert().name
+    except ParticleNotFound:
+        return 'ChargeConj({0})'.format(pname)
 
 
 class DaughtersDict(Counter):
@@ -39,6 +54,22 @@ class DaughtersDict(Counter):
         Return the daughters as a string representation (ordered list of names).
         """
         return ' '.join(sorted(self.elements()))
+
+    def charge_conjugate(self):
+        """
+        Return the charge-conjugate final state.
+
+        Note
+        ----
+        Charge conjugation mapping expects PDG particle names.
+
+        Examples
+        --------
+        >>> dd = DaughtersDict({'K+': 2, 'pi0': 1})
+        >>> dd.charge_conjugate()
+        <DaughtersDict: ['K-', 'K-', 'pi0']>
+        """
+        return self.__class__({charge_conjugate(p):n for p, n in self.items()})
 
     def __repr__(self):
         return "<{self.__class__.__name__}: {daughters}>".format(
@@ -91,7 +122,7 @@ class DecayMode(object):
         ----------
         bf: float, optional, default=0
             Decay mode branching fraction
-        daughters: DaughtersDict, optional, default=None
+        daughters: iterable or DaughtersDict, optional, default=None
             The final-state particles
         info: keyword arguments, optional
             Decay mode model information and/or user metadata (aka extra info)
@@ -108,6 +139,9 @@ class DecayMode(object):
         >>> dd = DaughtersDict('K+ K-')
         >>> dm = DecayMode(0.5, dd)
 
+        >>> # Decay mode with minimal input information, simpler version
+        >>> dm = DecayMode(0.5, 'K+ K-')
+
         >>> # Decay mode with decay model information
         >>> dd = DaughtersDict('pi- pi0 nu_tau')
         >>> dm = DecayMode(0.2551, dd,
@@ -119,7 +153,7 @@ class DecayMode(object):
         >>> dm = DecayMode(0.5, dd, model='PHSP', study='toy', year=2019)
         """
         self.bf = bf
-        self.daughters = daughters if daughters is not None else DaughtersDict()
+        self.daughters = DaughtersDict(daughters)
 
         self.metadata = dict(model=None, model_params=None)
         self.metadata.update(**info)
@@ -163,6 +197,24 @@ class DecayMode(object):
             val += "        {k}: {v}\n".format(k=key, v=self.metadata[key])
 
         return val
+
+    def charge_conjugate(self):
+        """
+        Return the charge-conjugate decay mode.
+
+        Note
+        ----
+        Charge conjugation mapping expects PDG particle names.
+
+        Examples
+        --------
+        >>> dm = DecayMode(1.0, 'K+ K+ pi-')
+        >>> dm.charge_conjugate()
+        <DecayMode: daughters=K- K- pi+, BF=1.0>
+        """
+        return self.__class__(self.bf,
+                              self.daughters.charge_conjugate(),
+                              **self.metadata)
 
     def __len__(self):
         """
