@@ -857,12 +857,27 @@ def get_model_parameters(decay_mode):
     the list
         [20000000000000.0, 0.1, 1.0, 0.04, 9.6, -0.8, 8.4, -0.6]
     will be returned.
+
+    For a decay
+        Decay MyD0
+            1.00      K-   pi-   pi+   pi+     LbAmpGen DtoKpipipi_v1 ;
+        Enddecay
+    the list
+        ['DtoKpipipi_v1']
+    will be returned.
     """
     if not isinstance(decay_mode, Tree) or decay_mode.data != 'decayline':
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
     lmo = list(decay_mode.find_data('model_options'))
-    return [float(tree.children[0].value) for tree in lmo[0].children] if len(lmo) == 1 else ''
+
+    def _value_or_name(t):
+        try:
+            return float(t.children[0].value)
+        except AttributeError:
+            return t.value
+
+    return [_value_or_name(tree) for tree in lmo[0].children] if len(lmo) == 1 else ''
 
 
 def get_decays(parsed_file):

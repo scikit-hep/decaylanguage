@@ -14,6 +14,9 @@ from decaylanguage.dec.dec import DecFileNotParsed, DecayNotFound
 from decaylanguage.dec.dec import ChargeConjugateReplacement
 from decaylanguage.dec.dec import get_decay_mother_name
 from decaylanguage.dec.dec import get_final_state_particle_names
+from decaylanguage.dec.dec import get_model_name
+from decaylanguage.dec.dec import get_model_parameters
+
 
 # New in Python 3
 try:
@@ -154,6 +157,31 @@ def test_decay_mode_details():
     tree_Dp = p._find_decay_modes('D+')[0]
     output = (1.0, ['K-', 'pi+', 'pi+', 'pi0'], 'PHSP', '')
     assert p._decay_mode_details(tree_Dp) == output
+
+
+def test_decay_model_parsing():
+    """
+    This module tests building blocks rather than the API,
+    hence the "strange" way to access parsed Lark Tree instances.
+    """
+    p = DecFileParser.from_file(DIR / 'data/test_Bd2DstDst.dec')
+    p.parse()
+
+    # Simple decay model without model parameters
+    dl = p._parsed_decays[2].children[1]  # 'MySecondD*+' Tree
+    assert get_model_name(dl) == 'VSS'
+    assert get_model_parameters(dl) == ''
+
+    # Decay model with a set of floating-point model parameters
+    dl = p._parsed_decays[0].children[1]  # 'B0sig' Tree
+    assert get_model_name(dl) == 'SVV_HELAMP'
+    assert get_model_parameters(dl) == [0.0, 0.0, 0.0, 0.0, 1.0, 0.0]
+
+    # Decay model where model parameter is a string,
+    # which matches an XML file for EvtGen
+    dl = p._parsed_decays[4].children[1]  # 'MyD0' Tree
+    assert get_model_name(dl) == 'LbAmpGen'
+    assert get_model_parameters(dl) == ['DtoKpipipi_v1']
 
 
 def test_duplicate_decay_definitions():
