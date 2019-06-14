@@ -155,6 +155,14 @@ class DecFileParser(object):
         # At last, find all particle decays defined in the .dec decay file ...
         self._find_parsed_decays()
 
+        # Check whether certain decay model parameters are defined via
+        # variable names with actual values provided via 'Define' statements,
+        # and perform the replacements name -> value where relevant.
+        # Do also a replacement of 'a_float' with a_float.
+        dict_define_defs = self.dict_definitions()
+        [DecayModelParamValueReplacement(define_defs=dict_define_defs).visit(tree)
+        for tree in self._parsed_decays]
+
         # ... and create on the fly the charge conjugate decays, if requested
         if self._include_ccdecays:
             self._add_charge_conjugate_decays()
@@ -612,6 +620,59 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
         return repr(self)
 
 
+class DecayModelParamValueReplacement(Visitor):
+    """
+    Lark Visitor implementing the replacement of decay model parameter names
+    with the actual parameter values provided in 'Define' statements,
+    and replacement of floats stored as strings to the actual floating values.
+    The replacement is only relevant for Lark Tree instances of name
+    'model_options' (Tree.data == 'model_options').
+
+    Parameters
+    ----------
+    define_defs: dict, optional, default={}
+        Dictionary with the 'Define' definitions in the parsed file.
+        Argument to be passed to the class constructor.
+
+    Examples
+    --------
+    >>> from lark import Tree, Token
+    >>> ...
+    >>> t = Tree('decay', [Tree('particle', [Token('LABEL', 'Upsilon(4S)')]),
+    ...         Tree('decayline', [Tree('value', [Token('SIGNED_NUMBER', '1.0')]),
+    ...         Tree('particle', [Token('LABEL', 'B0')]),
+    ...         Tree('particle', [Token('LABEL', 'anti-B0')]),
+    ...         Tree('model', [Token('MODEL_NAME', 'VSS_BMIX'),
+    ...         Tree('model_options', [Token('LABEL', 'dm')])])])])
+    >>> dict_define_defs = {'dm': 0.507e12}
+    >>> DecayModelParamValueReplacement(define_defs=dict_define_defs).visit(t)
+    Tree(decay, [Tree(particle, [Token(LABEL, 'Upsilon(4S)')]), Tree(decayline,
+    [Tree(value, [Token(SIGNED_NUMBER, '1.0')]), Tree(particle, [Token(LABEL, 'B0')]),
+    Tree(particle, [Token(LABEL, 'anti-B0')]), Tree(model, [Token(MODEL_NAME, 'VSS_BMIX'),
+    Tree(model_options, [Token(LABEL, 507000000000.0)])])])])
+    """
+    def __init__(self, define_defs=dict()):
+        self.define_defs = define_defs
+
+    def _replacement(self, t):
+        try:
+            t.children[0].value = float(t.children[0].value)
+        except AttributeError:
+            try:
+                t.value = self.define_defs[t.value]
+            except:
+                pass
+
+    def model_options(self, tree):
+        """
+        Method for the rule (here, a replacement) we wish to implement.
+        """
+        assert tree.data == 'model_options'
+
+        for child in tree.children:
+            self._replacement(child)
+
+
 class ChargeConjugateReplacement(Visitor):
     """
     Lark Visitor implementing the replacement of all particle names
@@ -871,13 +932,13 @@ def get_model_parameters(decay_mode):
 
     lmo = list(decay_mode.find_data('model_options'))
 
-    def _value_or_name(t):
+    def _value(t):
         try:
-            return float(t.children[0].value)
+            return t.children[0].value
         except AttributeError:
             return t.value
 
-    return [_value_or_name(tree) for tree in lmo[0].children] if len(lmo) == 1 else ''
+    return [_value(tree) for tree in lmo[0].children] if len(lmo) == 1 else ''
 
 
 def get_decays(parsed_file):
