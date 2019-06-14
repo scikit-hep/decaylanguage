@@ -195,6 +195,8 @@ def test_decay_model_parsing_with_variable_defs():
     p = DecFileParser.from_file(DIR / 'data/test_Upsilon4S2B0B0bar.dec')
     p.parse()
 
+    assert p.dict_definitions() == {'dm': 507000000000.0}
+
     dl = p._parsed_decays[0].children[1]
     assert get_model_name(dl) == 'VSS_BMIX'
     assert get_model_parameters(dl) == [0.507e12]

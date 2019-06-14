@@ -1,0 +1,8 @@
+# Example decay for testing purposes:
+# it checks that variable definitions are understood during parsing.
+
+Define dm 0.507e12
+
+Decay Upsilon(4S)
+1.0    B0    anti-B0       VSS_BMIX dm;
+Enddecay
