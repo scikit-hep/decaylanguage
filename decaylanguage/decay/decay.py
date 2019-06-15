@@ -4,14 +4,14 @@ from cachetools import cached, LFUCache
 from particle import Particle, ParticleNotFound
 
 
-@cached(cache=LFUCache(maxsize=256))
+@cached(cache=LFUCache(maxsize=64))
 def charge_conjugate(pname):
     """
     Return the charge-conjugate particle name matching the given PDG name.
     If no matching is found, return "ChargeConj(pname)".
     """
     try:
-        return Particle.from_string(pname).invert().name
+        return Particle.find(name=pname).invert().name
     except ParticleNotFound:
         return 'ChargeConj({0})'.format(pname)
 
