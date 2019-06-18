@@ -60,14 +60,14 @@ class DecayChainViewer(object):
         Visualize the Graph produced, opening the file ('png' by default)
         with the machine default program.
         """
-        self.build_decay_graph()
+        self._build_decay_graph()
 
         import tempfile
         import webbrowser
         tmpf = tempfile.NamedTemporaryFile(prefix='DecayChainViewer',
                                            suffix='.{0}'.format(format),
                                            delete=False)
-        self.get_digraph().write(tmpf.name, format=format)
+        self.graph.write(tmpf.name, format=format)
         tmpf.close()
         return webbrowser.open(tmpf.name)
 
@@ -100,7 +100,7 @@ class DecayChainViewer(object):
                     _ref = new_node_no_subchain(offset+idm, _list_parts)
                     _bf = subchain[idm]['bf']
                     if link_pos is None:
-                        self._graph.add_edge(pydot.Edge(top_node, _ref, label=_bf))
+                        self._graph.add_edge(pydot.Edge(top_node, _ref, label=str(_bf)))
                     else:
                         self._graph.add_edge(pydot.Edge('%s:p%s'%(top_node, link_pos), _ref, label=str(_bf)))
                 else:
@@ -175,4 +175,3 @@ class DecayChainViewer(object):
         """
 
         return self.graph.create_svg().decode('UTF-8')
-
