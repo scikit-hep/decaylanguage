@@ -160,8 +160,8 @@ class DecFileParser(object):
         # and perform the replacements name -> value where relevant.
         # Do also a replacement of 'a_float' with a_float.
         dict_define_defs = self.dict_definitions()
-        [DecayModelParamValueReplacement(define_defs=dict_define_defs).visit(tree)
-        for tree in self._parsed_decays]
+        for tree in self._parsed_decays:
+            DecayModelParamValueReplacement(define_defs=dict_define_defs).visit(tree)
 
         # ... and create on the fly the charge conjugate decays, if requested
         if self._include_ccdecays:
@@ -658,10 +658,8 @@ class DecayModelParamValueReplacement(Visitor):
         try:
             t.children[0].value = float(t.children[0].value)
         except AttributeError:
-            try:
+            if t.value in self.define_defs:
                 t.value = self.define_defs[t.value]
-            except:
-                pass
 
     def model_options(self, tree):
         """
