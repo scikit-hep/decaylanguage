@@ -32,6 +32,8 @@ import os
 import warnings
 import re
 
+from six import StringIO
+
 from lark import Lark
 from lark import Tree, Transformer, Visitor
 
@@ -65,17 +67,18 @@ class DecFileParser(object):
 
     Example
     -------
-    >>> parsed_file = DecFileParser.from_file('my-decay-file.dec')
+    >>> parsed_file = DecFileParser('my-decay-file.dec')
     """
 
     __slots__ = ("_grammar",
                  "_grammar_info",
-                 "_dec_file_name",
+                 "_dec_file_names",
+                 "_dec_file",
                  "_parsed_dec_file",
                  "_parsed_decays",
                  "_include_ccdecays")
 
-    def __init__(self, filename):
+    def __init__(self, filename=None):
         """
         Default constructor.
 
@@ -87,33 +90,71 @@ class DecFileParser(object):
         self._grammar = None       # Loaded Lark grammar definition file
         self._grammar_info = None  # Name of Lark grammar definition file
 
-        # Conversion to handle pathlib on Python < 3.6:
-        self._dec_file_name = str(filename)  # Name of the input decay file
-        self._parsed_dec_file = None      # Parsed decay file
+        # Name(s) of the input decay file(s)
+        if filename:
+            # Check input file
+            if not os.path.exists(filename):
+                raise FileNotFoundError("'{0}'!".format(filename))
 
-        self._parsed_decays = None  # Particle decays found in the decay file
+            self._dec_file_names = str(filename)  # Conversion to handle pathlib on Python < 3.6
+            self._dec_file = open(self._dec_file_names).read()
+
+        self._parsed_dec_file = None  # Parsed decay file
+        self._parsed_decays = None    # Particle decays found in the decay file
 
         # By default, consider charge-conjugate decays when parsing
         self._include_ccdecays = True
 
     @classmethod
-    def from_file(cls, filename):
+    def from_string(cls, filecontent):
         """
-        Parse a .dec decay file.
+        Parse a .dec decay file provided as a multi-line string.
 
         Parameters
         ----------
-        filename: str
-            Input .dec decay file name.
+        filecontent: str
+            Input .dec decay file content.
         """
-        # Conversion to handle pathlib on Python < 3.6:
-        filename = str(filename)
+        stream = StringIO(filecontent)
+        stream.seek(0)
 
-        # Check input file
-        if not os.path.exists(filename):
-            raise FileNotFoundError("'{0}'!".format(filename))
+        _cls = cls()
+        _cls._dec_file = stream.read()
+        _cls._dec_file_names = '<dec file input as a string>'
 
-        return cls(filename)
+        return _cls
+
+    @classmethod
+    def from_files(cls, filenames):
+        """
+        Parse a set of .dec decay files.
+
+        Parameters
+        ----------
+        filenames: iterable
+            Input .dec decay file names.
+        """
+        stream = StringIO()
+        for filename in filenames:
+            # Check input file
+            if not os.path.exists(filename):
+                raise FileNotFoundError("'{0}'!".format(filename))
+
+            with open(filename, 'r') as file:
+                for line in file:
+                    # We need to strip the unicode byte ordering if present before checking for *
+                    beg = line.lstrip('\ufeff').lstrip()
+                    # Make sure one discards all line "End"
+                    if not ( beg.startswith('End') and not beg.startswith('Enddecay')):
+                        stream.write(line)
+                stream.write('\n')
+        stream.seek(0)
+
+        _cls = cls()
+        _cls._dec_file_names = filenames
+        _cls._dec_file = stream.read()
+
+        return _cls
 
     def parse(self, include_ccdecays=True):
         """
@@ -149,8 +190,7 @@ class DecFileParser(object):
         # Instantiate the Lark parser according to chosen settings
         parser = Lark(self.grammar(), parser=opts['parser'], lexer=opts['lexer'])
 
-        dec_file = open(self._dec_file_name).read()
-        self._parsed_dec_file = parser.parse(dec_file)
+        self._parsed_dec_file = parser.parse(self._dec_file)
 
         # At last, find all particle decays defined in the .dec decay file ...
         self._find_parsed_decays()
@@ -610,11 +650,11 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
 
     def __repr__(self):
         if self._parsed_dec_file is not None:
-            return "<{self.__class__.__name__}: decfile='{decfile}', n_decays={n_decays}>".format(
-                self=self, decfile=self._dec_file_name, n_decays=self.number_of_decays)
+            return "<{self.__class__.__name__}: decfile(s)={decfile}, n_decays={n_decays}>".format(
+                self=self, decfile=self._dec_file_names, n_decays=self.number_of_decays)
         else:
-            return "<{self.__class__.__name__}: decfile='{decfile}'>"\
-                    .format(self=self, decfile=self._dec_file_name)
+            return "<{self.__class__.__name__}: decfile(s)={decfile}>"\
+                    .format(self=self, decfile=self._dec_file_names)
 
     def __str__(self):
         return repr(self)
