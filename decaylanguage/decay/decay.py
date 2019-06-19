@@ -1,10 +1,16 @@
 from collections import Counter
-from cachetools import cached, LFUCache
+
+try:
+    from functools import lru_cache
+    cacher = lru_cache(maxsize=64)
+except ImportError:
+    from cachetools import cached, LFUCache
+    cacher = cached(cache=LFUCache(maxsize=64))
 
 from particle import Particle, ParticleNotFound
 
 
-@cached(cache=LFUCache(maxsize=64))
+@cacher
 def charge_conjugate(pname):
     """
     Return the charge-conjugate particle name matching the given PDG name.

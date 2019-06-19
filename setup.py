@@ -78,7 +78,7 @@ setup(
         'pathlib2>=2.3; python_version<"3.5"',
         'enum34>=1.1; python_version<"3.4"',
         'importlib_resources>=1.0; python_version<"3.7"',
-        'cachetools',
+        'cachetools; python_version<"3.3"',
         'particle>=0.4.4'
     ],
     extras_require=extras,
