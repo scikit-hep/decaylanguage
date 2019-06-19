@@ -11,9 +11,13 @@ from decaylanguage import data
 
 from decaylanguage.dec.dec import DecFileParser
 from decaylanguage.dec.dec import DecFileNotParsed, DecayNotFound
+from decaylanguage.dec.dec import DecayModelParamValueReplacement
 from decaylanguage.dec.dec import ChargeConjugateReplacement
 from decaylanguage.dec.dec import get_decay_mother_name
 from decaylanguage.dec.dec import get_final_state_particle_names
+from decaylanguage.dec.dec import get_model_name
+from decaylanguage.dec.dec import get_model_parameters
+
 
 # New in Python 3
 try:
@@ -156,6 +160,48 @@ def test_decay_mode_details():
     assert p._decay_mode_details(tree_Dp) == output
 
 
+def test_decay_model_parsing():
+    """
+    This module tests building blocks rather than the API,
+    hence the "strange" way to access parsed Lark Tree instances.
+    """
+    p = DecFileParser.from_file(DIR / 'data/test_Bd2DstDst.dec')
+    p.parse()
+
+    # Simple decay model without model parameters
+    dl = p._parsed_decays[2].children[1]  # 'MySecondD*+' Tree
+    assert get_model_name(dl) == 'VSS'
+    assert get_model_parameters(dl) == ''
+
+    # Decay model with a set of floating-point model parameters
+    dl = p._parsed_decays[0].children[1]  # 'B0sig' Tree
+    assert get_model_name(dl) == 'SVV_HELAMP'
+    assert get_model_parameters(dl) == [0.0, 0.0, 0.0, 0.0, 1.0, 0.0]
+
+    # Decay model where model parameter is a string,
+    # which matches an XML file for EvtGen
+    dl = p._parsed_decays[4].children[1]  # 'MyD0' Tree
+    assert get_model_name(dl) == 'LbAmpGen'
+    assert get_model_parameters(dl) == ['DtoKpipipi_v1']
+
+
+def test_decay_model_parsing_with_variable_defs():
+    """
+    In this example the decay model details are "VSS_BMIX dm",
+    where dm stands for a variable name whose value is defined via the statement
+    'Define dm 0.507e12'. The parser should recognise this and return
+    [0.507e12] rather than ['dm'] as model parameters.
+    """
+    p = DecFileParser.from_file(DIR / 'data/test_Upsilon4S2B0B0bar.dec')
+    p.parse()
+
+    assert p.dict_definitions() == {'dm': 507000000000.0}
+
+    dl = p._parsed_decays[0].children[1]
+    assert get_model_name(dl) == 'VSS_BMIX'
+    assert get_model_parameters(dl) == [0.507e12]
+
+
 def test_duplicate_decay_definitions():
     p = DecFileParser(DIR / 'data/duplicate-decays.dec')
     p.parse()
@@ -171,6 +217,68 @@ def test_build_decay_chain():
 
     output = {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'm': 'PHSP', 'mp': ''}]}
     assert p.build_decay_chain('D+', stable_particles=['pi0']) == output
+
+
+def test_Lark_DecayModelParamValueReplacement_Visitor_no_params():
+    t = Tree('decay', [Tree('particle', [Token('LABEL', 'D0')]),
+            Tree('decayline', [Tree('value', [Token('SIGNED_NUMBER', '1.0')]),
+            Tree('particle', [Token('LABEL', 'K-')]),
+            Tree('particle', [Token('LABEL', 'pi+')]),
+            Tree('model', [Token('MODEL_NAME', 'PHSP')])])])
+
+    DecayModelParamValueReplacement().visit(t)
+
+    # The visitor should do nothing in this case
+    tree_decayline = list(t.find_data('decayline'))[0]
+    assert get_model_name(tree_decayline) == 'PHSP'
+    assert get_model_parameters(tree_decayline) == ''
+
+
+def test_Lark_DecayModelParamValueReplacement_Visitor_single_value():
+    t = Tree('decay', [Tree('particle', [Token('LABEL', 'Upsilon(4S)')]),
+            Tree('decayline', [Tree('value', [Token('SIGNED_NUMBER', '1.0')]),
+            Tree('particle', [Token('LABEL', 'B0')]),
+            Tree('particle', [Token('LABEL', 'anti-B0')]),
+            Tree('model', [Token('MODEL_NAME', 'VSS_BMIX'),
+            Tree('model_options', [Token('LABEL', 'dm')])])])])
+
+    DecayModelParamValueReplacement().visit(t)
+
+    # Nothing done since model parameter name has no corresponding
+    # 'Define' statement from which the actual value can be inferred
+    tree_decayline = list(t.find_data('decayline'))[0]
+    assert get_model_name(tree_decayline) == 'VSS_BMIX'
+    assert get_model_parameters(tree_decayline) == ['dm']
+
+    dict_define_defs = {'dm': 0.507e12}
+
+    DecayModelParamValueReplacement(define_defs=dict_define_defs).visit(t)
+
+    # The model parameter 'dm' should now be replaced by its value
+    assert get_model_name(tree_decayline) == 'VSS_BMIX'
+    assert get_model_parameters(tree_decayline) == [507000000000.0]
+
+
+def test_Lark_DecayModelParamValueReplacement_Visitor_list():
+    t = Tree('decay', [Tree('particle', [Token('LABEL', 'B0sig')]),
+            Tree('decayline', [Tree('value', [Token('SIGNED_NUMBER', '1.000')]),
+            Tree('particle', [Token('LABEL', 'MyFirstD*-')]),
+            Tree('particle', [Token('LABEL', 'MySecondD*+')]),
+            Tree('model', [Token('MODEL_NAME', 'SVV_HELAMP'),
+            Tree('model_options',
+                [Tree('value', [Token('SIGNED_NUMBER', '0.0')]),
+                Tree('value', [Token('SIGNED_NUMBER', '0.0')]),
+                Tree('value', [Token('SIGNED_NUMBER', '0.0')]),
+                Tree('value', [Token('SIGNED_NUMBER', '0.0')]),
+                Tree('value', [Token('SIGNED_NUMBER', '1.0')]),
+                Tree('value', [Token('SIGNED_NUMBER', '0.0')])])])])])
+
+    DecayModelParamValueReplacement().visit(t)
+
+    # The visitor should do nothing in this case
+    tree_decayline = list(t.find_data('decayline'))[0]
+    assert get_model_name(tree_decayline) == 'SVV_HELAMP'
+    assert get_model_parameters(tree_decayline) == [0.0, 0.0, 0.0, 0.0, 1.0, 0.0]
 
 
 def test_Lark_ChargeConjugateReplacement_Visitor():
