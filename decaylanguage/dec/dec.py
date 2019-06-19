@@ -92,11 +92,12 @@ class DecFileParser(object):
 
         # Name(s) of the input decay file(s)
         if filename:
+            filename = str(filename)  # Conversion to handle pathlib on Python < 3.6
             # Check input file
             if not os.path.exists(filename):
                 raise FileNotFoundError("'{0}'!".format(filename))
 
-            self._dec_file_names = str(filename)  # Conversion to handle pathlib on Python < 3.6
+            self._dec_file_names = filename
             self._dec_file = open(self._dec_file_names).read()
 
         self._parsed_dec_file = None  # Parsed decay file
