@@ -766,10 +766,11 @@ def find_charge_conjugate_match(pname, dict_cc_names=dict()):
 
     # Many names can be easily matched
     _pname = re.sub('anti-', '', pname)
-    mat = getdec.match(_pname).groupdict()
-    if mat and mat['charge']:
-        newcharge = Charge_undo[Charge(Charge_mapping[mat['charge']]*-1)]
-        ccpname = _pname.replace(mat['charge'], newcharge)
+    mat = getdec.match(_pname)
+    if mat:
+        oldcharge = mat.groupdict()['charge']
+        newcharge = Charge_undo[Charge(Charge_mapping[oldcharge]*-1)]
+        ccpname = _pname.replace(oldcharge, newcharge)
         dict_cc_names[pname] = ccpname
         return ccpname
 
