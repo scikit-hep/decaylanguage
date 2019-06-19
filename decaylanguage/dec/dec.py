@@ -93,6 +93,7 @@ class DecFileParser(object):
         # Name(s) of the input decay file(s)
         if filename:
             filename = str(filename)  # Conversion to handle pathlib on Python < 3.6
+
             # Check input file
             if not os.path.exists(filename):
                 raise FileNotFoundError("'{0}'!".format(filename))
@@ -137,6 +138,8 @@ class DecFileParser(object):
         """
         stream = StringIO()
         for filename in filenames:
+            filename = str(filename)  # Conversion to handle pathlib on Python < 3.6
+
             # Check input file
             if not os.path.exists(filename):
                 raise FileNotFoundError("'{0}'!".format(filename))
