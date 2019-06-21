@@ -91,6 +91,8 @@ class DecFileParser(object):
         self._grammar_info = None  # Name of Lark grammar definition file
 
         # Name(s) of the input decay file(s)
+        self._dec_file_names = None
+        self._dec_file = None
         if filename:
             filename = str(filename)  # Conversion to handle pathlib on Python < 3.6
 
@@ -121,8 +123,8 @@ class DecFileParser(object):
         stream.seek(0)
 
         _cls = cls()
-        _cls._dec_file = stream.read()
         _cls._dec_file_names = '<dec file input as a string>'
+        _cls._dec_file = stream.read()
 
         return _cls
 
@@ -148,7 +150,8 @@ class DecFileParser(object):
                 for line in file:
                     # We need to strip the unicode byte ordering if present before checking for *
                     beg = line.lstrip('\ufeff').lstrip()
-                    # Make sure one discards all line "End"
+                    # Make sure one discards all lines "End"
+                    # in intermediate files, to avoid a parsing error
                     if not ( beg.startswith('End') and not beg.startswith('Enddecay')):
                         stream.write(line)
                 stream.write('\n')
