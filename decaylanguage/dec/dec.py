@@ -78,30 +78,45 @@ class DecFileParser(object):
                  "_parsed_decays",
                  "_include_ccdecays")
 
-    def __init__(self, filename=None):
+    def __init__(self, *filenames):
         """
-        Default constructor.
+        Default constructor. Parse one or more .dec decay files.
 
         Parameters
         ----------
-        filename: str
-            Input .dec decay file name.
+        filenames: non-keyworded variable length argument
+            Input .dec decay file name(s).
         """
         self._grammar = None       # Loaded Lark grammar definition file
         self._grammar_info = None  # Name of Lark grammar definition file
 
         # Name(s) of the input decay file(s)
-        self._dec_file_names = None
-        self._dec_file = None
-        if filename:
-            filename = str(filename)  # Conversion to handle pathlib on Python < 3.6
+        if filenames:
+            # Conversion to handle pathlib on Python < 3.6
+            self._dec_file_names = [str(f) for f in filenames]
 
-            # Check input file
-            if not os.path.exists(filename):
-                raise FileNotFoundError("'{0}'!".format(filename))
+            stream = StringIO()
+            for filename in self._dec_file_names:
+                # Check input file
+                if not os.path.exists(filename):
+                    raise FileNotFoundError("'{0}'!".format(filename))
 
-            self._dec_file_names = filename
-            self._dec_file = open(self._dec_file_names).read()
+                with open(filename, 'r') as file:
+                    for line in file:
+                        # We need to strip the unicode byte ordering if present before checking for *
+                        beg = line.lstrip('\ufeff').lstrip()
+                        # Make sure one discards all lines "End"
+                        # in intermediate files, to avoid a parsing error
+                        if not ( beg.startswith('End') and not beg.startswith('Enddecay')):
+                            stream.write(line)
+                    stream.write('\n')
+
+            stream.seek(0)
+            # Content of input file(s)
+            self._dec_file = stream.read()
+        else:
+            self._dec_file_names = None
+            self._dec_file = None
 
         self._parsed_dec_file = None  # Parsed decay file
         self._parsed_decays = None    # Particle decays found in the decay file
@@ -124,41 +139,6 @@ class DecFileParser(object):
 
         _cls = cls()
         _cls._dec_file_names = '<dec file input as a string>'
-        _cls._dec_file = stream.read()
-
-        return _cls
-
-    @classmethod
-    def from_files(cls, filenames):
-        """
-        Parse a set of .dec decay files.
-
-        Parameters
-        ----------
-        filenames: iterable
-            Input .dec decay file names.
-        """
-        stream = StringIO()
-        for filename in filenames:
-            filename = str(filename)  # Conversion to handle pathlib on Python < 3.6
-
-            # Check input file
-            if not os.path.exists(filename):
-                raise FileNotFoundError("'{0}'!".format(filename))
-
-            with open(filename, 'r') as file:
-                for line in file:
-                    # We need to strip the unicode byte ordering if present before checking for *
-                    beg = line.lstrip('\ufeff').lstrip()
-                    # Make sure one discards all lines "End"
-                    # in intermediate files, to avoid a parsing error
-                    if not ( beg.startswith('End') and not beg.startswith('Enddecay')):
-                        stream.write(line)
-                stream.write('\n')
-        stream.seek(0)
-
-        _cls = cls()
-        _cls._dec_file_names = filenames
         _cls._dec_file = stream.read()
 
         return _cls

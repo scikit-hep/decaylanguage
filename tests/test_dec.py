@@ -30,20 +30,19 @@ DIR = Path(__file__).parent.resolve()
 
 
 def test_default_constructor():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    p = DecFileParser()
     assert p is not None
 
-
-def test_from_files():
-    p = DecFileParser.from_files([DIR / 'data/test_example_Dst.dec'])
+def test_constructor_1_file():
+    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
 
     assert p is not None
     assert len(p._dec_file_names) == 1
 
 
-def test_from_files():
-    p = DecFileParser.from_files([DIR / 'data/test_Xicc2XicPiPi.dec',
-                                  DIR / 'data/test_Bc2BsPi_Bs2KK.dec'])
+def test_constructor_multiple_files():
+    p = DecFileParser(DIR / 'data/test_Xicc2XicPiPi.dec',
+                      DIR / 'data/test_Bc2BsPi_Bs2KK.dec')
     p.parse()
 
     assert len(p._dec_file_names) == 2
