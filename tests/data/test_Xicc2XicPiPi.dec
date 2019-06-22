@@ -1,0 +1,16 @@
+
+Alias      MyXic+              Xi_c+
+Alias      MyantiXic-          anti-Xi_c-
+ChargeConj MyXic+              MyantiXic-
+
+Decay Xi_cc+sig
+  1.000       MyXic+    pi-    pi+       PHSP;
+Enddecay
+CDecay anti-Xi_cc-sig
+
+Decay MyXic+
+  1.000       p+    K-    pi+       PHSP;
+Enddecay
+CDecay MyantiXic-
+
+End

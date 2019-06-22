@@ -20,7 +20,7 @@ class DecayChainViewer(object):
 
     Example
     -------
-    >>> dfp = DecFileParser.from_file('my-Dst-decay-file.dec')
+    >>> dfp = DecFileParser('my-Dst-decay-file.dec')
     >>> dfp.parse()
     >>> chain = dfp.build_decay_chain('D*+')
     >>> dcv = DecayChainViewer(chain)

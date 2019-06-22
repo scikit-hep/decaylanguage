@@ -11,7 +11,7 @@ DIR = Path(__file__).parent.resolve()
 
 
 def test_single_decay():
-    p = DecFileParser.from_file(DIR / '../data/test_example_Dst.dec')
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
     chain = p.build_decay_chain('D*+', stable_particles=['D+', 'D0', 'pi0'])
@@ -37,7 +37,7 @@ mother -> dec2  [label=0.016];
 
 
 def test_simple_decay_chain():
-    p = DecFileParser.from_file(DIR / '../data/test_example_Dst.dec')
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
     chain = p.build_decay_chain('D*+')
