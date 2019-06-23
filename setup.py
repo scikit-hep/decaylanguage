@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
+# Copyright (c) 2018-2019, Eduardo Rodrigues and Henry Schreiner.
+#
+# Distributed under the 3-clause BSD license, see accompanying file LICENSE
+# or https://github.com/scikit-hep/decaylanguage for details.
+
 from __future__ import absolute_import
 from __future__ import print_function
 
@@ -52,7 +57,7 @@ setup(
     package_data={'': ['data/*.*']},
     classifiers=[
         # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: BSD License',

@@ -1,3 +1,8 @@
+# Copyright (c) 2018-2019, Eduardo Rodrigues and Henry Schreiner.
+#
+# Distributed under the 3-clause BSD license, see accompanying file LICENSE
+# or https://github.com/scikit-hep/decaylanguage for details.
+
 """
 Submodule with classes and utilities to visualize decay chains.
 Decay chains are typically provided by the parser of .dec decay files,
