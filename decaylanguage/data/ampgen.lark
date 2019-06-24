@@ -1,3 +1,8 @@
+// Copyright (c) 2018-2019, Eduardo Rodrigues and Henry Schreiner.
+//
+// Distributed under the 3-clause BSD license, see accompanying file LICENSE
+// or https://github.com/scikit-hep/decaylanguage for details.
+
 start : _NEWLINE? (line _NEWLINE)+
 
 ?line : cplx_decay_line | cart_decay_line | invert_line | constant | variable | options | event_type
@@ -12,7 +17,7 @@ event_type : "EventType" particle particle+
 constant : particle SIGNED_NUMBER
 variable : particle fix SIGNED_NUMBER SIGNED_NUMBER
 cplx_decay_line : decay fixed_cplx fixed_cplx
-cart_decay_line : decay fixed_cplx 
+cart_decay_line : decay fixed_cplx
 
 // Particle could have a number in front
 // TODO: This could pull out the - or -NUMBER* part
