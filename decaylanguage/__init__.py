@@ -3,11 +3,12 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
-__version__ = '0.2.0'
 
-version = __version__
-version_info = __version__.split('.')
-
+# Convenient access to the version number
+from ._version import __version__
 
 # Direct access to decay file parsing tools
 from .dec import DecFileParser
+
+# Direct access to decay chain visualization tools
+from .decay import DecayChainViewer
