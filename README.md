@@ -1,4 +1,4 @@
-[![DecayLanguage](images/DecayLanguage.png)](http://decaylanguage.readthedocs.io/en/latest/)
+[![DecayLanguage](https://github.com/scikit-hep/decaylanguage/raw/master/images/DecayLanguage.png)](http://decaylanguage.readthedocs.io/en/latest/)
 
 ## DecayLanguage: describe, manipulate and convert particle decays
 
