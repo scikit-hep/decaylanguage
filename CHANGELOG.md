@@ -1,8 +1,6 @@
 # Changelog
 
-## Version 0.3.0
-
-Under development
+## Version 0.3.0 (2019-06-26)
 
 * Decays modelling:
   - Updates to Mint related particle data files.
@@ -23,6 +21,7 @@ Under development
   - CI with Travis and AppVeyor removed.
 * Miscellaneous:
   - Demo notebook added, with a launcher for Binder.
+  -Copyright statements added to repository files.
   - General clean-up and minor bug fixes.
 
 

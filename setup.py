@@ -47,7 +47,7 @@ setup(
     author_email='henry.schreiner@cern.ch',
     maintainer = 'The Scikit-HEP admins',
     maintainer_email = 'scikit-hep-admins@googlegroups.com',
-    version='0.2.0',
+    version = get_version(),
     license='BSD 3-Clause License',
     description='A language to describe particle decays, and tools to work with them.',
     long_description=proc_readme(read('README.md')) + '\n\n' + read('CHANGELOG.md'),
@@ -84,7 +84,7 @@ setup(
         'enum34>=1.1; python_version<"3.4"',
         'importlib_resources>=1.0; python_version<"3.7"',
         'cachetools; python_version<"3.3"',
-        'particle>=0.4.4'
+        'particle>=0.5.0'
     ],
     extras_require=extras,
     setup_requires=[] + pytest_runner,
