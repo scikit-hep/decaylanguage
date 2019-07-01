@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 0.3.1
+
+Under development.
+
+* Miscellaneous:
+  - Demo notebook updated.
+  - Python wheels generation added.
+  - Zenodo DOI badge added to README.
+
+
 ## Version 0.3.0 (2019-06-26)
 
 * Decays modelling:
@@ -21,7 +31,7 @@
   - CI with Travis and AppVeyor removed.
 * Miscellaneous:
   - Demo notebook added, with a launcher for Binder.
-  -Copyright statements added to repository files.
+  - Copyright statements added to repository files.
   - General clean-up and minor bug fixes.
 
 
