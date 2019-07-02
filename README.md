@@ -101,6 +101,19 @@ information stored in decay files: the decays themselves, particle name aliases,
 definitions of charge-conjugate particles, variable and Pythia-specific
 definitions, etc.
 
+The class `DecayChainViewer` allows the visualization of parsed decay chains:
+
+```python
+from decaylanguage import DecayChainViewer
+
+# Build the D*+ decay chain representation setting the D+ and D0 mesons to stable,
+# to avoid too cluttered an image
+d = parser.build_decay_chain('D*+', stable_particles=['D+', 'D0'])
+DecayChainViewer(d)  # works in a notebook
+```
+
+![DecayChain D*](images/DecayChain_Dst_stable-D0-and-D+.png)
+
 #### Decay modeling
 
 The most common way to create a decay chain is to read in an [AmpGen]
