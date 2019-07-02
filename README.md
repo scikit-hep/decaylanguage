@@ -101,6 +101,21 @@ information stored in decay files: the decays themselves, particle name aliases,
 definitions of charge-conjugate particles, variable and Pythia-specific
 definitions, etc.
 
+It can be handy to parse from a multi-line string rather than a file:
+
+```python
+s = """Decay pi0
+0.988228297   gamma   gamma                   PHSP;
+0.011738247   e+      e-      gamma           PI0_DALITZ;
+0.000033392   e+      e+      e-      e-      PHSP;
+0.000000065   e+      e-                      PHSP;
+Enddecay
+"""
+
+parser = DecFileParser.from_string(s)
+parser.parse()
+```
+
 The class `DecayChainViewer` allows the visualization of parsed decay chains:
 
 ```python
