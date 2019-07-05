@@ -153,7 +153,7 @@ Alias      anti-Sigma-sig    anti-Sigma-
 ChargeConj Sigma+sig         anti-Sigma-sig
 Alias      K+sig             K+
 Alias      K-sig             K-
-ChargeConj K+sig             K-sig 
+ChargeConj K+sig             K-sig
 Alias      Lambda0sig        Lambda0
 Alias      anti-Lambda0sig   anti-Lambda0
 ChargeConj Lambda0sig        anti-Lambda0sig
@@ -180,7 +180,7 @@ ChargeConj K_S0sig           K_S0sig
 Alias      K_L0sig           K_L0
 ChargeConj K_L0sig           K_L0sig
 Alias      phisig            phi
-ChargeConj phisig            phisig 
+ChargeConj phisig            phisig
 Alias	   Xi_cc+sig        Xi_cc+
 Alias	   anti-Xi_cc-sig   anti-Xi_cc-
 ChargeConj Xi_cc+sig		anti-Xi_cc-sig
@@ -236,7 +236,7 @@ Alias      D_s*-sig             D_s*-
 Alias      D_s*+sig             D_s*+
 ChargeConj D_s*+sig             D_s*-sig
 Alias      Omega-sig            Omega-
-Alias      anti-Omega+sig       anti-Omega+ 
+Alias      anti-Omega+sig       anti-Omega+
 ChargeConj Omega-sig            anti-Omega+sig
 Alias      Sigma_b0sig          Sigma_b0
 Alias      anti-Sigma_b0sig     anti-Sigma_b0
@@ -254,7 +254,7 @@ Alias	     Xi_cc++sig           Xi_cc++
 Alias	     anti-Xi_cc--sig      anti-Xi_cc--
 ChargeConj Xi_cc++sig           anti-Xi_cc--sig
 Alias      Xi-sig               Xi-
-Alias      anti-Xi+sig          anti-Xi+ 
+Alias      anti-Xi+sig          anti-Xi+
 ChargeConj Xi-sig               anti-Xi+sig
 Alias      Xi0sig               Xi0
 Alias      anti-Xi0sig          anti-Xi0
@@ -315,23 +315,23 @@ Decay anti-B0
 #
 0.0493   D*+     e-      anti-nu_e      PHOTOS  HQET2 1.207 0.920 1.406 0.853; # 1.0 * PDG2014
 0.0219   D+      e-      anti-nu_e      PHOTOS  HQET2 1.185 1.081;             # 1.0 * PDG2014
-0.0042   D_1+   e-   anti-nu_e          PHOTOS  ISGW2;               # PDG2014+D_J below 
+0.0042   D_1+   e-   anti-nu_e          PHOTOS  ISGW2;               # PDG2014+D_J below
 0.0045   D_0*+   e-   anti-nu_e         PHOTOS  ISGW2;               # PDG2014+D_J below
 0.0046   D'_1+   e-   anti-nu_e         PHOTOS  ISGW2;               # PDG2014+D_J below
 0.0033   D_2*+   e-   anti-nu_e         PHOTOS  ISGW2;               # PDG2014+D_J below
 0.00045  D*+  pi0   e-   anti-nu_e      PHOTOS  GOITY_ROBERTS;       # Increase by 1.5 compared to 2011
 0.00490  D*0   pi+  e-   anti-nu_e      PHOTOS  GOITY_ROBERTS;       # Same as 2011
 0.0015   D+   pi0   e-   anti-nu_e      PHOTOS  GOITY_ROBERTS;       # 1.5 * of 2011 table
-0.0043   D0   pi+   e-   anti-nu_e      PHOTOS  GOITY_ROBERTS;       # In principle should be in D**, but go to PDG2014 to fill inclusive 
+0.0043   D0   pi+   e-   anti-nu_e      PHOTOS  GOITY_ROBERTS;       # In principle should be in D**, but go to PDG2014 to fill inclusive
 # Do same as for electrons
-0.0493   D*+     mu-     anti-nu_mu    PHOTOS  HQET2 1.207 0.920 1.406 0.853; 
-0.0219   D+      mu-     anti-nu_mu    PHOTOS  HQET2 1.185 1.081;; 
+0.0493   D*+     mu-     anti-nu_mu    PHOTOS  HQET2 1.207 0.920 1.406 0.853;
+0.0219   D+      mu-     anti-nu_mu    PHOTOS  HQET2 1.185 1.081;;
 0.0042   D_1+   mu-  anti-nu_mu        PHOTOS  ISGW2;
 0.0045   D_0*+   mu-  anti-nu_mu       PHOTOS  ISGW2;
 0.0046   D'_1+   mu-  anti-nu_mu       PHOTOS  ISGW2;
 0.0033   D_2*+   mu-  anti-nu_mu       PHOTOS  ISGW2;
 0.00045  D*+  pi0   mu-  anti-nu_mu    PHOTOS   GOITY_ROBERTS;
-0.00490  D*0   pi+  mu-  anti-nu_mu    PHOTOS   GOITY_ROBERTS; 
+0.00490  D*0   pi+  mu-  anti-nu_mu    PHOTOS   GOITY_ROBERTS;
 0.0015   D+   pi0   mu-  anti-nu_mu    PHOTOS   GOITY_ROBERTS;
 0.0043   D0   pi+   mu-  anti-nu_mu    PHOTOS   GOITY_ROBERTS;
 #
@@ -381,7 +381,7 @@ Decay anti-B0
 0.001892   Xu+  e-  anti-nu_e         PHOTOS    VUB 4.8 1.29 0.22 20 0.30 0.55 1.20 0.61 1.26 0.85 1.34 1.08 1.41 1.21 1.48 1.30 1.55 1.30 1.61 1.33 1.67 1.36 1.73 1.39 1.79 1.33 1.84 1.42 1.90 1.39 1.95 1.39 2.00 1.37 2.50 1.30 3.00 0.74 3.50 0.99 4.00 1.09 4.50 1.00;
 #
 0.000145000 pi+     mu-     anti-nu_mu                      PHOTOS   ISGW2; # PDG2014
-0.000294000 rho+    mu-     anti-nu_mu                      PHOTOS   ISGW2; # PDG2014 
+0.000294000 rho+    mu-     anti-nu_mu                      PHOTOS   ISGW2; # PDG2014
 0.000000   D(2S)+ mu-  anti-nu_mu       PHOTOS   ISGW2;
 0.000000   D*(2S)+ mu-  anti-nu_mu      PHOTOS    ISGW2;
 0.001892   Xu+  mu-  anti-nu_mu      PHOTOS       VUB 4.8 1.29 0.22 20 0.30 0.55 1.20 0.61 1.26 0.85 1.34 1.08 1.41 1.21 1.48 1.30 1.55 1.30 1.61 1.33 1.67 1.36 1.73 1.39 1.79 1.33 1.84 1.42 1.90 1.39 1.95 1.39 2.00 1.37 2.50 1.30 3.00 0.74 3.50 0.99 4.00 1.09 4.50 1.00;
@@ -1630,26 +1630,26 @@ Decay B0
 #
 0.0493   D*-     e+      nu_e       PHOTOS HQET2 1.207 0.920 1.406 0.853; # 1.0 * PDG2014
 0.0219   D-      e+      nu_e       PHOTOS HQET2 1.185 1.081;               # 1.0 * PDG2014
-0.0042   D_1-   e+   nu_e           PHOTOS ISGW2;               # PDG2014+D_J below 
+0.0042   D_1-   e+   nu_e           PHOTOS ISGW2;               # PDG2014+D_J below
 0.0045   D_0*-   e+   nu_e          PHOTOS ISGW2;               # PDG2014+D_J below
 0.0046   D'_1-   e+   nu_e          PHOTOS ISGW2;               # PDG2014+D_J below
 0.0033   D_2*-   e+   nu_e          PHOTOS ISGW2;               # PDG2014+D_J below
 0.00045  D*-  pi0   e+   nu_e       PHOTOS GOITY_ROBERTS;       # Increase by 1.5 compared to 2011
 0.00490  anti-D*0 pi-  e+   nu_e    PHOTOS GOITY_ROBERTS;       # Same as 2011
 0.0015   D-   pi0   e+   nu_e       PHOTOS GOITY_ROBERTS;       # 1.5 * of 2011 table
-0.0043   anti-D0  pi-  e+   nu_e    PHOTOS GOITY_ROBERTS;       # In principle should be in D**, but go to PDG2014 to fill inclusive 
+0.0043   anti-D0  pi-  e+   nu_e    PHOTOS GOITY_ROBERTS;       # In principle should be in D**, but go to PDG2014 to fill inclusive
 #
 # Do same as for electrons
-0.0493   D*-     mu+     nu_mu      PHOTOS HQET2 1.207 0.920 1.406 0.853; 
-0.0219   D-      mu+     nu_mu      PHOTOS HQET2 1.185 1.081;               
-0.0042   D_1-   mu+  nu_mu          PHOTOS ISGW2;               
-0.0045   D_0*-   mu+  nu_mu         PHOTOS  ISGW2;              
-0.0046   D'_1-   mu+  nu_mu         PHOTOS  ISGW2;              
-0.0033   D_2*-   mu+  nu_mu         PHOTOS  ISGW2;              
-0.00045  D*-  pi0   mu+  nu_mu      PHOTOS GOITY_ROBERTS;       
-0.00490  anti-D*0 pi-  mu+  nu_mu   PHOTOS     GOITY_ROBERTS;   
-0.0015   D-   pi0   mu+  nu_mu      PHOTOS GOITY_ROBERTS;       
-0.0043   anti-D0  pi-   mu+  nu_mu  PHOTOS    GOITY_ROBERTS;    
+0.0493   D*-     mu+     nu_mu      PHOTOS HQET2 1.207 0.920 1.406 0.853;
+0.0219   D-      mu+     nu_mu      PHOTOS HQET2 1.185 1.081;
+0.0042   D_1-   mu+  nu_mu          PHOTOS ISGW2;
+0.0045   D_0*-   mu+  nu_mu         PHOTOS  ISGW2;
+0.0046   D'_1-   mu+  nu_mu         PHOTOS  ISGW2;
+0.0033   D_2*-   mu+  nu_mu         PHOTOS  ISGW2;
+0.00045  D*-  pi0   mu+  nu_mu      PHOTOS GOITY_ROBERTS;
+0.00490  anti-D*0 pi-  mu+  nu_mu   PHOTOS     GOITY_ROBERTS;
+0.0015   D-   pi0   mu+  nu_mu      PHOTOS GOITY_ROBERTS;
+0.0043   anti-D0  pi-   mu+  nu_mu  PHOTOS    GOITY_ROBERTS;
 #
 #                    b -> c tau nu
 #
@@ -2906,23 +2906,23 @@ Decay B-
 #
 0.0569   D*0     e-      anti-nu_e     PHOTOS  HQET2 1.207 0.920 1.406 0.853; # 1.0 * PDG2014
 0.0227   D0      e-      anti-nu_e     PHOTOS  HQET2 1.185 1.081;               # 1.0 * PDG2014
-0.0045   D_10   e-   anti-nu_e         PHOTOS  ISGW2;               # PDG2014 + D_10->D*+pi- = 2/3 
+0.0045   D_10   e-   anti-nu_e         PHOTOS  ISGW2;               # PDG2014 + D_10->D*+pi- = 2/3
 0.0037   D_0*0   e-   anti-nu_e        PHOTOS  ISGW2;               # PDG2014 + D_0*0->D+pi- = 2/3
 0.0040   D'_10   e-   anti-nu_e        PHOTOS  ISGW2;               # PDG2014 + Dprime_10->D*+pi- = 2/3
 0.0033   D_2*0   e-   anti-nu_e        PHOTOS  ISGW2;               # DG2014 + D_2*0->D+pi- = 0.459
 0.006100 D*+   pi-  e-   anti-nu_e     PHOTOS  GOITY_ROBERTS;       # Same as 2011
-0.0003   D*0  pi0   e-   anti-nu_e     PHOTOS  GOITY_ROBERTS;       # same as 2011 
+0.0003   D*0  pi0   e-   anti-nu_e     PHOTOS  GOITY_ROBERTS;       # same as 2011
 0.0021   D+   pi-   e-   anti-nu_e     PHOTOS  GOITY_ROBERTS;       # PDG2014 (in principle covered by other decays, but there are some decays missing to inclusives)
-0.0010   D0   pi0   e-   anti-nu_e     PHOTOS  GOITY_ROBERTS;       # same as 2011 
+0.0010   D0   pi0   e-   anti-nu_e     PHOTOS  GOITY_ROBERTS;       # same as 2011
 #
 # For muonic decays do same as for electrons
-0.0569   D*0     mu-     anti-nu_mu    PHOTOS   HQET2 1.207 0.920 1.406 0.853; 
-0.0227   D0      mu-     anti-nu_mu    PHOTOS   HQET2 1.185 1.081; 
+0.0569   D*0     mu-     anti-nu_mu    PHOTOS   HQET2 1.207 0.920 1.406 0.853;
+0.0227   D0      mu-     anti-nu_mu    PHOTOS   HQET2 1.185 1.081;
 0.0045   D_10  mu-  anti-nu_mu         PHOTOS   ISGW2;
 0.0037   D_0*0  mu-  anti-nu_mu        PHOTOS   ISGW2;
 0.0040   D'_10  mu-  anti-nu_mu        PHOTOS   ISGW2;
 0.0033   D_2*0  mu-  anti-nu_mu        PHOTOS   ISGW2;
-0.006100 D*+  pi-  mu- anti-nu_mu      PHOTOS   GOITY_ROBERTS; 
+0.006100 D*+  pi-  mu- anti-nu_mu      PHOTOS   GOITY_ROBERTS;
 0.0003   D*0   pi0   mu-   anti-nu_mu  PHOTOS   GOITY_ROBERTS;
 0.0021   D+    pi-   mu-   anti-nu_mu  PHOTOS   GOITY_ROBERTS;
 0.0010   D0    pi0   mu-   anti-nu_mu  PHOTOS   GOITY_ROBERTS;
@@ -2942,20 +2942,20 @@ Decay B-
 #       hybrid weights (and vice versa).
 # This will need check whether we get correct inclusive q2 dependence
 
-0.00007800 pi0     e-      anti-nu_e   PHOTOS   ISGW2; # PDG2014  
-0.00003800 eta     e-      anti-nu_e   PHOTOS   ISGW2; # PDG2014  
-0.00015800 rho0    e-      anti-nu_e   PHOTOS   ISGW2; # PDG2014  
-0.00011900 omega   e-      anti-nu_e   PHOTOS   ISGW2; # PDG2014  
+0.00007800 pi0     e-      anti-nu_e   PHOTOS   ISGW2; # PDG2014
+0.00003800 eta     e-      anti-nu_e   PHOTOS   ISGW2; # PDG2014
+0.00015800 rho0    e-      anti-nu_e   PHOTOS   ISGW2; # PDG2014
+0.00011900 omega   e-      anti-nu_e   PHOTOS   ISGW2; # PDG2014
 0.000230   eta'   e-   anti-nu_e       PHOTOS   ISGW2; # PDG2014
 0.000000   D(2S)0 e-   anti-nu_e       PHOTOS   ISGW2;
 0.000000   D*(2S)0 e-   anti-nu_e      PHOTOS   ISGW2;
-0.001948   Xu0   e-  anti-nu_e         VUB 4.8 1.29 0.22 20 0.30 0.54 1.20 0.95 1.26 0.78 1.34 0.98 1.41 0.91 1.48 1.23 1.55 1.36 1.61 1.39 1.67 1.38 1.73 1.43 1.79 1.41 1.84 1.42 1.90 1.45 1.95 1.40 2.00 1.42 2.50 1.31 3.00 1.36 3.50 1.15 4.00 1.01 4.50 1.51; 
+0.001948   Xu0   e-  anti-nu_e         VUB 4.8 1.29 0.22 20 0.30 0.54 1.20 0.95 1.26 0.78 1.34 0.98 1.41 0.91 1.48 1.23 1.55 1.36 1.61 1.39 1.67 1.38 1.73 1.43 1.79 1.41 1.84 1.42 1.90 1.45 1.95 1.40 2.00 1.42 2.50 1.31 3.00 1.36 3.50 1.15 4.00 1.01 4.50 1.51;
 #
 # For muons do same as for electrons
-0.00007800 pi0     mu-   anti-nu_mu     PHOTOS   ISGW2; 
-0.00003800 eta     mu-   anti-nu_mu     PHOTOS   ISGW2; 
-0.00015800 rho0    mu-   anti-nu_mu     PHOTOS   ISGW2; 
-0.00011900 omega   mu-   anti-nu_mu     PHOTOS   ISGW2; 
+0.00007800 pi0     mu-   anti-nu_mu     PHOTOS   ISGW2;
+0.00003800 eta     mu-   anti-nu_mu     PHOTOS   ISGW2;
+0.00015800 rho0    mu-   anti-nu_mu     PHOTOS   ISGW2;
+0.00011900 omega   mu-   anti-nu_mu     PHOTOS   ISGW2;
 0.000230   eta'   mu-  anti-nu_mu       PHOTOS   ISGW2;
 0.000000   D(2S)0 mu-  anti-nu_mu       PHOTOS   ISGW2;
 0.000000   D*(2S)0 mu-  anti-nu_mu      PHOTOS   ISGW2;
@@ -3938,25 +3938,25 @@ Decay B+
 # Updated to PDG 2008
 #                  b -> c semileptonic
 #
-0.0569   anti-D*0 e+      nu_e         PHOTOS  HQET2 1.207 0.920 1.406 0.853; # For details see B- decay 
-0.0227   anti-D0 e+      nu_e          PHOTOS  HQET2 1.185 1.081;               
-0.0045   anti-D_10   e+   nu_e         PHOTOS  ISGW2;             
-0.0037   anti-D_0*0   e+   nu_e        PHOTOS  ISGW2;             
-0.0040   anti-D'_10   e+   nu_e        PHOTOS  ISGW2;             
-0.0033   anti-D_2*0   e+   nu_e        PHOTOS  ISGW2;             
-0.006100 D*-  pi+     e+      nu_e     PHOTOS  GOITY_ROBERTS;     
-0.0006   anti-D*0  pi0   e+   nu_e     PHOTOS  GOITY_ROBERTS;     
-0.0021   D-   pi+   e+   nu_e          PHOTOS  GOITY_ROBERTS;     
-0.0020   anti-D0  pi0   e+   nu_e      PHOTOS  GOITY_ROBERTS;     
+0.0569   anti-D*0 e+      nu_e         PHOTOS  HQET2 1.207 0.920 1.406 0.853; # For details see B- decay
+0.0227   anti-D0 e+      nu_e          PHOTOS  HQET2 1.185 1.081;
+0.0045   anti-D_10   e+   nu_e         PHOTOS  ISGW2;
+0.0037   anti-D_0*0   e+   nu_e        PHOTOS  ISGW2;
+0.0040   anti-D'_10   e+   nu_e        PHOTOS  ISGW2;
+0.0033   anti-D_2*0   e+   nu_e        PHOTOS  ISGW2;
+0.006100 D*-  pi+     e+      nu_e     PHOTOS  GOITY_ROBERTS;
+0.0006   anti-D*0  pi0   e+   nu_e     PHOTOS  GOITY_ROBERTS;
+0.0021   D-   pi+   e+   nu_e          PHOTOS  GOITY_ROBERTS;
+0.0020   anti-D0  pi0   e+   nu_e      PHOTOS  GOITY_ROBERTS;
 
 # For muonic decays do same as for electrons
-0.0569   anti-D*0 mu+     nu_mu       PHOTOS   HQET2 1.207 0.920 1.406 0.853; 
-0.0227   anti-D0 mu+     nu_mu        PHOTOS   HQET2 1.185 1.081; 
+0.0569   anti-D*0 mu+     nu_mu       PHOTOS   HQET2 1.207 0.920 1.406 0.853;
+0.0227   anti-D0 mu+     nu_mu        PHOTOS   HQET2 1.185 1.081;
 0.0045   anti-D_10   mu+  nu_mu       PHOTOS   ISGW2;
 0.0037   anti-D_0*0   mu+  nu_mu      PHOTOS   ISGW2;
 0.0040   anti-D'_10   mu+  nu_mu      PHOTOS   ISGW2;
 0.0033   anti-D_2*0   mu+  nu_mu      PHOTOS   ISGW2;
-0.006100 D*-   pi+     mu+     nu_mu  PHOTOS   GOITY_ROBERTS; 
+0.006100 D*-   pi+     mu+     nu_mu  PHOTOS   GOITY_ROBERTS;
 0.0006   anti-D*0  pi0   mu+   nu_mu  PHOTOS   GOITY_ROBERTS;
 0.0021   D-   pi+   mu+   nu_mu       PHOTOS   GOITY_ROBERTS;
 0.0020   anti-D0  pi0   mu+   nu_mu   PHOTOS   GOITY_ROBERTS;
@@ -3983,13 +3983,13 @@ Decay B+
 0.000230   eta'   e+   nu_e        PHOTOS  ISGW2; # PDG2014
 0.000000   anti-D(2S)0 e+   nu_e   PHOTOS  ISGW2;
 0.000000   anti-D*(2S)0 e+   nu_e  PHOTOS  ISGW2;
-0.001948   Xu0   e+  nu_e         VUB 4.8 1.29 0.22 20 0.30 0.54 1.20 0.95 1.26 0.78 1.34 0.98 1.41 0.91 1.48 1.23 1.55 1.36 1.61 1.39 1.67 1.38 1.73 1.43 1.79 1.41 1.84 1.42 1.90 1.45 1.95 1.40 2.00 1.42 2.50 1.31 3.00 1.36 3.50 1.15 4.00 1.01 4.50 1.51; 
+0.001948   Xu0   e+  nu_e         VUB 4.8 1.29 0.22 20 0.30 0.54 1.20 0.95 1.26 0.78 1.34 0.98 1.41 0.91 1.48 1.23 1.55 1.36 1.61 1.39 1.67 1.38 1.73 1.43 1.79 1.41 1.84 1.42 1.90 1.45 1.95 1.40 2.00 1.42 2.50 1.31 3.00 1.36 3.50 1.15 4.00 1.01 4.50 1.51;
 #
 # For muons do same as for electrons
-0.00007800 pi0     mu+     nu_mu   PHOTOS  ISGW2; 
-0.00003800 eta     mu+     nu_mu   PHOTOS  ISGW2; 
-0.00015800 rho0    mu+     nu_mu   PHOTOS  ISGW2; 
-0.00011900 omega   mu+     nu_mu   PHOTOS  ISGW2; 
+0.00007800 pi0     mu+     nu_mu   PHOTOS  ISGW2;
+0.00003800 eta     mu+     nu_mu   PHOTOS  ISGW2;
+0.00015800 rho0    mu+     nu_mu   PHOTOS  ISGW2;
+0.00011900 omega   mu+     nu_mu   PHOTOS  ISGW2;
 0.000230   eta'   mu+  nu_mu       PHOTOS  ISGW2;
 0.000000   anti-D(2S)0 mu+  nu_mu  PHOTOS  ISGW2;
 0.000000   anti-D*(2S)0 mu+  nu_mu PHOTOS  ISGW2;
@@ -4899,7 +4899,7 @@ Decay B+
 0.008879613 anti-cs_1 uu_1 PYTHIA 63;
 #
 #
-0.216697143 u anti-d anti-c u PYTHIA 23; # Adjust for unitarity 
+0.216697143 u anti-d anti-c u PYTHIA 23; # Adjust for unitarity
 0.034424652 u anti-d anti-c u PYTHIA 43; # Subtract 0.8%
 0.021305150 u anti-s anti-c u PYTHIA 43;
 #lange - try to crank up the psi production....
@@ -6180,7 +6180,7 @@ Decay D+
 0.003321725 K-      pi+     e+      nu_e                    PHOTOS   PHSP;  # PDG2014 (subtracted K*)+tiny bit to have sum=1
 0.001200122 anti-K0 pi0     e+      nu_e                    PHOTOS   PHSP;  # Keep same as in 2010 version+tiny bit to have sum=1
 #
-0.052800000 anti-K*0 mu+     nu_mu                          PHOTOS  ISGW2; # PDG2014 
+0.052800000 anti-K*0 mu+     nu_mu                          PHOTOS  ISGW2; # PDG2014
 0.092000000 anti-K0 mu+     nu_mu                           PHOTOS  ISGW2; # PDG2014
 0.002773020 anti-K_10 mu+     nu_mu                         PHOTOS  ISGW2; # Keep same as in 2010 version
 0.002927076 anti-K_2*0 mu+     nu_mu                        PHOTOS  ISGW2; # Keep same as in 2010 version
@@ -6473,8 +6473,8 @@ Decay D0
 0.001100000 K_2*-   e+      nu_e                            PHOTOS   ISGW2; # Small decrease as this is unmeasured
 0.002890000 pi-     e+      nu_e                            PHOTOS   ISGW2; # PDG2014
 0.001770000 rho-    e+      nu_e                            PHOTOS   ISGW2; # PDG2014
-0.001080000 anti-K0 pi-     e+      nu_e                    PHOTOS   PHSP;  # PDG2014 subtracting K* (decreased due large uncertaity ) 
-0.000400000 K-      pi0     e+      nu_e                    PHOTOS   PHSP;  # PDG2014 subtracting K* (decreased due large uncertaity ) 
+0.001080000 anti-K0 pi-     e+      nu_e                    PHOTOS   PHSP;  # PDG2014 subtracting K* (decreased due large uncertaity )
+0.000400000 K-      pi0     e+      nu_e                    PHOTOS   PHSP;  # PDG2014 subtracting K* (decreased due large uncertaity )
 #
 0.021000000 K*-     mu+     nu_mu                           PHOTOS  ISGW2; # 1.1 * PDG2014
 0.034700000 K-      mu+     nu_mu                           PHOTOS  ISGW2; # 1.05 * PDG2014
@@ -6661,8 +6661,8 @@ Decay anti-D0
 0.001100000 K_2*+   e-      anti-nu_e                       PHOTOS   ISGW2; # Small decrease as this is unmeasured
 0.002890000 pi+     e-      anti-nu_e                       PHOTOS   ISGW2; # PDG2014
 0.001770000 rho+    e-      anti-nu_e                       PHOTOS   ISGW2; # PDG2014
-0.001080000 K0      pi+     e-      anti-nu_e               PHOTOS   PHSP;  # PDG2014 subtracting K* (decreased due large uncertaity ) 
-0.000400000 K+      pi0     e-      anti-nu_e               PHOTOS   PHSP;  # PDG2014 subtracting K* (decreased due large uncertaity ) 
+0.001080000 K0      pi+     e-      anti-nu_e               PHOTOS   PHSP;  # PDG2014 subtracting K* (decreased due large uncertaity )
+0.000400000 K+      pi0     e-      anti-nu_e               PHOTOS   PHSP;  # PDG2014 subtracting K* (decreased due large uncertaity )
 #
 0.021000000 K*+     mu-     anti-nu_mu                      PHOTOS  ISGW2; # 1.1 * PDG2014
 0.034700000 K+      mu-     anti-nu_mu                      PHOTOS  ISGW2; # 1.05 * PDG2014
@@ -6856,7 +6856,7 @@ Decay D_s+
 0.000304906 rho+    pi0                                     SVS; #[Reconstructed PDG2011]
 0.000076226 pi+     pi0                                     PHSP; #[Reconstructed PDG2011]
 #?
-0.000196200 rho0    pi+                                     SVS;  # PDG 2014 
+0.000196200 rho0    pi+                                     SVS;  # PDG 2014
 0.007852048 f_0     pi+                                     PHSP; # PDG 2014
 0.001753646 f_2     pi+                                     PHSP; # PDG 2014
 0.004754077 f'_0    pi+                                     PHSP; # PDG 2014
@@ -6865,8 +6865,8 @@ Decay D_s+
 0.000000000 pi+     pi-     pi+                             PHSP; # PDG 2014 (filled by exclusives)
 0.084000000 phi     rho+                                    SVV_HELAMP 1.0 0.0 1.0 0.0 1.0 0.0; #[Reconstructed PDG2011]
 0.089000000 rho+    eta                                     SVS; #[Reconstructed PDG2011]
-0.124213286 rho+    eta'                                    SVS; # Decrease compared to PDG 2014 to preserve unitarity after 
-#                                                                # fixing Ds --> 3pi, we also have too much of inclusive eta', 
+0.124213286 rho+    eta'                                    SVS; # Decrease compared to PDG 2014 to preserve unitarity after
+#                                                                # fixing Ds --> 3pi, we also have too much of inclusive eta',
 #                                                                #so pick this decay
 0.006500000 pi+     pi0     pi0                             PHSP; #[Reconstructed PDG2011]
 0.007622650 phi     pi+     pi0                             PHSP; #[Reconstructed PDG2011]
@@ -6960,7 +6960,7 @@ Decay D_s-
 0.002300000 omega   pi-                                     SVS; #[Reconstructed PDG2011]
 0.000304906 rho-    pi0                                     SVS; #[Reconstructed PDG2011]
 0.000076226 pi-     pi0                                     PHSP; #[Reconstructed PDG2011]
-0.000196200 rho0    pi-                                     SVS;  # PDG 2014 
+0.000196200 rho0    pi-                                     SVS;  # PDG 2014
 0.007852048 f_0     pi-                                     PHSP; # PDG 2014
 0.001753646 f_2     pi-                                     PHSP; # PDG 2014
 0.004754077 f'_0    pi-                                     PHSP; # PDG 2014
@@ -6969,7 +6969,7 @@ Decay D_s-
 0.000000000 pi-     pi+     pi-                             PHSP; # PDG 2014 (filled by exclusives)
 0.084000000 phi     rho-                                    SVV_HELAMP 1.0 0.0 1.0 0.0 1.0 0.0; #[Reconstructed PDG2011]
 0.089000000 rho-    eta                                     SVS; #[Reconstructed PDG2011]
-0.124213286 rho-    eta'                                    SVS; # Decrease compared to PDG 2014 to preserve unitarity after 
+0.124213286 rho-    eta'                                    SVS; # Decrease compared to PDG 2014 to preserve unitarity after
 0.006500000 pi-     pi0     pi0                             PHSP; #[Reconstructed PDG2011]
 0.007622650 phi     pi-     pi0                             PHSP; #[Reconstructed PDG2011]
 0.011433975 eta     pi-     pi0                             PHSP; #[Reconstructed PDG2011]
@@ -9401,27 +9401,6 @@ Decay anti-Sigma(1670)0
 0.35    anti-Sigma-   pi+      PHSP;
 Enddecay
 #
-Decay Sigma(1775)0
-0.215     p+     K-                             PHSP;
-0.215     n0   anti-K0                          PHSP;
-0.20   Lambda0 pi0                             PHSP;
-0.02  Sigma+   pi-                            PHSP;
-0.02  Sigma-   pi+         PHSP;
-0.055  Sigma*+   pi-                            PHSP;
-0.055  Sigma*-   pi+         PHSP;
-0.22   Lambda(1520)0 pi0                             PHSP;
-Enddecay
-#
-Decay anti-Sigma(1775)0
-0.215     anti-p-     K+                             PHSP;
-0.215     anti-n0   K0                          PHSP;
-0.20   anti-Lambda0 pi0                             PHSP;
-0.02  anti-Sigma+   pi-                            PHSP;
-0.02  anti-Sigma-   pi+         PHSP;
-0.055  anti-Sigma*+   pi-                            PHSP;
-0.055  anti-Sigma*-   pi+         PHSP;
-0.22   anti-Lambda(1520)0 pi0                             PHSP;
-Enddecay
 Decay Sigma+
 0.515454300 p+      pi0                                     PHSP; #[Reconstructed PDG2011]
 0.482854300 n0      pi+                                     PHSP; #[Reconstructed PDG2011]
@@ -10783,7 +10762,7 @@ Decay K_L0
 Enddecay
 
 ##### Add excited baryon decays
-###### N* 
+###### N*
 Decay N(1440)+   # PDG 12212
   0.35 p+ pi0 PHSP;
   0.35 n0 pi+ PHSP;
@@ -11224,7 +11203,7 @@ Decay Delta(1700)++   # PDG 12224
   0.2 p+ pi+ PHSP;
   0.15 N(1440)+ pi+ PHSP;
   0.1 p+ rho+ PHSP;
-Enddecay 
+Enddecay
 CDecay anti-Delta(1700)--
 
 Decay Delta(1700)-    # PDG 11114
@@ -11438,7 +11417,7 @@ Decay Delta(1930)+  # PDG 12126
 Enddecay
 CDecay anti-Delta(1930)-
 
-Decay Delta(1930)++  # PDG 12226 
+Decay Delta(1930)++  # PDG 12226
   0.3 N(1440)+ pi+ PHSP;
   0.25 p+ rho+ PHSP;
   0.2 p+ pi+ PHSP;
@@ -11447,7 +11426,7 @@ Decay Delta(1930)++  # PDG 12226
 Enddecay
 CDecay anti-Delta(1930)--
 
-Decay Delta(1930)-  # PDG 11116 
+Decay Delta(1930)-  # PDG 11116
   0.3 N(1440)0 pi- PHSP;
   0.25 n0 rho- PHSP;
   0.2 n0 pi- PHSP;
