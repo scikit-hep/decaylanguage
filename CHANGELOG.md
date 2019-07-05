@@ -4,8 +4,11 @@
 
 Under development.
 
+* Parsing of decay files (aka .dec files):
+  - Update to latest LHCb DECAY.DEC file.
 * Miscellaneous:
   - Demo notebook updated.
+  - README updated with latest package functionality.
   - Python wheels generation added.
   - Zenodo DOI badge added to README.
 
