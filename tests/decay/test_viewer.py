@@ -3,10 +3,15 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
+
+from __future__ import absolute_import
+
 try:
     from pathlib2 import Path
 except ImportError:
     from pathlib import Path
+
+import pytest
 
 from decaylanguage.dec.dec import DecFileParser
 from decaylanguage.decay.viewer import DecayChainViewer
@@ -41,3 +46,32 @@ def test_simple_decay_chain():
     assert 'label="<p0> K- | <p1> pi+ | <p2> pi+ | <p3> pi0"' in graph_output_as_dot
     assert 'label="<p0> D+ | <p1> gamma"' in graph_output_as_dot
     assert 'label="<p0> K- | <p1> pi+ | <p2> pi+ | <p3> pi0"' in graph_output_as_dot
+
+
+checklist_decfiles = (
+    (DIR / '../data/test_Bc2BsPi_Bs2KK.dec', 'B_c+sig'),
+    (DIR / '../data/test_Bd2DDst_Ds2DmPi0.dec', 'B0sig'),
+    (DIR / '../data/test_Bd2DmTauNu_Dm23PiPi0_Tau2MuNu.dec', 'B0sig'),
+    (DIR / '../data/test_Bd2DMuNu.dec', 'anti-B0sig'),
+    (DIR / '../data/test_Bd2DstDst.dec', 'anti-B0sig'),
+    (DIR / '../data/test_example_Dst.dec', 'D*+'),
+    (DIR / '../data/test_Xicc2XicPiPi.dec', 'Xi_cc+sig')
+)
+
+
+@pytest.mark.parametrize("decfilepath,signal_mother", checklist_decfiles)
+def test_duplicate_arrows(decfilepath, signal_mother):
+    """
+    This test effectively checks whether any box node (node with subdecays)
+    gets more than one arrow to it, which would show a bug
+    in the creation of the DOT file recursively parsing the built decay chain.
+    """
+    p = DecFileParser(decfilepath, DIR / '../../decaylanguage/data/DECAY_LHCB.DEC')
+    p.parse()
+
+    chain = p.build_decay_chain(signal_mother)
+    dcv = DecayChainViewer(chain)
+    graph_output_as_dot = dcv.to_string()
+
+    l = [i.split(' ')[0] for i in graph_output_as_dot.split('-> dec')[1:]]  # list of node identifiers
+    assert len(set(l)) == len(l)

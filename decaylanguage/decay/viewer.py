@@ -9,7 +9,11 @@ Decay chains are typically provided by the parser of .dec decay files,
 see the `DecFileParser` class.
 """
 
-from numpy.random import randint
+import itertools
+try:
+    counter = itertools.count().__next__
+except AttributeError:
+    counter = itertools.count().next
 
 try:
     import pydot
@@ -84,34 +88,34 @@ class DecayChainViewer(object):
         in the DOT language.
         """
 
-        def new_node_no_subchain(dec_number, list_parts):
+        def new_node_no_subchain(list_parts):
             label = ' '.join(['%s'%p for p in list_parts])
             #label = ' '.join(['%s'%Particle.from_dec(p).html_name for p in list_parts])
-            r = 'dec%s' % dec_number
+            r = 'dec%s' % counter()
             self._graph.add_node(pydot.Node(r, label=label))
             return r
 
-        def new_node_with_subchain(dec_number, list_parts):
+        def new_node_with_subchain(list_parts):
             list_parts = [list(p.keys())[0] if isinstance(p,dict) else p for p in list_parts]
             label = ' | '.join(['<p%s> %s'%(i,n) for i, n in enumerate(list_parts)])
-            r = 'dec%s' % dec_number
+            r = 'dec%s' % counter()
             self._graph.add_node(pydot.Node(r, shape='record', label=label, fillcolor="#9abad6"))
             return r
 
-        def iterate_chain(subchain, top_node=None, offset=0, link_pos=None):
+        def iterate_chain(subchain, top_node=None, link_pos=None):
             if not top_node: top_node = node_mother
             n_decaymodes = len(subchain)
             for idm in range(n_decaymodes):
                 _list_parts = subchain[idm]['fs']
                 if not has_subdecay(_list_parts):
-                    _ref = new_node_no_subchain(offset+idm, _list_parts)
+                    _ref = new_node_no_subchain(_list_parts)
                     _bf = subchain[idm]['bf']
                     if link_pos is None:
                         self._graph.add_edge(pydot.Edge(top_node, _ref, label=str(_bf)))
                     else:
                         self._graph.add_edge(pydot.Edge('%s:p%s'%(top_node, link_pos), _ref, label=str(_bf)))
                 else:
-                    _ref_1 = new_node_with_subchain(offset+idm, _list_parts)
+                    _ref_1 = new_node_with_subchain(_list_parts)
                     _bf_1 = subchain[idm]['bf']
                     if link_pos is None:
                         self._graph.add_edge(pydot.Edge(top_node, _ref_1, label=str(_bf_1)))
@@ -120,8 +124,7 @@ class DecayChainViewer(object):
                     for i, _p in enumerate(_list_parts):
                         if not isinstance(_p,str):
                             _k = list(_p.keys())[0]
-                            # The range of generated random numbers could be increased, but it's probably not necessary
-                            iterate_chain(_p[_k], top_node=_ref_1, offset=offset+randint(10000), link_pos=i)
+                            iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
 
         # Effectively do a reset and produce a new graph
         self._graph = self._instantiate_digraph()
