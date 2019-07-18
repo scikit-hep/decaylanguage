@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.3.2
+
+Under development.
+
+
 ## Version 0.3.1 (2019-07-18)
 
 * Parsing of decay files (aka .dec files):
