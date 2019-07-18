@@ -13,7 +13,7 @@ import itertools
 try:
     counter = itertools.count().__next__
 except AttributeError:
-    counter = itertools.count().__next__
+    counter = itertools.count().next
 
 try:
     import pydot
