@@ -62,9 +62,9 @@ checklist_decfiles = (
 @pytest.mark.parametrize("decfilepath,signal_mother", checklist_decfiles)
 def test_duplicate_arrows(decfilepath, signal_mother):
     """
-    This test effectively checks whether any box node gets more than one arrow,
-    which would show a bug in the creation of the DOT file Recursively parsing
-    the built decay chain.
+    This test effectively checks whether any box node (node with subdecays)
+    gets more than one arrow to it, which would show a bug
+    in the creation of the DOT file recursively parsing the built decay chain.
     """
     p = DecFileParser(decfilepath, DIR / '../../decaylanguage/data/DECAY_LHCB.DEC')
     p.parse()
