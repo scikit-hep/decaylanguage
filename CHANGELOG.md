@@ -1,8 +1,6 @@
 # Changelog
 
-## Version 0.3.1
-
-Under development.
+## Version 0.3.1 (2019-07-18)
 
 * Parsing of decay files (aka .dec files):
   - Update to latest LHCb DECAY.DEC file.
