@@ -9,6 +9,8 @@ Decay chains are typically provided by the parser of .dec decay files,
 see the `DecFileParser` class.
 """
 
+from numpy.random import randint
+
 try:
     import pydot
 except ImportError:
@@ -118,8 +120,8 @@ class DecayChainViewer(object):
                     for i, _p in enumerate(_list_parts):
                         if not isinstance(_p,str):
                             _k = list(_p.keys())[0]
-                            offset += offset+n_decaymodes+len(_list_parts)
-                            iterate_chain(_p[_k], top_node=_ref_1, offset=offset+n_decaymodes+len(_list_parts), link_pos=i)
+                            # The range of generated random numbers could be increased, but it's probably not necessary
+                            iterate_chain(_p[_k], top_node=_ref_1, offset=offset+randint(10000), link_pos=i)
 
         # Effectively do a reset and produce a new graph
         self._graph = self._instantiate_digraph()
