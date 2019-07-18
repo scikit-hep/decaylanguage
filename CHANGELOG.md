@@ -6,6 +6,9 @@ Under development.
 
 * Parsing of decay files (aka .dec files):
   - Update to latest LHCb DECAY.DEC file.
+* Visualisation of decay chains:
+  - ``DecayChainViewer`` class made more robust.
+  - Better tests.
 * Miscellaneous:
   - Demo notebook updated.
   - README updated with latest package functionality.
