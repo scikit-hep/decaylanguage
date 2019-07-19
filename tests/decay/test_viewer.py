@@ -75,3 +75,14 @@ def test_duplicate_arrows(decfilepath, signal_mother):
 
     l = [i.split(' ')[0] for i in graph_output_as_dot.split('-> dec')[1:]]  # list of node identifiers
     assert len(set(l)) == len(l)
+
+
+def test_init_non_defaults():
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
+    p.parse()
+
+    chain = p.build_decay_chain('D*+')
+    dcv = DecayChainViewer(chain, graph_name='TEST', rankdir='TB')
+
+    assert dcv.graph.get_name() == 'TEST'
+    assert dcv.graph.get_rankdir() == 'TB'

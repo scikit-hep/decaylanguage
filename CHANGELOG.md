@@ -2,8 +2,10 @@
 
 ## Version 0.3.2
 
-Under development.
-
+* Visualisation of decay chains:
+  - ``DecayChainViewer`` class simplified and improved.
+  - More tests.
+  
 
 ## Version 0.3.1 (2019-07-18)
 
