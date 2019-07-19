@@ -129,6 +129,27 @@ DecayChainViewer(d)  # works in a notebook
 
 ![DecayChain D*](images/DecayChain_Dst_stable-D0-and-D+.png)
 
+The actual graph is available as
+
+```python
+# ...
+dcv = DecayChainViewer(d)
+dcv.graph
+```
+
+making all `pydot.Dot` class properties and methods available, such as
+
+```python
+dcv.graph.write_pdf('mygraph.pdf')
+```
+
+In the same way, all `pydot.Dot` class attributes are settable
+upon instantiation of `DecayChainViewer`:
+
+```python
+dcv = DecayChainViewer(chain, graph_name='TEST', rankdir='TB')
+```
+
 #### Decay modeling
 
 The most common way to create a decay chain is to read in an [AmpGen]
