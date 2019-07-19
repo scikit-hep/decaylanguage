@@ -39,15 +39,15 @@ def test_default_constructor():
     assert p is not None
 
 def test_constructor_1_file():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
 
     assert p is not None
     assert len(p._dec_file_names) == 1
 
 
 def test_constructor_multiple_files():
-    p = DecFileParser(DIR / 'data/test_Xicc2XicPiPi.dec',
-                      DIR / 'data/test_Bc2BsPi_Bs2KK.dec')
+    p = DecFileParser(DIR / '../data/test_Xicc2XicPiPi.dec',
+                      DIR / '../data/test_Bc2BsPi_Bs2KK.dec')
     p.parse()
 
     assert len(p._dec_file_names) == 2
@@ -76,31 +76,31 @@ def test_unknown_decfile():
 
 def test_non_parsed_decfile():
     with pytest.raises(DecFileNotParsed):
-        p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+        p = DecFileParser(DIR / '../data/test_example_Dst.dec')
         p.list_decay_mother_names()
 
 
 def test_non_existent_decay():
     with pytest.raises(DecayNotFound):
-        p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+        p = DecFileParser(DIR / '../data/test_example_Dst.dec')
         p.parse()
         p.list_decay_modes('XYZ')
 
 
 def test_default_grammar_loading():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     assert p.grammar is not None
 
 
 def test_explicit_grammar_loading():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
-    p.load_grammar(DIR / '../decaylanguage/data/decfile.lark')
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
+    p.load_grammar(DIR / '../../decaylanguage/data/decfile.lark')
 
     assert p.grammar_loaded is True
 
 
 def test_string_representation():
-        p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+        p = DecFileParser(DIR / '../data/test_example_Dst.dec')
 
         assert "n_decays" not in p.__str__()
 
@@ -109,28 +109,28 @@ def test_string_representation():
 
 
 def test_definitions_parsing():
-    p = DecFileParser(DIR / 'data/defs-aliases-chargeconj.dec')
+    p = DecFileParser(DIR / '../data/defs-aliases-chargeconj.dec')
     p.parse()
 
     assert len(p.dict_definitions()) == 24
 
 
 def test_aliases_parsing():
-    p = DecFileParser(DIR / 'data/defs-aliases-chargeconj.dec')
+    p = DecFileParser(DIR / '../data/defs-aliases-chargeconj.dec')
     p.parse()
 
     assert len(p.dict_aliases()) == 132
 
 
 def test_charge_conjugates_parsing():
-    p = DecFileParser(DIR / 'data/defs-aliases-chargeconj.dec')
+    p = DecFileParser(DIR / '../data/defs-aliases-chargeconj.dec')
     p.parse()
 
     assert len(p.dict_charge_conjugates()) == 77
 
 
 def test_pythia_definitions_parsing():
-    p = DecFileParser(DIR / 'data/defs-aliases-chargeconj.dec')
+    p = DecFileParser(DIR / '../data/defs-aliases-chargeconj.dec')
     p.parse()
 
     assert p.dict_pythia_definitions() == {'ParticleDecays:mixB': 'off',
@@ -140,7 +140,7 @@ def test_pythia_definitions_parsing():
 
 
 def test_list_lineshape_definitions():
-    p = DecFileParser(DIR / 'data/defs-aliases-chargeconj.dec')
+    p = DecFileParser(DIR / '../data/defs-aliases-chargeconj.dec')
     p.parse()
 
     assert p.list_lineshape_definitions() == [(['D_1+', 'D*+', 'pi0'], 2),
@@ -154,26 +154,26 @@ def test_list_lineshape_definitions():
 
 
 def test_global_photos_flag():
-    p = DecFileParser(DIR / 'data/defs-aliases-chargeconj.dec')
+    p = DecFileParser(DIR / '../data/defs-aliases-chargeconj.dec')
     p.parse()
 
     assert p.global_photos_flag() == True
 
 def test_missing_global_photos_flag():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
     assert p.global_photos_flag() == False
 
 def test_list_charge_conjugate_decays():
-    p = DecFileParser(DIR / 'data/test_Bd2DmTauNu_Dm23PiPi0_Tau2MuNu.dec')
+    p = DecFileParser(DIR / '../data/test_Bd2DmTauNu_Dm23PiPi0_Tau2MuNu.dec')
     p.parse()
 
     assert p.list_charge_conjugate_decays() == ['MyD+', 'MyTau+', 'Mya_1-', 'anti-B0sig']
 
 
 def test_simple_dec():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
     assert p.list_decay_mother_names() == ['D*+', 'D*-', 'D0', 'D+', 'pi0']
@@ -186,7 +186,7 @@ def test_dec_with_new_particle():
     This decay file is special (at least for now) since the mother particle
     is not known to the PDG data table.
     """
-    p = DecFileParser(DIR / 'data/test_Xicc2XicPiPi.dec')
+    p = DecFileParser(DIR / '../data/test_Xicc2XicPiPi.dec')
     p.parse()
 
     assert 'MyantiXic-' in p.list_decay_mother_names()
@@ -194,7 +194,7 @@ def test_dec_with_new_particle():
 
 
 def test_decay_mode_details():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
     tree_Dp = p._find_decay_modes('D+')[0]
@@ -207,7 +207,7 @@ def test_decay_model_parsing():
     This module tests building blocks rather than the API,
     hence the "strange" way to access parsed Lark Tree instances.
     """
-    p = DecFileParser(DIR / 'data/test_Bd2DstDst.dec')
+    p = DecFileParser(DIR / '../data/test_Bd2DstDst.dec')
     p.parse()
 
     # Simple decay model without model parameters
@@ -234,7 +234,7 @@ def test_decay_model_parsing_with_variable_defs():
     'Define dm 0.507e12'. The parser should recognise this and return
     [0.507e12] rather than ['dm'] as model parameters.
     """
-    p = DecFileParser(DIR / 'data/test_Upsilon4S2B0B0bar.dec')
+    p = DecFileParser(DIR / '../data/test_Upsilon4S2B0B0bar.dec')
     p.parse()
 
     assert p.dict_definitions() == {'dm': 507000000000.0}
@@ -245,7 +245,7 @@ def test_decay_model_parsing_with_variable_defs():
 
 
 def test_duplicate_decay_definitions():
-    p = DecFileParser(DIR / 'data/duplicate-decays.dec')
+    p = DecFileParser(DIR / '../data/duplicate-decays.dec')
     p.parse()
 
     assert p.number_of_decays == 2
@@ -254,7 +254,7 @@ def test_duplicate_decay_definitions():
 
 
 def test_build_decay_chain():
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
     output = {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'm': 'PHSP', 'mp': ''}]}
@@ -372,7 +372,7 @@ def test_creation_charge_conjugate_decays_in_decfile_with_aliases():
     The decay modes for the latter 5 should be created on the fly,
     hence providing in total 10 sets of particle decays parsed.
     """
-    p = DecFileParser(DIR / 'data/test_Bd2DstDst.dec')
+    p = DecFileParser(DIR / '../data/test_Bd2DstDst.dec')
     p.parse()
 
     assert p.number_of_decays == 10
@@ -388,14 +388,14 @@ def test_creation_charge_conjugate_decays_in_decfile_without_CDecay_defs():
     as there are no instructions on how to decay the anti-D0 and the D-!
     In short, there should only be 5 sets of decay modes parsed.
     """
-    p = DecFileParser(DIR / 'data/test_example_Dst.dec')
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
     assert p.number_of_decays == 5
 
 
 def test_master_DECAYdotDEC_file():
-    p = DecFileParser(DIR / '../decaylanguage/data/DECAY_LHCB.DEC')
+    p = DecFileParser(DIR / '../../decaylanguage/data/DECAY_LHCB.DEC')
     p.parse()
 
     assert p.number_of_decays == 506
