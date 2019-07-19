@@ -59,28 +59,11 @@ class DecayChainViewer(object):
         # Store the input decay chain
         self._chain = decaychain
 
-        # Override the default graph settings with the user input, if any
-        args = self._get_digraph_defaults()
-        args.update(**attrs)
-        self._graph_attributes = args
+        # Instantiate digraph with defaults possibly overriden by user attributes
+        self._graph = self._instantiate_graph(**attrs)
 
+        # Build the actual graph from the input decay chain structure
         self._build_decay_graph()
-
-    def visualize_decay_graph(self, format='png'):
-        """
-        Visualize the Graph produced, opening the file ('png' by default)
-        with the machine default program.
-        """
-        self._build_decay_graph()
-
-        import tempfile
-        import webbrowser
-        tmpf = tempfile.NamedTemporaryFile(prefix='DecayChainViewer',
-                                           suffix='.{0}'.format(format),
-                                           delete=False)
-        self.graph.write(tmpf.name, format=format)
-        tmpf.close()
-        return webbrowser.open(tmpf.name)
 
     def _build_decay_graph(self):
         """
@@ -127,7 +110,7 @@ class DecayChainViewer(object):
                             iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
 
         # Effectively do a reset and produce a new graph
-        self._graph = self._instantiate_digraph()
+        #self._graph = self._instantiate_graph()
 
         has_subdecay = lambda ds: not all([isinstance(p,str) for p in ds])
 
@@ -140,6 +123,20 @@ class DecayChainViewer(object):
         # Actually build the whole decay chain, iteratively
         iterate_chain(sc)
 
+    def visualize_decay_graph(self, format='png'):
+        """
+        Visualize the Graph produced, opening the file ('png' by default)
+        with the machine default program.
+        """
+        import tempfile
+        import webbrowser
+        tmpf = tempfile.NamedTemporaryFile(prefix='DecayChainViewer',
+                                           suffix='.{0}'.format(format),
+                                           delete=False)
+        self.graph.write(tmpf.name, format=format)
+        tmpf.close()
+        return webbrowser.open(tmpf.name)
+
     @property
     def graph(self):
         """
@@ -150,27 +147,39 @@ class DecayChainViewer(object):
     def to_string(self):
         """
         Return a string representation of the built Graph in the DOT language.
-        The function is simply `Graph.to_string()`.
+        The function is a trivial shortcut for `Graph.to_string()`.
         """
         return self.graph.to_string()
 
-    def _instantiate_digraph(self):
+    def _instantiate_graph(self, **attrs):
         """
         Return a pydot.Dot class instance using the default attributes
         specified in this class:
         - Default graph attributes are overriden by input by the user.
-        - Class nd node and edge defaults.
+        - Class and node and edge defaults.
         """
-        g = pydot.Dot(graph_type='digraph', graph_name='DecayChainGraph')
+        # Make sure the user cannot override the graph type
+        try:
+            del attrs['graph_type']
+        except KeyError:
+            pass
 
-        g.set_graph_defaults(**self._graph_attributes)
+        default_args = self._get_graph_defaults()
+        default_args.update(**attrs)
+
+        g = pydot.Dot(**default_args)
+
         g.set_node_defaults(**self._get_node_defaults())
         g.set_edge_defaults(**self._get_edge_defaults())
 
         return g
 
-    def _get_digraph_defaults(self):
-        return dict(graph_name='DecayChainGraph', rankdir='LR')
+    def _get_graph_defaults(self):
+        """
+        Note: the graph type cannot be overriden.
+        """
+        return dict(graph_type='digraph', graph_name='DecayChainGraph',
+                    rankdir='LR')
 
     def _get_node_defaults(self):
         return dict(style='filled', fillcolor='#eef3f8',
@@ -181,7 +190,7 @@ class DecayChainViewer(object):
 
     def _repr_svg_(self):
         """
-        IPython display
+        IPython display in SVG format.
         """
 
         return self.graph.create_svg().decode('UTF-8')
