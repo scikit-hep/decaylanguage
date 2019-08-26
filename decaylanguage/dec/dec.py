@@ -903,7 +903,7 @@ def get_final_state_particle_names(decay_mode):
 
     fsps = get_final_state_particles(decay_mode)
     # list of final-state particle names
-    return [fsp.children[0].value for fsp in fsps]
+    return [str(fsp.children[0].value) for fsp in fsps]
 
 
 def get_model_name(decay_mode):
@@ -927,7 +927,7 @@ def get_model_name(decay_mode):
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
     lm = list(decay_mode.find_data('model'))
-    return lm[0].children[0].value
+    return str(lm[0].children[0].value)
 
 
 def get_model_parameters(decay_mode):
