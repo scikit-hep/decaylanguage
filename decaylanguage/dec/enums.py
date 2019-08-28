@@ -41,6 +41,7 @@ known_decay_models = (
     "PYTHIA",
     "SLN",
     "SSD_CP",
+    "SSS_CP",
     "STS",
     "SVP_HELAMP",
     "SVS",
