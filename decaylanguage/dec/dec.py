@@ -302,6 +302,17 @@ class DecFileParser(object):
         """
         return get_pythia_definitions(self._parsed_dec_file)
 
+    def dict_jetset_definitions(self):
+        """
+        Return a dictionary of all JETSET definitions in the input parsed file,
+        of the form
+        "JetSetPar <PARAM>(<PNUMBER>)=<NUMBER>"
+        as {'PARAM1': {PNUMBER1: VALUE1, PNUMBER2: VALUE2, ...},
+            'PARAM2': {...},
+            ...}.
+        """
+        return get_jetset_definitions(self._parsed_dec_file)
+
     def list_lineshape_definitions(self):
         """
         Return a dictionary of all SetLineshapePW definitions in the input parsed file,
@@ -1102,6 +1113,44 @@ def get_pythia_definitions(parsed_file):
     try:
         return {'{0}:{1}'.format(tree.children[0].value, tree.children[1].value):str_or_float(tree.children[2].value)
             for tree in parsed_file.find_data('pythia_def')}
+    except:
+        RuntimeError("Input parsed file does not seem to have the expected structure.")
+
+
+def get_jetset_definitions(parsed_file):
+    """
+    Return a dictionary of all JETSET definitions in the input parsed file,
+    of the form
+    "JetSetPar <PARAM>(<PNUMBER>)=<NUMBER>"
+    as {'PARAM1': {PNUMBER1: VALUE1, PNUMBER2: VALUE2, ...},
+        'PARAM2': {...},
+        ...}.
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+    """
+    if not isinstance(parsed_file, Tree) :
+        raise RuntimeError("Input not an instance of a Tree!")
+
+    get_jetsetpar = re.compile(r"""
+    ^                                     # Beginning of string
+        (?P<pname>      [a-zA-Z]+?  )     # One or more characters, non-greedy
+     \( (?P<pnumber>    \d+         ) \)  # parameter number in ()
+    """, re.VERBOSE)
+
+    try:
+        dict_params = {}
+        for tree in parsed_file.find_data('jetset_def'):
+            param = get_jetsetpar.match(tree.children[0].value).groupdict()
+            try:
+                dict_params[param['pname']].update(
+                    {int(param['pnumber']):tree.children[1].value})
+            except KeyError:
+                dict_params[param['pname']] =\
+                    {int(param['pnumber']):tree.children[1].value}
+        return dict_params
     except:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 

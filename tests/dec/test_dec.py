@@ -139,6 +139,16 @@ def test_pythia_definitions_parsing():
                                            'Next:numberShowEvent': 0.0}
 
 
+def test_jetset_definitions_parsing():
+    p = DecFileParser(DIR / '../data/defs-aliases-chargeconj.dec')
+    p.parse()
+
+    assert p.dict_jetset_definitions() == {'MSTU': {1: '0', 2: '0'},
+                                           'PARU': {11: '0.001'},
+                                           'MSTJ': {26: '0'},
+                                           'PARJ': {21: '0.36'}}
+
+
 def test_list_lineshape_definitions():
     p = DecFileParser(DIR / '../data/defs-aliases-chargeconj.dec')
     p.parse()
