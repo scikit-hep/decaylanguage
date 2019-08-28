@@ -28,9 +28,9 @@ def test_single_decay():
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
-    assert 'dec0 [label="D0 pi+"];' in graph_output_as_dot
-    assert 'dec1 [label="D+ pi0"];' in graph_output_as_dot
-    assert 'dec2 [label="D+ gamma"];' in graph_output_as_dot
+    assert 'mother -> dec0  [label="0.677"]' in graph_output_as_dot
+    assert 'mother -> dec1  [label="0.307"]' in graph_output_as_dot
+    assert 'mother -> dec2  [label="0.016"]' in graph_output_as_dot
 
 
 def test_simple_decay_chain():
@@ -41,11 +41,11 @@ def test_simple_decay_chain():
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
-    assert 'label="<p0> D0 | <p1> pi+"' in graph_output_as_dot
-    assert 'label="<p0> D+ | <p1> pi0"' in graph_output_as_dot
-    assert 'label="<p0> K- | <p1> pi+ | <p2> pi+ | <p3> pi0"' in graph_output_as_dot
-    assert 'label="<p0> D+ | <p1> gamma"' in graph_output_as_dot
-    assert 'label="<p0> K- | <p1> pi+ | <p2> pi+ | <p3> pi0"' in graph_output_as_dot
+    assert 'mother -> dec3  [label="0.677"]' in graph_output_as_dot
+    assert 'dec3:p0 -> dec4  [label="1.0"]' in graph_output_as_dot
+    assert 'mother -> dec5  [label="0.307"]' in graph_output_as_dot
+    assert 'dec5:p0 -> dec6  [label="1.0"]' in graph_output_as_dot
+    assert 'dec6:p3 -> dec7  [label="0.988228297"]' in graph_output_as_dot
 
 
 checklist_decfiles = (
