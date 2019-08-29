@@ -1148,7 +1148,11 @@ def get_jetset_definitions(parsed_file):
         try:
             return int(n)
         except ValueError:
-            return float(n)
+            try:
+                return float(n)
+            except:
+                # handle all other exceptions
+                return n
 
     try:
         dict_params = {}
