@@ -1140,16 +1140,26 @@ def get_jetset_definitions(parsed_file):
      \( (?P<pnumber>    \d+         ) \)  # parameter number in ()
     """, re.VERBOSE)
 
+    def to_int_or_float(n):
+        """
+        Trivial helper function to convert the parsed (as strings)
+        JETSET parameters into what they are, namely integers or floats.
+        """
+        try:
+            return int(n)
+        except ValueError:
+            return float(n)
+
     try:
         dict_params = {}
         for tree in parsed_file.find_data('jetset_def'):
             param = get_jetsetpar.match(tree.children[0].value).groupdict()
             try:
                 dict_params[param['pname']].update(
-                    {int(param['pnumber']):tree.children[1].value})
+                    {int(param['pnumber']):to_int_or_float(tree.children[1].value)})
             except KeyError:
                 dict_params[param['pname']] =\
-                    {int(param['pnumber']):tree.children[1].value}
+                    {int(param['pnumber']):to_int_or_float(tree.children[1].value)}
         return dict_params
     except:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
