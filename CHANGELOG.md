@@ -1,11 +1,14 @@
 # Changelog
 
-## Version 0.3.2
+## Version 0.3.2 (2019-08-29)
 
+* Parsing of decay files (aka .dec files):
+  - ``DecFileParser`` class extended to understand JETSET definitions.
 * Visualisation of decay chains:
   - ``DecayChainViewer`` class simplified and improved.
+  - Decay chain DOT graphs now display HTML particle names.
   - More tests.
-  
+
 
 ## Version 0.3.1 (2019-07-18)
 
