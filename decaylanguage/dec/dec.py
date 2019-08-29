@@ -1151,7 +1151,7 @@ def get_jetset_definitions(parsed_file):
             try:
                 return float(n)
             except:
-                # handle all other exceptions
+                # pass though non-numbers unchanged
                 return n
 
     try:
