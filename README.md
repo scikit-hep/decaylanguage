@@ -1,4 +1,4 @@
-[![DecayLanguage](https://raw.githubusercontent.com/scikit-hep/decaylanguage/master/images/DecayLanguage.png)](http://decaylanguage.readthedocs.io/en/latest/)
+[![DecayLanguage](https://raw.githubusercontent.com/scikit-hep/decaylanguage/master/images/DecayLanguage.png)](https://decaylanguage.readthedocs.io/en/latest/)
 
 ## DecayLanguage: describe, manipulate and convert particle decays
 
@@ -127,7 +127,7 @@ d = parser.build_decay_chain('D*+', stable_particles=['D+', 'D0'])
 DecayChainViewer(d)  # works in a notebook
 ```
 
-![DecayChain D*](images/DecayChain_Dst_stable-D0-and-D+.png)
+![DecayChain D*](https://raw.githubusercontent.com/scikit-hep/decaylanguage/master/images/DecayChain_Dst_stable-D0-and-D+.png)
 
 The actual graph is available as
 
