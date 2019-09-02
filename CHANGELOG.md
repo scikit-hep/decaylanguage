@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.4.0 (2019-09-02)
+
+* Package dependent on ``Particle`` version 0.6.0.
+  Otherwise identical to version 0.3.2.
+
+
 ## Version 0.3.2 (2019-08-29)
 
 * Parsing of decay files (aka .dec files):
