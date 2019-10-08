@@ -234,7 +234,7 @@ class DecayMode(object):
         d = {'bf': self.bf, 'fs': self.daughters.to_list()}
         d.update(self.metadata)
         if d['model_params'] is None:
-            del d['model_params']
+            d['model_params'] = ''
         return d
 
     def charge_conjugate(self):
@@ -269,3 +269,123 @@ class DecayMode(object):
 
     def __str__(self):
         return repr(self)
+
+
+class DecayChain(object):
+    """
+    Class holding a particle decay chain, which is typically a top-level decay
+    (mother particle, branching fraction and final-state particles)
+    and a set of sub-decays for any non-stable particle in the top-level decay.
+    The whole chain can be seen as a mother particle and a list of decay modes.
+
+    This class is the main building block for the digital representation
+    of full decay chains.
+    """
+
+    __slots__ = ("mother",
+                 "decays")
+
+    def __init__(self, mother = None, decays = None):
+        """
+        Default constructor.
+        """
+        self.mother = mother
+        self.decays = decays
+
+    def top_level_decay(self):
+        """
+        Return the top-level decay as a `DecayMode` instance.
+        """
+        return self.decays[self.mother]
+
+    @property
+    def bf(self):
+        """
+        Branching fraction of the top-level decay.
+        """
+        return self.top_level_decay().bf
+
+    @property
+    def visible_bf(self):
+        """
+        Visible branching fraction of the whole decay chain.
+
+        Note
+        ----
+        Calculation requires a flattening of the entire decay chain.
+        """
+        return self.flatten().bf
+
+    def to_dict(self):
+        """
+        Return the decay chain as a dictionary representation.
+        The format is the same as `DecFileParser.build_decay_chain(...)`.
+
+        Examples
+        --------
+        >>> dm1 = DecayMode(0.028, 'K_S0 pi+ pi-')
+        >>> dm2 = DecayMode(0.692, 'pi+ pi-')
+        >>> dc = DecayChain('D0', {'D0':dm1, 'K_S0':dm2})
+        >>> dc.to_dict()
+        {'D0': [{'bf': 0.028,
+            'fs': [{'K_S0': [{'bf': 0.692,
+                'fs': ['pi+', 'pi-'],
+                'model': None,
+                'model_params': ''}]},
+             'pi+',
+             'pi-'],
+            'model': None,
+            'model_params': ''}]}
+        """
+        def recursively_replace(mother):
+            dm = self.decays[mother].to_dict()
+            result = list()
+            list_fsp = dm['fs']
+
+            for pos, fsp in enumerate(list_fsp):
+                if fsp in self.decays.keys():
+                    list_fsp[pos] = recursively_replace(fsp)
+                else:
+                    pass
+
+            result.append(dm)
+            d = {mother:result}
+            return d
+
+        return recursively_replace(self.mother)
+
+    def flatten(self):
+        """
+        Flatten the decay chain replacing all intermediate, decaying particles,
+        with their final states.
+
+        Examples
+        --------
+        >>> dm1 = DecayMode(0.0124, 'K_S0 pi0', model='PHSP')
+        >>> dm2 = DecayMode(0.692, 'pi+ pi-')
+        >>> dm3 = DecayMode(0.98823, 'gamma gamma')
+        >>> dc = DecayChain('D0', {'D0':dm1, 'K_S0':dm2, 'pi0':dm3})
+        >>>
+        >>> dc.flatten().to_dict()
+        {'D0': [{'bf': 0.008479803984,
+           'fs': ['gamma', 'gamma', 'pi+', 'pi-'],
+           'model': 'PHSP',
+           'model_params': ''}]}
+        """
+        vis_bf = 1.
+        fs = DaughtersDict()
+        keys = self.decays.keys()
+        for k in keys:
+            down_one_level = True
+            while down_one_level:
+                vis_bf *= self.decays[k].bf
+                fs += self.decays[k].daughters
+                fs[k] -= 1
+                down_one_level = k in fs.elements()
+
+        return DecayChain(self.mother,
+            {self.mother:DecayMode(vis_bf,
+                                   fs,
+                                   **self.top_level_decay().metadata)
+                                   }
+            )
