@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.4.1
+
+In development.
+
+* Universal representation of decay chains:
+  - Classes ``DaughtersDict`` and ``DecayMode`` enhanced.
+
+
 ## Version 0.4.0 (2019-09-02)
 
 * Package dependent on ``Particle`` version 0.6.0.

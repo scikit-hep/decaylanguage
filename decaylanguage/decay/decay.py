@@ -22,7 +22,7 @@ def charge_conjugate(pname):
     If no matching is found, return "ChargeConj(pname)".
     """
     try:
-        return Particle.find(name=pname).invert().name
+        return Particle.from_dec(pname).invert().name
     except ParticleNotFound:
         return 'ChargeConj({0})'.format(pname)
 
@@ -66,6 +66,12 @@ class DaughtersDict(Counter):
         """
         return ' '.join(sorted(self.elements()))
 
+    def to_list(self):
+        """
+        Return the daughters as an ordered list of names.
+        """
+        return sorted(list(self.elements()))
+
     def charge_conjugate(self):
         """
         Return the charge-conjugate final state.
@@ -84,7 +90,7 @@ class DaughtersDict(Counter):
 
     def __repr__(self):
         return "<{self.__class__.__name__}: {daughters}>".format(
-                self=self, daughters=sorted(list(self.elements())))
+                self=self, daughters=self.to_list())
 
     def __str__(self):
         return repr(self)
@@ -113,7 +119,7 @@ class DaughtersDict(Counter):
 class DecayMode(object):
     """
     Class holding a particle decay mode, which is typically a branching fraction
-    and a list of final-state particles.
+    and a list of final-state particles (i.e. a list of DaughtersDict instances).
     The class can also contain metadata such as decay model and optional
     decay-model parameters, as defined for example in .dec decay files.
 
@@ -208,6 +214,28 @@ class DecayMode(object):
             val += "        {k}: {v}\n".format(k=key, v=self.metadata[key])
 
         return val
+
+    def to_dict(self):
+        """
+        Return the decay mode as a dictionary in the format understood
+        by the `DecayChainViewer` class.
+
+        Examples
+        --------
+        >>> dm = DecayMode(0.5, 'K+ K- K- pi- pi0 nu_tau',
+                           model='PHSP', study='toy', year=2019)
+        >>> dm.to_dict()
+        {'bf': 0.5,
+         'fs': ['K+', 'K-', 'K-', 'nu_tau', 'pi-', 'pi0'],
+         'model': 'PHSP',
+         'study': 'toy',
+         'year': 2019}
+        """
+        d = {'bf': self.bf, 'fs': self.daughters.to_list()}
+        d.update(self.metadata)
+        if d['model_params'] is None:
+            del d['model_params']
+        return d
 
     def charge_conjugate(self):
         """
