@@ -326,7 +326,7 @@ class DecayChain(object):
     def to_dict(self):
         """
         Return the decay chain as a dictionary representation.
-        The format is the same as `DecFileParser.build_decay_chain(...)`.
+        The format is the same as `DecFileParser.build_decay_chains(...)`.
 
         Examples
         --------
@@ -396,3 +396,17 @@ class DecayChain(object):
                                    **self.top_level_decay().metadata)
                                    }
             )
+
+    def __repr__(self):
+        if self.mother is None:
+            return "Decay mode: undefined"
+
+        return "<{self.__class__.__name__}: {mother} -> {tldecay} ({n} sub-decays), BF={bf}>".format(
+                self=self,
+                mother=self.mother,
+                tldecay=self.top_level_decay().daughters.to_string(),
+                n=len(self.decays)-1,
+                bf=self.bf)
+
+    def __str__(self):
+        return repr(self)
