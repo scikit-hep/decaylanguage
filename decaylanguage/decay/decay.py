@@ -288,6 +288,13 @@ class DecayChain(object):
     def __init__(self, mother = None, decays = None):
         """
         Default constructor.
+
+        Examples
+        --------
+        >>> dm1 = DecayMode(0.0124, 'K_S0 pi0', model='PHSP')
+        >>> dm2 = DecayMode(0.692, 'pi+ pi-')
+        >>> dm3 = DecayMode(0.98823, 'gamma gamma')
+        >>> dc = DecayChain('D0', {'D0':dm1, 'K_S0':dm2, 'pi0':dm3})
         """
         self.mother = mother
         self.decays = decays
