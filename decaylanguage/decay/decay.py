@@ -323,6 +323,80 @@ class DecayChain(object):
         """
         return self.flatten().bf
 
+    def print_as_tree(self):
+        """
+        Tree-structure like print of the entire decay chain.
+
+        Examples
+        --------
+        >>> dm1 = DecayMode(0.028, 'K_S0 pi+ pi-')
+        >>> dm2 = DecayMode(0.692, 'pi+ pi-')
+        >>> dc = DecayChain('D0', {'D0':dm1, 'K_S0':dm2})
+        >>> dc.print_as_tree()
+        D0
+        +--> K_S0
+        |    +--> pi+
+        |    +--> pi-
+        +--> pi+
+        +--> pi-
+
+        >>> dm1 = DecayMode(0.0124, 'K_S0 pi0')
+        >>> dm2 = DecayMode(0.692, 'pi+ pi-')
+        >>> dm3 = DecayMode(0.98823, 'gamma gamma')
+        >>> dc = DecayChain('D0', {'D0':dm1, 'K_S0':dm2, 'pi0':dm3})
+        >>> dc.print_as_tree()
+        D0
+        +--> K_S0
+        |    +--> pi+
+        |    +--> pi-
+        +--> pi0
+             +--> gamma
+             +--> gamma
+
+        >>> dm1 = DecayMode(0.6770, 'D0 pi+')
+        >>> dm2 = DecayMode(0.0124, 'K_S0 pi0')
+        >>> dm3 = DecayMode(0.692, 'pi+ pi-')
+        >>> dm4 = DecayMode(0.98823, 'gamma gamma')
+        >>> dc = DecayChain('D*+', {'D*+':dm1, 'D0':dm2, 'K_S0':dm3, 'pi0':dm4})
+        >>> dc.print_as_tree()
+        D*+
+        +--> D0
+        |    +--> K_S0
+        |    |    +--> pi+
+        |    |    +--> pi-
+        |    +--> pi0
+        |         +--> gamma
+        |         +--> gamma
+        +--> pi+
+        """
+        indent = 4
+        arrow = '+--> '
+        bar = '|'
+
+        # TODO: simplify logic and perform further checks
+        def _print(decay_dict, depth=0, link=False, last=False):
+            mother = list(decay_dict.keys())[0]
+            prefix = bar if (link and depth>1) else ''
+            prefix = prefix + ' '*indent*(depth-1)
+            for i, i_decay in enumerate(decay_dict[mother]):
+                print(prefix, arrow if depth > 0 else '', mother, sep='')
+                fsps = i_decay['fs']
+                n = len(list(fsps))
+                depth += 1
+                for j, fsp in enumerate(fsps):
+                    prefix = bar if (link and depth>1) else ''
+                    if last:
+                        prefix = prefix + ' '*indent*(depth-1) + ' '
+                    else:
+                        prefix = (prefix+' '*indent)*(depth-1)
+                    if isinstance(fsp, str):
+                        print(prefix, arrow, fsp, sep='')
+                    else:
+                        _print(fsp, depth=depth, link=(link or (j<n-1)), last=(j==n-1))
+
+        dc_dict = self.to_dict()
+        _print(dc_dict)
+
     def to_dict(self):
         """
         Return the decay chain as a dictionary representation.
