@@ -123,7 +123,7 @@ from decaylanguage import DecayChainViewer
 
 # Build the D*+ decay chain representation setting the D+ and D0 mesons to stable,
 # to avoid too cluttered an image
-d = parser.build_decay_chain('D*+', stable_particles=['D+', 'D0'])
+d = parser.build_decay_chains('D*+', stable_particles=['D+', 'D0'])
 DecayChainViewer(d)  # works in a notebook
 ```
 

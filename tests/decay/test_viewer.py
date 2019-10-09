@@ -24,7 +24,7 @@ def test_single_decay():
     p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
-    chain = p.build_decay_chain('D*+', stable_particles=['D+', 'D0', 'pi0'])
+    chain = p.build_decay_chains('D*+', stable_particles=['D+', 'D0', 'pi0'])
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
@@ -37,7 +37,7 @@ def test_simple_decay_chain():
     p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
-    chain = p.build_decay_chain('D*+')
+    chain = p.build_decay_chains('D*+')
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
@@ -69,7 +69,7 @@ def test_duplicate_arrows(decfilepath, signal_mother):
     p = DecFileParser(decfilepath, DIR / '../../decaylanguage/data/DECAY_LHCB.DEC')
     p.parse()
 
-    chain = p.build_decay_chain(signal_mother)
+    chain = p.build_decay_chains(signal_mother)
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
@@ -81,7 +81,7 @@ def test_init_non_defaults():
     p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
-    chain = p.build_decay_chain('D*+')
+    chain = p.build_decay_chains('D*+')
     dcv = DecayChainViewer(chain, graph_name='TEST', rankdir='TB')
 
     assert dcv.graph.get_name() == 'TEST'

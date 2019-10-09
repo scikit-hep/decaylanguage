@@ -263,12 +263,12 @@ def test_duplicate_decay_definitions():
     assert p.list_decay_mother_names() == ['Sigma(1775)0', 'anti-Sigma(1775)0']
 
 
-def test_build_decay_chain():
+def test_build_decay_chains():
     p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
     output = {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'm': 'PHSP', 'mp': ''}]}
-    assert p.build_decay_chain('D+', stable_particles=['pi0']) == output
+    assert p.build_decay_chains('D+', stable_particles=['pi0']) == output
 
 
 def test_Lark_DecayModelParamValueReplacement_Visitor_no_params():
