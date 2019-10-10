@@ -36,7 +36,7 @@ class DecayChainViewer(object):
     -------
     >>> dfp = DecFileParser('my-Dst-decay-file.dec')
     >>> dfp.parse()
-    >>> chain = dfp.build_decay_chain('D*+')
+    >>> chain = dfp.build_decay_chains('D*+')
     >>> dcv = DecayChainViewer(chain)
     >>> dcv  # display the SVG figure in a notebook
     """

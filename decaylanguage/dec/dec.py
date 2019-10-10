@@ -571,9 +571,9 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
             print('%12g : %50s %15s %s' % (dm_details[0], '  '.\
                 join(p for p in dm_details[1]), dm_details[2], dm_details[3]))
 
-    def build_decay_chain(self, mother, stable_particles=[]):
+    def build_decay_chains(self, mother, stable_particles=[]):
         """
-        Iteratively build the whole decay chain of a given mother particle,
+        Iteratively build the entire decay chains of a given mother particle,
         optionally considering, on the fly, certain particles as stable.
         This way, for example, only the B -> D E F part in a decay chain
         A -> B (-> D E F (-> G H)) C
@@ -584,7 +584,8 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
         mother: str
             Input mother particle name.
         stable_particles: iterable, optional, default=[]
-            If provided, stops the decay-chain parsing, taking the "list" as particles to be considered stable.
+            If provided, stops the decay-chain parsing,
+            taking the "list" as particles to be considered stable.
 
         Returns
         -------
@@ -602,7 +603,7 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
         --------
         >>> parser = DecFileParser('a-Dplus-decay-file.dec')
         >>> parser.parse()
-        >>> parser.build_decay_chain('D+')
+        >>> parser.build_decay_chains('D+')
         {'D+': [{'bf': 1.0,
            'fs': ['K-',
             'pi+',
@@ -622,7 +623,7 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
               {'bf': 6.5e-08, 'fs': ['e+', 'e-'], 'm': 'PHSP', 'mp': ''}]}],
            'm': 'PHSP',
            'mp': ''}]}
-        >>> p.build_decay_chain('D+', stable_particles=['pi0'])
+        >>> p.build_decay_chains('D+', stable_particles=['pi0'])
         {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'm': 'PHSP', 'mp': ''}]}
         """
         keys = ('bf', 'fs', 'm', 'mp')
@@ -641,7 +642,7 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
                     # if fs does not have decays defined in the parsed file
                     _n_dms = len(self._find_decay_modes(fs))
 
-                    _info = self.build_decay_chain(fs, stable_particles)
+                    _info = self.build_decay_chains(fs, stable_particles)
                     d['fs'][i] = _info
                 except DecayNotFound:
                     pass
