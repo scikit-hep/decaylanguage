@@ -43,8 +43,8 @@ extras = {
 
 setup(
     name='decaylanguage',
-    author='Henry Fredrick Schreiner III',
-    author_email='henry.schreiner@cern.ch',
+    author='Henry Fredrick Schreiner III, Eduardo Rodrigues',
+    author_email='henry.schreiner@cern.ch, eduardo.rodrigues@cern.ch',
     maintainer = 'The Scikit-HEP admins',
     maintainer_email = 'scikit-hep-admins@googlegroups.com',
     version = get_version(),
@@ -84,7 +84,7 @@ setup(
         'enum34>=1.1; python_version<"3.4"',
         'importlib_resources>=1.0; python_version<"3.7"',
         'cachetools; python_version<"3.3"',
-        'particle>=0.6.0'
+        'particle==0.6'
     ],
     extras_require=extras,
     setup_requires=[] + pytest_runner,
