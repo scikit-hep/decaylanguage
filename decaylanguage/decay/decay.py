@@ -6,6 +6,7 @@
 from __future__ import print_function
 
 from collections import Counter
+from copy import deepcopy
 
 try:
     from functools import lru_cache
@@ -178,13 +179,39 @@ class DecayMode(object):
         self.metadata.update(**info)
 
     @classmethod
+    def from_dict(cls, decay_mode_dict):
+        """
+        Constructor from a dictionary of the form
+        {'bf': <float>, 'fs': [...], ...}.
+        These two keys are mandatory.
+
+        Examples
+        --------
+        >>> DecayMode.from_dict({'bf': 0.98823,
+                                 'fs': ['gamma', 'gamma'],
+                                 'model': 'PHSP',
+                                 'model_params': ''})
+        <DecayMode: daughters=gamma gamma, BF=0.98823>
+        """
+        dm = deepcopy(decay_mode_dict)
+
+        try:
+            bf = dm.pop('bf')
+            daughters = dm.pop('fs')
+        except:
+            raise RuntimeError("Input not in the expected format!")
+
+        return cls(bf=bf, daughters=daughters, **dm)
+
+    @classmethod
     def from_pdgids(cls, bf, daughters, **info):
         """
         Constructor for a final state given as a list of particle PDG IDs.
 
         Examples
         --------
-        >>> dm = DecayMode.from_pdgids(0.5, [321, -321])
+        >>> DecayMode.from_pdgids(0.5, [321, -321])
+        <DecayMode: daughters=K+ K-, BF=0.5>
         """
         # Check inputs
         try:
@@ -300,6 +327,44 @@ class DecayChain(object):
         """
         self.mother = mother
         self.decays = decays
+
+    @classmethod
+    def from_dict(cls, decay_chain_dict):
+        """
+        Constructor from a decay chain represented as a dictionary.
+        The format is the same as that returned by
+        `DecFileParser.build_decay_chains(...)`.
+        """
+        try:
+            assert len(decay_chain_dict.keys()) == 1
+        except:
+            raise RuntimeError("Input not in the expected format!")
+
+        has_no_subdecay = lambda ds: all([isinstance(p, str) for p in ds])
+
+        def build_decay_modes(dc_dict):
+            mother = list(dc_dict.keys())[0]
+            dms = dc_dict[mother]
+
+            for dm in dms:
+                if has_no_subdecay(dm['fs']):
+                    decay_modes[mother] = DecayMode.from_dict(dm)
+                else:
+                    d = deepcopy(dm)
+                    for i in range(len(d['fs'])):
+                        if isinstance(d['fs'][i], dict):
+                            # Replace the element with the key and
+                            # store the present decay mode ignoring sub-decays
+                            d['fs'][i] = list(d['fs'][i].keys())[0]
+                            decay_modes[mother] = DecayMode.from_dict(d)
+                            # Recursively continue ...
+                            build_decay_modes(dm['fs'][i])
+
+        decay_modes = dict()
+        mother = list(decay_chain_dict.keys())[0]
+        build_decay_modes(decay_chain_dict)
+
+        return cls( mother, decay_modes)
 
     def top_level_decay(self):
         """
