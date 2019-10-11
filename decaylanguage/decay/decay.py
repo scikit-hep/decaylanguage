@@ -356,9 +356,12 @@ class DecayChain(object):
                             # Replace the element with the key and
                             # store the present decay mode ignoring sub-decays
                             d['fs'][i] = list(d['fs'][i].keys())[0]
-                            decay_modes[mother] = DecayMode.from_dict(d)
                             # Recursively continue ...
                             build_decay_modes(dm['fs'][i])
+                    # Create the decay mode now that none of its particles
+                    # has a sub-decay
+                    decay_modes[mother] = DecayMode.from_dict(d)
+
 
         decay_modes = dict()
         mother = list(decay_chain_dict.keys())[0]
