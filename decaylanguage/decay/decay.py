@@ -449,6 +449,8 @@ class DecayChain(object):
         >>> dm3 = DecayMode(0.98823, 'gamma gamma')
         >>> dc = DecayChain('D0', {'D0':dm1, 'K_S0':dm2, 'pi0':dm3})
         >>>
+        >>> dc.flatten()
+        <DecayChain: D0 -> gamma gamma pi+ pi- (0 sub-decays), BF=0.008479803984>
         >>> dc.flatten().to_dict()
         {'D0': [{'bf': 0.008479803984,
            'fs': ['gamma', 'gamma', 'pi+', 'pi-'],

@@ -4,7 +4,11 @@
 
 In development.
 
+* Changes in API:
+  - ``DecFileParser.build_decay_chain()`` renamed to ``DecFileParser.build_decay_chains()``.
+
 * Universal representation of decay chains:
+  - Class ``DecayChain`` introduced.
   - Classes ``DaughtersDict`` and ``DecayMode`` enhanced.
 
 
