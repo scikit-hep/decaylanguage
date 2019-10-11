@@ -1,15 +1,13 @@
 # Changelog
 
-## Version 0.4.1
-
-In development.
-
-* Changes in API:
-  - ``DecFileParser.build_decay_chain()`` renamed to ``DecFileParser.build_decay_chains()``.
+## Version 0.5.0 (2019-10-11)
 
 * Universal representation of decay chains:
   - Class ``DecayChain`` introduced.
   - Classes ``DaughtersDict`` and ``DecayMode`` enhanced.
+* Changes in API:
+  - ``DecFileParser.build_decay_chain()`` renamed to ``DecFileParser.build_decay_chains()``.
+* Package dependent on ``Particle`` package version 0.6.
 
 
 ## Version 0.4.0 (2019-09-02)
