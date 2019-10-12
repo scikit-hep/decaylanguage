@@ -3,6 +3,9 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
+
+from pytest import approx
+
 from decaylanguage.decay.decay import DaughtersDict
 from decaylanguage.decay.decay import DecayMode
 from decaylanguage.decay.decay import DecayChain
@@ -190,7 +193,7 @@ def test_DecayChain_to_dict():
 
 def test_DecayChain_properties():
     assert dc.bf == 0.0124
-    assert dc.visible_bf == 0.008479803984
+    assert dc.visible_bf == approx(0.008479803984)
 
 
 def test_DecayChain_flatten():
