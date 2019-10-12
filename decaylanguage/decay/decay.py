@@ -318,6 +318,11 @@ class DecayChain(object):
         """
         Default constructor.
 
+        Parameters
+        ----------
+        mother: str, optional, default=None
+            Input mother particle of the top-level decay.
+
         Examples
         --------
         >>> dm1 = DecayMode(0.0124, 'K_S0 pi0', model='PHSP')
@@ -505,10 +510,16 @@ class DecayChain(object):
 
         return recursively_replace(self.mother)
 
-    def flatten(self):
+    def flatten(self, stable_particles=[]):
         """
         Flatten the decay chain replacing all intermediate, decaying particles,
         with their final states.
+
+        Parameters
+        ----------
+        stable_particles: iterable, optional, default=[]
+            If provided, ignores the sub-decays of the listed particles,
+            considering them as stable.
 
         Examples
         --------
@@ -524,12 +535,17 @@ class DecayChain(object):
            'fs': ['gamma', 'gamma', 'pi+', 'pi-'],
            'model': 'PHSP',
            'model_params': ''}]}
+
+        >>> dc.flatten(stable_particles=['K_S0', 'pi0']).decays
+        {'D0': <DecayMode: daughters=K_S0 pi0, BF=0.0124>}
         """
         vis_bf = 1.
         fs = DaughtersDict()
         keys = self.decays.keys()
         for k in keys:
             down_one_level = True
+            if k in stable_particles:
+                continue
             while down_one_level:
                 vis_bf *= self.decays[k].bf
                 fs += self.decays[k].daughters
