@@ -3,8 +3,12 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
+
+from pytest import approx
+
 from decaylanguage.decay.decay import DaughtersDict
 from decaylanguage.decay.decay import DecayMode
+from decaylanguage.decay.decay import DecayChain
 
 
 def test_DaughtersDict_constructor_from_dict():
@@ -91,6 +95,14 @@ def test_DecayMode_constructor_with_user_model_info():
                            'year': 2019}
 
 
+def test_DecayMode_constructor_from_dict():
+    dm = DecayMode.from_dict({'bf': 0.98823,
+                              'fs': ['gamma', 'gamma'],
+                              'model': 'PHSP',
+                              'model_params': ''})
+    assert str(dm) == "<DecayMode: daughters=gamma gamma, BF=0.98823>"
+
+
 def test_DecayMode_describe_simple():
     dd = DaughtersDict('pi- pi0 nu_tau')
     dm = DecayMode(0.2551, dd, model='TAUHADNU', model_params=[-0.108, 0.775, 0.149, 1.364, 0.400])
@@ -125,3 +137,70 @@ def test_DecayMode_number_of_final_states():
     dd = DaughtersDict('p p~ K+ pi-')
     dm = DecayMode(1.e-6, dd, model='PHSP')
     assert len(dm) == 4
+
+
+dm1 = DecayMode(0.0124, 'K_S0 pi0', model='PHSP')
+dm2 = DecayMode(0.692, 'pi+ pi-')
+dm3 = DecayMode(0.98823, 'gamma gamma')
+dc = DecayChain('D0', {'D0':dm1, 'K_S0':dm2, 'pi0':dm3})
+
+
+dm1 = DecayMode(0.6770, 'D0 pi+')
+dm2 = DecayMode(0.0124, 'K_S0 pi0')
+dm3 = DecayMode(0.692, 'pi+ pi-')
+dm4 = DecayMode(0.98823, 'gamma gamma')
+dc2 = DecayChain('D*+', {'D*+':dm1, 'D0':dm2, 'K_S0':dm3, 'pi0':dm4})
+
+
+def test_DecayChain_constructor_subdecays():
+    assert len(dc.decays) == 3
+    assert dc.mother == 'D0'
+
+
+def test_DecayChain_constructor_from_dict():
+    dc_dict = {'D0': [{'bf': 0.0124,
+                       'fs': [{'K_S0': [{'bf': 0.692,
+                                         'fs': ['pi+', 'pi-'],
+                                         'model': None,
+                                         'model_params': ''}]},
+                              {'pi0': [{'bf': 0.98823,
+                                        'fs': ['gamma', 'gamma'],
+                                        'model': None,
+                                        'model_params': ''}]}],
+                        'model': 'PHSP',
+                        'model_params': ''}]
+                }
+    assert DecayChain.from_dict(dc_dict).to_dict() == dc_dict
+
+
+def test_DecayChain_to_dict():
+    assert dc2.to_dict() == {'D*+': [{'bf': 0.677,
+                        'fs': [{'D0': [{'bf': 0.0124,
+                            'fs': [{'K_S0': [{'bf': 0.692,
+                                'fs': ['pi+', 'pi-'],
+                                'model': None,
+                                'model_params': ''}]},
+                                   {'pi0': [{'bf': 0.98823,
+                                   'fs': ['gamma', 'gamma'],
+                                   'model': None,
+                                   'model_params': ''}]}],
+                            'model': None,
+                            'model_params': ''}]},
+                            'pi+'],
+                        'model': None,
+                        'model_params': ''}]}
+
+
+def test_DecayChain_properties():
+    assert dc.bf == 0.0124
+    assert dc.visible_bf == approx(0.008479803984)
+
+
+def test_DecayChain_flatten():
+    dc_flatten = dc2.flatten()
+    assert dc_flatten.mother == dc2.mother
+    assert dc_flatten.bf == dc_flatten.visible_bf
+
+
+def test_DecayChain_string_repr():
+    assert str(dc) == "<DecayChain: D0 -> K_S0 pi0 (2 sub-decays), BF=0.0124>"
