@@ -36,6 +36,7 @@ from __future__ import absolute_import, division, print_function
 import os
 import warnings
 import re
+import operator
 
 from six import StringIO
 
@@ -562,14 +563,41 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
 
         return (bf, fsp_names, model, model_params)
 
-    def print_decay_modes(self, mother):
-        """Pretty print (debugging) of the decay modes of a given particle."""
+    def print_decay_modes(self, mother,
+                          print_model=True,
+                          ascending=False):
+        """
+        Pretty print of the decay modes of a given particle.
+
+        Parameters
+        ----------
+        mother: str
+            Input mother particle name.
+        print_model: bool, optional, default=True
+            Specify whether to print the decay model and model parameters,
+            if available.
+        ascending: bool, optional, default=False
+            Print the list of decay modes ordered in ascending/descending order
+            of branching fraction.
+        """
         dms = self._find_decay_modes(mother)
 
-        for dm in dms:
-            dm_details = self._decay_mode_details(dm)
-            print('%12g : %50s %15s %s' % (dm_details[0], '  '.\
-                join(p for p in dm_details[1]), dm_details[2], dm_details[3]))
+        l = list()
+        if print_model:
+            for dm in dms:
+                dm_details = self._decay_mode_details(dm)
+                l.append((dm_details[0],'%-50s %15s %s' % ('  '.\
+                    join(p for p in dm_details[1]), dm_details[2], dm_details[3])))
+        else:
+            for dm in dms:
+                fsp_names = get_final_state_particle_names(dm)
+                l.append((get_branching_fraction(dm),
+                         '%-50s' % ('  '.join(p for p in fsp_names))))
+
+        l.sort(key=operator.itemgetter(0), reverse=(not ascending))
+
+        for bf, info in l:
+            print('%12g : %s' % (bf, info))
 
     def build_decay_chains(self, mother, stable_particles=[]):
         """
@@ -1222,7 +1250,6 @@ def get_global_photos_flag(parsed_file):
 
     # Check if the flag is not set more than once, just in case ...
     tree = tuple(parsed_file.find_data('global_photos'))
-    print('TREE:', tree)
     if len(tree) == 0:
         return PhotosEnum.no
     elif len(tree) > 1:
