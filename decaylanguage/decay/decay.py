@@ -314,7 +314,7 @@ class DecayChain(object):
     __slots__ = ("mother",
                  "decays")
 
-    def __init__(self, mother = None, decays = None):
+    def __init__(self, mother, decays):
         """
         Default constructor.
 
@@ -397,6 +397,13 @@ class DecayChain(object):
         Calculation requires a flattening of the entire decay chain.
         """
         return self.flatten().bf
+
+    @property
+    def ndecays(self):
+        """
+        Return the number of decay modes including the top-level decay.
+        """
+        return len(self.decays)
 
     def print_as_tree(self):
         """
