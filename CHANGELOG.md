@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 0.5.1 (2019-10-14)
+
+* Universal representation of decay chains:
+  - Classes ``DecayChain`` and ``DecayMode`` enhanced.
+  - Tests for class ``DecayChain`` added.
+* Parsing of decay files (aka .dec files):
+  - ``DecFileParser`` class extended.
+
+
 ## Version 0.5.0 (2019-10-11)
 
 * Universal representation of decay chains:
