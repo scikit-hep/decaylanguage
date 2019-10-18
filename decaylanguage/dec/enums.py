@@ -20,6 +20,8 @@ class PhotosEnum(IntEnum):
 # 'decaylanguage/data/decfile.lark'!
 known_decay_models = (
     "BaryonPCR",
+    "BCL",
+    "BGL",
     "BTO3PI_CP",
     "BTOSLLALI",
     "BTOSLLBALL",
@@ -28,12 +30,16 @@ known_decay_models = (
     "CB3PI-MPP",
     "CB3PI-P00",
     "D_DALITZ",
+    "ETAPRIME_DALITZ",
     "ETA_DALITZ",
+    "ETA_FULLDALITZ",
+    "ETA_PI0DALITZ",
     "GOITY_ROBERTS",
     "HELAMP",
     "HQET",
     "ISGW2",
     "LbAmpGen",
+    "LLSW",
     "OMEGA_DALITZ",
     "PARTWAVE",
     "PHSP",
@@ -62,4 +68,5 @@ known_decay_models = (
     "VVP",
     "VVPIPI",
     "VVS_PWAVE",
+    "YMSTOYNSPIPICLEO"
     )
