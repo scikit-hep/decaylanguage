@@ -257,6 +257,7 @@ class DecayMode(object):
         {'bf': 0.5,
          'fs': ['K+', 'K-', 'K-', 'nu_tau', 'pi-', 'pi0'],
          'model': 'PHSP',
+         'model_params': '',
          'study': 'toy',
          'year': 2019}
         """
