@@ -23,6 +23,7 @@ from decaylanguage.dec.dec import get_final_state_particle_names
 from decaylanguage.dec.dec import get_model_name
 from decaylanguage.dec.dec import get_model_parameters
 
+from decaylanguage.dec.enums import known_decay_models
 
 # New in Python 3
 try:
@@ -409,3 +410,20 @@ def test_master_DECAYdotDEC_file():
     p.parse()
 
     assert p.number_of_decays == 506
+
+
+def test_lark_file_model_list_consistency():
+    """
+    Make sure that the list of known decay models in the grammar file
+    'decaylanguage/data/decfile.lark' is consistent with that provided
+    to the user via
+    'from decaylanguage.dec.enums import known_decay_models'.
+    """
+    with open(DIR / '../../decaylanguage/data/decfile.lark') as lark_file:
+        lines = lark_file.readlines()
+        for line in lines:
+            if 'MODEL_NAME.2' in line: break
+        models = line.split(':')[1].strip(' ').strip('\n').split('"|"')
+        models = [m.strip('"') for m in models]
+
+        assert models == list(known_decay_models)

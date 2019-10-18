@@ -62,11 +62,11 @@ known_decay_models = (
     "TVS_PWAVE",
     "VLL",
     "VSP_PWAVE",
-    "VSS",
     "VSS_BMIX",
+    "VSS",
     "VUB",
-    "VVP",
     "VVPIPI",
+    "VVP",
     "VVS_PWAVE",
     "YMSTOYNSPIPICLEO"
     )
