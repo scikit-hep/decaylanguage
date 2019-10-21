@@ -1,6 +1,7 @@
 <a href="https://decaylanguage.readthedocs.io/en/latest/"><img align="left" src="https://raw.githubusercontent.com/scikit-hep/decaylanguage/master/images/DecayLanguage.png"></img></a><br>
 
-## DecayLanguage: describe, manipulate and convert particle decays
+
+# DecayLanguage: describe, manipulate and convert particle decays
 
 [![PyPI Package latest release](https://img.shields.io/pypi/v/decaylanguage.svg)](https://pypi.python.org/pypi/decaylanguage)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3257423.svg)](https://doi.org/10.5281/zenodo.3257423)
@@ -21,10 +22,10 @@ several fitting programs. Particular interest is given to programs dedicated
 to amplitude analyses.
 
 DecayLanguage provides tools to parse so-called .dec decay files,
-and manipulate and visualize decay chains.
+and describe, manipulate and visualize decay chains.
 
 
-### Installation
+## Installation
 
 Just run the following:
 
@@ -39,7 +40,7 @@ what those are. [Python 2.7 and 3.4+](http://docs.python-guide.org/en/latest/sta
 
 Required and compatibility dependencies will be automatically installed by pip.
 
-#### Required dependencies:
+### Required dependencies:
 
 -   [particle](https://github.com/scikit-hep/particle): PDG particle data and identification codes
 -   [Numpy](https://scipy.org/install.html): The numerical library for Python
@@ -48,14 +49,14 @@ Required and compatibility dependencies will be automatically installed by pip.
 -   [plumbum](https://github.com/tomerfiliba/plumbum): Command line tools
 -   [lark-parser](https://github.com/lark-parser/lark): A modern parsing library for Python
 
-#### Python compatibility:
+### Python compatibility:
 -   [six](https://github.com/benjaminp/six): Compatibility library
 -   [pathlib2](https://github.com/mcmtroffaes/pathlib2) backport if using Python 2.7
 -   [enum34](https://bitbucket.org/stoneleaf/enum34) backport if using Python /< 3.5
 -   [importlib_resources](http://importlib-resources.readthedocs.io/en/latest/) backport if using Python /< 3.7
 
 
-#### Recommended dependencies:
+### Recommended dependencies:
 -   [graphviz](https://gitlab.com/graphviz/graphviz/) to render (DOT
     language) graph descriptions of decay chains.
 -   [pydot](https://github.com/pydot/pydot), a Python interface to
@@ -63,22 +64,36 @@ Required and compatibility dependencies will be automatically installed by pip.
 </p></details>
 
 
-### Usage
+## Getting started
 
-This is a quick user guide. For a full API docs, go [here](https://decaylanguage.readthedocs.io/en/latest/).
+The [Binder demo](https://mybinder.org/v2/gh/scikit-hep/decaylanguage/master?urlpath=lab/tree/notebooks/DecayLanguageDemo.ipynb)
+is an excellent way to get started with `DecayLanguage`.
 
-``DecayLanguage`` is a set of tools for building and transforming particle
-decays. The parts are:
+This is a quick user guide. For a full API docs, go [here](https://decaylanguage.readthedocs.io/en/latest/)
+(note that it is presently work-in-progress).
 
-#### Particles
+### What is DecayLanguage?
+
+`DecayLanguage` is a set of tools for building and transforming particle
+decays:
+
+1. It provides tools to parse so-called `.dec` decay files,
+and describe, manipulate and visualize the resulting decay chains.
+
+2. It implements a language to describe and convert particle decays
+between digital representations, effectively making it possible to interoperate
+several fitting programs. Particular interest is given to programs dedicated
+to amplitude analyses.
+
+### Particles
 
 Particles are a key component when dealing with decays.
 Refer to the [particle package](https://github.com/scikit-hep/particle)
-for how to deal with particles and PDG identification codes.
+for how to deal with particles and Monte Carlo particle identification codes.
 
-#### Decay files
+### Parse decay files
 
-Decay .dec files can be parsed simply with
+Decay `.dec` files can be parsed simply with
 
 ```python
 from decaylanguage import DecFileParser
@@ -112,9 +127,38 @@ s = """Decay pi0
 Enddecay
 """
 
-parser = DecFileParser.from_string(s)
-parser.parse()
+dfp = DecFileParser.from_string(s)
+dfp.parse()
 ```
+
+#### Advanced usage
+
+The list of `.dec` file decay models known to the package can be inspected via
+
+```python
+from decaylanguage.dec import known_decay_models
+```
+
+Say you have to deal with a decay file containing a new model not yet on the list above.
+Running the parser as usual will result in a `UnexpectedToken` exception.
+It is nevertheless easy to deal with this issue; no need to wait for a new release.
+It is just a matter of adding the model name to the list in `decaylanguage/data/decfile.lark`
+(or your private copy), see the line
+`MODEL_NAME.2 : "BaryonPCR"|"BTO3PI_CP"|"BTOSLLALI"|...`,
+and then proceed as usual apart from adding an extra line to call to `load_grammar`
+to specify the Lark grammar to use:
+
+```python
+dfp = DecFileParser('my_decfile.dec')
+dfp.load_grammar('path/to/my_updated_decfile.lark')
+dfp.parse()
+...
+```
+
+This being said, please do submit a pull request to add new models,
+if you spot missing ones ...
+
+### Visualize decay files
 
 The class `DecayChainViewer` allows the visualization of parsed decay chains:
 
@@ -123,7 +167,7 @@ from decaylanguage import DecayChainViewer
 
 # Build the D*+ decay chain representation setting the D+ and D0 mesons to stable,
 # to avoid too cluttered an image
-d = parser.build_decay_chains('D*+', stable_particles=['D+', 'D0'])
+d = dfp.build_decay_chains('D*+', stable_particles=['D+', 'D0'])
 DecayChainViewer(d)  # works in a notebook
 ```
 
@@ -150,7 +194,29 @@ upon instantiation of `DecayChainViewer`:
 dcv = DecayChainViewer(chain, graph_name='TEST', rankdir='TB')
 ```
 
-#### Decay modeling
+### Universal representation of decay chains
+
+A series of classes have been designed to provide a universal representation
+of decay chains of any complexity:
+
+```python
+>>> from decaylanguage import DaughtersDict, DecayMode, DecayChain
+>>>
+>>> dm1 = DecayMode(0.0124, 'K_S0 pi0', model='PHSP')
+>>> dm2 = DecayMode(0.692, 'pi+ pi-')
+>>> dm3 = DecayMode(0.98823, 'gamma gamma')
+>>> dc = DecayChain('D0', {'D0':dm1, 'K_S0':dm2, 'pi0':dm3})
+>>> dc
+<DecayChain: D0 -> K_S0 pi0 (2 sub-decays), BF=0.0124>
+```
+
+Decay chains can be visualised with the `DecayChainViewer` class, as above:
+
+```python
+DecayChainViewer(dc.to_dict())
+```
+
+### Decay modeling
 
 The most common way to create a decay chain is to read in an [AmpGen]
 style syntax from a file or a string. You can use:
@@ -186,10 +252,13 @@ GooFitChain. To use the [GooFit] output, type from the shell:
 python -m decaylanguage -G goofit myinput.opts
 ```
 
-### Acknowledgements
+## Acknowledgements
 
-DecayLanguage is free software released under a BSD 3-Clause License.
-It was originally developed by Henry Schreiner.
+Support for this work was provided by the National Science Foundation
+cooperative agreement OAC-1450377 (DIANA/HEP) and OAC-1836650 (IRIS-HEP).
+Any opinions, findings, conclusions or recommendations expressed in this material
+are those of the authors and do not necessarily reflect the views of the National Science Foundation.
+
 
 [AmpGen]: https://gitlab.cern.ch/lhcb/Gauss/tree/LHCBGAUSS-1058.AmpGenDev/Gen/AmpGen
 [GooFit]: https://GooFit.github.io
