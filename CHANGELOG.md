@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.5.2 (2019-10-23)
+
+* Parsing of decay files (aka .dec files):
+  - New Belle II decay models added.
+* README updated to provide basic coverage of recent new features.
+* Clean-up of obsolete files.
+
+
 ## Version 0.5.1 (2019-10-14)
 
 * Universal representation of decay chains:
