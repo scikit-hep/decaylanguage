@@ -165,7 +165,7 @@ The class `DecayChainViewer` allows the visualization of parsed decay chains:
 ```python
 from decaylanguage import DecayChainViewer
 
-# Build the D*+ decay chain representation setting the D+ and D0 mesons to stable,
+# Build the (dictionary-like) D*+ decay chain representation setting the D+ and D0 mesons to stable,
 # to avoid too cluttered an image
 d = dfp.build_decay_chains('D*+', stable_particles=['D+', 'D0'])
 DecayChainViewer(d)  # works in a notebook
@@ -196,8 +196,12 @@ dcv = DecayChainViewer(chain, graph_name='TEST', rankdir='TB')
 
 ### Universal representation of decay chains
 
-A series of classes have been designed to provide a universal representation
-of decay chains of any complexity:
+A series of classes and methods have been designed to provide universal representations
+of particle decay chains of any complexity, and to provide the ability
+to convert between these representations.
+Specifically, class- and dictionary-based representations have been implemented.
+
+An example of a class-based representation of a decay chain is the following:
 
 ```python
 >>> from decaylanguage import DaughtersDict, DecayMode, DecayChain
@@ -210,11 +214,19 @@ of decay chains of any complexity:
 <DecayChain: D0 -> K_S0 pi0 (2 sub-decays), BF=0.0124>
 ```
 
-Decay chains can be visualised with the `DecayChainViewer` class, as above:
+Decay chains can be visualised with the `DecayChainViewer` class making use
+of the dictionary representation `dc.to_dict()`, which is the simple
+representation understood by `DecayChainViewer`, as see above:
 
 ```python
 DecayChainViewer(dc.to_dict())
 ```
+
+The fact that 2 representations of particle decay chains are provided ensures
+the following:
+
+1. Human-readable (class) and computer-efficient (dictionary) alternatives.
+2. Flexibility for parsing, manipulation and storage of decay chain information.
 
 ### Decay modeling
 

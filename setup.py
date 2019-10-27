@@ -27,7 +27,7 @@ def read(*names, **kwargs):
 def proc_readme(text):
     text = text.split('<!-- break -->')[-1]
     return '''
-    [![DecayLanguage](https://raw.githubusercontent.com/scikit-hep/decaylanguage/master/images/DecayLanguage.png)](http://decaylanguage.readthedocs.io/en/latest/)
+    <a href="https://decaylanguage.readthedocs.io/en/latest/"><img align="left" src="https://raw.githubusercontent.com/scikit-hep/decaylanguage/master/images/DecayLanguage.png"></img></a><br>
 
     ''' + text
 
