@@ -175,7 +175,7 @@ class DecayMode(object):
         self.bf = bf
         self.daughters = DaughtersDict(daughters)
 
-        self.metadata = dict(model=None, model_params=None)
+        self.metadata = dict(model='', model_params='')
         self.metadata.update(**info)
 
     @classmethod
@@ -494,11 +494,11 @@ class DecayChain(object):
         {'D0': [{'bf': 0.028,
             'fs': [{'K_S0': [{'bf': 0.692,
                 'fs': ['pi+', 'pi-'],
-                'model': None,
+                'model': '',
                 'model_params': ''}]},
              'pi+',
              'pi-'],
-            'model': None,
+            'model': '',
             'model_params': ''}]}
         """
         def recursively_replace(mother):
