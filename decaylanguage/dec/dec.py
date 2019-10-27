@@ -619,13 +619,13 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
         -------
         out: dict
             Decay chain as a dictionary of the form
-            {mother: [{'bf': float, 'fs': list, 'm': str, 'mp': str}]}
+            {mother: [{'bf': float, 'fs': list, 'model': str, 'model_params': str}]}
             where
             'bf' stands for the deca mode branching fraction,
             'fs' is a list of final-state particle names (strings)
             and/or dictionaries of the same form as the decay chain above,
-            'm' is the model name, if found, else '',
-            'mp' are the model parameters, if specified, else ''
+            'model' is the model name, if found, else '',
+            'model_params' are the model parameters, if specified, else ''
 
         Examples
         --------
@@ -638,23 +638,23 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
             'pi+',
             {'pi0': [{'bf': 0.988228297,
                'fs': ['gamma', 'gamma'],
-               'm': 'PHSP',
-               'mp': ''},
+               'model': 'PHSP',
+               'model_params': ''},
               {'bf': 0.011738247,
                'fs': ['e+', 'e-', 'gamma'],
-               'm': 'PI0_DALITZ',
-               'mp': ''},
+               'model': 'PI0_DALITZ',
+               'model_params': ''},
               {'bf': 3.3392e-05,
               'fs': ['e+', 'e+', 'e-', 'e-'],
-              'm': 'PHSP',
-              'mp': ''},
-              {'bf': 6.5e-08, 'fs': ['e+', 'e-'], 'm': 'PHSP', 'mp': ''}]}],
-           'm': 'PHSP',
-           'mp': ''}]}
+              'model': 'PHSP',
+              'model_params': ''},
+              {'bf': 6.5e-08, 'fs': ['e+', 'e-'], 'model': 'PHSP', 'model_params': ''}]}],
+           'model': 'PHSP',
+           'model_params': ''}]}
         >>> p.build_decay_chains('D+', stable_particles=['pi0'])
-        {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'm': 'PHSP', 'mp': ''}]}
+        {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'model': 'PHSP', 'model_params': ''}]}
         """
-        keys = ('bf', 'fs', 'm', 'mp')
+        keys = ('bf', 'fs', 'model', 'model_params')
 
         info = list()
         for dm in (self._find_decay_modes(mother)):

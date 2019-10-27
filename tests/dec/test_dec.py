@@ -268,7 +268,7 @@ def test_build_decay_chains():
     p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
-    output = {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'm': 'PHSP', 'mp': ''}]}
+    output = {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'model': 'PHSP', 'model_params': ''}]}
     assert p.build_decay_chains('D+', stable_particles=['pi0']) == output
 
 
