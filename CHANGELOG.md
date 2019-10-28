@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.5.3 (2019-10-28)
+
+* Dict-like representation of particle decay chains improved.
+* Documentation added to README.
+
+
 ## Version 0.5.2 (2019-10-23)
 
 * Parsing of decay files (aka .dec files):
