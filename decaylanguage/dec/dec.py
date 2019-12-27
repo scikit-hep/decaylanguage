@@ -36,7 +36,6 @@ from __future__ import absolute_import, division, print_function
 import os
 import warnings
 import re
-import operator
 
 from six import StringIO
 
@@ -303,17 +302,6 @@ class DecFileParser(object):
         """
         return get_pythia_definitions(self._parsed_dec_file)
 
-    def dict_jetset_definitions(self):
-        """
-        Return a dictionary of all JETSET definitions in the input parsed file,
-        of the form
-        "JetSetPar <PARAM>(<PNUMBER>)=<NUMBER>"
-        as {'PARAM1': {PNUMBER1: VALUE1, PNUMBER2: VALUE2, ...},
-            'PARAM2': {...},
-            ...}.
-        """
-        return get_jetset_definitions(self._parsed_dec_file)
-
     def list_lineshape_definitions(self):
         """
         Return a dictionary of all SetLineshapePW definitions in the input parsed file,
@@ -563,45 +551,18 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
 
         return (bf, fsp_names, model, model_params)
 
-    def print_decay_modes(self, mother,
-                          print_model=True,
-                          ascending=False):
-        """
-        Pretty print of the decay modes of a given particle.
-
-        Parameters
-        ----------
-        mother: str
-            Input mother particle name.
-        print_model: bool, optional, default=True
-            Specify whether to print the decay model and model parameters,
-            if available.
-        ascending: bool, optional, default=False
-            Print the list of decay modes ordered in ascending/descending order
-            of branching fraction.
-        """
+    def print_decay_modes(self, mother):
+        """Pretty print (debugging) of the decay modes of a given particle."""
         dms = self._find_decay_modes(mother)
 
-        l = list()
-        if print_model:
-            for dm in dms:
-                dm_details = self._decay_mode_details(dm)
-                l.append((dm_details[0],'%-50s %15s %s' % ('  '.\
-                    join(p for p in dm_details[1]), dm_details[2], dm_details[3])))
-        else:
-            for dm in dms:
-                fsp_names = get_final_state_particle_names(dm)
-                l.append((get_branching_fraction(dm),
-                         '%-50s' % ('  '.join(p for p in fsp_names))))
+        for dm in dms:
+            dm_details = self._decay_mode_details(dm)
+            print('%12g : %50s %15s %s' % (dm_details[0], '  '.\
+                join(p for p in dm_details[1]), dm_details[2], dm_details[3]))
 
-        l.sort(key=operator.itemgetter(0), reverse=(not ascending))
-
-        for bf, info in l:
-            print('%12g : %s' % (bf, info))
-
-    def build_decay_chains(self, mother, stable_particles=[]):
+    def build_decay_chain(self, mother, stable_particles=[]):
         """
-        Iteratively build the entire decay chains of a given mother particle,
+        Iteratively build the whole decay chain of a given mother particle,
         optionally considering, on the fly, certain particles as stable.
         This way, for example, only the B -> D E F part in a decay chain
         A -> B (-> D E F (-> G H)) C
@@ -612,49 +573,48 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
         mother: str
             Input mother particle name.
         stable_particles: iterable, optional, default=[]
-            If provided, stops the decay-chain parsing,
-            taking the "list" as particles to be considered stable.
+            If provided, stops the decay-chain parsing, taking the "list" as particles to be considered stable.
 
         Returns
         -------
         out: dict
             Decay chain as a dictionary of the form
-            {mother: [{'bf': float, 'fs': list, 'model': str, 'model_params': str}]}
+            {mother: [{'bf': float, 'fs': list, 'm': str, 'mp': str}]}
             where
             'bf' stands for the deca mode branching fraction,
             'fs' is a list of final-state particle names (strings)
             and/or dictionaries of the same form as the decay chain above,
-            'model' is the model name, if found, else '',
-            'model_params' are the model parameters, if specified, else ''
+            'm' is the model name, if found, else '',
+            'mp' are the model parameters, if specified, else ''
 
         Examples
         --------
         >>> parser = DecFileParser('a-Dplus-decay-file.dec')
         >>> parser.parse()
-        >>> parser.build_decay_chains('D+')
+        >>> parser.build_decay_chain('D+')
         {'D+': [{'bf': 1.0,
            'fs': ['K-',
             'pi+',
             'pi+',
             {'pi0': [{'bf': 0.988228297,
                'fs': ['gamma', 'gamma'],
-               'model': 'PHSP',
-               'model_params': ''},
+               'm': 'PHSP',
+               'mp': ''},
               {'bf': 0.011738247,
                'fs': ['e+', 'e-', 'gamma'],
-               'model': 'PI0_DALITZ',
-               'model_params': ''},
+               'm': 'PI0_DALITZ',
+               'mp': ''},
               {'bf': 3.3392e-05,
               'fs': ['e+', 'e+', 'e-', 'e-'],
-              'model': 'PHSP',
-              'model_params': ''},
-              {'bf': 6.5e-08, 'fs': ['e+', 'e-'], 'model': 'PHSP', 'model_params': ''}]}],
-           'model': 'PHSP',
-           'model_params': ''}]}
-        >>> p.build_decay_chains('D+', stable_particles=['pi0'])
-        {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'model': 'PHSP', 'model_params': ''}]}
+              'm': 'PHSP',
+              'mp': ''},
+              {'bf': 6.5e-08, 'fs': ['e+', 'e-'], 'm': 'PHSP', 'mp': ''}]}],
+           'm': 'PHSP',
+           'mp': ''}]}
+        >>> p.build_decay_chain('D+', stable_particles=['pi0'])
+        {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'm': 'PHSP', 'mp': ''}]}
         """
-        keys = ('bf', 'fs', 'model', 'model_params')
+        keys = ('bf', 'fs', 'm', 'mp')
 
         info = list()
         for dm in (self._find_decay_modes(mother)):
@@ -670,7 +630,7 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
                     # if fs does not have decays defined in the parsed file
                     _n_dms = len(self._find_decay_modes(fs))
 
-                    _info = self.build_decay_chains(fs, stable_particles)
+                    _info = self.build_decay_chain(fs, stable_particles)
                     d['fs'][i] = _info
                 except DecayNotFound:
                     pass
@@ -943,7 +903,7 @@ def get_final_state_particle_names(decay_mode):
 
     fsps = get_final_state_particles(decay_mode)
     # list of final-state particle names
-    return [str(fsp.children[0].value) for fsp in fsps]
+    return [fsp.children[0].value for fsp in fsps]
 
 
 def get_model_name(decay_mode):
@@ -967,7 +927,7 @@ def get_model_name(decay_mode):
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
     lm = list(decay_mode.find_data('model'))
-    return str(lm[0].children[0].value)
+    return lm[0].children[0].value
 
 
 def get_model_parameters(decay_mode):
@@ -1146,58 +1106,6 @@ def get_pythia_definitions(parsed_file):
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
-def get_jetset_definitions(parsed_file):
-    """
-    Return a dictionary of all JETSET definitions in the input parsed file,
-    of the form
-    "JetSetPar <PARAM>(<PNUMBER>)=<NUMBER>"
-    as {'PARAM1': {PNUMBER1: VALUE1, PNUMBER2: VALUE2, ...},
-        'PARAM2': {...},
-        ...}.
-
-    Parameters
-    ----------
-    parsed_file: Lark Tree instance
-        Input parsed file.
-    """
-    if not isinstance(parsed_file, Tree) :
-        raise RuntimeError("Input not an instance of a Tree!")
-
-    get_jetsetpar = re.compile(r"""
-    ^                                     # Beginning of string
-        (?P<pname>      [a-zA-Z]+?  )     # One or more characters, non-greedy
-     \( (?P<pnumber>    \d+         ) \)  # parameter number in ()
-    """, re.VERBOSE)
-
-    def to_int_or_float(n):
-        """
-        Trivial helper function to convert the parsed (as strings)
-        JETSET parameters into what they are, namely integers or floats.
-        """
-        try:
-            return int(n)
-        except ValueError:
-            try:
-                return float(n)
-            except:
-                # pass though non-numbers unchanged
-                return n
-
-    try:
-        dict_params = {}
-        for tree in parsed_file.find_data('jetset_def'):
-            param = get_jetsetpar.match(tree.children[0].value).groupdict()
-            try:
-                dict_params[param['pname']].update(
-                    {int(param['pnumber']):to_int_or_float(tree.children[1].value)})
-            except KeyError:
-                dict_params[param['pname']] =\
-                    {int(param['pnumber']):to_int_or_float(tree.children[1].value)}
-        return dict_params
-    except:
-        RuntimeError("Input parsed file does not seem to have the expected structure.")
-
-
 def get_lineshape_definitions(parsed_file):
     """
     Return a dictionary of all SetLineshapePW definitions in the input parsed file,
@@ -1250,6 +1158,7 @@ def get_global_photos_flag(parsed_file):
 
     # Check if the flag is not set more than once, just in case ...
     tree = tuple(parsed_file.find_data('global_photos'))
+    print('TREE:', tree)
     if len(tree) == 0:
         return PhotosEnum.no
     elif len(tree) > 1:

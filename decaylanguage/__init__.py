@@ -12,6 +12,3 @@ from .dec import DecFileParser
 
 # Direct access to decay chain visualization tools
 from .decay import DecayChainViewer
-
-# Direct access to decay chain representation classes
-from .decay import DaughtersDict, DecayMode, DecayChain

@@ -23,7 +23,6 @@ from decaylanguage.dec.dec import get_final_state_particle_names
 from decaylanguage.dec.dec import get_model_name
 from decaylanguage.dec.dec import get_model_parameters
 
-from decaylanguage.dec.enums import known_decay_models
 
 # New in Python 3
 try:
@@ -140,16 +139,6 @@ def test_pythia_definitions_parsing():
                                            'Next:numberShowEvent': 0.0}
 
 
-def test_jetset_definitions_parsing():
-    p = DecFileParser(DIR / '../data/defs-aliases-chargeconj.dec')
-    p.parse()
-
-    assert p.dict_jetset_definitions() == {'MSTU': {1: 0, 2: 0},
-                                           'PARU': {11: 0.001},
-                                           'MSTJ': {26: 0},
-                                           'PARJ': {21: 0.36}}
-
-
 def test_list_lineshape_definitions():
     p = DecFileParser(DIR / '../data/defs-aliases-chargeconj.dec')
     p.parse()
@@ -264,12 +253,12 @@ def test_duplicate_decay_definitions():
     assert p.list_decay_mother_names() == ['Sigma(1775)0', 'anti-Sigma(1775)0']
 
 
-def test_build_decay_chains():
+def test_build_decay_chain():
     p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
-    output = {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'model': 'PHSP', 'model_params': ''}]}
-    assert p.build_decay_chains('D+', stable_particles=['pi0']) == output
+    output = {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'm': 'PHSP', 'mp': ''}]}
+    assert p.build_decay_chain('D+', stable_particles=['pi0']) == output
 
 
 def test_Lark_DecayModelParamValueReplacement_Visitor_no_params():
@@ -411,7 +400,6 @@ def test_master_DECAYdotDEC_file():
 
     assert p.number_of_decays == 506
 
-
 def test_BELLE2_decfile():
     p = DecFileParser(DIR / '../../decaylanguage/data/DECAY_BELLE2.DEC')
     p.parse()
@@ -419,20 +407,3 @@ def test_BELLE2_decfile():
     # Just check the dec file will parse since I do not know 
     # how many decays are in the dec file.
     assert p.number_of_decays > 0
-
-def test_lark_file_model_list_consistency():
-    """
-    Make sure that the list of known decay models in the grammar file
-    'decaylanguage/data/decfile.lark' is consistent with that provided
-    to the user via
-    'from decaylanguage.dec.enums import known_decay_models'.
-    """
-    filename = str(DIR / '../../decaylanguage/data/decfile.lark')
-    with open(filename) as lark_file:
-        lines = lark_file.readlines()
-        for line in lines:
-            if 'MODEL_NAME.2' in line: break
-        models = line.split(':')[1].strip(' ').strip('\n').split('"|"')
-        models = [m.strip('"') for m in models]
-
-        assert models == list(known_decay_models)

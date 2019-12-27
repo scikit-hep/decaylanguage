@@ -24,28 +24,28 @@ def test_single_decay():
     p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
-    chain = p.build_decay_chains('D*+', stable_particles=['D+', 'D0', 'pi0'])
+    chain = p.build_decay_chain('D*+', stable_particles=['D+', 'D0', 'pi0'])
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
-    assert 'mother -> dec0  [label="0.677"]' in graph_output_as_dot
-    assert 'mother -> dec1  [label="0.307"]' in graph_output_as_dot
-    assert 'mother -> dec2  [label="0.016"]' in graph_output_as_dot
+    assert 'dec0 [label="D0 pi+"];' in graph_output_as_dot
+    assert 'dec1 [label="D+ pi0"];' in graph_output_as_dot
+    assert 'dec2 [label="D+ gamma"];' in graph_output_as_dot
 
 
 def test_simple_decay_chain():
     p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
-    chain = p.build_decay_chains('D*+')
+    chain = p.build_decay_chain('D*+')
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
-    assert 'mother -> dec3  [label="0.677"]' in graph_output_as_dot
-    assert 'dec3:p0 -> dec4  [label="1.0"]' in graph_output_as_dot
-    assert 'mother -> dec5  [label="0.307"]' in graph_output_as_dot
-    assert 'dec5:p0 -> dec6  [label="1.0"]' in graph_output_as_dot
-    assert 'dec6:p3 -> dec7  [label="0.988228297"]' in graph_output_as_dot
+    assert 'label="<p0> D0 | <p1> pi+"' in graph_output_as_dot
+    assert 'label="<p0> D+ | <p1> pi0"' in graph_output_as_dot
+    assert 'label="<p0> K- | <p1> pi+ | <p2> pi+ | <p3> pi0"' in graph_output_as_dot
+    assert 'label="<p0> D+ | <p1> gamma"' in graph_output_as_dot
+    assert 'label="<p0> K- | <p1> pi+ | <p2> pi+ | <p3> pi0"' in graph_output_as_dot
 
 
 checklist_decfiles = (
@@ -69,7 +69,7 @@ def test_duplicate_arrows(decfilepath, signal_mother):
     p = DecFileParser(decfilepath, DIR / '../../decaylanguage/data/DECAY_LHCB.DEC')
     p.parse()
 
-    chain = p.build_decay_chains(signal_mother)
+    chain = p.build_decay_chain(signal_mother)
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
@@ -81,7 +81,7 @@ def test_init_non_defaults():
     p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
 
-    chain = p.build_decay_chains('D*+')
+    chain = p.build_decay_chain('D*+')
     dcv = DecayChainViewer(chain, graph_name='TEST', rankdir='TB')
 
     assert dcv.graph.get_name() == 'TEST'
