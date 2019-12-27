@@ -251,12 +251,19 @@ Alias      Omega_cc+sig         Omega_cc+
 Alias      anti-Omega_cc-sig    anti-Omega_cc-
 ChargeConj Omega_cc+sig         anti-Omega_cc-sig
 
+#JetSet parameter modifications
 #(Very important that there are no blank spaces in the parameter string!)
 #Turn off B0-B0B mixing in Pythia
 PythiaBothParam ParticleDecays:mixB=off
 PythiaBothParam Init:showChangedSettings=off
 PythiaBothParam Init:showChangedParticleData=off
 PythiaBothParam Next:numberShowEvent=0
+
+JetSetPar MSTU(1)=0
+JetSetPar MSTU(2)=0
+JetSetPar PARU(11)=0.001
+JetSetPar MSTJ(26)=0
+JetSetPar PARJ(21)=0.36
 
 # Turn on PHOTOS for all decays
 yesPhotos

@@ -20,6 +20,9 @@ try:
 except ImportError:
     raise ImportError("You need pydot for this submodule. Please install pydot with for example 'pip install pydot'\n")
 
+from particle import Particle
+from particle import ParticleNotFound
+
 
 class GraphNotBuiltError(RuntimeError):
     pass
@@ -33,8 +36,9 @@ class DecayChainViewer(object):
     -------
     >>> dfp = DecFileParser('my-Dst-decay-file.dec')
     >>> dfp.parse()
-    >>> chain = dfp.build_decay_chain('D*+')
+    >>> chain = dfp.build_decay_chains('D*+')
     >>> dcv = DecayChainViewer(chain)
+    >>> dcv  # display the SVG figure in a notebook
     """
 
     __slots__ = ("_chain",
@@ -70,19 +74,36 @@ class DecayChainViewer(object):
         Recursively navigate the decay chain tree and produce a Graph
         in the DOT language.
         """
+        def safe_name(name):
+            try:
+                return Particle.from_dec(name).html_name
+            except ParticleNotFound:
+                return name
+
+        def html_table_label(names, add_tags=False, bgcolor='#9abad6'):
+            if add_tags:
+                label = '<<TABLE BORDER="0" CELLSPACING="0" BGCOLOR="{bgcolor}">'.format(bgcolor=bgcolor)
+            else:
+                label = '<<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0" BGCOLOR="{bgcolor}"><TR>'.format(bgcolor=bgcolor)
+            for i, n in enumerate(names):
+                if add_tags:
+                    label += '<TR><TD BORDER="1" CELLPADDING="5" PORT="p{tag}">{name}</TD></TR>'.format(tag=i, name=safe_name(n))
+                else:
+                    label += '<TD BORDER="0" CELLPADDING="2">{name}</TD>'.format(name=safe_name(n))
+            label += "{tr}</TABLE>>".format(tr='' if add_tags else '</TR>')
+            return label
 
         def new_node_no_subchain(list_parts):
-            label = ' '.join(['%s'%p for p in list_parts])
-            #label = ' '.join(['%s'%Particle.from_evtgen_name(p).html_name for p in list_parts])
+            label = html_table_label(list_parts, bgcolor='#eef3f8')
             r = 'dec%s' % counter()
-            self._graph.add_node(pydot.Node(r, label=label))
+            self._graph.add_node(pydot.Node(r, label=label, style='filled', fillcolor='#eef3f8'))
             return r
 
         def new_node_with_subchain(list_parts):
             list_parts = [list(p.keys())[0] if isinstance(p,dict) else p for p in list_parts]
-            label = ' | '.join(['<p%s> %s'%(i,n) for i, n in enumerate(list_parts)])
+            label = html_table_label(list_parts, add_tags=True)
             r = 'dec%s' % counter()
-            self._graph.add_node(pydot.Node(r, shape='record', label=label, fillcolor="#9abad6"))
+            self._graph.add_node(pydot.Node(r, shape='none', label=label))
             return r
 
         def iterate_chain(subchain, top_node=None, link_pos=None):
@@ -109,14 +130,11 @@ class DecayChainViewer(object):
                             _k = list(_p.keys())[0]
                             iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
 
-        # Effectively do a reset and produce a new graph
-        #self._graph = self._instantiate_graph()
-
         has_subdecay = lambda ds: not all([isinstance(p,str) for p in ds])
 
         k = list(self._chain.keys())[0]
-
-        node_mother = pydot.Node("mother", style="filled", fillcolor="#568dba", shape='box', label=str(k))
+        label = html_table_label([k], add_tags=True, bgcolor='#568dba')
+        node_mother = pydot.Node("mother",  shape='none', label=label)
         self._graph.add_node(node_mother)
         sc = self._chain[k]
 
@@ -182,8 +200,7 @@ class DecayChainViewer(object):
                     rankdir='LR')
 
     def _get_node_defaults(self):
-        return dict(style='filled', fillcolor='#eef3f8',
-                    fontname='Helvetica', fontsize=11)
+        return dict(fontname='Helvetica', fontsize=11, shape='oval')
 
     def _get_edge_defaults(self):
         return dict(fontcolor='#4c4c4c', fontsize=11)
