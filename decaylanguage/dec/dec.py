@@ -810,7 +810,7 @@ def find_charge_conjugate_match(pname, dict_cc_names=dict()):
     try:
         return Particle.from_evtgen_name(pname).invert().name
     # If anything else fails ...
-    except ParticleNotFound:
+    except:
         return 'ChargeConj({0})'.format(pname)
 
 
