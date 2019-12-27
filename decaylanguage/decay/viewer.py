@@ -73,7 +73,7 @@ class DecayChainViewer(object):
 
         def new_node_no_subchain(list_parts):
             label = ' '.join(['%s'%p for p in list_parts])
-            #label = ' '.join(['%s'%Particle.from_dec(p).html_name for p in list_parts])
+            #label = ' '.join(['%s'%Particle.from_evtgen_name(p).html_name for p in list_parts])
             r = 'dec%s' % counter()
             self._graph.add_node(pydot.Node(r, label=label))
             return r
