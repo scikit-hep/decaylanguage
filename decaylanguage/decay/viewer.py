@@ -70,10 +70,27 @@ class DecayChainViewer(object):
         Recursively navigate the decay chain tree and produce a Graph
         in the DOT language.
         """
+        def safe_name(name):
+            try:
+                return Particle.from_string(name).html_name
+            except:
+                return name
+
+        def html_table_label(names, add_tags=False, bgcolor='#9abad6'):
+            if add_tags:
+                label = '<<TABLE BORDER="0" CELLSPACING="0" BGCOLOR="{bgcolor}">'.format(bgcolor=bgcolor)
+            else:
+                label = '<<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0" BGCOLOR="{bgcolor}"><TR>'.format(bgcolor=bgcolor)
+            for i, n in enumerate(names):
+                if add_tags:
+                    label += '<TR><TD BORDER="1" CELLPADDING="5" PORT="p{tag}">{name}</TD></TR>'.format(tag=i, name=safe_name(n))
+                else:
+                    label += '<TD BORDER="0" CELLPADDING="2">{name}</TD>'.format(name=safe_name(n))
+            label += "{tr}</TABLE>>".format(tr='' if add_tags else '</TR>')
+            return label
 
         def new_node_no_subchain(list_parts):
-            label = ' '.join(['%s'%p for p in list_parts])
-            #label = ' '.join(['%s'%Particle.from_evtgen_name(p).html_name for p in list_parts])
+            label = html_table_label(list_parts, bgcolor='#eef3f8')
             r = 'dec%s' % counter()
             self._graph.add_node(pydot.Node(r, label=label))
             return r

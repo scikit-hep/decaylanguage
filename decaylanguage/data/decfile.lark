@@ -4,7 +4,7 @@
 // or https://github.com/scikit-hep/decaylanguage for details.
 
 start : _NEWLINE* (line _NEWLINE+)+ ("End" _NEWLINE+)?
-?line : define | pythia_def | alias | chargeconj | commands | decay | cdecay | setlspw
+?line : define | pythia_def | jetset_def | alias | chargeconj | commands | decay | cdecay | setlspw
 
 pythia_def : "PythiaBothParam" LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)
 
@@ -50,7 +50,7 @@ _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )
 _SEMICOLON: /;/
 
 // We must set priorities here to use lalr - match model name above label, and label above something else
-MODEL_NAME.2 : "BaryonPCR"|"BTO3PI_CP"|"BTOSLLALI"|"BTOSLLBALL"|"BTOXSGAMMA"|"BTOXSLL"|"CB3PI-MPP"|"CB3PI-P00"|"D_DALITZ"|"ETA_DALITZ"|"GOITY_ROBERTS"|"HELAMP"|"HQET"|"ISGW2"|"LbAmpGen"|"OMEGA_DALITZ"|"PARTWAVE"|"PHSP"|"PI0_DALITZ"|"PYTHIA"|"SLN"|"STS"|"SVP_HELAMP"|"SVS"|"SVV_HELAMP"|"TAUHADNU"|"TAULNUNU"|"TAUSCALARNU"|"TAUVECTORNU"|"TSS"|"TVS_PWAVE"|"VLL"|"VSP_PWAVE"|"VSS_BMIX"|"VSS"|"VUB"|"VVPIPI"|"VVP"|"VVS_PWAVE"|"SSD_CP"|"BGL"|"LLSW"|"BCL"|"ISGW2"|"SVV_CP"|"ETA_PI0DALITZ"|"ETA_FULLDALITZ"|"ETAPRIME_DALITZ"|"YMSTOYNSPIPICLEO"
+MODEL_NAME.2 : "BaryonPCR"|"BCL"|"BGL"|"BTO3PI_CP"|"BTOSLLALI"|"BTOSLLBALL"|"BTOXSGAMMA"|"BTOXSLL"|"CB3PI-MPP"|"CB3PI-P00"|"D_DALITZ"|"ETAPRIME_DALITZ"|"ETA_DALITZ"|"ETA_FULLDALITZ"|"ETA_PI0DALITZ"|"GOITY_ROBERTS"|"HELAMP"|"HQET"|"ISGW2"|"LbAmpGen"|"LLSW"|"OMEGA_DALITZ"|"PARTWAVE"|"PHSP"|"PI0_DALITZ"|"PYCONT"|"PYTHIA"|"SLN"|"SSD_CP"|"SSS_CP"|"STS"|"SVP_HELAMP"|"SVS"|"SVV_CP"|"SVV_HELAMP"|"TAUHADNU"|"TAULNUNU"|"TAUSCALARNU"|"TAUVECTORNU"|"TSS"|"TVS_PWAVE"|"VLL"|"VSP_PWAVE"|"VSS_BMIX"|"VSS"|"VUB"|"VVPIPI"|"VVP"|"VVS_PWAVE"|"YMSTOYNSPIPICLEO"
 
 LABEL : /[a-zA-Z0-9\/\-+*_()']+/
 COMMENT : /[#][^\n]*/

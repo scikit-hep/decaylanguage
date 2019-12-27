@@ -407,3 +407,20 @@ def test_BELLE2_decfile():
     # Just check the dec file will parse since I do not know 
     # how many decays are in the dec file.
     assert p.number_of_decays > 0
+
+def test_lark_file_model_list_consistency():
+    """
+    Make sure that the list of known decay models in the grammar file
+    'decaylanguage/data/decfile.lark' is consistent with that provided
+    to the user via
+    'from decaylanguage.dec.enums import known_decay_models'.
+    """
+    filename = str(DIR / '../../decaylanguage/data/decfile.lark')
+    with open(filename) as lark_file:
+        lines = lark_file.readlines()
+        for line in lines:
+            if 'MODEL_NAME.2' in line: break
+        models = line.split(':')[1].strip(' ').strip('\n').split('"|"')
+        models = [m.strip('"') for m in models]
+
+        assert models == list(known_decay_models)
