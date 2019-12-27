@@ -452,7 +452,7 @@ Skipping creation of these charge-conjugate decay trees.""".format('\n'.join([m 
         def _is_not_self_conj(t):
             try:
                 mname = t.children[0].children[0].value
-                if Particle.from_evtgen_name(mname).is_self_conjugate:
+                if Particle.from_string(mname).is_self_conjugate:
                     msg = """Found 'CDecay' statement for self-conjugate particle {0}. This is a bug!
 Skipping creation of charge-conjugate decay Tree.""".format(mname)
                     warnings.warn(msg)
@@ -783,8 +783,8 @@ class ChargeConjugateReplacement(Visitor):
     # TODO: this can be improved!
     def _last_chance_matching(self, pname):
         try:
-            return Particle.from_evtgen_name(pname).invert().name
-        except ParticleNotFound:
+            return Particle.from_string(pname).invert().name
+        except:
             return 'ChargeConj({0})'.format(pname)
 
     def particle(self, tree):
@@ -848,7 +848,7 @@ def find_charge_conjugate_match(pname, dict_cc_names=dict()):
 
     # Search EvtGen names via the Particle class
     try:
-        return Particle.from_evtgen_name(pname).invert().name
+        return Particle.from_string(pname).invert().name
     # If anything else fails ...
     except:
         return 'ChargeConj({0})'.format(pname)

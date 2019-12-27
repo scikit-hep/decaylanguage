@@ -76,8 +76,8 @@ class DecayChainViewer(object):
         """
         def safe_name(name):
             try:
-                return Particle.from_dec(name).html_name
-            except ParticleNotFound:
+                return Particle.from_string(name).html_name
+            except:
                 return name
 
         def html_table_label(names, add_tags=False, bgcolor='#9abad6'):
