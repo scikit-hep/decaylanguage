@@ -399,3 +399,11 @@ def test_master_DECAYdotDEC_file():
     p.parse()
 
     assert p.number_of_decays == 506
+
+def test_BELLE2_decfile():
+    p = DecFileParser(DIR / '../../decaylanguage/data/DECAY_BELLE2.DEC')
+    p.parse()
+
+    # Just check the dec file will parse since I do not know 
+    # how many decays are in the dec file.
+    assert p.number_of_decays > 0
