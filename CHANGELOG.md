@@ -1,11 +1,53 @@
 # Changelog
 
-## Version 0.3.2
+## Version 0.5.3 (2019-10-28)
 
+* Dict-like representation of particle decay chains improved.
+* Documentation added to README.
+
+
+## Version 0.5.2 (2019-10-23)
+
+* Parsing of decay files (aka .dec files):
+  - New Belle II decay models added.
+* README updated to provide basic coverage of recent new features.
+* Clean-up of obsolete files.
+
+
+## Version 0.5.1 (2019-10-14)
+
+* Universal representation of decay chains:
+  - Classes ``DecayChain`` and ``DecayMode`` enhanced.
+  - Tests for class ``DecayChain`` added.
+* Parsing of decay files (aka .dec files):
+  - ``DecFileParser`` class extended.
+
+
+## Version 0.5.0 (2019-10-11)
+
+* Universal representation of decay chains:
+  - Class ``DecayChain`` introduced.
+  - Classes ``DaughtersDict`` and ``DecayMode`` enhanced.
+* Changes in API:
+  - ``DecFileParser.build_decay_chain()`` renamed to ``DecFileParser.build_decay_chains()``.
+* Package dependent on ``Particle`` package version 0.6.
+
+
+## Version 0.4.0 (2019-09-02)
+
+* Package dependent on ``Particle`` version 0.6.0.
+  Otherwise identical to version 0.3.2.
+
+
+## Version 0.3.2 (2019-08-29)
+
+* Parsing of decay files (aka .dec files):
+  - ``DecFileParser`` class extended to understand JETSET definitions.
 * Visualisation of decay chains:
   - ``DecayChainViewer`` class simplified and improved.
+  - Decay chain DOT graphs now display HTML particle names.
   - More tests.
-  
+
 
 ## Version 0.3.1 (2019-07-18)
 
