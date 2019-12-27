@@ -743,7 +743,7 @@ class ChargeConjugateReplacement(Visitor):
     # TODO: this can be improved!
     def _last_chance_matching(self, pname):
         try:
-            return Particle.from_dec(pname).invert().name
+            return Particle.from_evtgen_name(pname).invert().name
         except ParticleNotFound:
             return 'ChargeConj({0})'.format(pname)
 
