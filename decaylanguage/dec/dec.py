@@ -784,7 +784,7 @@ class ChargeConjugateReplacement(Visitor):
     def _last_chance_matching(self, pname):
         try:
             return Particle.from_string(pname).invert().name
-        except:
+        except ParticleNotFound:
             return 'ChargeConj({0})'.format(pname)
 
     def particle(self, tree):
@@ -850,7 +850,7 @@ def find_charge_conjugate_match(pname, dict_cc_names=dict()):
     try:
         return Particle.from_string(pname).invert().name
     # If anything else fails ...
-    except:
+    except ParticleNotFound:
         return 'ChargeConj({0})'.format(pname)
 
 
