@@ -25,8 +25,8 @@ def charge_conjugate(pname):
     If no matching is found, return "ChargeConj(pname)".
     """
     try:
-        return Particle.from_dec(pname).invert().name
-    except ParticleNotFound:
+        return Particle.from_string(pname).invert().name
+    except:
         return 'ChargeConj({0})'.format(pname)
 
 

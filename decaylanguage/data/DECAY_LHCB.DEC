@@ -288,7 +288,7 @@ Decay Upsilon(4S)
 0.000084099 Upsilon(2S) pi+     pi-                         VVPIPI; #[Reconstructed PDG2011]
 0.000044342 Upsilon(2S) pi0     pi0                         VVPIPI; #[Reconstructed PDG2011]
 0.000080123 Upsilon pi+     pi-                             VVPIPI; #[Reconstructed PDG2011]
-0.000044342 Upsilon pi0     pi0                             VVPIPI;2 #[Reconstructed PDG2011]
+0.000044342 Upsilon pi0     pi0                             VVPIPI; #[Reconstructed PDG2011]
 0.000194392 Upsilon eta                                     PARTWAVE 0.0 0.0 1.0 0.0 0.0 0.0; #[Reconstructed PDG2011]
 # BF ~ (2J+1)E^3_gamma; see PRL 94, 032001
 # V-> gamma S    Partial wave (L,S)=(0,0)

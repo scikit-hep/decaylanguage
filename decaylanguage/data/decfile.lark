@@ -3,7 +3,7 @@
 // Distributed under the 3-clause BSD license, see accompanying file LICENSE
 // or https://github.com/scikit-hep/decaylanguage for details.
 
-start : _NEWLINE? (line _NEWLINE)+ ("End" _NEWLINE)?
+start : _NEWLINE* (line _NEWLINE+)+ ("End" _NEWLINE+)?
 ?line : define | pythia_def | jetset_def | alias | chargeconj | commands | decay | cdecay | setlspw
 
 pythia_def : "PythiaBothParam" LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)
@@ -27,8 +27,8 @@ global_photos : boolean_photos
 boolean_photos : "yesPhotos" -> yes
                 | "noPhotos"  -> no
 
-decay : "Decay" particle _NEWLINE decayline+ "Enddecay"
-decayline : value particle* photos? model _NEWLINE // There is always a ; here
+decay : "Decay" particle _NEWLINE+ decayline+ "Enddecay"
+decayline : value particle* photos? model (_NEWLINE | _SEMICOLON)+ // There is always a ; here
 value : SIGNED_NUMBER
 photos : "PHOTOS"
 
@@ -36,7 +36,7 @@ label : LABEL
 particle : LABEL // Add full particle parsing here
 
 model : MODEL_NAME model_options?
-model_options : (value | LABEL)+
+model_options : (value | LABEL | _NEWLINE)+
 
 // model : model_generic
 // model_helamp : "HELAMP" (SIGNED_NUMBER SIGNED_NUMBER)+
@@ -48,13 +48,14 @@ model_options : (value | LABEL)+
 %import common.SIGNED_NUMBER
 
 // New lines filter our comments too, and multiple new lines
-_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
+_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )
+_SEMICOLON: /;/
 
 // We must set priorities here to use lalr - match model name above label, and label above something else
 MODEL_NAME.2 : "BaryonPCR"|"BCL"|"BGL"|"BTO3PI_CP"|"BTOSLLALI"|"BTOSLLBALL"|"BTOXSGAMMA"|"BTOXSLL"|"CB3PI-MPP"|"CB3PI-P00"|"D_DALITZ"|"ETAPRIME_DALITZ"|"ETA_DALITZ"|"ETA_FULLDALITZ"|"ETA_PI0DALITZ"|"GOITY_ROBERTS"|"HELAMP"|"HQET"|"ISGW2"|"LbAmpGen"|"LLSW"|"OMEGA_DALITZ"|"PARTWAVE"|"PHSP"|"PI0_DALITZ"|"PYCONT"|"PYTHIA"|"SLN"|"SSD_CP"|"SSS_CP"|"STS"|"SVP_HELAMP"|"SVS"|"SVV_CP"|"SVV_HELAMP"|"TAUHADNU"|"TAULNUNU"|"TAUSCALARNU"|"TAUVECTORNU"|"TSS"|"TVS_PWAVE"|"VLL"|"VSP_PWAVE"|"VSS_BMIX"|"VSS"|"VUB"|"VVPIPI"|"VVP"|"VVS_PWAVE"|"YMSTOYNSPIPICLEO"
 
 LABEL : /[a-zA-Z0-9\/\-+*_()']+/
-COMMENT : /[;#][^\n]*/
+COMMENT : /[#][^\n]*/
 
 // We should ignore comments
 %ignore COMMENT
