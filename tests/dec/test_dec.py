@@ -417,7 +417,7 @@ def test_BELLE2_decfile():
 
     # Just check the dec file will parse since I do not know 
     # how many decays are in the dec file.
-    assert p.number_of_decays > 0
+    assert p.number_of_decays == 356
 
 def test_lark_file_model_list_consistency():
     """
