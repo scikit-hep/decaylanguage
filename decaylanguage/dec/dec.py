@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019, Eduardo Rodrigues and Henry Schreiner.
+# Copyright (c) 2018-2020, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
@@ -46,6 +46,7 @@ from lark import Tree, Transformer, Visitor
 from particle import Particle, ParticleNotFound
 from particle.particle.enums import Charge, Charge_undo, Charge_mapping
 from particle.particle.regex import getdec
+from particle.converters import PDG2EvtGenNameMap
 
 from ..data import open_text
 from .. import data
@@ -536,9 +537,15 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
 
         raise DecayNotFound("Decays of particle '%s' not found in .dec file!" % mother)
 
-    def list_decay_modes(self, mother):
+    def list_decay_modes(self, mother, pdg_name=False):
         """
         Return a list of decay modes for the given mother particle.
+
+        Parameters
+        ----------
+        pdg_name: str, optional, default=False
+            Input mother particle name is the PDG name,
+            not the (default) EvtGen name.
 
         Example
         -------
@@ -547,6 +554,9 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
         >>> parser.list_decay_mother_names()  # Inspect what decays are defined
         >>> parser.list_decay_modes('pi0')
         """
+        if pdg_name:
+            mother = PDG2EvtGenNameMap[mother]
+
         return [get_final_state_particle_names(mode)
                 for mode in self._find_decay_modes(mother)]
 
@@ -564,6 +574,7 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
         return (bf, fsp_names, model, model_params)
 
     def print_decay_modes(self, mother,
+                          pdg_name=False,
                           print_model=True,
                           ascending=False):
         """
@@ -573,6 +584,9 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
         ----------
         mother: str
             Input mother particle name.
+        pdg_name: str, optional, default=False
+            Input mother particle name is the PDG name,
+            not the (default) EvtGen name.
         print_model: bool, optional, default=True
             Specify whether to print the decay model and model parameters,
             if available.
@@ -580,6 +594,9 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
             Print the list of decay modes ordered in ascending/descending order
             of branching fraction.
         """
+        if pdg_name:
+            mother = PDG2EvtGenNameMap[mother]
+
         dms = self._find_decay_modes(mother)
 
         l = list()
