@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-# Copyright (c) 2018-2019, Eduardo Rodrigues and Henry Schreiner.
+# Copyright (c) 2018-2020, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
@@ -29,7 +29,7 @@ INSTALL_REQUIRES = [
     'enum34>=1.1; python_version<"3.4"',
     'importlib_resources>=1.0; python_version<"3.7"',
     'cachetools; python_version<"3.3"',
-    'particle==0.6.*'
+    'particle==0.9.*'
 ]
 
 needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
