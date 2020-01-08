@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019, Eduardo Rodrigues and Henry Schreiner.
+# Copyright (c) 2018-2020, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
@@ -264,6 +264,24 @@ def test_duplicate_decay_definitions():
     assert p.list_decay_mother_names() == ['Sigma(1775)0', 'anti-Sigma(1775)0']
 
 
+def test_list_decay_modes():
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
+    p.parse()
+
+    assert p.list_decay_modes('D*-') == [['anti-D0', 'pi-'], ['D-', 'pi0'], ['D-', 'gamma']]
+    assert p.list_decay_modes('D*(2010)-', pdg_name=True) == [['anti-D0', 'pi-'], ['D-', 'pi0'], ['D-', 'gamma']]
+
+
+def test_print_decay_modes():
+    p = DecFileParser(DIR / '../data/test_example_Dst.dec')
+    p.parse()
+
+    with pytest.raises(DecayNotFound):
+        p.print_decay_modes('D*(2010)-')
+
+    p.print_decay_modes('D*(2010)-', pdg_name=True)
+
+
 def test_build_decay_chains():
     p = DecFileParser(DIR / '../data/test_example_Dst.dec')
     p.parse()
@@ -415,7 +433,7 @@ def test_BELLE2_decfile():
     p = DecFileParser(DIR / '../../decaylanguage/data/DECAY_BELLE2.DEC')
     p.parse()
 
-    # Just check the dec file will parse since I do not know 
+    # Just check the dec file will parse since I do not know
     # how many decays are in the dec file.
     assert p.number_of_decays == 356
 
