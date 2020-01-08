@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019, Eduardo Rodrigues and Henry Schreiner.
+# Copyright (c) 2018-2020, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
@@ -20,8 +20,11 @@ try:
 except ImportError:
     raise ImportError("You need pydot for this submodule. Please install pydot with for example 'pip install pydot'\n")
 
-from particle import Particle
-from particle import ParticleNotFound
+from particle import latex_to_html_name
+from particle.converters.bimap import DirectionalMaps
+
+
+_EvtGen2LatexNameMap, _Latex2EvtGenNameMap = DirectionalMaps("EvtGenName", "LaTexName")
 
 
 class GraphNotBuiltError(RuntimeError):
@@ -74,9 +77,21 @@ class DecayChainViewer(object):
         Recursively navigate the decay chain tree and produce a Graph
         in the DOT language.
         """
-        def safe_name(name):
+        def safe_html_name(name):
+            """
+            Get a safe HTML name from the EvtGen name.
+
+            Note
+            ----
+            The match is done using a conversion map rather than via
+            `Particle.from_evtgen_name(name).html_name` for 2 reasons:
+            - Some decay-file-specific "particle" names (e.g. cs_0)
+              are not in the PDG table.
+            - No need to load all particle information if all that's needed
+              is a match EvtGen - HTML name.
+            """
             try:
-                return Particle.from_string(name).html_name
+                return latex_to_html_name(_EvtGen2LatexNameMap[name])
             except:
                 return name
 
@@ -87,9 +102,9 @@ class DecayChainViewer(object):
                 label = '<<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0" BGCOLOR="{bgcolor}"><TR>'.format(bgcolor=bgcolor)
             for i, n in enumerate(names):
                 if add_tags:
-                    label += '<TR><TD BORDER="1" CELLPADDING="5" PORT="p{tag}">{name}</TD></TR>'.format(tag=i, name=safe_name(n))
+                    label += '<TR><TD BORDER="1" CELLPADDING="5" PORT="p{tag}">{name}</TD></TR>'.format(tag=i, name=safe_html_name(n))
                 else:
-                    label += '<TD BORDER="0" CELLPADDING="2">{name}</TD>'.format(name=safe_name(n))
+                    label += '<TD BORDER="0" CELLPADDING="2">{name}</TD>'.format(name=safe_html_name(n))
             label += "{tr}</TABLE>>".format(tr='' if add_tags else '</TR>')
             return label
 

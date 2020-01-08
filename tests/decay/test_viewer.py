@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019, Eduardo Rodrigues and Henry Schreiner.
+# Copyright (c) 2018-2020, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
@@ -86,3 +86,29 @@ def test_init_non_defaults():
 
     assert dcv.graph.get_name() == 'TEST'
     assert dcv.graph.get_rankdir() == 'TB'
+
+
+def test_graphs_with_EvtGen_specific_names():
+    p = DecFileParser(DIR / '../../decaylanguage/data/DECAY_LHCB.DEC')
+    p.parse()
+
+    # Not setting many of the particles as stable would result in a gargantuesque chain,
+    # which would also take a fair amount of time to build!
+    list_stable_particles = ['Xi_c0',
+                             'Xi-',
+                             'D0',
+                             'Omega_c0',
+                             'Sigma_c0',
+                             'tau-',
+                             'D_s-',
+                             'J/psi',
+                             'pi0',
+                             'Lambda0',
+                             'psi(2S)'
+                             ]
+
+    chain = p.build_decay_chains('Xi_b-', stable_particles=list_stable_particles)
+    dcv = DecayChainViewer(chain)
+
+    assert '(cs)<SUB>0</SUB>' in dcv.to_string()  # not 'cs_0' ;-)
+    assert '&Xi;<SUB>c</SUB><SUP>0</SUP>' in dcv.to_string()
