@@ -119,12 +119,15 @@ def test_DecayMode_describe_with_extra_info():
 
 
 def test_DecayMode_charge_conjugate():
-    dd = DaughtersDict('pi- pi0 nu(tau)')
+    dd = DaughtersDict('pi- pi0 nu_tau')
     dm = DecayMode(0.2551, dd, model='TAUHADNU', model_params=[-0.108, 0.775, 0.149, 1.364, 0.400])
     dm_cc = dm.charge_conjugate()
-    assert dm_cc.daughters == DaughtersDict('pi+ pi0 nu(tau)~')
+    assert dm_cc.daughters == DaughtersDict('pi+ pi0 anti-nu_tau')
     assert 'BF: 0.2551' in dm.describe()
     assert 'Decay model: TAUHADNU [-0.108, 0.775, 0.149, 1.364, 0.4]' in dm.describe()
+
+    dd = DaughtersDict('pi- pi0 nu(tau)')
+    dd.charge_conjugate(pdg_name=True) == DaughtersDict('pi+ pi0 nu(tau)~')
 
 
 def test_DecayMode_string_repr():
