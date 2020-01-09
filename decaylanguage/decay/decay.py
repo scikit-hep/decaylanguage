@@ -3,37 +3,26 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
+from __future__ import absolute_import
 from __future__ import print_function
 
 from collections import Counter
 from copy import deepcopy
 
-try:
-    from functools import lru_cache
-    cacher = lru_cache(maxsize=64)
-except ImportError:
-    from cachetools import cached, LFUCache
-    cacher = cached(cache=LFUCache(maxsize=64))
-
-from particle import Particle, ParticleNotFound
-
-
-@cacher
-def charge_conjugate(pname):
-    """
-    Return the charge-conjugate particle name matching the given PDG name.
-    If no matching is found, return "ChargeConj(pname)".
-    """
-    try:
-        return Particle.from_string(pname).invert().name
-    except:
-        return 'ChargeConj({0})'.format(pname)
+from ..utils import charge_conjugate_name
 
 
 class DaughtersDict(Counter):
     """
     Class holding a decay final state as a dictionary.
     It is a building block for the digital representation of full decay chains.
+
+    Note
+    ----
+    This class assumes EvtGen particle names, though this assumption is only relevant
+    for the `charge_conjugate` method.
+    Otherwise, all other class methods smoothly deal with
+    any kind of particle names (basically an iterable of strings).
 
     Example
     -------
@@ -45,13 +34,20 @@ class DaughtersDict(Counter):
         """
         Default constructor.
 
+        Note
+        ----
+        This class assumes EvtGen particle names, though this assumption is only relevant
+        for the `charge_conjugate` method (refer to its documentation).
+        Otherwise, all other class methods smoothly deal with
+        any kind of particle names (basically an iterable of strings).
+
         Examples
         --------
         >>> # An empty final state
         >>> dd = DaughtersDict()
 
         >>> # Constructor from a dictionary
-        >>> dd = DaughtersDict({'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1})
+        >>> dd = DaughtersDict({'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 3})
 
         >>> # Constructor from a list of particle names
         >>> dd = DaughtersDict(['K+', 'K-', 'K-', 'pi+', 'pi0'])
@@ -75,21 +71,31 @@ class DaughtersDict(Counter):
         """
         return sorted(list(self.elements()))
 
-    def charge_conjugate(self):
+    def charge_conjugate(self, pdg_name=False):
         """
         Return the charge-conjugate final state.
 
-        Note
-        ----
-        Charge conjugation mapping expects PDG particle names.
+        Parameters
+        ----------
+        pdg_name: str, optional, default=False
+            Input particle name is the PDG name,
+            not the (default) EvtGen name.
 
         Examples
         --------
         >>> dd = DaughtersDict({'K+': 2, 'pi0': 1})
         >>> dd.charge_conjugate()
         <DaughtersDict: ['K-', 'K-', 'pi0']>
+        >>>
+        >>> dd = DaughtersDict({'K_S0': 1, 'pi0': 1})
+        >>> dd.charge_conjugate()
+        <DaughtersDict: ['K_S0', 'pi0']>
+        >>>
+        >>> dd = DaughtersDict({'K(S)0': 1, 'pi0': 1})  # PDG names!
+        >>> dd.charge_conjugate(pdg_name=True)
+        <DaughtersDict: ['K(S)0', 'pi0']>
         """
-        return self.__class__({charge_conjugate(p):n for p, n in self.items()})
+        return self.__class__({charge_conjugate_name(p, pdg_name):n for p, n in self.items()})
 
     def __repr__(self):
         return "<{self.__class__.__name__}: {daughters}>".format(
@@ -128,6 +134,13 @@ class DecayMode(object):
 
     This class is a building block for the digital representation
     of full decay chains.
+
+    Note
+    ----
+    This class assumes EvtGen particle names, though this assumption is only
+    relevant for the `charge_conjugate` method.
+    Otherwise, all other class methods smoothly deal
+    with any kind of particle names (basically an iterable of strings).
     """
 
     __slots__ = ("bf",
@@ -141,14 +154,21 @@ class DecayMode(object):
         Parameters
         ----------
         bf: float, optional, default=0
-            Decay mode branching fraction
+            Decay mode branching fraction.
         daughters: iterable or DaughtersDict, optional, default=None
-            The final-state particles
+            The final-state particles.
         info: keyword arguments, optional
             Decay mode model information and/or user metadata (aka extra info)
             By default the following elements are always created:
-            dict(model=None, model_params=None)
+            dict(model=None, model_params=None).
             The user can provide any metadata, see the examples below.
+
+        Note
+        ----
+        This class assumes EvtGen particle names, though this assumption is only
+        relevant for the `charge_conjugate` method.
+        Otherwise, all other class methods smoothly deal
+        with any kind of particle names (basically an iterable of strings).
 
         Examples
         --------
@@ -185,6 +205,13 @@ class DecayMode(object):
         {'bf': <float>, 'fs': [...], ...}.
         These two keys are mandatory.
 
+        Note
+        ----
+        This class assumes EvtGen particle names, though this assumption is only
+        relevant for the `charge_conjugate` method.
+        Otherwise, all other class methods smoothly deal
+        with any kind of particle names (basically an iterable of strings).
+
         Examples
         --------
         >>> DecayMode.from_dict({'bf': 0.98823,
@@ -208,17 +235,27 @@ class DecayMode(object):
         """
         Constructor for a final state given as a list of particle PDG IDs.
 
+        Note
+        ----
+        All particle names are internally saved as EvtGen names,
+        to be consistent with the default class assumption, see class docstring.
+
         Examples
         --------
         >>> DecayMode.from_pdgids(0.5, [321, -321])
         <DecayMode: daughters=K+ K-, BF=0.5>
+        >>>
+        >>> DecayMode.from_pdgids(0.5, [310, 310])
+        <DecayMode: daughters=K_S0 K_S0, BF=0.5>
         """
         # Check inputs
         try:
-            from particle import Particle, ParticleNotFound
-            daughters = [Particle.from_pdgid(d).name for d in daughters]
+            from particle import PDGID, ParticleNotFound
+            from particle.converters import EvtGenName2PDGIDBiMap
+            daughters = [EvtGenName2PDGIDBiMap[PDGID(d)] for d in daughters]
         except ParticleNotFound:
             raise ParticleNotFound('Please check your input PDG IDs!')
+
         daughters = DaughtersDict(daughters)
 
         # Override the default settings with the user input, if any
@@ -267,22 +304,32 @@ class DecayMode(object):
             d['model_params'] = ''
         return d
 
-    def charge_conjugate(self):
+    def charge_conjugate(self, pdg_name=False):
         """
         Return the charge-conjugate decay mode.
 
-        Note
-        ----
-        Charge conjugation mapping expects PDG particle names.
+        Parameters
+        ----------
+        pdg_name: str, optional, default=False
+            Input particle name is the PDG name,
+            not the (default) EvtGen name.
 
         Examples
         --------
         >>> dm = DecayMode(1.0, 'K+ K+ pi-')
         >>> dm.charge_conjugate()
         <DecayMode: daughters=K- K- pi+, BF=1.0>
+        >>>
+        >>> dm = DecayMode(1.0, 'K_S0 pi+')
+        >>> dm.charge_conjugate()
+        <DecayMode: daughters=K_S0 pi-, BF=1.0>
+        >>>
+        >>> dm = DecayMode(1.0, 'K(S)0 pi+')  # PDG names!
+        >>> dm.charge_conjugate(pdg_name=True)
+        <DecayMode: daughters=K(S)0 pi-, BF=1.0>
         """
         return self.__class__(self.bf,
-                              self.daughters.charge_conjugate(),
+                              self.daughters.charge_conjugate(pdg_name),
                               **self.metadata)
 
     def __len__(self):
@@ -310,6 +357,13 @@ class DecayChain(object):
 
     This class is the main building block for the digital representation
     of full decay chains.
+
+    Note
+    ----
+    This class does not assume any kind of particle names (EvtGen, PDG).
+    It is nevertheless advised to default use EvtGen names for consistency
+    with the defaults used in the related classes `DecayMode` and `DaughtersDict`,
+    unless there is a good motivation not to.
     """
 
     __slots__ = ("mother",

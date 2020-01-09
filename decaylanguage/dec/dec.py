@@ -543,6 +543,8 @@ All but the first occurrence will be discarded/removed ...""".format(', '.join(d
 
         Parameters
         ----------
+        mother: str
+            Input mother particle name.
         pdg_name: str, optional, default=False
             Input mother particle name is the PDG name,
             not the (default) EvtGen name.
