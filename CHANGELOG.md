@@ -1,5 +1,18 @@
 # Changelog
 
+## Version 0.6.0 (2020-01-10)
+
+* Parsing of decay files (aka .dec files):
+  - Master Belle II DECAY.DEC file added to the package.
+  - Certain ``DecFileParser`` class methods made more versatile.
+  - ``Lark`` parsing grammar file improved.
+* Universal representation of decay chains:
+  - Classes ``DecayChain``, ``DecayMode``, ``DaughtersDict`` and ``DecayChainViewer`` enhanced.
+* Dependencies and Python version support:
+  - Package dependent on ``Particle`` versions 0.9.*.
+  - Support for Python 3.8 added.
+
+
 ## Version 0.5.3 (2019-10-28)
 
 * Dict-like representation of particle decay chains improved.
