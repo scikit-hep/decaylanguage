@@ -807,29 +807,9 @@ class ChargeConjugateReplacement(Visitor):
         """
         assert tree.data == 'particle'
         pname = tree.children[0].value
-        ccpname = self._particle(pname)
-        # Will be able to use the following line once the method is fully robust
-        #ccpname = find_charge_conjugate_match(pname, self.charge_conj_defs)
+        ccpname = find_charge_conjugate_match(pname, self.charge_conj_defs)
+        self.charge_conj_defs[pname] = ccpname
         tree.children[0].value = ccpname
-
-    def _particle(self, pname):
-        if len(self.charge_conj_defs) > 0:
-            match = self.charge_conj_defs.get(pname)
-            if match is not None:
-                return match
-            for p, ccp in self.charge_conj_defs.items():
-                if ccp == pname:
-                    return p
-                # Yes, both 'ChargeConj P CCP' and 'ChargeConj CCP P' are relevant
-                elif p == pname:
-                    return ccp
-            # Cache particle-antiparticle matching pairs, to speed-up
-            ccpname = charge_conjugate_name(pname)
-            self.charge_conj_defs[pname] = ccpname
-            return ccpname
-        else:
-            # "Last-chance matching" !
-            return charge_conjugate_name(pname)
 
 def find_charge_conjugate_match(pname, dict_cc_names=dict()):
     """
