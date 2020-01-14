@@ -46,7 +46,6 @@ from lark import Tree, Transformer, Visitor
 from particle import Particle, ParticleNotFound
 from particle.converters import PDG2EvtGenNameMap
 from particle.particle.enums import Charge, Charge_undo, Charge_mapping
-#from particle.particle.regex import getdec
 
 from .enums import PhotosEnum
 
