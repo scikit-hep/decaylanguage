@@ -192,16 +192,27 @@ def test_simple_dec():
     assert p.list_decay_modes('D0') == [['K-', 'pi+']]
 
 
-def test_dec_with_new_particle():
+def test_with_missing_info():
     """
-    This decay file is special (at least for now) since the mother particle
-    is not known to the PDG data table.
+    This decay file misses a ChargeConj statement relating the particle aliases
+    Xi_cc+sig and anti-Xi_cc-sig. As a consequence, only 3 decays are parsed
+    and the following warning is issued:
+    ``
+    Corresponding 'Decay' statement for 'CDecay' statement(s) of following particle(s) not found:
+    anti-Xi_cc-sig.
+    Skipping creation of these charge-conjugate decay trees.
+      warnings.warn(msg)
+    ``
     """
     p = DecFileParser(DIR / '../data/test_Xicc2XicPiPi.dec')
     p.parse()
 
-    assert 'MyantiXic-' in p.list_decay_mother_names()
+    # Decay of anti-Xi_cc-sig missing
+    assert p.number_of_decays == 3
     assert 'anti-Xi_cc-sig' not in p.list_decay_mother_names()
+
+    # CDecay statements
+    assert 'anti-Xi_cc-sig' in p.list_charge_conjugate_decays()
 
 
 def test_decay_mode_details():
@@ -270,6 +281,21 @@ def test_list_decay_modes():
 
     assert p.list_decay_modes('D*-') == [['anti-D0', 'pi-'], ['D-', 'pi0'], ['D-', 'gamma']]
     assert p.list_decay_modes('D*(2010)-', pdg_name=True) == [['anti-D0', 'pi-'], ['D-', 'pi0'], ['D-', 'gamma']]
+
+
+def test_list_decay_modes_on_the_fly():
+    """
+    Unlike in the example above the charge conjugate decay modes are created
+    on the fly from the non-CC. decay.
+    """
+    p = DecFileParser(DIR / '../data/test_Xicc2XicPiPi.dec')
+    p.parse()
+
+    # Parsed directly from the dec file
+    assert p.list_decay_modes('MyXic+') == [['p+', 'K-', 'pi+']]
+
+    # Decay mode created on-the-fly from the above
+    assert p.list_decay_modes('MyantiXic-') == [['anti-p-', 'K+', 'pi-']]
 
 
 def test_print_decay_modes():
@@ -366,7 +392,7 @@ def test_Lark_ChargeConjugateReplacement_Visitor():
 
     ChargeConjugateReplacement().visit(t)
 
-    assert get_decay_mother_name(t) == 'D~0'
+    assert get_decay_mother_name(t) == 'anti-D0'
     assert get_final_state_particle_names(t.children[1]) == ['K+', 'pi-']
 
 

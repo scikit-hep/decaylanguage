@@ -44,13 +44,14 @@ from lark import Lark
 from lark import Tree, Transformer, Visitor
 
 from particle import Particle, ParticleNotFound
-from particle.particle.enums import Charge, Charge_undo, Charge_mapping
-from particle.particle.regex import getdec
 from particle.converters import PDG2EvtGenNameMap
+from particle.particle.enums import Charge, Charge_undo, Charge_mapping
 
+from .enums import PhotosEnum
+
+from ..utils import charge_conjugate_name
 from ..data import open_text
 from .. import data
-from .enums import PhotosEnum
 
 
 # New in Python 3
@@ -799,53 +800,25 @@ class ChargeConjugateReplacement(Visitor):
     def __init__(self, charge_conj_defs=dict()):
         self.charge_conj_defs = charge_conj_defs
 
-    # TODO: this can be improved!
-    def _last_chance_matching(self, pname):
-        try:
-            return Particle.from_string(pname).invert().name
-        except ParticleNotFound:
-            return 'ChargeConj({0})'.format(pname)
-
     def particle(self, tree):
         """
         Method for the rule (here, a replacement) we wish to implement.
         """
         assert tree.data == 'particle'
         pname = tree.children[0].value
-        ccpname = self._particle(pname)
-        # Will be able to use the following line once the method is fully robust
-        #ccpname = find_charge_conjugate_match(pname, self.charge_conj_defs)
+        ccpname = find_charge_conjugate_match(pname, self.charge_conj_defs)
+        self.charge_conj_defs[pname] = ccpname
         tree.children[0].value = ccpname
-
-    def _particle(self, pname):
-        if len(self.charge_conj_defs) > 0:
-            match = self.charge_conj_defs.get(pname)
-            if match is not None:
-                return match
-            for p, ccp in self.charge_conj_defs.items():
-                if ccp == pname:
-                    return p
-                # Yes, both 'ChargeConj P CCP' and 'ChargeConj CCP P' are relevant
-                elif p == pname:
-                    return ccp
-            # Cache particle-antiparticle matching pairs, to speed-up
-            ccpname = self._last_chance_matching(pname)
-            self.charge_conj_defs[pname] = ccpname
-            return ccpname
-        else:
-            return self._last_chance_matching(pname)
 
 def find_charge_conjugate_match(pname, dict_cc_names=dict()):
     """
+    Find the charge-conjugate particle name making use of user information
+    from "ChargeConj" statements in a decay file.
 
+    The name `ChargeConj(pname)` is returned if all matching "routes" fail,
+    see `charge_conjugate_name(...) function.`
     """
-    # Special case/name
-    if pname == 'anti-c-hadron' or pname == 'anti-Omega_c0':
-        ccpname = re.sub('anti-', '', pname)
-        dict_cc_names[pname] = ccpname
-        return ccpname
-
-    # Next, check the list of particle-antiparticle matches provided ;-)
+    # Check the list of particle-antiparticle matches provided ;-)
     if len(dict_cc_names) > 0:
         match = dict_cc_names.get(pname)
         if match is not None:
@@ -855,23 +828,7 @@ def find_charge_conjugate_match(pname, dict_cc_names=dict()):
             if ccp == pname:
                 return p
 
-    # Many names can be easily matched
-    _pname = re.sub('anti-', '', pname)
-    mat = getdec.match(_pname)
-    if mat:
-        oldcharge = mat.groupdict()['charge']
-        newcharge = Charge_undo[Charge(Charge_mapping[oldcharge]*-1)]
-        ccpname = _pname.replace(oldcharge, newcharge)
-        dict_cc_names[pname] = ccpname
-        return ccpname
-
-    # Search EvtGen names via the Particle class
-    try:
-        return Particle.from_string(pname).invert().name
-    # If anything else fails ...
-    except ParticleNotFound:
-        return 'ChargeConj({0})'.format(pname)
-
+    return charge_conjugate_name(pname)
 
 def get_decay_mother_name(decay_tree):
     """

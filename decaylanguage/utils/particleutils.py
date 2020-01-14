@@ -13,7 +13,9 @@ except ImportError:
     cacher = cached(cache=LFUCache(maxsize=64))
 
 from particle import Particle
-from particle.converters import PDG2EvtGenNameMap
+from particle.converters import EvtGenName2PDGIDBiMap
+from particle.converters import PDG2EvtGenNameMap,EvtGen2PDGNameMap
+from particle.exceptions import MatchingIDNotFound
 
 
 @cacher
@@ -21,6 +23,16 @@ def charge_conjugate_name(name, pdg_name=False):
     """
     Return the charge-conjugate particle name matching the given name.
     If no matching is found, return "ChargeConj(pname)".
+
+    Note
+    ----
+    Search/match in order:
+    1) Trivial case - does the name correspond to a self-conjugate particle?
+       Only works for particles in the DB.
+    2) Try to match the antiparticle looking for the opposite PDG ID
+       in the list of PDG IDs - EvtGen names.
+       This can deal with specific particles or badly-known particles
+       not in the DB but not so rare in decay files.
 
     Parameters
     ----------
@@ -33,16 +45,22 @@ def charge_conjugate_name(name, pdg_name=False):
     Returns
     -------
     out: str
-    Either the EvtGen or PDG charge-conjugate particle name
-    depending on the value of parameter `pdg_name`.
+        Either the EvtGen or PDG charge-conjugate particle name
+        depending on the value of parameter `pdg_name`.
     """
     if pdg_name:
-        name = PDG2EvtGenNameMap[name]
+        try:
+            ccname = charge_conjugate_name(PDG2EvtGenNameMap[name])
+            # Convert the EvtGen name back to a PDG name, to match input type
+            return EvtGen2PDGNameMap[ccname]
+        except MatchingIDNotFound:  # Catch issue in PDG2EvtGenNameMap matching
+            return 'ChargeConj({0})'.format(name)
 
+    # Dealing only with EvtGen names at this stage
     try:
-        ccname = Particle.from_evtgen_name(name).invert().name  # Returns a PDG name ;-)
-        if pdg_name:
-            return ccname
-        return PDG2EvtGenNameMap[ccname]
+        return Particle.from_evtgen_name(name).invert().evtgen_name
     except:
-        return 'ChargeConj({0})'.format(name)
+        try:
+            return EvtGenName2PDGIDBiMap[-EvtGenName2PDGIDBiMap[name]]
+        except:
+            return 'ChargeConj({0})'.format(name)
