@@ -454,7 +454,7 @@ Skipping creation of these charge-conjugate decay trees.""".format('\n'.join([m 
         def _is_not_self_conj(t):
             try:
                 mname = t.children[0].children[0].value
-                if Particle.from_string(mname).is_self_conjugate:
+                if Particle.from_evtgen_name(mname).is_self_conjugate:
                     msg = """Found 'CDecay' statement for self-conjugate particle {0}. This is a bug!
 Skipping creation of charge-conjugate decay Tree.""".format(mname)
                     warnings.warn(msg)
