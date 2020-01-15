@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.6.1 (2020-01-15)
+
+* Parsing of decay files (aka .dec files):
+  - Simpifications in various methods of class ``DecFileParser``.
+  - A couple more tests added.
+* Minor fixes.
+
+
 ## Version 0.6.0 (2020-01-10)
 
 * Parsing of decay files (aka .dec files):
