@@ -1,4 +1,7 @@
 
 from .decay import DaughtersDict, DecayMode, DecayChain
 
-from .viewer import DecayChainViewer
+try:
+    from .viewer import DecayChainViewer
+except ImportError:
+    pass
