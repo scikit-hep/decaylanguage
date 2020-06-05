@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 0.7.0
+
+Under development.
+
+* Dependencies:
+  - Package dependent on ``Particle`` versions 0.10.*.
+  - Dependencies on `lark-parser` and others upgraded.
+
+
 ## Version 0.6.2 (2020-06-05)
 
 * Dependencies:

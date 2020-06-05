@@ -19,17 +19,17 @@ from setuptools import setup
 PYTHON_REQUIRES = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 INSTALL_REQUIRES = [
-    'attrs>=17.4',
-    'plumbum>=1.6.6',
+    'attrs>=19.2',
+    'plumbum>=1.6.9',
     'numpy>=1.12',
     'pandas>=0.22',
     'six>=1.11',
-    'lark-parser>=0.6.3',
+    'lark-parser>=0.8.0',
     'pathlib2>=2.3; python_version<"3.5"',
     'enum34>=1.1; python_version<"3.4"',
     'importlib_resources>=1.0; python_version<"3.7"',
     'cachetools; python_version<"3.3"',
-    'particle==0.9.*',
+    'particle==0.10.*',
     'pydot'
 ]
 
