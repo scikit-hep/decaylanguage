@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.6.2 (2020-06-05)
+
+* Dependencies:
+  - Package dependency on ``pydot`` made a requirement.
+
+
 ## Version 0.6.1 (2020-01-15)
 
 * Parsing of decay files (aka .dec files):
