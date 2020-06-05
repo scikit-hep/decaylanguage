@@ -7,8 +7,7 @@ steps:
 - script: |
     python -m pip install --upgrade pip
     python -m pip install --upgrade pytest
-    python -m pip install pydot
-    python -m pip install pytest-cov pytest-runner pytest-azurepipelines
+    python -m pip install pytest-cov pytest-azurepipelines
   displayName: 'Install dependencies'
 
 - script: |
