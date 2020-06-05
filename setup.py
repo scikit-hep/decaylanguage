@@ -29,7 +29,8 @@ INSTALL_REQUIRES = [
     'enum34>=1.1; python_version<"3.4"',
     'importlib_resources>=1.0; python_version<"3.7"',
     'cachetools; python_version<"3.3"',
-    'particle==0.9.*'
+    'particle==0.9.*',
+    'pydot'
 ]
 
 needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
@@ -54,8 +55,8 @@ def get_version():
     return g["__version__"]
 
 extras = {
-    'test': ['pytest', 'pydot'],
-    'notebook': ['graphviz', 'pydot'],
+    'test': ['pytest'],
+    'notebook': ['graphviz'],
 }
 
 setup(
