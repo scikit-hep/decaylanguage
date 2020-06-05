@@ -1,0 +1,49 @@
+name: Wheel and SDist
+
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+  release:
+    types:
+    - published
+
+jobs:
+  dist:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install wheel and SDist requirements
+      run: python -m pip install "setuptools>=42.0" "setuptools_scm[toml]>=4.1" "wheel"
+
+    - name: Build SDist
+      run: python setup.py sdist
+
+    - name: Build wheel
+      run: >
+        python -m pip wheel . -w wheels
+
+    - uses: actions/upload-artifact@v2
+      with:
+        path: wheels/DecayLanguage*.whl
+
+  publish:
+    needs: [dist]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
+
+    steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: artifact
+        path: dist
+
+    - uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}

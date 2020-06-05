@@ -33,9 +33,6 @@ INSTALL_REQUIRES = [
     'pydot'
 ]
 
-needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
-pytest_runner = ['pytest-runner'] if needs_pytest else []
-
 def read(*names, **kwargs):
     return io.open(
         os.path.join(os.path.dirname(__file__), *names),
@@ -75,7 +72,6 @@ setup(
     package_data = {'': ['data/*.*']},
     python_requires = PYTHON_REQUIRES,
     install_requires = INSTALL_REQUIRES,
-    setup_requires = [] + pytest_runner,
     tests_require = extras['test'],
     extras_require = extras,
     keywords = [
