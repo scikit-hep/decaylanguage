@@ -5,7 +5,7 @@
 Under development.
 
 * Dependencies:
-  - Package dependent on ``Particle`` versions 0.10.*.
+  - Package dependent on ``Particle`` version 0.10.
   - Dependencies on `lark-parser` and others upgraded.
 
 
