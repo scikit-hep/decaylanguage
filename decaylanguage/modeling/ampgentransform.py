@@ -6,7 +6,7 @@
 from lark import Transformer, Tree
 
 def get_from_parser(parser, key):
-    return [v.children for v in parser.find_data(key)]
+    return [v.children for v in list(parser.find_data(key))]
 
 class AmpGenTransformer(Transformer):
     def constant(self, lines):
