@@ -11,7 +11,7 @@ dependencies:
   - pip:
     - hepunits>=1.2.0
     - particle==0.11.*
-    - lark-parser>=0.8.0
+    - lark-parser==0.8.*
     - plumbum>=1.6.9
     - RISE
     - graphviz
