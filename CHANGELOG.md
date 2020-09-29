@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.8.0 (2020-09-29)
+
+* Dependencies:
+  - Package dependent on ``Particle`` version 0.12.
+
 ## Version 0.7.0 (2020-08-13)
 
 * Dependencies:
