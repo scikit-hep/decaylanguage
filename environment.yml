@@ -10,7 +10,7 @@ dependencies:
   - pydot>=1.3.0
   - pip:
     - hepunits>=1.2.0
-    - particle==0.11.*
+    - particle==0.12.*
     - lark-parser>=0.8.0,<0.8.6
     - plumbum>=1.6.9
     - RISE
