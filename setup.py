@@ -68,7 +68,7 @@ setup(
     long_description = proc_readme(read('README.md')) + '\n\n' + read('CHANGELOG.md'),
     long_description_content_type = "text/markdown",
     url = 'https://github.com/scikit-hep/decaylanguage',
-    packages = find_packages(),
+    packages = find_packages(exclude=("tests",)),
     package_data = {'': ['data/*.*']},
     python_requires = PYTHON_REQUIRES,
     install_requires = INSTALL_REQUIRES,
