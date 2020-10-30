@@ -1,5 +1,8 @@
 # Changelog
 
+* Dependencies and Python version support:
+  - Support for Python 3.9 added.
+
 ## Version 0.8.0 (2020-09-29)
 
 * Dependencies:
