@@ -1,6 +1,9 @@
 # Changelog
 
+## Version 0.9.0 (2020-10-31)
+
 * Dependencies and Python version support:
+  - Package dependent on ``Particle`` version 0.13.
   - Support for Python 3.9 added.
 
 ## Version 0.8.0 (2020-09-29)
