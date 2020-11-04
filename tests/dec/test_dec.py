@@ -114,6 +114,8 @@ def test_copydecay_statement_parsing():
     p.parse()
 
     assert len(p.dict_decays2copy()) == 2
+    assert p.number_of_decays == 4  # 2 original + 2 copied
+    assert p.list_decay_modes('phi_copy') == p.list_decay_modes('phi')
 
 
 def test_definitions_parsing():
