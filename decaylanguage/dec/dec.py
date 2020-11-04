@@ -9,10 +9,11 @@ Submodule with classes and utilities to deal with and parse .dec decay files.
 Basic assumptions
 -----------------
 
-1) For standard (non-alias) particle (names):
+1) For standard particle names *not defined* via aliases:
     - Decay modes defined via a 'Decay' statement.
     - Related antiparticle decay modes either defined via a 'CDecay' statement
       or via a 'Decay' statement. The latter option is often used if CP matters.
+
 2) For particle names defined via aliases:
     - Particle decay modes defined as above.
     - Related antiparticle decay modes defined with either options above,
@@ -29,6 +30,10 @@ Basic assumptions
 
 3) As a consequence, particles that are self-conjugate should not be used
    in 'CDecay' statements, obviously.
+
+ 4) Decays defined via a 'CopyDecay' statement are simply (deep) copied
+    and no copy of the corresponding antiparticle is performed unless explicitly requested
+    with another 'CopyDecay' statement.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -75,7 +80,8 @@ class DecFileParser(object):
 
     Example
     -------
-    >>> parsed_file = DecFileParser('my-decay-file.dec')
+    >>> dfp = DecFileParser('my-decay-file.dec')
+    >>> dfp.parse()
     """
 
     __slots__ = ("_grammar",
@@ -153,13 +159,12 @@ class DecFileParser(object):
 
     def parse(self, include_ccdecays=True):
         """
-        Parse the given .dec decay file according to default Lark parser
-        and specified options, i.e.,
-            parser = 'lalr',
-            lexer = 'standard'.
+        Parse the given .dec decay file(s) according to the default Lark parser
+        and specified options.
 
         See method 'load_grammar' for how to explicitly define the grammar
-        and set the Lark parsing options.
+        and set the Lark parsing options. This method needs to be called
+        before 'parse' to override the parser and its options.
 
         Parameters
         ----------
@@ -198,14 +203,19 @@ class DecFileParser(object):
         for tree in self._parsed_decays:
             DecayModelParamValueReplacement(define_defs=dict_define_defs).visit(tree)
 
-        # ... and create on the fly the charge conjugate decays, if requested
+        # Create on the fly the decays to be copied, if requested
+        if self.dict_decays2copy():
+            self._add_decays_to_be_copied()
+
+        # Create on the fly the charge conjugate decays, if requested
         if self._include_ccdecays:
             self._add_charge_conjugate_decays()
 
     def grammar(self):
         """
         Access the internal Lark grammar definition file,
-        loading it from the default location if needed.
+        effectively loading the default grammar with default parsing options
+        if no grammar has been loaded before.
 
         Returns
         -------
@@ -220,7 +230,8 @@ class DecFileParser(object):
     def grammar_info(self):
         """
         Access the internal Lark grammar definition file name and
-        parser options, loading the grammar from the default location if needed.
+        parser options, effectively loading the default grammar
+        with default parsing options if no grammar has been loaded before.
 
         Returns
         -------
@@ -266,8 +277,19 @@ class DecFileParser(object):
 
     @property
     def grammar_loaded(self):
-        """Check to see if the Lark grammar definition file is loaded."""
+        """
+        Check to see if the Lark grammar definition file is loaded.
+        """
         return self._grammar is not None
+
+    def dict_decays2copy(self):
+        """
+        Return a dictionary of all statements in the input parsed file
+        defining a decay to be copied, of the form
+        "CopyDecay <NAME> <DECAY_TO_COPY>",
+        as {'NAME1': DECAY_TO_COPY1, 'NAME2': DECAY_TO_COPY2, ...}.
+        """
+        return get_decays2copy_statements(self._parsed_dec_file)
 
     def dict_definitions(self):
         """
@@ -318,7 +340,7 @@ class DecFileParser(object):
 
     def list_lineshape_definitions(self):
         """
-        Return a dictionary of all SetLineshapePW definitions in the input parsed file,
+        Return a list of all SetLineshapePW definitions in the input parsed file,
         of the form
         "SetLineshapePW <MOTHER> <DAUGHTER1> <DAUGHTER2> <VALUE>",
         as
@@ -353,19 +375,18 @@ class DecFileParser(object):
 
     def _find_parsed_decays(self):
         """
-        Return a tuple of all decay definitions in the input parsed file,
-        of the form
-        "Decay <MOTHER>",
-        as a tuple of Lark Tree instances with Tree.data=='decay', i.e.,
-        (Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER1>]), ...),
-        Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER2>]), ...)).
+        Find all decay definitions in the input parsed file,
+        which are of the form "Decay <MOTHER>", and save them internally
+        as a list of Lark Tree instances with Tree.data=='decay', i.e.,
+        [Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER1>]), ...),
+        Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER2>]), ...)].
 
         Duplicate definitions (a bug, of course) are removed, issuing a warning.
 
         Note
         ----
         1) Method not meant to be used directly!
-        2) charge conjugates need to be dealt with differently,
+        2) Charge conjugates need to be dealt with differently,
         see 'self._add_charge_conjugate_decays()'.
         """
         if self._parsed_dec_file is not None:
@@ -373,6 +394,45 @@ class DecFileParser(object):
 
         # Check for duplicates - should be considered a bug in the .dec file!
         self._check_parsed_decays()
+
+    def _add_decays_to_be_copied(self):
+        """
+        Create the copies of the Lark Tree instances of decays specified
+        in the input parsed file via the statements of the form
+        "CopyDecay <NAME> <DECAY_TO_COPY>".
+        These are added to the internal list of decays stored in the class
+        in variable 'self._parsed_decays'.
+
+        Note
+        ----
+        1) There is no check that for a requested copy of non self-conjugate decay
+           the copy of the corresponding antiparticle is also requested in the file!
+           In other terms, only explicit copies are performed.
+        2) Method not meant to be used directly!
+        """
+        decays2copy = self.dict_decays2copy()
+
+        # match name -> position in list self._parsed_decays
+        name2treepos = {t.children[0].children[0].value:i for i, t in enumerate(self._parsed_decays)}
+
+        # Make the copies taking care to change the name of the mother particle
+        copied_decays = []
+        misses = []
+        for decay2copy, decay2becopied in decays2copy.items():
+            try:
+                match = self._parsed_decays[name2treepos[decay2becopied]]
+                copied_decay = match.__deepcopy__(None)
+                copied_decay.children[0].children[0].value = decay2copy
+                copied_decays.append(copied_decay)
+            except:
+                misses.append(decay2copy)
+        if len(misses) > 0:
+            msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{0}.
+Skipping creation of these copied decay trees.""".format('\n'.join([m for m in misses]))
+            warnings.warn(msg)
+
+        # Actually add all these copied decays to the list of decays!
+        self._parsed_decays.extend(copied_decays)
 
     def _add_charge_conjugate_decays(self):
         """
@@ -991,8 +1051,7 @@ def get_model_parameters(decay_mode):
 def get_decays(parsed_file):
     """
     Return a list of all decay definitions in the input parsed file,
-    of the form
-    "Decay <MOTHER>",
+    of the form "Decay <MOTHER>",
     as a tuple of Lark Tree instances with Tree.data=='decay', i.e.,
     [Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER1>]), ...),
      Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER2>]), ...)].
@@ -1027,6 +1086,28 @@ def get_charge_conjugate_decays(parsed_file):
 
     try:
         return sorted([tree.children[0].children[0].value for tree in parsed_file.find_data('cdecay')])
+    except:
+        RuntimeError("Input parsed file does not seem to have the expected structure.")
+
+
+def get_decays2copy_statements(parsed_file):
+    """
+    Return a dictionary of all statements in the input parsed file
+    defining a decay to be copied, of the form
+    "CopyDecay <NAME> <DECAY_TO_COPY>",
+    as {'NAME1': DECAY_TO_COPY1, 'NAME2': DECAY_TO_COPY2, ...}.
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+    """
+    if not isinstance(parsed_file, Tree) :
+        raise RuntimeError("Input not an instance of a Tree!")
+
+    try:
+        return {tree.children[0].children[0].value:tree.children[1].children[0].value
+            for tree in parsed_file.find_data('copydecay')}
     except:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
@@ -1176,7 +1257,7 @@ def get_jetset_definitions(parsed_file):
 
 def get_lineshape_definitions(parsed_file):
     """
-    Return a dictionary of all SetLineshapePW definitions in the input parsed file,
+    Return a list of all SetLineshapePW definitions in the input parsed file,
     of the form
     "SetLineshapePW <MOTHER> <DAUGHTER1> <DAUGHTER2> <VALUE>",
     as

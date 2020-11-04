@@ -1,0 +1,50 @@
+# Example file to test EvtGen's CopyDecay and RemoveDecay keywords.
+
+# These will all be redefined at the end after Decay definitions
+Alias phi_copy phi
+Alias f'_0_copy f'_0
+
+Decay phi
+0.489000000 K+      K-                   VSS; #[Reconstructed PDG2011]
+0.342000000 K_L0    K_S0                 VSS; #[Reconstructed PDG2011]
+0.0425   rho+ pi-                        VVS_PWAVE 1.0 0.0 0.0 0.0 0.0 0.0;
+0.0425   rho0 pi0                        VVS_PWAVE 1.0 0.0 0.0 0.0 0.0 0.0;
+0.0425   rho- pi+                        VVS_PWAVE 1.0 0.0 0.0 0.0 0.0 0.0;
+0.0250   pi+  pi- pi0                    PHSP;
+0.013090000 eta     gamma                VSP_PWAVE; #[Reconstructed PDG2011]
+0.000687600 pi0     gamma                VSP_PWAVE; #[Reconstructed PDG2011]
+0.000295400 e+      e-                   PHOTOS      VLL; #[Reconstructed PDG2011]
+0.000287000 mu+     mu-                  PHOTOS      VLL; #[Reconstructed PDG2011]
+0.000113000 pi0     pi0     gamma        PHSP; #[Reconstructed PDG2011]
+0.000115000 eta     e+      e-           PHSP; #[Reconstructed PDG2011]
+0.000322000 f_0     gamma                PHSP; #[Reconstructed PDG2011]
+0.000074000 pi+     pi-                  PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000047000 omega   pi0                  PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000041000 pi+     pi-     gamma        PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000004000 pi+     pi-     pi+     pi-  PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000011200 pi0     e+      e-           PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000072700 pi0     eta     gamma        PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000062500 eta'    gamma                PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000014000 mu+     mu-     gamma        PHSP;  #[New mode added] #[Reconstructed PDG2011]
+Enddecay
+
+Decay f'_0
+0.5200   pi+  pi-                        PHSP;
+0.2600   pi0  pi0                        PHSP;
+0.0750   pi+ pi+ pi- pi-                 PHSP;
+0.0750   pi+ pi- pi0 pi0                 PHSP;
+0.0350   K+   K-                         PHSP;
+0.0175   K_S0  K_S0                      PHSP;
+0.0175   K_L0  K_L0                      PHSP;
+Enddecay
+
+CopyDecay phi_copy phi
+CopyDecay f'_0_copy f'_0
+
+#RemoveDecay phi_copy
+#K+ K-;
+#Enddecay
+#RemoveDecay f'_0_copy
+#K+ K-;
+#pi+ pi-;
+#Enddecay

@@ -4,7 +4,7 @@
 // or https://github.com/scikit-hep/decaylanguage for details.
 
 start : _NEWLINE* (line _NEWLINE+)+ ("End" _NEWLINE+)?
-?line : define | pythia_def | jetset_def | alias | chargeconj | commands | decay | cdecay | setlspw
+?line : define | pythia_def | jetset_def | alias | chargeconj | commands | decay | cdecay | copydecay | setlspw
 
 pythia_def : "PythiaBothParam" LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)
 
@@ -31,6 +31,8 @@ decay : "Decay" particle _NEWLINE+ decayline+ "Enddecay"
 decayline : value particle* photos? model (_NEWLINE | _SEMICOLON)+ // There is always a ; here
 value : SIGNED_NUMBER
 photos : "PHOTOS"
+
+copydecay : "CopyDecay" label label
 
 label : LABEL
 particle : LABEL // Add full particle parsing here
