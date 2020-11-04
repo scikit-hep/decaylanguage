@@ -109,6 +109,13 @@ def test_string_representation():
         assert "n_decays=5" in p.__str__()
 
 
+def test_copydecay_statement_parsing():
+    p = DecFileParser(DIR / '../data/test_CopyDecay_RemoveDecay.dec')
+    p.parse()
+
+    assert len(p.dict_decays2copy()) == 2
+
+
 def test_definitions_parsing():
     p = DecFileParser(DIR / '../data/defs-aliases-chargeconj.dec')
     p.parse()
