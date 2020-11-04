@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 0.9.1 (2020-11-04)
+
+* Parsing of decay files (aka .dec files):
+  - ``DecFileParser`` class enhanced to understand the CopyDecay statement.
+* Tests:
+  - Added tests for Python 3.8 and 3.9 on Windows.
+* Miscellaneous:
+  - Conda badge added to the README, since package now available in Conda.
+
 ## Version 0.9.0 (2020-10-31)
 
 * Dependencies and Python version support:
