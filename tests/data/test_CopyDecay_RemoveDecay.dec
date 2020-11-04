@@ -1,8 +1,8 @@
 # Example file to test EvtGen's CopyDecay and RemoveDecay keywords.
 
 # These will all be redefined at the end after Decay definitions
-Alias phi_A phi
-Alias f'_0_A f'_0
+Alias phi_copy phi
+Alias f'_0_copy f'_0
 
 Decay phi
 0.489000000 K+      K-                   VSS; #[Reconstructed PDG2011]
@@ -38,12 +38,13 @@ Decay f'_0
 0.0175   K_L0  K_L0                      PHSP;
 Enddecay
 
-CopyDecay phi_A phi
-CopyDecay f'_0_A f'_0
+CopyDecay phi_copy phi
+CopyDecay f'_0_copy f'_0
 
-#RemoveDecay phi_A
+#RemoveDecay phi_copy
 #K+ K-;
 #Enddecay
-#RemoveDecay f'_0_A
+#RemoveDecay f'_0_copy
 #K+ K-;
+#pi+ pi-;
 #Enddecay
