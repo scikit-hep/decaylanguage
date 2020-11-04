@@ -269,6 +269,15 @@ class DecFileParser(object):
         """Check to see if the Lark grammar definition file is loaded."""
         return self._grammar is not None
 
+    def dict_decays2copy(self):
+        """
+        Return a dictionary of all statements in the input parsed file
+        defining a decay to be copied, of the form
+        "CopyDecay <NAME> <DECAY_TO_COPY>",
+        as {'NAME1': DECAY_TO_COPY1, 'NAME2': DECAY_TO_COPY2, ...}.
+        """
+        return get_decays2copy_statements(self._parsed_dec_file)
+
     def dict_definitions(self):
         """
         Return a dictionary of all definitions in the input parsed file,
@@ -991,8 +1000,7 @@ def get_model_parameters(decay_mode):
 def get_decays(parsed_file):
     """
     Return a list of all decay definitions in the input parsed file,
-    of the form
-    "Decay <MOTHER>",
+    of the form "Decay <MOTHER>",
     as a tuple of Lark Tree instances with Tree.data=='decay', i.e.,
     [Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER1>]), ...),
      Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER2>]), ...)].
@@ -1027,6 +1035,28 @@ def get_charge_conjugate_decays(parsed_file):
 
     try:
         return sorted([tree.children[0].children[0].value for tree in parsed_file.find_data('cdecay')])
+    except:
+        RuntimeError("Input parsed file does not seem to have the expected structure.")
+
+
+def get_decays2copy_statements(parsed_file):
+    """
+    Return a dictionary of all statements in the input parsed file
+    defining a decay to be copied, of the form
+    "CopyDecay <NAME> <DECAY_TO_COPY>",
+    as {'NAME1': DECAY_TO_COPY1, 'NAME2': DECAY_TO_COPY2, ...}.
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+    """
+    if not isinstance(parsed_file, Tree) :
+        raise RuntimeError("Input not an instance of a Tree!")
+
+    try:
+        return {tree.children[0].children[0].value:tree.children[1].children[0].value
+            for tree in parsed_file.find_data('alias')}
     except:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
