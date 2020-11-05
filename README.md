@@ -13,7 +13,6 @@
 [![Coverage Status](https://img.shields.io/azure-devops/coverage/scikit-hep/decaylanguage/3.svg)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=3?branchName=master)
 [![Tests Status](https://img.shields.io/azure-devops/tests/scikit-hep/decaylanguage/3.svg)](https://dev.azure.com/scikit-hep/decaylanguage/_build/latest?definitionId=3?branchName=master)
 [![Documentation Status](https://readthedocs.org/projects/decaylanguage/badge/?style=flat)](https://readthedocs.org/projects/decaylanguage)
-[![Commits since latest release](https://img.shields.io/github/commits-since/scikit-hep/decaylanguage/v0.3.0.svg)](https://github.com/scikit-hep/decaylanguage/compare/v0.3.0...master)
 
 [![Binder demo](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scikit-hep/decaylanguage/master?urlpath=lab/tree/notebooks/DecayLanguageDemo.ipynb)
 
