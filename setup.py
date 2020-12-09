@@ -29,7 +29,7 @@ INSTALL_REQUIRES = [
     'enum34>=1.1; python_version<"3.4"',
     'importlib_resources>=1.0; python_version<"3.7"',
     'cachetools; python_version<"3.3"',
-    'particle==0.13.*',
+    'particle==0.14.*',
     'pydot'
 ]
 
@@ -38,13 +38,6 @@ def read(*names, **kwargs):
         os.path.join(os.path.dirname(__file__), *names),
         encoding=kwargs.get('encoding', 'utf8')
     ).read()
-
-def proc_readme(text):
-    text = text.split('<!-- break -->')[-1]
-    return '''
-    <a href="https://decaylanguage.readthedocs.io/en/latest/"><img align="left" src="https://raw.githubusercontent.com/scikit-hep/decaylanguage/master/images/DecayLanguage.png"></img></a><br>
-
-    ''' + text
 
 def get_version():
     g = {}
@@ -65,7 +58,7 @@ setup(
     version = get_version(),
     license = 'BSD 3-Clause License',
     description = 'A language to describe particle decays, and tools to work with them.',
-    long_description = proc_readme(read('README.md')) + '\n\n' + read('CHANGELOG.md'),
+    long_description = read('README.md'),
     long_description_content_type = "text/markdown",
     url = 'https://github.com/scikit-hep/decaylanguage',
     packages = find_packages(exclude=("tests",)),
