@@ -1,9 +1,14 @@
 # Changelog
 
+## Version 0.10.0 (2020-12-10)
+
+* Dependencies:
+  - Package dependent on ``Particle`` version 0.14.
+
 ## Version 0.9.1 (2020-11-04)
 
 * Parsing of decay files (aka .dec files):
-  - ``DecFileParser`` class enhanced to understand the CopyDecay statement.
+  - ``DecFileParser`` class enhanced to understand EvtGen's CopyDecay statement in decay files.
 * Tests:
   - Added tests for Python 3.8 and 3.9 on Windows.
 * Miscellaneous:
@@ -50,7 +55,7 @@
 * Universal representation of decay chains:
   - Classes ``DecayChain``, ``DecayMode``, ``DaughtersDict`` and ``DecayChainViewer`` enhanced.
 * Dependencies and Python version support:
-  - Package dependent on ``Particle`` versions 0.9.*.
+  - Package dependent on ``Particle`` versions 0.9.
   - Support for Python 3.8 added.
 
 
