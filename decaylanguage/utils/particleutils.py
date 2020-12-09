@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (c) 2018-2020, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
@@ -7,14 +8,16 @@ from __future__ import absolute_import
 
 try:
     from functools import lru_cache
+
     cacher = lru_cache(maxsize=64)
 except ImportError:
     from cachetools import cached, LFUCache
+
     cacher = cached(cache=LFUCache(maxsize=64))
 
 from particle import Particle
 from particle.converters import EvtGenName2PDGIDBiMap
-from particle.converters import PDG2EvtGenNameMap,EvtGen2PDGNameMap
+from particle.converters import PDG2EvtGenNameMap, EvtGen2PDGNameMap
 from particle.exceptions import MatchingIDNotFound
 
 
@@ -54,7 +57,7 @@ def charge_conjugate_name(name, pdg_name=False):
             # Convert the EvtGen name back to a PDG name, to match input type
             return EvtGen2PDGNameMap[ccname]
         except MatchingIDNotFound:  # Catch issue in PDG2EvtGenNameMap matching
-            return 'ChargeConj({0})'.format(name)
+            return "ChargeConj({0})".format(name)
 
     # Dealing only with EvtGen names at this stage
     try:
@@ -63,4 +66,4 @@ def charge_conjugate_name(name, pdg_name=False):
         try:
             return EvtGenName2PDGIDBiMap[-EvtGenName2PDGIDBiMap[name]]
         except:
-            return 'ChargeConj({0})'.format(name)
+            return "ChargeConj({0})".format(name)

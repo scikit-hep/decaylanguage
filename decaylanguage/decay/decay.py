@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (c) 2018-2020, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
@@ -63,7 +64,7 @@ class DaughtersDict(Counter):
         """
         Return the daughters as a string representation (ordered list of names).
         """
-        return ' '.join(sorted(self.elements()))
+        return " ".join(sorted(self.elements()))
 
     def to_list(self):
         """
@@ -95,11 +96,14 @@ class DaughtersDict(Counter):
         >>> dd.charge_conjugate(pdg_name=True)
         <DaughtersDict: ['K(S)0', 'pi0']>
         """
-        return self.__class__({charge_conjugate_name(p, pdg_name):n for p, n in self.items()})
+        return self.__class__(
+            {charge_conjugate_name(p, pdg_name): n for p, n in self.items()}
+        )
 
     def __repr__(self):
         return "<{self.__class__.__name__}: {daughters}>".format(
-                self=self, daughters=self.to_list())
+            self=self, daughters=self.to_list()
+        )
 
     def __str__(self):
         return repr(self)
@@ -143,11 +147,9 @@ class DecayMode(object):
     with any kind of particle names (basically an iterable of strings).
     """
 
-    __slots__ = ("bf",
-                 "daughters",
-                 "metadata")
+    __slots__ = ("bf", "daughters", "metadata")
 
-    def __init__(self, bf = 0, daughters = None, **info):
+    def __init__(self, bf=0, daughters=None, **info):
         """
         Default constructor.
 
@@ -195,7 +197,7 @@ class DecayMode(object):
         self.bf = bf
         self.daughters = DaughtersDict(daughters)
 
-        self.metadata = dict(model='', model_params='')
+        self.metadata = dict(model="", model_params="")
         self.metadata.update(**info)
 
     @classmethod
@@ -223,8 +225,8 @@ class DecayMode(object):
         dm = deepcopy(decay_mode_dict)
 
         try:
-            bf = dm.pop('bf')
-            daughters = dm.pop('fs')
+            bf = dm.pop("bf")
+            daughters = dm.pop("fs")
         except:
             raise RuntimeError("Input not in the expected format!")
 
@@ -252,9 +254,10 @@ class DecayMode(object):
         try:
             from particle import PDGID, ParticleNotFound
             from particle.converters import EvtGenName2PDGIDBiMap
+
             daughters = [EvtGenName2PDGIDBiMap[PDGID(d)] for d in daughters]
         except ParticleNotFound:
-            raise ParticleNotFound('Please check your input PDG IDs!')
+            raise ParticleNotFound("Please check your input PDG IDs!")
 
         daughters = DaughtersDict(daughters)
 
@@ -266,14 +269,16 @@ class DecayMode(object):
         Make a nice high-density string for all decay-mode properties and info.
         """
         val = """Daughters: {daughters} , BF: {bf:<15.8g}
-    Decay model: {model} {model_params}""".format(daughters=' '.join(self.daughters),
-           bf=self.bf,
-           model=self.metadata['model'],
-           model_params=self.metadata['model_params']
-                        if self.metadata['model_params'] is not None else '')
+    Decay model: {model} {model_params}""".format(
+            daughters=" ".join(self.daughters),
+            bf=self.bf,
+            model=self.metadata["model"],
+            model_params=self.metadata["model_params"]
+            if self.metadata["model_params"] is not None
+            else "",
+        )
 
-        keys = [k for k in self.metadata
-              if k not in ('model', 'model_params')]
+        keys = [k for k in self.metadata if k not in ("model", "model_params")]
         if len(keys) > 0:
             val += "\n    Extra info:\n"
         for key in keys:
@@ -298,10 +303,10 @@ class DecayMode(object):
          'study': 'toy',
          'year': 2019}
         """
-        d = {'bf': self.bf, 'fs': self.daughters.to_list()}
+        d = {"bf": self.bf, "fs": self.daughters.to_list()}
         d.update(self.metadata)
-        if d['model_params'] is None:
-            d['model_params'] = ''
+        if d["model_params"] is None:
+            d["model_params"] = ""
         return d
 
     def charge_conjugate(self, pdg_name=False):
@@ -328,9 +333,9 @@ class DecayMode(object):
         >>> dm.charge_conjugate(pdg_name=True)
         <DecayMode: daughters=K(S)0 pi-, BF=1.0>
         """
-        return self.__class__(self.bf,
-                              self.daughters.charge_conjugate(pdg_name),
-                              **self.metadata)
+        return self.__class__(
+            self.bf, self.daughters.charge_conjugate(pdg_name), **self.metadata
+        )
 
     def __len__(self):
         """
@@ -340,9 +345,10 @@ class DecayMode(object):
 
     def __repr__(self):
         return "<{self.__class__.__name__}: daughters={daughters}, BF={bf}>".format(
-                self=self,
-                daughters=self.daughters.to_string() if len(self.daughters)>0 else '[]',
-                bf=self.bf)
+            self=self,
+            daughters=self.daughters.to_string() if len(self.daughters) > 0 else "[]",
+            bf=self.bf,
+        )
 
     def __str__(self):
         return repr(self)
@@ -366,8 +372,7 @@ class DecayChain(object):
     unless there is a good motivation not to.
     """
 
-    __slots__ = ("mother",
-                 "decays")
+    __slots__ = ("mother", "decays")
 
     def __init__(self, mother, decays):
         """
@@ -407,27 +412,26 @@ class DecayChain(object):
             dms = dc_dict[mother]
 
             for dm in dms:
-                if has_no_subdecay(dm['fs']):
+                if has_no_subdecay(dm["fs"]):
                     decay_modes[mother] = DecayMode.from_dict(dm)
                 else:
                     d = deepcopy(dm)
-                    for i in range(len(d['fs'])):
-                        if isinstance(d['fs'][i], dict):
+                    for i in range(len(d["fs"])):
+                        if isinstance(d["fs"][i], dict):
                             # Replace the element with the key and
                             # store the present decay mode ignoring sub-decays
-                            d['fs'][i] = list(d['fs'][i].keys())[0]
+                            d["fs"][i] = list(d["fs"][i].keys())[0]
                             # Recursively continue ...
-                            build_decay_modes(dm['fs'][i])
+                            build_decay_modes(dm["fs"][i])
                     # Create the decay mode now that none of its particles
                     # has a sub-decay
                     decay_modes[mother] = DecayMode.from_dict(d)
-
 
         decay_modes = dict()
         mother = list(decay_chain_dict.keys())[0]
         build_decay_modes(decay_chain_dict)
 
-        return cls( mother, decay_modes)
+        return cls(mother, decay_modes)
 
     def top_level_decay(self):
         """
@@ -507,29 +511,34 @@ class DecayChain(object):
         +--> pi+
         """
         indent = 4
-        arrow = '+--> '
-        bar = '|'
+        arrow = "+--> "
+        bar = "|"
 
         # TODO: simplify logic and perform further checks
         def _print(decay_dict, depth=0, link=False, last=False):
             mother = list(decay_dict.keys())[0]
-            prefix = bar if (link and depth>1) else ''
-            prefix = prefix + ' '*indent*(depth-1)
+            prefix = bar if (link and depth > 1) else ""
+            prefix = prefix + " " * indent * (depth - 1)
             for i, i_decay in enumerate(decay_dict[mother]):
-                print(prefix, arrow if depth > 0 else '', mother, sep='')
-                fsps = i_decay['fs']
+                print(prefix, arrow if depth > 0 else "", mother, sep="")
+                fsps = i_decay["fs"]
                 n = len(list(fsps))
                 depth += 1
                 for j, fsp in enumerate(fsps):
-                    prefix = bar if (link and depth>1) else ''
+                    prefix = bar if (link and depth > 1) else ""
                     if last:
-                        prefix = prefix + ' '*indent*(depth-1) + ' '
+                        prefix = prefix + " " * indent * (depth - 1) + " "
                     else:
-                        prefix = (prefix+' '*indent)*(depth-1)
+                        prefix = (prefix + " " * indent) * (depth - 1)
                     if isinstance(fsp, str):
-                        print(prefix, arrow, fsp, sep='')
+                        print(prefix, arrow, fsp, sep="")
                     else:
-                        _print(fsp, depth=depth, link=(link or (j<n-1)), last=(j==n-1))
+                        _print(
+                            fsp,
+                            depth=depth,
+                            link=(link or (j < n - 1)),
+                            last=(j == n - 1),
+                        )
 
         dc_dict = self.to_dict()
         _print(dc_dict)
@@ -555,10 +564,11 @@ class DecayChain(object):
             'model': '',
             'model_params': ''}]}
         """
+
         def recursively_replace(mother):
             dm = self.decays[mother].to_dict()
             result = list()
-            list_fsp = dm['fs']
+            list_fsp = dm["fs"]
 
             for pos, fsp in enumerate(list_fsp):
                 if fsp in self.decays.keys():
@@ -567,7 +577,7 @@ class DecayChain(object):
                     pass
 
             result.append(dm)
-            d = {mother:result}
+            d = {mother: result}
             return d
 
         return recursively_replace(self.mother)
@@ -601,7 +611,7 @@ class DecayChain(object):
         >>> dc.flatten(stable_particles=['K_S0', 'pi0']).decays
         {'D0': <DecayMode: daughters=K_S0 pi0, BF=0.0124>}
         """
-        vis_bf = 1.
+        vis_bf = 1.0
         fs = DaughtersDict()
         keys = self.decays.keys()
         for k in keys:
@@ -614,23 +624,22 @@ class DecayChain(object):
                 fs[k] -= 1
                 down_one_level = k in fs.elements()
 
-        return DecayChain(self.mother,
-            {self.mother:DecayMode(vis_bf,
-                                   fs,
-                                   **self.top_level_decay().metadata)
-                                   }
-            )
+        return DecayChain(
+            self.mother,
+            {self.mother: DecayMode(vis_bf, fs, **self.top_level_decay().metadata)},
+        )
 
     def __repr__(self):
         if self.mother is None:
             return "Decay mode: undefined"
 
         return "<{self.__class__.__name__}: {mother} -> {tldecay} ({n} sub-decays), BF={bf}>".format(
-                self=self,
-                mother=self.mother,
-                tldecay=self.top_level_decay().daughters.to_string(),
-                n=len(self.decays)-1,
-                bf=self.bf)
+            self=self,
+            mother=self.mother,
+            tldecay=self.top_level_decay().daughters.to_string(),
+            n=len(self.decays) - 1,
+            bf=self.bf,
+        )
 
     def __str__(self):
         return repr(self)
