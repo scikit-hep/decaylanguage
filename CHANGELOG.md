@@ -4,6 +4,8 @@
 
 * Dependencies:
   - Package dependent on ``Particle`` version 0.14.
+* Miscellaneous:
+  - Pre-commit hooks added - Black formatting, check-manifest, etc.
 
 ## Version 0.9.1 (2020-11-04)
 
