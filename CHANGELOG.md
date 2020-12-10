@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.10.1 (2020-12-10)
+
+* Environment YAML file updated to ``Particle`` version 0.14.
+
 ## Version 0.10.0 (2020-12-10)
 
 * Dependencies:
