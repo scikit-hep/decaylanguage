@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# coding: utf-8
+# -*- coding: utf-8 -*-
 # Copyright (c) 2018-2020, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
@@ -15,10 +15,10 @@ from decaylanguage.modeling.ampgen2goofit import ampgen2goofit
 
 
 class DecayLanguageDecay(cli.Application):
-    generator = cli.SwitchAttr(['-G', '--generator'], cli.Set('goofit'), mandatory=True)
+    generator = cli.SwitchAttr(["-G", "--generator"], cli.Set("goofit"), mandatory=True)
 
     def main(self, filename):
-        if self.generator == 'goofit':
+        if self.generator == "goofit":
             ampgen2goofit(filename)
 
 

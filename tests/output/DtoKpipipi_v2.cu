@@ -48,11 +48,11 @@ Dtos1P1_s1toS2P2_S2toP3P4 : SF_4Body.DtoPP1_PtoSP2_StoP3P4
   D0{K(1460)~-[GSpline.EFF]{PiPi30[kMatrix.prod.1]{pi+,pi-},K-},pi+}
 
 
-      Scalar: PiPi00      PiPi10      PiPi20      PiPi30      KPi00       KPi10       KPi20      
-PseudoScalar: pi+         pi-         K-          D0          K(1460)~-  
-      Vector: rho(770)0   omega(782)0 K(892)~0    rho(1450)0 
+      Scalar: PiPi00      PiPi10      PiPi20      PiPi30      KPi00       KPi10       KPi20
+PseudoScalar: pi+         pi-         K-          D0          K(1460)~-
+      Vector: rho(770)0   omega(782)0 K(892)~0    rho(1450)0
        Axial: K(1)(1270)~- a(1)(1260)+ K(1)(1400)~-
-      Tensor: K(2)~-     
+      Tensor: K(2)~-
 PseudoTensor:
      Unknown:
 
@@ -1535,5 +1535,3 @@ ONE
         2});
 
     DK3P_DI.amplitudes_B.push_back(amplitudes_list.back());
-
-

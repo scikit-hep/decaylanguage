@@ -9,5 +9,3 @@ At the command line::
 Or::
 
     pip install https://github.com/scikit-hep/decaylanguage.git
-
-

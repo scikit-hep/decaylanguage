@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .amplitudechain import LS
 from .amplitudechain import AmplitudeChain
 

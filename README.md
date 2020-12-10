@@ -1,4 +1,4 @@
-[![DecayLanguage](https://raw.githubusercontent.com/scikit-hep/decaylanguage/master/images/DecayLanguage.png)](https://decaylanguage.readthedocs.io/en/latest/)
+<img alt="DecayLanguage logo" src="https://raw.githubusercontent.com/scikit-hep/decaylanguage/master/images/DecayLanguage.png"/>
 
 # DecayLanguage: describe, manipulate and convert particle decays
 
@@ -16,8 +16,6 @@
 
 [![Binder demo](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scikit-hep/decaylanguage/master?urlpath=lab/tree/notebooks/DecayLanguageDemo.ipynb)
 
-
-<!-- break -->
 
 DecayLanguage implements a language to describe and convert particle decays
 between digital representations, effectively making it possible to interoperate
