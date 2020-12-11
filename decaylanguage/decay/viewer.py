@@ -19,6 +19,8 @@ except AttributeError:
 
 try:
     import pydot
+    from graphviz
+    gra = graphviz.Digraph()
 except ImportError:
     raise ImportError(
         "You need pydot for this submodule. Please install pydot with for example 'pip install pydot'\n"
@@ -125,7 +127,7 @@ class DecayChainViewer(object):
             label = html_table_label(list_parts, bgcolor="#eef3f8")
             r = "dec%s" % counter()
             self._graph.add_node(
-                pydot.Node(r, label=label, style="filled", fillcolor="#eef3f8")
+                gra.node(r, label=label, style="filled", fillcolor="#eef3f8")
             )
             return r
 
@@ -135,7 +137,7 @@ class DecayChainViewer(object):
             ]
             label = html_table_label(list_parts, add_tags=True)
             r = "dec%s" % counter()
-            self._graph.add_node(pydot.Node(r, shape="none", label=label))
+            self._graph.add_node(gra.node(r, shape="none", label=label))
             return r
 
         def iterate_chain(subchain, top_node=None, link_pos=None):
@@ -148,10 +150,10 @@ class DecayChainViewer(object):
                     _ref = new_node_no_subchain(_list_parts)
                     _bf = subchain[idm]["bf"]
                     if link_pos is None:
-                        self._graph.add_edge(pydot.Edge(top_node, _ref, label=str(_bf)))
+                        self._graph.add_edge(gra.edge(top_node, _ref, label=str(_bf)))
                     else:
                         self._graph.add_edge(
-                            pydot.Edge(
+                            gra.edge(
                                 "%s:p%s" % (top_node, link_pos), _ref, label=str(_bf)
                             )
                         )
@@ -160,11 +162,11 @@ class DecayChainViewer(object):
                     _bf_1 = subchain[idm]["bf"]
                     if link_pos is None:
                         self._graph.add_edge(
-                            pydot.Edge(top_node, _ref_1, label=str(_bf_1))
+                            gra.edge(top_node, _ref_1, label=str(_bf_1))
                         )
                     else:
                         self._graph.add_edge(
-                            pydot.Edge(
+                            gra.edge(
                                 "%s:p%s" % (top_node, link_pos),
                                 _ref_1,
                                 label=str(_bf_1),
@@ -179,7 +181,7 @@ class DecayChainViewer(object):
 
         k = list(self._chain.keys())[0]
         label = html_table_label([k], add_tags=True, bgcolor="#568dba")
-        node_mother = pydot.Node("mother", shape="none", label=label)
+        node_mother = gra.node("mother", shape="none", label=label)
         self._graph.add_node(node_mother)
         sc = self._chain[k]
 
