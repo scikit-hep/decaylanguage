@@ -19,6 +19,7 @@ except AttributeError:
 
 try:
     import graphviz
+
     gra = graphviz.Digraph()
 except ImportError:
     raise ImportError(
