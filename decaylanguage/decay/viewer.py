@@ -18,8 +18,7 @@ except AttributeError:
     counter = itertools.count().next
 
 try:
-    import pydot
-    from graphviz
+    import graphviz
     gra = graphviz.Digraph()
 except ImportError:
     raise ImportError(
@@ -233,7 +232,7 @@ class DecayChainViewer(object):
         default_args = self._get_graph_defaults()
         default_args.update(**attrs)
 
-        g = pydot.Dot(**default_args)
+        g = gra.render(**default_args)
 
         g.set_node_defaults(**self._get_node_defaults())
         g.set_edge_defaults(**self._get_edge_defaults())
