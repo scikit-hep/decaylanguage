@@ -23,7 +23,7 @@ try:
     gra = graphviz.Digraph()
 except ImportError:
     raise ImportError(
-        "You need pydot for this submodule. Please install pydot with for example 'pip install pydot'\n"
+        "You need graphviz for this submodule. Please install graphviz with for example 'pip install graphviz'\n"
     )
 
 from particle import latex_to_html_name
@@ -61,7 +61,7 @@ class DecayChainViewer(object):
         decaychain: dict
             Input .dec decay file name.
         attrs: optional
-            User input pydot.Dot class attributes.
+            User input graphviz.render class attributes.
 
         See also
         --------
@@ -219,7 +219,7 @@ class DecayChainViewer(object):
 
     def _instantiate_graph(self, **attrs):
         """
-        Return a pydot.Dot class instance using the default attributes
+        Return a graphviz.render class instance using the default attributes
         specified in this class:
         - Default graph attributes are overriden by input by the user.
         - Class and node and edge defaults.

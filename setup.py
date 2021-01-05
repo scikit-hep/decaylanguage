@@ -30,7 +30,7 @@ INSTALL_REQUIRES = [
     'importlib_resources>=1.0; python_version<"3.7"',
     'cachetools; python_version<"3.3"',
     "particle==0.14.*",
-    "pydot",
+    "graphviz",
 ]
 
 
