@@ -7,6 +7,7 @@ dependencies:
   - jupyterlab>=0.35
   - six>=1.11
   - numpy>=1.12
+  - graphviz
   - pip:
     - hepunits>=2.0.0
     - particle==0.14.*
