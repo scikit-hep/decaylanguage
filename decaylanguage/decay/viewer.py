@@ -235,10 +235,8 @@ class DecayChainViewer(object):
 
         g = gra.render(**default_args)
 
-        g.self._graph.add_node(
-                gra.node(**self._get_node_defaults()))
-        g.self._graph.add_edge(
-                gra.edge(**self._get_edge_defaults()))
+        g.self._graph.add_node(gra.node(**self._get_node_defaults()))
+        g.self._graph.add_edge(gra.edge(**self._get_edge_defaults()))
 
         return g
 
