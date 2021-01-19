@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.10.2 (2021-01-19)
+
+* Parsing of decay files (aka .dec files):
+  - New decay models as taken from most-recent EvtGen documentation.
+
 ## Version 0.10.1 (2020-12-10)
 
 * Environment YAML file updated to ``Particle`` version 0.14.
