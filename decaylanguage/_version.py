@@ -5,7 +5,7 @@
 # or https://github.com/scikit-hep/decaylanguage for details.
 
 
-__version__ = "0.10.2"
+__version__ = "0.10.3"
 
 version = __version__
 version_info = __version__.split(".")

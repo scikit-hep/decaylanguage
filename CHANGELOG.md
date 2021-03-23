@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.10.3 (2021-03-23)
+
+* Miscellaneous:
+  - Code refactored in the CI by Sourcery.ai.
+  - Updates to versions of pre-commit hooks.
+
 ## Version 0.10.2 (2021-01-19)
 
 * Parsing of decay files (aka .dec files):
