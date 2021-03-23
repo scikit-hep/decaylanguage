@@ -184,14 +184,14 @@ class DecFileParser(object):
             warnings.warn("Input file being re-parsed ...")
 
         # Override the parsing settings for charge conjugate decays
-        self._include_ccdecays = include_ccdecays if include_ccdecays else False
+        self._include_ccdecays = include_ccdecays or False
 
         # Retrieve all info on the default Lark grammar and its default options,
         # effectively loading it
         opts = self.grammar_info()
-        extraopts = dict(
-            (k, v) for k, v in opts.items() if k not in ("lark_file", "parser", "lexer")
-        )
+        extraopts = {
+            k: v for k, v in opts.items() if k not in ("lark_file", "parser", "lexer")
+        }
 
         # Instantiate the Lark parser according to chosen settings
         parser = Lark(self.grammar(), parser=opts["parser"], lexer=opts["lexer"])
@@ -437,11 +437,12 @@ class DecFileParser(object):
                 copied_decays.append(copied_decay)
             except:
                 misses.append(decay2copy)
-        if len(misses) > 0:
+        if misses:
             msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{0}.
 Skipping creation of these copied decay trees.""".format(
-                "\n".join([m for m in misses])
+                "\n".join(misses)
             )
+
             warnings.warn(msg)
 
         # Actually add all these copied decays to the list of decays!
@@ -572,11 +573,12 @@ Skipping creation of charge-conjugate decay Tree.""".format(
         lmn = self.list_decay_mother_names()
         duplicates = []
         if self.number_of_decays != len(set(lmn)):
-            duplicates = set([n for n in lmn if lmn.count(n) > 1])
+            duplicates = {n for n in lmn if lmn.count(n) > 1}
             msg = """The following particle(s) is(are) redefined in the input .dec file with 'Decay': {0}!
 All but the first occurrence will be discarded/removed ...""".format(
-                ", ".join(d for d in duplicates)
+                ", ".join(duplicates)
             )
+
             warnings.warn(msg)
 
         # Create a list with all occurrences to remove
@@ -692,30 +694,27 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         dms = self._find_decay_modes(mother)
 
-        l = list()
-        if print_model:
-            for dm in dms:
+        l = []
+        for dm in dms:
+            if print_model:
                 dm_details = self._decay_mode_details(dm)
                 l.append(
                     (
                         dm_details[0],
-                        "%-50s %15s %s"
-                        % (
-                            "  ".join(p for p in dm_details[1]),
-                            dm_details[2],
-                            dm_details[3],
+                        (
+                            "%-50s %15s %s"
+                            % (
+                                "  ".join(dm_details[1]),
+                                dm_details[2],
+                                dm_details[3],
+                            )
                         ),
                     )
                 )
-        else:
-            for dm in dms:
+
+            else:
                 fsp_names = get_final_state_particle_names(dm)
-                l.append(
-                    (
-                        get_branching_fraction(dm),
-                        "%-50s" % ("  ".join(p for p in fsp_names)),
-                    )
-                )
+                l.append((get_branching_fraction(dm), "%-50s" % "  ".join(fsp_names)))
 
         l.sort(key=operator.itemgetter(0), reverse=(not ascending))
 
@@ -1349,7 +1348,7 @@ def get_lineshape_definitions(parsed_file):
         raise RuntimeError("Input not an instance of a Tree!")
 
     try:
-        d = list()
+        d = []
         for tree in parsed_file.find_data("setlspw"):
             particles = [p.children[0].value for p in tree.children[:-1]]
             val = int(tree.children[3].children[0].value)
@@ -1382,7 +1381,7 @@ def get_global_photos_flag(parsed_file):
 
     # Check if the flag is not set more than once, just in case ...
     tree = tuple(parsed_file.find_data("global_photos"))
-    if len(tree) == 0:
+    if not tree:
         return PhotosEnum.no
     elif len(tree) > 1:
         warnings.warn("PHOTOS flag re-set! Using flag set in last ...")

@@ -83,7 +83,7 @@ class AllowedDecays(object):
 
 class Decay(object):
     def __init__(self, bf=0, daughters=None):
-        if daughters == None:
+        if daughters is None:
             daughters = DaughterList()
         self.bf = bf
         self.daughters = daughters
@@ -151,16 +151,15 @@ class decparser(cmd.Cmd):
         pass
 
     def do_ModelAlias(self, line):
-        if not ";" in line:
+        if ";" not in line:
             self.ignoreUntilSemicolon = True
 
     def do_Decay(self, line):
         if self.file_parse_status == "Decay":
             raise Exception("Repeated Decay statement: %s" % line)
-        else:
-            self.file_parse_status = "Decay"
-            particle = Particle.from_string(line.split()[0])
-            self.current_decay_top = AllowedDecays(particle)
+        self.file_parse_status = "Decay"
+        particle = Particle.from_string(line.split()[0])
+        self.current_decay_top = AllowedDecays(particle)
 
     def do_CDecay(self, line):
         ##        print 'CDecay for', line
@@ -171,7 +170,6 @@ class decparser(cmd.Cmd):
             print(line)
             self.cdecay_delayed.append(line)
             return
-            raise Exception("CDecay without conjugate mode: %s" % line)
         self.current_decay_top = AllowedDecays(line.split()[0])
         ##        print conj
         for cdecay in self.decaylist[conj].decays:
@@ -197,7 +195,6 @@ class decparser(cmd.Cmd):
             print("Ought to be [] 0!:", self.cdecay_delayed, len(self.cdecay_delayed))
         while self.cdecay_delayed:
             self.do_CDecay(self.cdecay_delayed.pop())
-        pass
 
     def addline(self, line):
         spl = line.split()
@@ -211,7 +208,7 @@ class decparser(cmd.Cmd):
         ##                 mod_found = True
         ##         if not mod_found:
         ##             print '\n', line
-        while not spl[-1][-1:] == ";":
+        while spl[-1][-1:] != ";":
             ##            print 'fixin', line
             if self.use_rawinput:
                 line = " ".join((line, input()))
@@ -222,13 +219,13 @@ class decparser(cmd.Cmd):
         killindex = None
         i = 0
         ##        print spl
-        while killindex == None and i < len(spl):
+        while killindex is None and i < len(spl):
             if spl[i][-1] == ";":
                 spl[i] = spl[i][:-1]
             if spl[i] in known_models:
                 killindex = i
             i += 1
-        if killindex == None:
+        if killindex is None:
             print(spl)
             raise Exception("No decay model specified: %s" % line)
         ##        print spl[killindex:]
@@ -249,10 +246,9 @@ class decparser(cmd.Cmd):
     def do_Enddecay(self, line):
         if self.file_parse_status != "Decay":
             raise Exception("Enddecay with no decay: %s" % line)
-        else:
-            self.file_parse_status = ""
-            self.decaylist[self.current_decay_top.decay_of] = self.current_decay_top
-            self.current_decay_top = None
+        self.file_parse_status = ""
+        self.decaylist[self.current_decay_top.decay_of] = self.current_decay_top
+        self.current_decay_top = None
 
     def do_hi(self, aft):
         print("hi", aft)
@@ -267,10 +263,7 @@ class interactive(cmd.Cmd):
 
     def do_readfile(self, line):
         "Read a file in (defaults to the one built into this package)"
-        if line == "":
-            fname = defdecfile
-        else:
-            fname = line
+        fname = defdecfile if line == "" else line
         with open(fname, "r") as infile:
             q = decparser(stdin=infile)
             q.use_rawinput = False
@@ -279,10 +272,7 @@ class interactive(cmd.Cmd):
 
     def do_dump(self, line):
         ##        print line
-        if line == "":
-            lpart = self.decaylist
-        else:
-            lpart = line.split()
+        lpart = self.decaylist if line == "" else line.split()
         for part in lpart:
             if part not in self.decaylist:
                 print("Unknown particle %s" % part)
@@ -339,9 +329,7 @@ class interactive(cmd.Cmd):
 
     def getDecList(self, line):
         predeclist = self.decaylist[line].decays[:]
-        declist = []
-        for dec in predeclist:
-            declist.append([[(line, dec)], dec])
+        declist = [[[(line, dec)], dec] for dec in predeclist]
         ##            print dec
         ##            declist.append([[],dec])
         ##         dlist = DaughterList()
@@ -407,7 +395,7 @@ def recurseOneLevel(decaylist, decaytable):
         for dau in decay[1].daughters:
             if toexpand == None and dau in decaytable:
                 toexpand = dau
-        if toexpand == None:
+        if toexpand is None:
             rv.append(decay)
         else:
             for subdec in decaytable[toexpand].decays:
