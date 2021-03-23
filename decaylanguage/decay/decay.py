@@ -116,7 +116,7 @@ class DaughtersDict(Counter):
         ----
         This is generally *not* the number of dictionary elements.
         """
-        return sum(n for n in self.values())
+        return sum(self.values())
 
     def __add__(self, other):
         """
@@ -279,7 +279,7 @@ class DecayMode(object):
         )
 
         keys = [k for k in self.metadata if k not in ("model", "model_params")]
-        if len(keys) > 0:
+        if keys:
             val += "\n    Extra info:\n"
         for key in keys:
             val += "        {k}: {v}\n".format(k=key, v=self.metadata[key])
@@ -567,18 +567,14 @@ class DecayChain(object):
 
         def recursively_replace(mother):
             dm = self.decays[mother].to_dict()
-            result = list()
+            result = []
             list_fsp = dm["fs"]
 
             for pos, fsp in enumerate(list_fsp):
                 if fsp in self.decays.keys():
                     list_fsp[pos] = recursively_replace(fsp)
-                else:
-                    pass
-
             result.append(dm)
-            d = {mother: result}
-            return d
+            return {mother: result}
 
         return recursively_replace(self.mother)
 

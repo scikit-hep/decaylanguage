@@ -143,9 +143,8 @@ class AmplitudeChain(ModelDecay):
         ]
         if new_trees:
             return new_trees
-        else:
-            self.__class__.final_particles |= {self.particle}
-            return [self]
+        self.__class__.final_particles |= {self.particle}
+        return [self]
 
     @property
     def ls_enum(self):
