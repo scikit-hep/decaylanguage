@@ -190,11 +190,8 @@ class DecFileParser(object):
         # effectively loading it
         opts = self.grammar_info()
         extraopts = {
-            k: v
-            for k, v in opts.items()
-            if k not in ("lark_file", "parser", "lexer")
+            k: v for k, v in opts.items() if k not in ("lark_file", "parser", "lexer")
         }
-
 
         # Instantiate the Lark parser according to chosen settings
         parser = Lark(self.grammar(), parser=opts["parser"], lexer=opts["lexer"])
