@@ -149,8 +149,8 @@ class DecayChainViewer(object):
                         self.graph.edge(top_node, _ref, label=str(_bf))
                     else:
                         self.graph.edge(
-                                "%s:p%s" % (top_node, link_pos), _ref, label=str(_bf)
-                            )
+                            "%s:p%s" % (top_node, link_pos), _ref, label=str(_bf)
+                        )
                 else:
                     _ref_1 = new_node_with_subchain(_list_parts)
                     _bf_1 = subchain[idm]["bf"]
@@ -158,10 +158,10 @@ class DecayChainViewer(object):
                         self.graph.edge(top_node, _ref_1, label=str(_bf_1))
                     else:
                         self.graph.edge(
-                                "%s:p%s" % (top_node, link_pos),
-                                _ref_1,
-                                label=str(_bf_1),
-                            )
+                            "%s:p%s" % (top_node, link_pos),
+                            _ref_1,
+                            label=str(_bf_1),
+                        )
                     for i, _p in enumerate(_list_parts):
                         if not isinstance(_p, str):
                             _k = list(_p.keys())[0]
@@ -214,11 +214,9 @@ class DecayChainViewer(object):
         arguments = self._get_default_arguments()
         arguments.update(**attrs)
 
-        g = graphviz.Digraph(**arguments,
-                             graph_attr=graph_attr,
-                             node_attr=node_attr,
-                             edge_attr=edge_attr
-                             )
+        g = graphviz.Digraph(
+            **arguments, graph_attr=graph_attr, node_attr=node_attr, edge_attr=edge_attr
+        )
 
         return g
 
@@ -226,10 +224,12 @@ class DecayChainViewer(object):
         """
         `graphviz.dot.Digraph` default arguments.
         """
-        return dict(name="DecayChainGraph",
-                    comment="Created by https://github.com/scikit-hep/decaylanguage",
-                    engine="dot",
-                    format="png")
+        return dict(
+            name="DecayChainGraph",
+            comment="Created by https://github.com/scikit-hep/decaylanguage",
+            engine="dot",
+            format="png",
+        )
 
     def _get_graph_defaults(self):
         d = self._get_default_arguments()
