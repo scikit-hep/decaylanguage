@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.11 (UNDER DEVELOPMENT)
+
+* Universal representation of decay chains:
+  - `DecayChainViewer` class adapted to make use of ``graphviz``.
+* Dependencies:
+  - Got rid of dependency on ``pydot``, as the package is no longer maintained.
+  - Replaced with dependency on ``graphviz``, made a requirement.
+
 ## Version 0.10.3 (2021-03-23)
 
 * Miscellaneous:
