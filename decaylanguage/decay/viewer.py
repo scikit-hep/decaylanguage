@@ -214,10 +214,10 @@ class DecayChainViewer(object):
         arguments = self._get_default_arguments()
         arguments.update(**attrs)
 
-        g = graphviz.Digraph(**arguments,
-                             graph_attr=graph_attr,
+        g = graphviz.Digraph(graph_attr=graph_attr,
                              node_attr=node_attr,
-                             edge_attr=edge_attr
+                             edge_attr=edge_attr,
+                             **arguments
                              )
 
         return g
