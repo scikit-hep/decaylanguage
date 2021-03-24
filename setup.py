@@ -69,7 +69,7 @@ setup(
     install_requires=INSTALL_REQUIRES,
     tests_require=extras["test"],
     extras_require=extras,
-    keywords=["HEP", "particle", "decay", "chain" "representation"],
+    keywords=["HEP", "particle", "decay", "chain", "representation"],
     classifiers=[
         # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
         "Development Status :: 4 - Beta",
