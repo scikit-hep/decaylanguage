@@ -214,11 +214,12 @@ class DecayChainViewer(object):
         arguments = self._get_default_arguments()
         arguments.update(**attrs)
 
-        g = graphviz.Digraph(
-            graph_attr=graph_attr, node_attr=node_attr, edge_attr=edge_attr, **arguments
+        return graphviz.Digraph(
+            graph_attr=graph_attr,
+            node_attr=node_attr,
+            edge_attr=edge_attr,
+            **arguments
         )
-
-        return g
 
     def _get_default_arguments(self):
         """
