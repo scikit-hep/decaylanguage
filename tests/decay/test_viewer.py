@@ -29,9 +29,9 @@ def test_single_decay():
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
-    assert 'mother -> dec0  [label="0.677"]' in graph_output_as_dot
-    assert 'mother -> dec1  [label="0.307"]' in graph_output_as_dot
-    assert 'mother -> dec2  [label="0.016"]' in graph_output_as_dot
+    assert 'mother -> dec0 [label=0.677]' in graph_output_as_dot
+    assert 'mother -> dec1 [label=0.307]' in graph_output_as_dot
+    assert 'mother -> dec2 [label=0.016]' in graph_output_as_dot
 
 
 def test_simple_decay_chain():
@@ -42,11 +42,11 @@ def test_simple_decay_chain():
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
-    assert 'mother -> dec3  [label="0.677"]' in graph_output_as_dot
-    assert 'dec3:p0 -> dec4  [label="1.0"]' in graph_output_as_dot
-    assert 'mother -> dec5  [label="0.307"]' in graph_output_as_dot
-    assert 'dec5:p0 -> dec6  [label="1.0"]' in graph_output_as_dot
-    assert 'dec6:p3 -> dec7  [label="0.988228297"]' in graph_output_as_dot
+    assert 'mother -> dec3 [label=0.677]' in graph_output_as_dot
+    assert 'dec3:p0 -> dec4 [label=1.0]' in graph_output_as_dot
+    assert 'mother -> dec5 [label=0.307]' in graph_output_as_dot
+    assert 'dec5:p0 -> dec6 [label=1.0]' in graph_output_as_dot
+    assert 'dec6:p3 -> dec7 [label=0.988228297]' in graph_output_as_dot
 
 
 checklist_decfiles = (
@@ -80,15 +80,28 @@ def test_duplicate_arrows(decfilepath, signal_mother):
     assert len(set(l)) == len(l)
 
 
-def test_init_non_defaults():
+def test_init_non_defaults_basic():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
     chain = p.build_decay_chains("D*+")
-    dcv = DecayChainViewer(chain, graph_name="TEST", rankdir="TB")
+    dcv = DecayChainViewer(chain, name="TEST", format="pdf")
 
-    assert dcv.graph.get_name() == "TEST"
-    assert dcv.graph.get_rankdir() == "TB"
+    assert dcv.graph.name == "TEST"
+    assert dcv.graph.format == "pdf"
+
+
+def test_init_non_defaults_attributes():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    chain = p.build_decay_chains("D*+")
+    node_attr = dict(shape="egg")
+    edge_attr = dict(fontsize="9")
+    dcv = DecayChainViewer(chain, node_attr=node_attr, edge_attr=edge_attr)
+
+    assert dcv.graph.node_attr == dict(fontname="Helvetica", fontsize="11", shape="egg")
+    assert dcv.graph.edge_attr == dict(fontcolor="#4c4c4c", fontsize="9")
 
 
 def test_graphs_with_EvtGen_specific_names():
