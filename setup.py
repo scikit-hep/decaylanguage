@@ -30,7 +30,7 @@ INSTALL_REQUIRES = [
     'importlib_resources>=1.0; python_version<"3.7"',
     'cachetools; python_version<"3.3"',
     "particle==0.14.*",
-    "pydot",
+    "graphviz",
 ]
 
 
@@ -49,7 +49,6 @@ def get_version():
 
 extras = {
     "test": ["pytest"],
-    "notebook": ["graphviz"],
 }
 
 setup(
@@ -70,7 +69,7 @@ setup(
     install_requires=INSTALL_REQUIRES,
     tests_require=extras["test"],
     extras_require=extras,
-    keywords=["HEP", "particle", "decay", "representation"],
+    keywords=["HEP", "particle", "decay", "chain" "representation"],
     classifiers=[
         # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
         "Development Status :: 4 - Beta",
