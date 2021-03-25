@@ -49,19 +49,14 @@ Required and compatibility dependencies will be automatically installed by pip.
 -   [attrs](https://github.com/python-attrs/attrs): DataClasses for Python
 -   [plumbum](https://github.com/tomerfiliba/plumbum): Command line tools
 -   [lark-parser](https://github.com/lark-parser/lark): A modern parsing library for Python
+-   [graphviz](https://gitlab.com/graphviz/graphviz/) to render (DOT language) graph
+    descriptions and visualizations of decay chains.
 
 ### Python compatibility:
 -   [six](https://github.com/benjaminp/six): Compatibility library
 -   [pathlib2](https://github.com/mcmtroffaes/pathlib2) backport if using Python 2.7
 -   [enum34](https://bitbucket.org/stoneleaf/enum34) backport if using Python /< 3.5
 -   [importlib_resources](http://importlib-resources.readthedocs.io/en/latest/) backport if using Python /< 3.7
-
-
-### Recommended dependencies:
--   [graphviz](https://gitlab.com/graphviz/graphviz/) to render (DOT
-    language) graph descriptions of decay chains.
--   [pydot](https://github.com/pydot/pydot), a Python interface to
-    Graphviz's Dot language, used to visualize particle decay chains.
 </p></details>
 
 
@@ -182,17 +177,17 @@ dcv = DecayChainViewer(d)
 dcv.graph
 ```
 
-making all `pydot.Dot` class properties and methods available, such as
+making all `graphviz.dot.Digraph` class properties and methods available, such as
 
 ```python
-dcv.graph.write_pdf('mygraph.pdf')
+dcv.graph.render(filename='mygraph', format='pdf', view=True, cleanup=True)
 ```
 
-In the same way, all `pydot.Dot` class attributes are settable
+In the same way, all `graphviz.dot.Digraph` class attributes are settable
 upon instantiation of `DecayChainViewer`:
 
 ```python
-dcv = DecayChainViewer(chain, graph_name='TEST', rankdir='TB')
+dcv = DecayChainViewer(chain, name='TEST', format='pdf')
 ```
 
 ### Universal representation of decay chains
