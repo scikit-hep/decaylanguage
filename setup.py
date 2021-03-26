@@ -5,40 +5,9 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
-from __future__ import absolute_import
-from __future__ import print_function
-
-import io
-import sys
 import os
 
-from setuptools import find_packages
 from setuptools import setup
-
-
-PYTHON_REQUIRES = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-
-INSTALL_REQUIRES = [
-    "attrs>=19.2",
-    "plumbum>=1.6.9",
-    "numpy>=1.12",
-    "pandas>=0.22",
-    "six>=1.11",
-    "lark-parser>=0.8.0, <0.8.6",
-    'pathlib2>=2.3; python_version<"3.5"',
-    'enum34>=1.1; python_version<"3.4"',
-    'importlib_resources>=1.0; python_version<"3.7"',
-    'cachetools; python_version<"3.3"',
-    "particle==0.14.*",
-    "graphviz",
-]
-
-
-def read(*names, **kwargs):
-    return io.open(
-        os.path.join(os.path.dirname(__file__), *names),
-        encoding=kwargs.get("encoding", "utf8"),
-    ).read()
 
 
 def get_version():
@@ -47,45 +16,6 @@ def get_version():
     return g["__version__"]
 
 
-extras = {
-    "test": ["pytest"],
-}
-
 setup(
-    name="DecayLanguage",
-    author="Henry Fredrick Schreiner III, Eduardo Rodrigues",
-    author_email="henry.schreiner@cern.ch, eduardo.rodrigues@cern.ch",
-    maintainer="The Scikit-HEP admins",
-    maintainer_email="scikit-hep-admins@googlegroups.com",
     version=get_version(),
-    license="BSD 3-Clause License",
-    description="A language to describe particle decays, and tools to work with them.",
-    long_description=read("README.md"),
-    long_description_content_type="text/markdown",
-    url="https://github.com/scikit-hep/decaylanguage",
-    packages=find_packages(exclude=("tests",)),
-    package_data={"": ["data/*.*"]},
-    python_requires=PYTHON_REQUIRES,
-    install_requires=INSTALL_REQUIRES,
-    tests_require=extras["test"],
-    extras_require=extras,
-    keywords=["HEP", "particle", "decay", "chain", "representation"],
-    classifiers=[
-        # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        "Development Status :: 4 - Beta",
-        "Intended Audience :: Developers",
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: BSD License",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Topic :: Scientific/Engineering",
-    ],
-    platforms="Any",
 )
