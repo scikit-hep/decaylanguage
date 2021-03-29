@@ -57,7 +57,7 @@ class DaughtersDict(Counter):
         >>> dd = DaughtersDict('K+ K- pi0')
         """
         if isinstance(iterable, dict):
-            iterable = {k:v for k, v in iterable.items() if v>0}
+            iterable = {k: v for k, v in iterable.items() if v > 0}
         elif iterable and isinstance(iterable, str):
             iterable = iterable.split()
         super(DaughtersDict, self).__init__(iterable, **kwds)
@@ -644,7 +644,7 @@ class DecayChain(object):
                 else:
                     del fs[k]
                     down_one_level = False
-        
+
         return DecayChain(
             self.mother,
             {self.mother: DecayMode(vis_bf, fs, **self.top_level_decay().metadata)},
