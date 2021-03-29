@@ -209,7 +209,7 @@ class DecayMode(object):
         {'bf': <float>, 'fs': [...], ...}.
         These two keys are mandatory. All others are interpreted as
         model information or metadata, see the constructor signature and doc.
-
+ 
         Note
         ----
         This class assumes EvtGen particle names, though this assumption is only
@@ -637,13 +637,7 @@ class DecayChain(object):
                 vis_bf *= self.decays[k].bf
                 fs += self.decays[k].daughters
                 fs[k] -= 1
-                # The flattened list may contain daughter counts<=0, which clearly should be removed
-                # (the count<0 happens for the mother, by construction and to simplify the flattening logic)
-                if fs[k] > 0:
-                    down_one_level = True
-                else:
-                    del fs[k]
-                    down_one_level = False
+                down_one_level = k in fs.elements()
         
         return DecayChain(
             self.mother,
