@@ -168,6 +168,7 @@ def dc():
     dm3 = DecayMode(0.98823, "gamma gamma")
     return DecayChain("D0", {"D0": dm1, "K_S0": dm2, "pi0": dm3})
 
+
 @pytest.fixture()
 def dc2():
     dm1 = DecayMode(0.6770, "D0 pi+")
