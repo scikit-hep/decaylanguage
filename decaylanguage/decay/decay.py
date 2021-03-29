@@ -59,6 +59,8 @@ class DaughtersDict(Counter):
         if iterable and isinstance(iterable, str):
             iterable = iterable.split()
         super(DaughtersDict, self).__init__(iterable, **kwds)
+        # The "+" (see Counter's __pos__) makes sure that counts <=0 are removed!
+        +self
 
     def to_string(self):
         """
@@ -205,8 +207,9 @@ class DecayMode(object):
         """
         Constructor from a dictionary of the form
         {'bf': <float>, 'fs': [...], ...}.
-        These two keys are mandatory.
-
+        These two keys are mandatory. All others are interpreted as
+        model information or metadata, see the constructor signature and doc.
+ 
         Note
         ----
         This class assumes EvtGen particle names, though this assumption is only
@@ -233,9 +236,21 @@ class DecayMode(object):
         return cls(bf=bf, daughters=daughters, **dm)
 
     @classmethod
-    def from_pdgids(cls, bf, daughters, **info):
+    def from_pdgids(cls, bf=0, daughters=None, **info):
         """
         Constructor for a final state given as a list of particle PDG IDs.
+
+        Parameters
+        ----------
+        bf: float
+            Decay mode branching fraction.
+        daughters: iterable
+            The final-state particle PDG IDs.
+        info: keyword arguments, optional
+            Decay mode model information and/or user metadata (aka extra info)
+            By default the following elements are always created:
+            dict(model=None, model_params=None).
+            The user can provide any metadata, see the examples below.
 
         Note
         ----
@@ -250,7 +265,9 @@ class DecayMode(object):
         >>> DecayMode.from_pdgids(0.5, [310, 310])
         <DecayMode: daughters=K_S0 K_S0, BF=0.5>
         """
-        # Check inputs
+        if not daughters:
+            return cls(bf=bf, daughters=daughters, **info)
+
         try:
             from particle import PDGID, ParticleNotFound
             from particle.converters import EvtGenName2PDGIDBiMap
@@ -380,8 +397,10 @@ class DecayChain(object):
 
         Parameters
         ----------
-        mother: str, optional, default=None
+        mother: str
             Input mother particle of the top-level decay.
+        decays: iterable
+            The decay modes.
 
         Examples
         --------
@@ -620,9 +639,11 @@ class DecayChain(object):
                 fs[k] -= 1
                 down_one_level = k in fs.elements()
 
+        # The "(+...)" makes sure that daughter counts <=0 are removed
+        # since fs[k]=0 is a possibility after the manipulations above
         return DecayChain(
             self.mother,
-            {self.mother: DecayMode(vis_bf, fs, **self.top_level_decay().metadata)},
+            {self.mother: DecayMode(vis_bf, (+fs), **self.top_level_decay().metadata)},
         )
 
     def __repr__(self):
