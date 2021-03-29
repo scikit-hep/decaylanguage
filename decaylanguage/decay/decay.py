@@ -56,11 +56,11 @@ class DaughtersDict(Counter):
         >>> # Constructor from a string representing the final state
         >>> dd = DaughtersDict('K+ K- pi0')
         """
-        if iterable and isinstance(iterable, str):
+        if isinstance(iterable, dict):
+            iterable = {k:v for k, v in iterable.items() if v>0}
+        elif iterable and isinstance(iterable, str):
             iterable = iterable.split()
         super(DaughtersDict, self).__init__(iterable, **kwds)
-        # The "+" (see Counter's __pos__) makes sure that counts <=0 are removed!
-        +self
 
     def to_string(self):
         """
@@ -628,8 +628,8 @@ class DecayChain(object):
         """
         vis_bf = 1.0
         fs = DaughtersDict()
-        keys = self.decays.keys()
-        for k in keys:
+
+        for k in self.decays.keys():
             down_one_level = True
             if k in stable_particles:
                 continue
@@ -637,13 +637,17 @@ class DecayChain(object):
                 vis_bf *= self.decays[k].bf
                 fs += self.decays[k].daughters
                 fs[k] -= 1
-                down_one_level = k in fs.elements()
-
-        # The "(+...)" makes sure that daughter counts <=0 are removed
-        # since fs[k]=0 is a possibility after the manipulations above
+                # The flattened list may contain daughter counts<=0, which clearly should be removed
+                # (the count<0 happens for the mother, by construction and to simplify the flattening logic)
+                if fs[k] > 0:
+                    down_one_level = True
+                else:
+                    del fs[k]
+                    down_one_level = False
+        
         return DecayChain(
             self.mother,
-            {self.mother: DecayMode(vis_bf, (+fs), **self.top_level_decay().metadata)},
+            {self.mother: DecayMode(vis_bf, fs, **self.top_level_decay().metadata)},
         )
 
     def __repr__(self):
