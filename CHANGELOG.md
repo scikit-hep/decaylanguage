@@ -3,6 +3,9 @@
 ## Version 0.11 (UNDER DEVELOPMENT)
 
 * Universal representation of decay chains:
+  - More documentation and testing.
+  - Allow default class method `DecayMode.from_pdgids()` mimicking the default constructor `DecayMode()`.
+  - Fix in logic of ``DecayChain.flatten()``.
   - `DecayChainViewer` class adapted to make use of ``graphviz``.
 * Dependencies:
   - Got rid of dependency on ``pydot``, as the package is no longer maintained.

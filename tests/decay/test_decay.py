@@ -71,16 +71,6 @@ def test_DecayMode_constructor_simple():
     assert dm.metadata == dict(model="", model_params="")
 
 
-def test_DecayMode_constructor_from_pdgids():
-    dm = DecayMode.from_pdgids(
-        0.5,
-        [321, -321],
-        model="TAUHADNU",
-        model_params=[-0.108, 0.775, 0.149, 1.364, 0.400],
-    )
-    assert dm.daughters == DaughtersDict("K+ K-")
-
-
 def test_DecayMode_constructor_with_model_info():
     dd = DaughtersDict("pi- pi0 nu_tau")
     dm = DecayMode(
@@ -92,7 +82,7 @@ def test_DecayMode_constructor_with_model_info():
     }
 
 
-def test_DecayMode_constructor_with_user_model_info():
+def test_DecayMode_constructor_with_user_metadata():
     dd = DaughtersDict("K+ K-")
     dm = DecayMode(0.5, dd, model="PHSP", study="toy", year=2019)
     assert dm.metadata == {
@@ -101,6 +91,23 @@ def test_DecayMode_constructor_with_user_model_info():
         "study": "toy",
         "year": 2019,
     }
+
+
+def test_DecayMode_constructor_from_pdgids_default():
+    dm = DecayMode.from_pdgids()
+    assert dm.bf == 0
+    assert dm.daughters == DaughtersDict()
+    assert dm.metadata == dict(model="", model_params="")
+
+
+def test_DecayMode_constructor_from_pdgids():
+    dm = DecayMode.from_pdgids(
+        0.5,
+        [321, -321],
+        model="TAUHADNU",
+        model_params=[-0.108, 0.775, 0.149, 1.364, 0.400],
+    )
+    assert dm.daughters == DaughtersDict("K+ K-")
 
 
 def test_DecayMode_constructor_from_dict():
@@ -119,7 +126,7 @@ def test_DecayMode_describe_simple():
     assert "Decay model: TAUHADNU [-0.108, 0.775, 0.149, 1.364, 0.4]" in dm.describe()
 
 
-def test_DecayMode_describe_with_extra_info():
+def test_DecayMode_describe_with_user_metadata():
     dd = DaughtersDict("K+ K-")
     dm = DecayMode(1.0e-6, dd, model="PHSP", study="toy", year=2019)
     assert "Extra info:" in dm.describe()
@@ -258,9 +265,10 @@ def test_DecayChain_properties():
 
 
 def test_DecayChain_flatten():
-    dc_flatten = dc2.flatten()
-    assert dc_flatten.mother == dc2.mother
-    assert dc_flatten.bf == dc_flatten.visible_bf
+    dc2_flatten = dc2.flatten()
+    assert dc2_flatten.mother == dc2.mother
+    assert dc2_flatten.bf == dc2_flatten.visible_bf
+    assert dc2_flatten.decays[dc2.mother].daughters == DaughtersDict(['gamma', 'gamma', 'pi+', 'pi+','pi-'])
 
 
 def test_DecayChain_string_repr():
