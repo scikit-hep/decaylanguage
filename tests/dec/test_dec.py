@@ -5,6 +5,7 @@
 # or https://github.com/scikit-hep/decaylanguage for details.
 
 import pytest
+import sys
 
 try:
     from pathlib2 import Path
@@ -26,10 +27,7 @@ from decaylanguage.dec.dec import get_model_parameters
 
 from decaylanguage.dec.enums import known_decay_models
 
-# New in Python 3
-try:
-    FileNotFoundError
-except NameError:
+if sys.version_info < (3,):
     FileNotFoundError = IOError
 
 
@@ -52,7 +50,10 @@ def test_constructor_multiple_files():
     p = DecFileParser(
         DIR / "../data/test_Xicc2XicPiPi.dec", DIR / "../data/test_Bc2BsPi_Bs2KK.dec"
     )
-    p.parse()
+
+    with pytest.warns(UserWarning) as record:
+        p.parse()
+    assert len(record) == 1
 
     assert len(p._dec_file_names) == 2
     assert p.number_of_decays == 7
@@ -230,7 +231,9 @@ def test_with_missing_info():
     ``
     """
     p = DecFileParser(DIR / "../data/test_Xicc2XicPiPi.dec")
-    p.parse()
+    with pytest.warns(UserWarning) as record:
+        p.parse()
+    assert len(record) == 1
 
     # Decay of anti-Xi_cc-sig missing
     assert p.number_of_decays == 3
@@ -293,7 +296,11 @@ def test_decay_model_parsing_with_variable_defs():
 
 def test_duplicate_decay_definitions():
     p = DecFileParser(DIR / "../data/duplicate-decays.dec")
-    p.parse()
+
+    with pytest.warns(UserWarning) as w:
+        p.parse()
+
+    assert len(w) == 2
 
     assert p.number_of_decays == 2
 
@@ -322,7 +329,9 @@ def test_list_decay_modes_on_the_fly():
     on the fly from the non-CC. decay.
     """
     p = DecFileParser(DIR / "../data/test_Xicc2XicPiPi.dec")
-    p.parse()
+    with pytest.warns(UserWarning) as record:
+        p.parse()
+    assert len(record) == 1
 
     # Parsed directly from the dec file
     assert p.list_decay_modes("MyXic+") == [["p+", "K-", "pi+"]]
