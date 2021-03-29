@@ -209,7 +209,7 @@ class DecayMode(object):
         {'bf': <float>, 'fs': [...], ...}.
         These two keys are mandatory. All others are interpreted as
         model information or metadata, see the constructor signature and doc.
- 
+
         Note
         ----
         This class assumes EvtGen particle names, though this assumption is only
