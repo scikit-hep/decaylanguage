@@ -5,6 +5,7 @@
 # or https://github.com/scikit-hep/decaylanguage for details.
 
 
+import pytest
 from pytest import approx
 
 from decaylanguage.decay.decay import DaughtersDict
@@ -160,20 +161,23 @@ def test_DecayMode_number_of_final_states():
     assert len(dm) == 4
 
 
-dm1 = DecayMode(0.0124, "K_S0 pi0", model="PHSP")
-dm2 = DecayMode(0.692, "pi+ pi-")
-dm3 = DecayMode(0.98823, "gamma gamma")
-dc = DecayChain("D0", {"D0": dm1, "K_S0": dm2, "pi0": dm3})
+@pytest.fixture()
+def dc():
+    dm1 = DecayMode(0.0124, "K_S0 pi0", model="PHSP")
+    dm2 = DecayMode(0.692, "pi+ pi-")
+    dm3 = DecayMode(0.98823, "gamma gamma")
+    return DecayChain("D0", {"D0": dm1, "K_S0": dm2, "pi0": dm3})
+
+@pytest.fixture()
+def dc2():
+    dm1 = DecayMode(0.6770, "D0 pi+")
+    dm2 = DecayMode(0.0124, "K_S0 pi0")
+    dm3 = DecayMode(0.692, "pi+ pi-")
+    dm4 = DecayMode(0.98823, "gamma gamma")
+    return DecayChain("D*+", {"D*+": dm1, "D0": dm2, "K_S0": dm3, "pi0": dm4})
 
 
-dm1 = DecayMode(0.6770, "D0 pi+")
-dm2 = DecayMode(0.0124, "K_S0 pi0")
-dm3 = DecayMode(0.692, "pi+ pi-")
-dm4 = DecayMode(0.98823, "gamma gamma")
-dc2 = DecayChain("D*+", {"D*+": dm1, "D0": dm2, "K_S0": dm3, "pi0": dm4})
-
-
-def test_DecayChain_constructor_subdecays():
+def test_DecayChain_constructor_subdecays(dc):
     assert len(dc.decays) == 3
     assert dc.mother == "D0"
 
@@ -213,7 +217,7 @@ def test_DecayChain_constructor_from_dict():
     assert DecayChain.from_dict(dc_dict).to_dict() == dc_dict
 
 
-def test_DecayChain_to_dict():
+def test_DecayChain_to_dict(dc2):
     assert dc2.to_dict() == {
         "D*+": [
             {
@@ -259,12 +263,12 @@ def test_DecayChain_to_dict():
     }
 
 
-def test_DecayChain_properties():
+def test_DecayChain_properties(dc):
     assert dc.bf == 0.0124
     assert dc.visible_bf == approx(0.008479803984)
 
 
-def test_DecayChain_flatten():
+def test_DecayChain_flatten(dc2):
     dc2_flatten = dc2.flatten()
     assert dc2_flatten.mother == dc2.mother
     assert dc2_flatten.bf == dc2_flatten.visible_bf
@@ -273,5 +277,5 @@ def test_DecayChain_flatten():
     )
 
 
-def test_DecayChain_string_repr():
+def test_DecayChain_string_repr(dc):
     assert str(dc) == "<DecayChain: D0 -> K_S0 pi0 (2 sub-decays), BF=0.0124>"

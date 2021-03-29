@@ -53,9 +53,9 @@ class AmplitudeChain(ModelDecay):
 
     lineshape = attr.ib(None)
     spinfactor = attr.ib(None)
-    amp = attr.ib(1 + 0j, cmp=False, validator=attr.validators.instance_of(complex))
-    err = attr.ib(0 + 0j, cmp=False, validator=attr.validators.instance_of(complex))
-    fix = attr.ib(True, cmp=False, validator=attr.validators.instance_of(bool))
+    amp = attr.ib(1 + 0j, eq=False, order=False, validator=attr.validators.instance_of(complex))
+    err = attr.ib(0 + 0j, eq=False, order=False, validator=attr.validators.instance_of(complex))
+    fix = attr.ib(True, eq=False, order=False, validator=attr.validators.instance_of(bool))
     name = attr.ib(None)
 
     # Class members keep track of additions
