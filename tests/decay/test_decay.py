@@ -268,7 +268,9 @@ def test_DecayChain_flatten():
     dc2_flatten = dc2.flatten()
     assert dc2_flatten.mother == dc2.mother
     assert dc2_flatten.bf == dc2_flatten.visible_bf
-    assert dc2_flatten.decays[dc2.mother].daughters == DaughtersDict(['gamma', 'gamma', 'pi+', 'pi+','pi-'])
+    assert dc2_flatten.decays[dc2.mother].daughters == DaughtersDict(
+        ["gamma", "gamma", "pi+", "pi+", "pi-"]
+    )
 
 
 def test_DecayChain_string_repr():
