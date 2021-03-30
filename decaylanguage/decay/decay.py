@@ -636,7 +636,7 @@ class DecayChain(object):
             for dm in self.decays.keys():
                 if k in self.decays[dm].daughters:
                     n_k = self.decays[dm].daughters[k]
-                    vis_bf *= (self.decays[k].bf**n_k)
+                    vis_bf *= self.decays[k].bf ** n_k
                     print('   dm:', dm,'%s*bf(%s)'%(n_k,k))
                     for _ in range(n_k):
                         fs += self.decays[k].daughters
