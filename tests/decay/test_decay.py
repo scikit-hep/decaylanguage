@@ -278,5 +278,31 @@ def test_DecayChain_flatten(dc2):
     )
 
 
+def test_DecayChain_flatten_complex():
+    dm1 = DecayMode(1.0, "D0 K_S0 pi+ pi0")
+    dm2 = DecayMode(0.0124, "K_S0 pi0 pi0")
+    dm3 = DecayMode(0.692, "pi+ pi-")
+    dm4 = DecayMode(0.98823, "gamma gamma")
+    dc = DecayChain("X+", {"X+": dm1, "D0": dm2, "K_S0": dm3, "pi0": dm4})
+    dc_flatten = dc.flatten()
+    assert dc_flatten.decays[dc_flatten.mother].daughters == DaughtersDict(
+        {"gamma": 6, "pi+": 3, "pi-": 2}
+    )
+    assert dc_flatten.bf == approx(1.0*0.0124*(0.692**2)*(0.98823**3))
+
+
+def test_DecayChain_flatten_with_stable_particles():
+    dm1 = DecayMode(0.5, "D0 anti-D0 pi+ pi0 pi0")
+    dm2 = DecayMode(0.0124, "K_S0 pi0")
+    dm3 = DecayMode(0.692, "pi+ pi-")
+    dm4 = DecayMode(0.98823, "gamma gamma")
+    dc = DecayChain("X+", {"X+": dm1, "D0": dm2, "anti-D0": dm2, "K_S0": dm3, "pi0": dm4})
+    dc_flatten = dc.flatten(stable_particles=["pi0"])
+    assert dc_flatten.decays[dc_flatten.mother].daughters == DaughtersDict(
+        {'pi0': 4, 'pi+': 3, 'pi-': 2}
+    )
+    assert dc_flatten.bf == approx(0.5*(0.0124**2)*(0.692**2))
+
+
 def test_DecayChain_string_repr(dc):
     assert str(dc) == "<DecayChain: D0 -> K_S0 pi0 (2 sub-decays), BF=0.0124>"

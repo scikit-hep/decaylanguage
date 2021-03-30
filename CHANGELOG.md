@@ -10,6 +10,8 @@
 * Dependencies:
   - Got rid of dependency on ``pydot``, as the package is no longer maintained.
   - Replaced with dependency on ``graphviz``, made a requirement.
+* Tests:
+  - Check for some expected warnings, to get rid of obvious warnings.
 
 ## Version 0.10.3 (2021-03-23)
 
