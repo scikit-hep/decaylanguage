@@ -638,11 +638,11 @@ class DecayChain(object):
             for k in keys:
                 if k in fs:
                     n_k = fs[k]
-                    vis_bf *= (self.decays[k].bf**n_k)
+                    vis_bf *= self.decays[k].bf ** n_k
                     for _ in range(n_k):
                         fs += self.decays[k].daughters
                     fs[k] -= n_k
-            further_to_replace = any([fs[_k]>0 for _k in keys])
+            further_to_replace = any([fs[_k] > 0 for _k in keys])
 
         return DecayChain(
             self.mother,
