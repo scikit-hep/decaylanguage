@@ -642,7 +642,7 @@ class DecayChain(object):
                     for _ in range(n_k):
                         fs += self.decays[k].daughters
                     fs[k] -= n_k
-            further_to_replace = any([fs[_k] > 0 for _k in keys])
+            further_to_replace = any(fs[_k] > 0 for _k in keys)
 
         return DecayChain(
             self.mother,
