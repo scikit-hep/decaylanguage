@@ -168,7 +168,7 @@ class DecayChainViewer(object):
                             iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
 
         def has_subdecay(ds):
-            return not all([isinstance(p, str) for p in ds])
+            return not all(isinstance(p, str) for p in ds)
 
         k = list(self._chain.keys())[0]
         label = html_table_label([k], add_tags=True, bgcolor="#568dba")

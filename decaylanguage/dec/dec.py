@@ -775,7 +775,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         """
         keys = ("bf", "fs", "model", "model_params")
 
-        info = list()
+        info = []
         for dm in self._find_decay_modes(mother):
             list_dm_details = self._decay_mode_details(dm)
             d = dict(zip(keys, list_dm_details))

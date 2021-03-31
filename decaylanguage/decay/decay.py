@@ -423,7 +423,7 @@ class DecayChain(object):
             raise RuntimeError("Input not in the expected format!")
 
         def has_no_subdecay(ds):
-            return all([isinstance(p, str) for p in ds])
+            return all(isinstance(p, str) for p in ds)
 
         def build_decay_modes(dc_dict):
             mother = list(dc_dict.keys())[0]
