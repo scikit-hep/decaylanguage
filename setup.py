@@ -5,17 +5,6 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
-import os
-
 from setuptools import setup
 
-
-def get_version():
-    g = {}
-    exec(open(os.path.join("decaylanguage", "_version.py")).read(), g)
-    return g["__version__"]
-
-
-setup(
-    version=get_version(),
-)
+setup()

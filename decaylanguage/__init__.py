@@ -6,7 +6,7 @@
 
 
 # Convenient access to the version number
-from ._version import __version__
+from ._version import version as __version__
 
 # Direct access to decay file parsing tools
 from .dec import DecFileParser
