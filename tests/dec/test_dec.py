@@ -76,7 +76,7 @@ Enddecay
 
 def test_unknown_decfile():
     with pytest.raises(FileNotFoundError):
-        p = DecFileParser("non-existent.dec")
+        DecFileParser("non-existent.dec")
 
 
 def test_non_parsed_decfile():

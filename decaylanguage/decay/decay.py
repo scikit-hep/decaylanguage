@@ -230,7 +230,7 @@ class DecayMode(object):
         try:
             bf = dm.pop("bf")
             daughters = dm.pop("fs")
-        except:
+        except Exception:
             raise RuntimeError("Input not in the expected format!")
 
         return cls(bf=bf, daughters=daughters, **dm)

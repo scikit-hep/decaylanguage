@@ -94,7 +94,7 @@ class DecayChainViewer(object):
             """
             try:
                 return latex_to_html_name(_EvtGen2LatexNameMap[name])
-            except:
+            except Exception:
                 return name
 
         def html_table_label(names, add_tags=False, bgcolor="#9abad6"):

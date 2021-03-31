@@ -92,7 +92,7 @@ class AmplitudeChain(ModelDecay):
 
         try:
             mat["particle"] = Particle.from_string(mat["name"])
-        except:
+        except Exception:
             print(
                 "Failed to find particle",
                 mat["name"],
@@ -253,7 +253,7 @@ class AmplitudeChain(ModelDecay):
 
         try:
             all_states = [Particle.from_string(n) for n in event_type]
-        except:
+        except Exception:
             print("Did not find at least one of the state particles from", *event_type)
             raise
 

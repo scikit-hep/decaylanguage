@@ -435,7 +435,7 @@ class DecFileParser(object):
                 copied_decay = match.__deepcopy__(None)
                 copied_decay.children[0].children[0].value = decay2copy
                 copied_decays.append(copied_decay)
-            except:
+            except Exception:
                 misses.append(decay2copy)
         if misses:
             msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{}.
@@ -519,7 +519,7 @@ The 'CDecay' definition(s) will be ignored ...""".format(
             try:
                 match = self._parsed_decays[name2treepos[name]]
                 trees_to_conjugate.append(match)
-            except:
+            except Exception:
                 misses.append(ccname)
         if len(misses) > 0:
             msg = """\nCorresponding 'Decay' statement for 'CDecay' statement(s) of following particle(s) not found:\n{}.
@@ -545,7 +545,7 @@ Skipping creation of charge-conjugate decay Tree.""".format(
                     return False
                 else:
                     return True
-            except:
+            except Exception:
                 return True
 
         [
@@ -1116,7 +1116,7 @@ def get_decays(parsed_file):
 
     try:
         return list(parsed_file.find_data("decay"))
-    except:
+    except Exception:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
@@ -1141,7 +1141,7 @@ def get_charge_conjugate_decays(parsed_file):
                 for tree in parsed_file.find_data("cdecay")
             ]
         )
-    except:
+    except Exception:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
@@ -1165,7 +1165,7 @@ def get_decays2copy_statements(parsed_file):
             tree.children[0].children[0].value: tree.children[1].children[0].value
             for tree in parsed_file.find_data("copydecay")
         }
-    except:
+    except Exception:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
@@ -1189,7 +1189,7 @@ def get_definitions(parsed_file):
             .value: float(tree.children[1].children[0].value)
             for tree in parsed_file.find_data("define")
         }
-    except:
+    except Exception:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
@@ -1211,7 +1211,7 @@ def get_aliases(parsed_file):
             tree.children[0].children[0].value: tree.children[1].children[0].value
             for tree in parsed_file.find_data("alias")
         }
-    except:
+    except Exception:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
@@ -1234,7 +1234,7 @@ def get_charge_conjugate_defs(parsed_file):
             tree.children[0].children[0].value: tree.children[1].children[0].value
             for tree in parsed_file.find_data("chargeconj")
         }
-    except:
+    except Exception:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
@@ -1258,7 +1258,7 @@ def get_pythia_definitions(parsed_file):
     def str_or_float(arg):
         try:
             return float(arg)
-        except:
+        except Exception:
             return arg
 
     try:
@@ -1268,7 +1268,7 @@ def get_pythia_definitions(parsed_file):
             ): str_or_float(tree.children[2].value)
             for tree in parsed_file.find_data("pythia_def")
         }
-    except:
+    except Exception:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
@@ -1308,7 +1308,7 @@ def get_jetset_definitions(parsed_file):
         except ValueError:
             try:
                 return float(n)
-            except:
+            except Exception:
                 # pass though non-numbers unchanged
                 return n
 
@@ -1325,7 +1325,7 @@ def get_jetset_definitions(parsed_file):
                     int(param["pnumber"]): to_int_or_float(tree.children[1].value)
                 }
         return dict_params
-    except:
+    except Exception:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
@@ -1354,7 +1354,7 @@ def get_lineshape_definitions(parsed_file):
             val = int(tree.children[3].children[0].value)
             d.append((particles, val))
         return d
-    except:
+    except Exception:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
@@ -1391,7 +1391,7 @@ def get_global_photos_flag(parsed_file):
     try:
         val = tree.children[0].data
         return PhotosEnum.yes if val == "yes" else PhotosEnum.no
-    except:
+    except Exception:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
