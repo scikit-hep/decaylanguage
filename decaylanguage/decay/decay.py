@@ -419,10 +419,11 @@ class DecayChain(object):
         """
         try:
             assert len(decay_chain_dict.keys()) == 1
-        except:
+        except Exception:
             raise RuntimeError("Input not in the expected format!")
 
-        has_no_subdecay = lambda ds: all([isinstance(p, str) for p in ds])
+        def has_no_subdecay(ds):
+            return all([isinstance(p, str) for p in ds])
 
         def build_decay_modes(dc_dict):
             mother = list(dc_dict.keys())[0]
@@ -536,7 +537,7 @@ class DecayChain(object):
             mother = list(decay_dict.keys())[0]
             prefix = bar if (link and depth > 1) else ""
             prefix = prefix + " " * indent * (depth - 1)
-            for i, i_decay in enumerate(decay_dict[mother]):
+            for i_decay in decay_dict[mother]:
                 print(prefix, arrow if depth > 0 else "", mother, sep="")
                 fsps = i_decay["fs"]
                 n = len(list(fsps))
@@ -595,7 +596,7 @@ class DecayChain(object):
 
         return recursively_replace(self.mother)
 
-    def flatten(self, stable_particles=[]):
+    def flatten(self, stable_particles=()):
         """
         Flatten the decay chain replacing all intermediate, decaying particles,
         with their final states.
@@ -624,6 +625,7 @@ class DecayChain(object):
         >>> dc.flatten(stable_particles=['K_S0', 'pi0']).decays
         {'D0': <DecayMode: daughters=K_S0 pi0, BF=0.0124>}
         """
+
         vis_bf = self.bf
         fs = DaughtersDict(self.decays[self.mother].daughters)
 

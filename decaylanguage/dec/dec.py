@@ -42,6 +42,7 @@ from __future__ import absolute_import, division, print_function
 import os
 import warnings
 import re
+import sys
 import operator
 
 from six import StringIO
@@ -49,21 +50,17 @@ from six import StringIO
 from lark import Lark
 from lark import Tree, Transformer, Visitor
 
-from particle import Particle, ParticleNotFound
+from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
-from particle.particle.enums import Charge, Charge_undo, Charge_mapping
 
 from .enums import PhotosEnum
 
 from ..utils import charge_conjugate_name
-from ..data import open_text
+
 from .. import data
 
-
 # New in Python 3
-try:
-    FileNotFoundError
-except NameError:
+if sys.version_info < (3,):
     FileNotFoundError = IOError
 
 
@@ -189,9 +186,9 @@ class DecFileParser(object):
         # Retrieve all info on the default Lark grammar and its default options,
         # effectively loading it
         opts = self.grammar_info()
-        extraopts = {
-            k: v for k, v in opts.items() if k not in ("lark_file", "parser", "lexer")
-        }
+        # extraopts = {
+        #     k: v for k, v in opts.items() if k not in ("lark_file", "parser", "lexer")
+        # }  not used later?
 
         # Instantiate the Lark parser according to chosen settings
         parser = Lark(self.grammar(), parser=opts["parser"], lexer=opts["lexer"])
@@ -694,11 +691,11 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         dms = self._find_decay_modes(mother)
 
-        l = []
+        ls = []
         for dm in dms:
             if print_model:
                 dm_details = self._decay_mode_details(dm)
-                l.append(
+                ls.append(
                     (
                         dm_details[0],
                         (
@@ -714,14 +711,14 @@ All but the first occurrence will be discarded/removed ...""".format(
 
             else:
                 fsp_names = get_final_state_particle_names(dm)
-                l.append((get_branching_fraction(dm), "%-50s" % "  ".join(fsp_names)))
+                ls.append((get_branching_fraction(dm), "%-50s" % "  ".join(fsp_names)))
 
-        l.sort(key=operator.itemgetter(0), reverse=(not ascending))
+        ls.sort(key=operator.itemgetter(0), reverse=(not ascending))
 
-        for bf, info in l:
+        for bf, info in ls:
             print("{:12g} : {}".format(bf, info))
 
-    def build_decay_chains(self, mother, stable_particles=[]):
+    def build_decay_chains(self, mother, stable_particles=()):
         """
         Iteratively build the entire decay chains of a given mother particle,
         optionally considering, on the fly, certain particles as stable.
@@ -790,7 +787,7 @@ All but the first occurrence will be discarded/removed ...""".format(
                 try:
                     # This throws a DecayNotFound exception
                     # if fs does not have decays defined in the parsed file
-                    _n_dms = len(self._find_decay_modes(fs))
+                    # _n_dms = len(self._find_decay_modes(fs))
 
                     _info = self.build_decay_chains(fs, stable_particles)
                     d["fs"][i] = _info
@@ -848,8 +845,8 @@ class DecayModelParamValueReplacement(Visitor):
     Tree(model_options, [Token(LABEL, 507000000000.0)])])])])
     """
 
-    def __init__(self, define_defs=dict()):
-        self.define_defs = define_defs
+    def __init__(self, define_defs=None):
+        self.define_defs = define_defs or {}
 
     def _replacement(self, t):
         try:
@@ -903,8 +900,8 @@ class ChargeConjugateReplacement(Visitor):
     Tree(particle, [Token(LABEL, 'pi-')]), Tree(model, [Token(MODEL_NAME, 'PHSP')])])])
     """
 
-    def __init__(self, charge_conj_defs=dict()):
-        self.charge_conj_defs = charge_conj_defs
+    def __init__(self, charge_conj_defs=None):
+        self.charge_conj_defs = charge_conj_defs or {}
 
     def particle(self, tree):
         """
@@ -917,7 +914,7 @@ class ChargeConjugateReplacement(Visitor):
         tree.children[0].value = ccpname
 
 
-def find_charge_conjugate_match(pname, dict_cc_names=dict()):
+def find_charge_conjugate_match(pname, dict_cc_names=None):
     """
     Find the charge-conjugate particle name making use of user information
     from "ChargeConj" statements in a decay file.
@@ -926,7 +923,7 @@ def find_charge_conjugate_match(pname, dict_cc_names=dict()):
     see `charge_conjugate_name(...) function.`
     """
     # Check the list of particle-antiparticle matches provided ;-)
-    if len(dict_cc_names) > 0:
+    if dict_cc_names:
         match = dict_cc_names.get(pname)
         if match is not None:
             return match

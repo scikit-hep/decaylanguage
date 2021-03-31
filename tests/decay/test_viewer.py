@@ -76,10 +76,10 @@ def test_duplicate_arrows(decfilepath, signal_mother):
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
-    l = [
+    ls = [
         i.split(" ")[0] for i in graph_output_as_dot.split("-> dec")[1:]
     ]  # list of node identifiers
-    assert len(set(l)) == len(l)
+    assert len(set(ls)) == len(ls)
 
 
 def test_init_non_defaults_basic():

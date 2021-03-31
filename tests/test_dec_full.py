@@ -8,7 +8,7 @@ from particle import Particle, ParticleNotFound
 
 from decaylanguage import data
 from decaylanguage.dec import dec
-from lark import Lark, Transformer, Tree
+from lark import Lark, Transformer
 
 import pytest
 
@@ -42,26 +42,26 @@ def test_dec_full():
     with data.open_text(data, "decfile.lark") as f:
         grammar = f.read()
 
-    l = Lark(grammar, parser="lalr", lexer="standard")  # , transformer = TreeToDec())
+    la = Lark(grammar, parser="lalr", lexer="standard")  # , transformer = TreeToDec())
 
-    parsed = l.parse(txt)
+    parsed = la.parse(txt)
     assert bool(parsed)
 
     transformed = dec.TreeToDec().transform(parsed)
 
-    define = dec.define(transformed)
+    dec.define(transformed)
     pythia_def = dec.pythia_def(transformed)
     alias = dec.alias(transformed)
-    chargeconj = dec.chargeconj(transformed)
-    global_photos = dec.global_photos(transformed)
+    dec.chargeconj(transformed)
+    dec.global_photos(transformed)
     decay = dec.decay(transformed)
-    cdecay = dec.cdecay(transformed)
-    setlspw = dec.setlspw(transformed)
+    dec.cdecay(transformed)
+    dec.setlspw(transformed)
 
     for item in pythia_def:
         print(item[0], ":", item[1], "=", item[2])
 
-    labelled = TreeToDec2(alias).transform(decay)
+    TreeToDec2(alias).transform(decay)
 
     print(TreeToDec2.missing)
     print(TreeToDec2.keyerrs)

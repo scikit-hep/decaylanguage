@@ -14,8 +14,6 @@ except ImportError:
 
 from lark import Tree, Token
 
-from decaylanguage import data
-
 from decaylanguage.dec.dec import DecFileParser
 from decaylanguage.dec.dec import DecFileNotParsed, DecayNotFound
 from decaylanguage.dec.dec import DecayModelParamValueReplacement
@@ -187,14 +185,14 @@ def test_global_photos_flag():
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
-    assert p.global_photos_flag() == True
+    assert p.global_photos_flag()
 
 
 def test_missing_global_photos_flag():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
-    assert p.global_photos_flag() == False
+    assert not p.global_photos_flag()
 
 
 def test_list_charge_conjugate_decays():

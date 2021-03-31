@@ -15,7 +15,6 @@ from __future__ import print_function
 import sys
 from copy import copy
 from enum import Enum
-from itertools import combinations
 from itertools import product
 
 import attr
@@ -30,8 +29,6 @@ from particle import Particle
 import os
 
 from .decay import ModelDecay
-from ..utils import filter_lines
-from ..utils import split
 
 from ..data import open_text
 from .. import data
@@ -142,10 +139,10 @@ class AmplitudeChain(ModelDecay):
 
         # If the tree ends
         new_trees = [
-            l
+            ln
             for line in linelist
             if line.name == self.name
-            for l in line.expand_lines(linelist)
+            for ln in line.expand_lines(linelist)
         ]
         if new_trees:
             return new_trees
@@ -245,9 +242,9 @@ class AmplitudeChain(ModelDecay):
 
         (event_type,) = get_from_parser(parsed, "event_type")
 
-        invert_lines = get_from_parser(parsed, "invert_line")
+        # invert_lines = get_from_parser(parsed, "invert_line")
         cplx_decay_lines = get_from_parser(parsed, "cplx_decay_line")
-        cart_decay_lines = get_from_parser(parsed, "cart_decay_line")
+        # cart_decay_lines = get_from_parser(parsed, "cart_decay_line")
         variables = get_from_parser(parsed, "variable")
         constants = get_from_parser(parsed, "constant")
 
@@ -291,10 +288,10 @@ class AmplitudeChain(ModelDecay):
 
         # Expand partial lines into complete lines
         new_line_arr = [
-            l
+            ln
             for line in line_arr
             if line.particle == all_states[0]
-            for l in line.expand_lines(line_arr)
+            for ln in line.expand_lines(line_arr)
         ]
 
         # Return

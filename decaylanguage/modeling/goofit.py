@@ -232,9 +232,9 @@ class GooFitChain(AmplitudeChain):
                 GooFitChain.consts.index.str.contains("Spline")
             ]
             splines = set(
-                splines.str.rstrip("::Spline::N")
-                .str.rstrip("::Spline::Min")
-                .str.rstrip("::Spline::Max")
+                splines.str.replace("::Spline::N", "")
+                .str.replace("::Spline::Min", "")
+                .str.replace("::Spline::Max", "")
             )
 
             for spline in splines:

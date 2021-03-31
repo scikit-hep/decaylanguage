@@ -146,7 +146,7 @@ def test_DecayMode_charge_conjugate():
     assert "Decay model: TAUHADNU [-0.108, 0.775, 0.149, 1.364, 0.4]" in dm.describe()
 
     dd = DaughtersDict("pi- pi0 nu(tau)")
-    dd.charge_conjugate(pdg_name=True) == DaughtersDict("pi+ pi0 nu(tau)~")
+    assert dd.charge_conjugate(pdg_name=True) == DaughtersDict("pi+ pi0 nu(tau)~")
 
 
 def test_DecayMode_string_repr():

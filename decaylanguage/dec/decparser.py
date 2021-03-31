@@ -56,8 +56,6 @@ known_models = [
     "BTOSLLALI",
 ]
 
-import os
-
 if "C3_DATA" in os.environ:
     defdecfile = "%s/DECAY.DEC" % os.environ["C3_DATA"]
 else:
@@ -390,7 +388,7 @@ def recurseOneLevel(decaylist, decaytable):
         # Only do one daughter!
         toexpand = None
         for dau in decay[1].daughters:
-            if toexpand == None and dau in decaytable:
+            if toexpand is None and dau in decaytable:
                 toexpand = dau
         if toexpand is None:
             rv.append(decay)
