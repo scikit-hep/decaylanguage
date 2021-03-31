@@ -1,5 +1,10 @@
 
 repos:
+- repo: https://github.com/asottile/pyupgrade
+  rev: v2.11.0
+  hooks:
+  - id: pyupgrade
+
 - repo: https://github.com/psf/black
   rev: 20.8b1
   hooks:
@@ -39,3 +44,9 @@ repos:
   - id: mypy
     files: src
     additional_dependencies: [attrs==19.3.0]
+
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 3.9.0
+  hooks:
+  - id: flake8
+    additional_dependencies: [flake8-bugbear]
