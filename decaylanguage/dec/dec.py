@@ -191,7 +191,9 @@ class DecFileParser(object):
         }
 
         # Instantiate the Lark parser according to chosen settings
-        parser = Lark(self.grammar(), parser=opts["parser"], lexer=opts["lexer"], **extraopts)
+        parser = Lark(
+            self.grammar(), parser=opts["parser"], lexer=opts["lexer"], **extraopts
+        )
 
         self._parsed_dec_file = parser.parse(self._dec_file)
 
