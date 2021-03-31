@@ -56,7 +56,9 @@ class DaughtersDict(Counter):
         >>> # Constructor from a string representing the final state
         >>> dd = DaughtersDict('K+ K- pi0')
         """
-        if iterable and isinstance(iterable, str):
+        if isinstance(iterable, dict):
+            iterable = {k: v for k, v in iterable.items() if v > 0}
+        elif iterable and isinstance(iterable, str):
             iterable = iterable.split()
         super(DaughtersDict, self).__init__(iterable, **kwds)
 
@@ -205,7 +207,8 @@ class DecayMode(object):
         """
         Constructor from a dictionary of the form
         {'bf': <float>, 'fs': [...], ...}.
-        These two keys are mandatory.
+        These two keys are mandatory. All others are interpreted as
+        model information or metadata, see the constructor signature and doc.
 
         Note
         ----
@@ -233,9 +236,21 @@ class DecayMode(object):
         return cls(bf=bf, daughters=daughters, **dm)
 
     @classmethod
-    def from_pdgids(cls, bf, daughters, **info):
+    def from_pdgids(cls, bf=0, daughters=None, **info):
         """
         Constructor for a final state given as a list of particle PDG IDs.
+
+        Parameters
+        ----------
+        bf: float, optional, default=0
+            Decay mode branching fraction.
+        daughters: iterable, optional, default=None
+            The final-state particle PDG IDs.
+        info: keyword arguments, optional
+            Decay mode model information and/or user metadata (aka extra info)
+            By default the following elements are always created:
+            dict(model=None, model_params=None).
+            The user can provide any metadata, see the examples below.
 
         Note
         ----
@@ -247,10 +262,12 @@ class DecayMode(object):
         >>> DecayMode.from_pdgids(0.5, [321, -321])
         <DecayMode: daughters=K+ K-, BF=0.5>
         >>>
-        >>> DecayMode.from_pdgids(0.5, [310, 310])
+        >>> DecayMode.from_pdgids(0.5, (310, 310))
         <DecayMode: daughters=K_S0 K_S0, BF=0.5>
         """
-        # Check inputs
+        if not daughters:
+            return cls(bf=bf, daughters=daughters, **info)
+
         try:
             from particle import PDGID, ParticleNotFound
             from particle.converters import EvtGenName2PDGIDBiMap
@@ -258,8 +275,6 @@ class DecayMode(object):
             daughters = [EvtGenName2PDGIDBiMap[PDGID(d)] for d in daughters]
         except ParticleNotFound:
             raise ParticleNotFound("Please check your input PDG IDs!")
-
-        daughters = DaughtersDict(daughters)
 
         # Override the default settings with the user input, if any
         return cls(bf=bf, daughters=daughters, **info)
@@ -380,8 +395,10 @@ class DecayChain(object):
 
         Parameters
         ----------
-        mother: str, optional, default=None
+        mother: str
             Input mother particle of the top-level decay.
+        decays: iterable
+            The decay modes.
 
         Examples
         --------
@@ -607,18 +624,25 @@ class DecayChain(object):
         >>> dc.flatten(stable_particles=['K_S0', 'pi0']).decays
         {'D0': <DecayMode: daughters=K_S0 pi0, BF=0.0124>}
         """
-        vis_bf = 1.0
-        fs = DaughtersDict()
-        keys = self.decays.keys()
-        for k in keys:
-            down_one_level = True
-            if k in stable_particles:
-                continue
-            while down_one_level:
-                vis_bf *= self.decays[k].bf
-                fs += self.decays[k].daughters
-                fs[k] -= 1
-                down_one_level = k in fs.elements()
+        vis_bf = self.bf
+        fs = DaughtersDict(self.decays[self.mother].daughters)
+
+        if stable_particles:
+            keys = [k for k in self.decays.keys() if k not in stable_particles]
+        else:
+            keys = [k for k in self.decays.keys()]
+        keys.insert(0, keys.pop(keys.index(self.mother)))
+
+        further_to_replace = True
+        while further_to_replace:
+            for k in keys:
+                if k in fs:
+                    n_k = fs[k]
+                    vis_bf *= self.decays[k].bf ** n_k
+                    for _ in range(n_k):
+                        fs += self.decays[k].daughters
+                    fs[k] -= n_k
+            further_to_replace = any(fs[_k] > 0 for _k in keys)
 
         return DecayChain(
             self.mother,

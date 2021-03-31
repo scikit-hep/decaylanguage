@@ -68,9 +68,11 @@ def test_duplicate_arrows(decfilepath, signal_mother):
     in the creation of the DOT file recursively parsing the built decay chain.
     """
     p = DecFileParser(decfilepath, DIR / "../../decaylanguage/data/DECAY_LHCB.DEC")
+
     p.parse()
 
     chain = p.build_decay_chains(signal_mother)
+
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
