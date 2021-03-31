@@ -149,7 +149,7 @@ class DecayChainViewer(object):
                         self.graph.edge(top_node, _ref, label=str(_bf))
                     else:
                         self.graph.edge(
-                            "%s:p%s" % (top_node, link_pos), _ref, label=str(_bf)
+                            "{}:p{}".format(top_node, link_pos), _ref, label=str(_bf)
                         )
                 else:
                     _ref_1 = new_node_with_subchain(_list_parts)
@@ -158,7 +158,7 @@ class DecayChainViewer(object):
                         self.graph.edge(top_node, _ref_1, label=str(_bf_1))
                     else:
                         self.graph.edge(
-                            "%s:p%s" % (top_node, link_pos),
+                            "{}:p{}".format(top_node, link_pos),
                             _ref_1,
                             label=str(_bf_1),
                         )

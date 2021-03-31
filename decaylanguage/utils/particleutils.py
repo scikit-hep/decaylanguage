@@ -57,7 +57,7 @@ def charge_conjugate_name(name, pdg_name=False):
             # Convert the EvtGen name back to a PDG name, to match input type
             return EvtGen2PDGNameMap[ccname]
         except MatchingIDNotFound:  # Catch issue in PDG2EvtGenNameMap matching
-            return "ChargeConj({0})".format(name)
+            return "ChargeConj({})".format(name)
 
     # Dealing only with EvtGen names at this stage
     try:
@@ -66,4 +66,4 @@ def charge_conjugate_name(name, pdg_name=False):
         try:
             return EvtGenName2PDGIDBiMap[-EvtGenName2PDGIDBiMap[name]]
         except:
-            return "ChargeConj({0})".format(name)
+            return "ChargeConj({})".format(name)

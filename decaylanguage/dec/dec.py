@@ -116,7 +116,7 @@ class DecFileParser(object):
             for filename in self._dec_file_names:
                 # Check input file
                 if not os.path.exists(filename):
-                    raise FileNotFoundError("'{0}'!".format(filename))
+                    raise FileNotFoundError("'{}'!".format(filename))
 
                 with open(filename, "r") as file:
                     for line in file:
@@ -438,7 +438,7 @@ class DecFileParser(object):
             except:
                 misses.append(decay2copy)
         if misses:
-            msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{0}.
+            msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{}.
 Skipping creation of these copied decay trees.""".format(
                 "\n".join(misses)
             )
@@ -483,7 +483,7 @@ Skipping creation of these copied decay trees.""".format(
 
         duplicates = [n for n in mother_names_ccdecays if n in mother_names_decays]
         if len(duplicates) > 0:
-            msg = """The following particles are defined in the input .dec file with both 'Decay' and 'CDecay': {0}!
+            msg = """The following particles are defined in the input .dec file with both 'Decay' and 'CDecay': {}!
 The 'CDecay' definition(s) will be ignored ...""".format(
                 ", ".join(d for d in duplicates)
             )
@@ -522,7 +522,7 @@ The 'CDecay' definition(s) will be ignored ...""".format(
             except:
                 misses.append(ccname)
         if len(misses) > 0:
-            msg = """\nCorresponding 'Decay' statement for 'CDecay' statement(s) of following particle(s) not found:\n{0}.
+            msg = """\nCorresponding 'Decay' statement for 'CDecay' statement(s) of following particle(s) not found:\n{}.
 Skipping creation of these charge-conjugate decay trees.""".format(
                 "\n".join([m for m in misses])
             )
@@ -537,7 +537,7 @@ Skipping creation of these charge-conjugate decay trees.""".format(
             try:
                 mname = t.children[0].children[0].value
                 if Particle.from_evtgen_name(mname).is_self_conjugate:
-                    msg = """Found 'CDecay' statement for self-conjugate particle {0}. This is a bug!
+                    msg = """Found 'CDecay' statement for self-conjugate particle {}. This is a bug!
 Skipping creation of charge-conjugate decay Tree.""".format(
                         mname
                     )
@@ -574,7 +574,7 @@ Skipping creation of charge-conjugate decay Tree.""".format(
         duplicates = []
         if self.number_of_decays != len(set(lmn)):
             duplicates = {n for n in lmn if lmn.count(n) > 1}
-            msg = """The following particle(s) is(are) redefined in the input .dec file with 'Decay': {0}!
+            msg = """The following particle(s) is(are) redefined in the input .dec file with 'Decay': {}!
 All but the first occurrence will be discarded/removed ...""".format(
                 ", ".join(duplicates)
             )
@@ -719,7 +719,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         l.sort(key=operator.itemgetter(0), reverse=(not ascending))
 
         for bf, info in l:
-            print("%12g : %s" % (bf, info))
+            print("{:12g} : {}".format(bf, info))
 
     def build_decay_chains(self, mother, stable_particles=[]):
         """
@@ -1263,7 +1263,7 @@ def get_pythia_definitions(parsed_file):
 
     try:
         return {
-            "{0}:{1}".format(
+            "{}:{}".format(
                 tree.children[0].value, tree.children[1].value
             ): str_or_float(tree.children[2].value)
             for tree in parsed_file.find_data("pythia_def")

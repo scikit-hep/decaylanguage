@@ -163,7 +163,7 @@ class AmplitudeChain(ModelDecay):
         elif self.lineshape.startswith("FOCUS"):
             return LS.FOCUS
         else:
-            raise RuntimeError("Unimplemented lineshape {0}".format(self.lineshape))
+            raise RuntimeError("Unimplemented lineshape {}".format(self.lineshape))
 
     @property
     def full_amp(self):
