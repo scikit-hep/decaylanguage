@@ -69,4 +69,4 @@ docs/_build
 /docs/html
 *.gv*
 
-/decaylanguage/_version.py
+/src/decaylanguage/_version.py
