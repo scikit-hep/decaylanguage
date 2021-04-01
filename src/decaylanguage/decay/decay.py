@@ -445,7 +445,7 @@ class DecayChain(object):
                     # has a sub-decay
                     decay_modes[mother] = DecayMode.from_dict(d)
 
-        decay_modes = dict()
+        decay_modes = dict()  # type: dict
         mother = list(decay_chain_dict.keys())[0]
         build_decay_modes(decay_chain_dict)
 
@@ -642,7 +642,7 @@ class DecayChain(object):
                     n_k = fs[k]
                     vis_bf *= self.decays[k].bf ** n_k
                     for _ in range(n_k):
-                        fs += self.decays[k].daughters
+                        fs += self.decays[k].daughters  # type: ignore
                     fs[k] -= n_k
             further_to_replace = any(fs[_k] > 0 for _k in keys)
 

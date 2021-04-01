@@ -62,8 +62,8 @@ class AmplitudeChain(ModelDecay):
     name = attr.ib(None)
 
     # Class members keep track of additions
-    all_particles = set()
-    final_particles = set()
+    all_particles = set()  # type: ignore
+    final_particles = set()  # type: ignore
 
     # This is set class-wide, and only used when a line is made
     cartesian = False

@@ -204,16 +204,13 @@ class decparser(cmd.Cmd):
         #         if not mod_found:
         #             print '\n', line
         while spl[-1][-1:] != ";":
-            #            print 'fixin', line
             if self.use_rawinput:
                 line = " ".join((line, input()))
             else:
                 line = " ".join((line, self.stdin.readline()))
             spl = line.split()
-        #        print spl
         killindex = None
         i = 0
-        #        print spl
         while killindex is None and i < len(spl):
             if spl[i][-1] == ";":
                 spl[i] = spl[i][:-1]
@@ -223,25 +220,22 @@ class decparser(cmd.Cmd):
         if killindex is None:
             print(spl)
             raise Exception("No decay model specified: %s" % line)
-        #        print spl[killindex:]
         decay = Decay()
         decay.bf = bf
-        #        print self.current_decay_top.decay_of, 'to',
         for part in spl[1:killindex]:
-            #            print part,
             if part in decay.daughters:
                 decay.daughters[part] += 1
             else:
                 decay.daughters[part] = 1
-        #        print decay.daughters
-        self.current_decay_top.decays.append(decay)
 
-    #        print self.current_decay_top.decays
+        assert self.current_decay_top is not None
+        self.current_decay_top.decays.append(decay)
 
     def do_Enddecay(self, line):
         if self.file_parse_status != "Decay":
             raise Exception("Enddecay with no decay: %s" % line)
         self.file_parse_status = ""
+        assert self.current_decay_top is not None
         self.decaylist[self.current_decay_top.decay_of] = self.current_decay_top
         self.current_decay_top = None
 
@@ -333,7 +327,7 @@ class interactive(cmd.Cmd):
         decaytable = self.decaylist.copy()
         for j in self.termpart:
             del decaytable[j]
-        last = []
+        last = []  # type: ignore
         while last != declist:
             last = declist[:]
             recurseOneLevel(declist, decaytable)
@@ -345,7 +339,7 @@ class interactive(cmd.Cmd):
             print("%s not known. Have you read the file yet?" % part)
             return
         final = input("Final state? ").split()
-        finalhash = {}
+        finalhash = {}  # type: dict
         termpartcpy = self.termpart[:]
         for p in final:
             finalhash[p] = finalhash.get(p, 0) + 1
