@@ -94,7 +94,7 @@ class DecayChainViewer(object):
             """
             try:
                 return latex_to_html_name(_EvtGen2LatexNameMap[name])
-            except:
+            except Exception:
                 return name
 
         def html_table_label(names, add_tags=False, bgcolor="#9abad6"):
@@ -149,7 +149,7 @@ class DecayChainViewer(object):
                         self.graph.edge(top_node, _ref, label=str(_bf))
                     else:
                         self.graph.edge(
-                            "%s:p%s" % (top_node, link_pos), _ref, label=str(_bf)
+                            "{}:p{}".format(top_node, link_pos), _ref, label=str(_bf)
                         )
                 else:
                     _ref_1 = new_node_with_subchain(_list_parts)
@@ -158,7 +158,7 @@ class DecayChainViewer(object):
                         self.graph.edge(top_node, _ref_1, label=str(_bf_1))
                     else:
                         self.graph.edge(
-                            "%s:p%s" % (top_node, link_pos),
+                            "{}:p{}".format(top_node, link_pos),
                             _ref_1,
                             label=str(_bf_1),
                         )
@@ -167,7 +167,8 @@ class DecayChainViewer(object):
                             _k = list(_p.keys())[0]
                             iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
 
-        has_subdecay = lambda ds: not all([isinstance(p, str) for p in ds])
+        def has_subdecay(ds):
+            return not all(isinstance(p, str) for p in ds)
 
         k = list(self._chain.keys())[0]
         label = html_table_label([k], add_tags=True, bgcolor="#568dba")

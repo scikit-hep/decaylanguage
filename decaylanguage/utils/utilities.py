@@ -48,12 +48,12 @@ def split(x):
         i += 1
 
 
-def filter_lines(matcher, input):
+def filter_lines(matcher, inp):
     """
     Filter out lines into new variable if they match a regular expression
     """
     output = [
-        matcher.match(l).groupdict() for l in input if matcher.match(l) is not None
+        matcher.match(ln).groupdict() for ln in input if matcher.match(ln) is not None
     ]
-    input = [l for l in input if matcher.match(l) is None]
-    return output, input
+    new_inp = [ln for ln in input if matcher.match(ln) is None]
+    return output, new_inp

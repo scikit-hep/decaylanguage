@@ -3,9 +3,6 @@
 
 from __future__ import print_function, division, absolute_import
 
-# try:
-#    import cmd2 as cmd
-# except:
 import cmd
 import os
 
@@ -58,8 +55,6 @@ known_models = [
     "PYTHIA",
     "BTOSLLALI",
 ]
-
-import os
 
 if "C3_DATA" in os.environ:
     defdecfile = "%s/DECAY.DEC" % os.environ["C3_DATA"]
@@ -128,9 +123,9 @@ class decparser(cmd.Cmd):
     def emptyline(self):
         return ""
 
-    ##    def precmd(self, line):
-    ##        print line
-    ##        return line
+    #    def precmd(self, line):
+    #        print line
+    #        return line
 
     def do_EOF(self, line):
         return True
@@ -162,7 +157,7 @@ class decparser(cmd.Cmd):
         self.current_decay_top = AllowedDecays(particle)
 
     def do_CDecay(self, line):
-        ##        print 'CDecay for', line
+        #        print 'CDecay for', line
         if self.file_parse_status == "Decay":
             raise Exception("Cannot do CDecay in Decay block: %s" % line)
         conj = Particle.from_string(line.split()[0]).invert()
@@ -171,26 +166,26 @@ class decparser(cmd.Cmd):
             self.cdecay_delayed.append(line)
             return
         self.current_decay_top = AllowedDecays(line.split()[0])
-        ##        print conj
+        #        print conj
         for cdecay in self.decaylist[conj].decays:
-            ##            print cdecay.daughters
+            #            print cdecay.daughters
             ndecay = Decay()
             ndecay.bf = cdecay.bf
             for dau in cdecay.daughters:
-                ##                print cdecay.daughters
+                #                print cdecay.daughters
                 ndecay.daughters[Particle.from_string(dau).invert()] = cdecay.daughters[
                     dau
                 ]
-            ##            print                 ndecay.daughters
+            #            print                 ndecay.daughters
 
-            ##            print cdecay.daughters, ndecay.daughters
-            ##        print line
+            #            print cdecay.daughters, ndecay.daughters
+            #        print line
             self.current_decay_top.decays.append(ndecay)
         self.decaylist[self.current_decay_top.decay_of] = self.current_decay_top
         self.current_decay_top = None
 
     def do_End(self, line):
-        ##        return self.do_EOF(line)
+        #        return self.do_EOF(line)
         if self.cdecay_delayed != []:
             print("Ought to be [] 0!:", self.cdecay_delayed, len(self.cdecay_delayed))
         while self.cdecay_delayed:
@@ -200,25 +195,25 @@ class decparser(cmd.Cmd):
         spl = line.split()
         try:
             bf = float(spl[0])
-        except:
-            raise Exception("Cannot parse decay line: %s" % line)
-        ##        mod_found = False
-        ##         for x in known_models:
-        ##             if x in line:
-        ##                 mod_found = True
-        ##         if not mod_found:
-        ##             print '\n', line
+        except Exception:
+            raise RuntimeError("Cannot parse decay line: %s" % line)
+        #        mod_found = False
+        #         for x in known_models:
+        #             if x in line:
+        #                 mod_found = True
+        #         if not mod_found:
+        #             print '\n', line
         while spl[-1][-1:] != ";":
-            ##            print 'fixin', line
+            #            print 'fixin', line
             if self.use_rawinput:
                 line = " ".join((line, input()))
             else:
                 line = " ".join((line, self.stdin.readline()))
             spl = line.split()
-        ##        print spl
+        #        print spl
         killindex = None
         i = 0
-        ##        print spl
+        #        print spl
         while killindex is None and i < len(spl):
             if spl[i][-1] == ";":
                 spl[i] = spl[i][:-1]
@@ -228,20 +223,20 @@ class decparser(cmd.Cmd):
         if killindex is None:
             print(spl)
             raise Exception("No decay model specified: %s" % line)
-        ##        print spl[killindex:]
+        #        print spl[killindex:]
         decay = Decay()
         decay.bf = bf
-        ##        print self.current_decay_top.decay_of, 'to',
+        #        print self.current_decay_top.decay_of, 'to',
         for part in spl[1:killindex]:
-            ##            print part,
+            #            print part,
             if part in decay.daughters:
                 decay.daughters[part] += 1
             else:
                 decay.daughters[part] = 1
-        ##        print decay.daughters
+        #        print decay.daughters
         self.current_decay_top.decays.append(decay)
 
-    ##        print self.current_decay_top.decays
+    #        print self.current_decay_top.decays
 
     def do_Enddecay(self, line):
         if self.file_parse_status != "Decay":
@@ -271,7 +266,7 @@ class interactive(cmd.Cmd):
             self.decaylist = q.decaylist
 
     def do_dump(self, line):
-        ##        print line
+        #        print line
         lpart = self.decaylist if line == "" else line.split()
         for part in lpart:
             if part not in self.decaylist:
@@ -309,32 +304,32 @@ class interactive(cmd.Cmd):
         return self.do_EOF(line)
 
     def do_final(self, line):
-        ##         predeclist = self.decaylist[line].decays[:]
-        ##         declist = []
-        ##         for dec in predeclist:
-        ##             declist.append([[],dec])
-        ##         decaytable = self.decaylist.copy()
-        ##         for j in self.termpart:
-        ##             del decaytable[j]
-        ##         last = []
-        ##         while last != declist:
-        ##             last = declist[:]
-        ##             recurseOneLevel(declist, decaytable)
+        #         predeclist = self.decaylist[line].decays[:]
+        #         declist = []
+        #         for dec in predeclist:
+        #             declist.append([[],dec])
+        #         decaytable = self.decaylist.copy()
+        #         for j in self.termpart:
+        #             del decaytable[j]
+        #         last = []
+        #         while last != declist:
+        #             last = declist[:]
+        #             recurseOneLevel(declist, decaytable)
         declist = self.getDecList(line)
         declist = compactDecayList(declist)
         declist.sort(key=lambda x: x.bf, reverse=True)
         for dec in declist:
-            ##            print dec
+            #            print dec
             print(dec.bf, dec.daughters_to_string())
 
     def getDecList(self, line):
         predeclist = self.decaylist[line].decays[:]
         declist = [[[(line, dec)], dec] for dec in predeclist]
-        ##            print dec
-        ##            declist.append([[],dec])
-        ##         dlist = DaughterList()
-        ##         dlist.add(line)
-        ##         declist = [[[],Decay(1,dlist)]]
+        #            print dec
+        #            declist.append([[],dec])
+        #         dlist = DaughterList()
+        #         dlist.add(line)
+        #         declist = [[[],Decay(1,dlist)]]
         decaytable = self.decaylist.copy()
         for j in self.termpart:
             del decaytable[j]
@@ -360,7 +355,7 @@ class interactive(cmd.Cmd):
         self.termpart[:] = termpartcpy
         sublist = []
         for dec in declist:
-            ##            print dec[1].daughters
+            #            print dec[1].daughters
             if dec[1].daughters == finalhash:
                 sublist.append(dec)
         sublist.sort(key=lambda x: x[1].bf, reverse=True)
@@ -371,7 +366,7 @@ class interactive(cmd.Cmd):
             else:
                 print("Chain: ")
                 for e2 in entry[0]:
-                    ##                    print e2
+                    #                    print e2
                     print("\t", e2[0], "->", e2[1].daughters_to_string())
 
     def do_oneshot(self, line):
@@ -393,7 +388,7 @@ def recurseOneLevel(decaylist, decaytable):
         # Only do one daughter!
         toexpand = None
         for dau in decay[1].daughters:
-            if toexpand == None and dau in decaytable:
+            if toexpand is None and dau in decaytable:
                 toexpand = dau
         if toexpand is None:
             rv.append(decay)
@@ -428,13 +423,13 @@ def compactDecayList(decaylist):
 
 
 if __name__ == "__main__":
-    ##     decparser().cmdloop(
-    ##         """Hi! We are beginning the loop."""
-    ##         )
-    ##    q = decparser(stdin=file('/home/ponyisi/DECAY.DEC', 'r'), stdout=sys.stdout)
-    ##    q.use_rawinput = False
-    ##    q.cmdloop()
-    ##    print q.decaylist
+    #     decparser().cmdloop(
+    #         """Hi! We are beginning the loop."""
+    #         )
+    #    q = decparser(stdin=file('/home/ponyisi/DECAY.DEC', 'r'), stdout=sys.stdout)
+    #    q.use_rawinput = False
+    #    q.cmdloop()
+    #    print q.decaylist
     interactive().cmdloop(
         "Hi! Welcome to the DECAY.DEC parser program.\n"
         "Blame ponyisi@lepp if any problems arise."

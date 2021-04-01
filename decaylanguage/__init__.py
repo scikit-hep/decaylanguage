@@ -16,3 +16,12 @@ from .decay import DecayChainViewer
 
 # Direct access to decay chain representation classes
 from .decay import DaughtersDict, DecayMode, DecayChain
+
+__all__ = (
+    "__version__",
+    "DecFileParser",
+    "DecayChainViewer",
+    "DaughtersDict",
+    "DecayMode",
+    "DecayChain",
+)

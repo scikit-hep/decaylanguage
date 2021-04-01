@@ -25,7 +25,7 @@ master_doc = "index"
 project = "decaylanguage"
 year = "2018"
 author = "Henry Fredrick Schreiner III"
-copyright = "{0}, {1}".format(year, author)
+copyright = "{}, {}".format(year, author)
 version = release = "0.2.0"
 
 pygments_style = "trac"
@@ -46,7 +46,7 @@ html_split_index = False
 html_sidebars = {
     "**": ["searchbox.html", "globaltoc.html", "sourcelink.html"],
 }
-html_short_title = "%s-%s" % (project, version)
+html_short_title = "{}-{}".format(project, version)
 
 napoleon_use_ivar = True
 napoleon_use_rtype = False

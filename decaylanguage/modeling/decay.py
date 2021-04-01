@@ -17,8 +17,6 @@ import attr
 import warnings
 from itertools import product
 
-from particle import Particle
-
 from ..utils import iter_flatten
 
 

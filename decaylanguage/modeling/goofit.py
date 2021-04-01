@@ -145,8 +145,8 @@ class GooFitChain(AmplitudeChain):
 
     def spindetails(self):
         if self.decay_structure == DecayStructure.FF_12_34:
-            a = "{0}1".format(sprint(self[0].particle.spin_type))
-            b = "{0}2".format(sprint(self[1].particle.spin_type))
+            a = "{}1".format(sprint(self[0].particle.spin_type))
+            b = "{}2".format(sprint(self[1].particle.spin_type))
             return (
                 "Dto{a}{b}_{a}toP1P2_{b}toP3P4"
                 + (
@@ -156,11 +156,11 @@ class GooFitChain(AmplitudeChain):
                 )
             ).format(self=self, a=a, b=b)
         else:
-            a = "{0}1".format(sprint(self[0].particle.spin_type))
+            a = "{}1".format(sprint(self[0].particle.spin_type))
             if self[0].daughters:
-                b = "{0}2".format(sprint(self[0][0].particle.spin_type))
+                b = "{}2".format(sprint(self[0][0].particle.spin_type))
             else:
-                raise LineFailure(self, "{0} has no daughters".format(self[0]))
+                raise LineFailure(self, "{} has no daughters".format(self[0]))
             wave = (
                 "{self[0].spinfactor}wave".format(self=self)
                 if self[0].spinfactor and self[0].spinfactor != "S"
@@ -232,9 +232,9 @@ class GooFitChain(AmplitudeChain):
                 GooFitChain.consts.index.str.contains("Spline")
             ]
             splines = set(
-                splines.str.rstrip("::Spline::N")
-                .str.rstrip("::Spline::Min")
-                .str.rstrip("::Spline::Max")
+                splines.str.replace("::Spline::N", "")
+                .str.replace("::Spline::Min", "")
+                .str.replace("::Spline::Max", "")
             )
 
             for spline in splines:
