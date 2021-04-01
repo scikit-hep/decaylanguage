@@ -732,7 +732,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         ----------
         mother: str
             Input mother particle name.
-        stable_particles: iterable, optional, default=[]
+        stable_particles: iterable, optional, default=()
             If provided, stops the decay-chain parsing,
             taking the "list" as particles to be considered stable.
 

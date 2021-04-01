@@ -603,7 +603,7 @@ class DecayChain(object):
 
         Parameters
         ----------
-        stable_particles: iterable, optional, default=[]
+        stable_particles: iterable, optional, default=()
             If provided, ignores the sub-decays of the listed particles,
             considering them as stable.
 
@@ -622,7 +622,7 @@ class DecayChain(object):
            'model': 'PHSP',
            'model_params': ''}]}
 
-        >>> dc.flatten(stable_particles=['K_S0', 'pi0']).decays
+        >>> dc.flatten(stable_particles=('K_S0', 'pi0')).decays
         {'D0': <DecayMode: daughters=K_S0 pi0, BF=0.0124>}
         """
 
