@@ -131,8 +131,8 @@ class DecFileParser(object):
             # Content of input file(s)
             self._dec_file = stream.read()
         else:
-            self._dec_file_names = None
-            self._dec_file = None
+            self._dec_file_names = []
+            self._dec_file = None  # type: ignore
 
         self._parsed_dec_file = None  # Parsed decay file
         self._parsed_decays = None  # Particle decays found in the decay file
@@ -154,7 +154,7 @@ class DecFileParser(object):
         stream.seek(0)
 
         _cls = cls()
-        _cls._dec_file_names = "<dec file input as a string>"
+        _cls._dec_file_names = ["<dec file input as a string>"]
         _cls._dec_file = stream.read()
 
         return _cls
@@ -422,7 +422,7 @@ class DecFileParser(object):
         # match name -> position in list self._parsed_decays
         name2treepos = {
             t.children[0].children[0].value: i
-            for i, t in enumerate(self._parsed_decays)
+            for i, t in enumerate(self._parsed_decays)  # type: ignore
         }
 
         # Make the copies taking care to change the name of the mother particle
@@ -430,7 +430,7 @@ class DecFileParser(object):
         misses = []
         for decay2copy, decay2becopied in decays2copy.items():
             try:
-                match = self._parsed_decays[name2treepos[decay2becopied]]
+                match = self._parsed_decays[name2treepos[decay2becopied]]  # type: ignore
                 copied_decay = match.__deepcopy__(None)
                 copied_decay.children[0].children[0].value = decay2copy
                 copied_decays.append(copied_decay)
@@ -445,7 +445,7 @@ Skipping creation of these copied decay trees.""".format(
             warnings.warn(msg)
 
         # Actually add all these copied decays to the list of decays!
-        self._parsed_decays.extend(copied_decays)
+        self._parsed_decays.extend(copied_decays)  # type: ignore
 
     def _add_charge_conjugate_decays(self):
         """
@@ -477,7 +477,7 @@ Skipping creation of these copied decay trees.""".format(
         # Cross-check - make sure charge conjugate decays are not defined
         # with both 'Decay' and 'CDecay' statements!
         mother_names_decays = [
-            get_decay_mother_name(tree) for tree in self._parsed_decays
+            get_decay_mother_name(tree) for tree in self._parsed_decays  # type: ignore
         ]
 
         duplicates = [n for n in mother_names_ccdecays if n in mother_names_decays]
@@ -508,7 +508,7 @@ The 'CDecay' definition(s) will be ignored ...""".format(
         # match name -> position in list self._parsed_decays
         name2treepos = {
             t.children[0].children[0].value: i
-            for i, t in enumerate(self._parsed_decays)
+            for i, t in enumerate(self._parsed_decays)  # type: ignore
         }
 
         trees_to_conjugate = []
@@ -516,7 +516,7 @@ The 'CDecay' definition(s) will be ignored ...""".format(
         for ccname in mother_names_ccdecays:
             name = find_charge_conjugate_match(ccname, dict_cc_names)
             try:
-                match = self._parsed_decays[name2treepos[name]]
+                match = self._parsed_decays[name2treepos[name]]  # type: ignore
                 trees_to_conjugate.append(match)
             except Exception:
                 misses.append(ccname)
@@ -554,7 +554,7 @@ Skipping creation of charge-conjugate decay Tree.""".format(
         ]
 
         # ... and add all these charge-conjugate decays to the list of decays!
-        self._parsed_decays.extend(cdecays)
+        self._parsed_decays.extend(cdecays)  # type: ignore
 
     def _check_parsing(self):
         """Has the .parse() method been called already?"""
@@ -570,7 +570,7 @@ Skipping creation of charge-conjugate decay Tree.""".format(
         """
         # Issue a helpful warning if duplicates are found
         lmn = self.list_decay_mother_names()
-        duplicates = []
+        duplicates = set()  # type: set
         if self.number_of_decays != len(set(lmn)):
             duplicates = {n for n in lmn if lmn.count(n) > 1}
             msg = """The following particle(s) is(are) redefined in the input .dec file with 'Decay': {}!
@@ -589,18 +589,18 @@ All but the first occurrence will be discarded/removed ...""".format(
                 duplicates_to_remove.extend([item] * (c - 1))
 
         # Actually remove all but the first occurrence of duplicate decays
-        for tree in reversed(self._parsed_decays):
+        for tree in reversed(self._parsed_decays):  # type: ignore
             val = tree.children[0].children[0].value
             if val in duplicates_to_remove:
                 duplicates_to_remove.remove(val)
-                self._parsed_decays.remove(tree)
+                self._parsed_decays.remove(tree)  # type: ignore
 
     @property
     def number_of_decays(self):
         """Return the number of particle decays defined in the parsed .dec file."""
         self._check_parsing()
 
-        return len(self._parsed_decays)
+        return len(self._parsed_decays)  # type: ignore
 
     def list_decay_mother_names(self):
         """
@@ -608,7 +608,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         """
         self._check_parsing()
 
-        return [get_decay_mother_name(d) for d in self._parsed_decays]
+        return [get_decay_mother_name(d) for d in self._parsed_decays]  # type: ignore
 
     def _find_decay_modes(self, mother):
         """
@@ -622,7 +622,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         """
         self._check_parsing()
 
-        for decay_Tree in self._parsed_decays:
+        for decay_Tree in self._parsed_decays:  # type: ignore
             if get_decay_mother_name(decay_Tree) == mother:
                 return tuple(decay_Tree.find_data("decayline"))
 
@@ -798,8 +798,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
             info.append(d)
 
-        info = {mother: info}
-        return info
+        return {mother: info}
 
     def __repr__(self):
         if self._parsed_dec_file is not None:
@@ -1312,9 +1311,10 @@ def get_jetset_definitions(parsed_file):
                 return n
 
     try:
-        dict_params = {}
+        dict_params = {}  # type: dict
         for tree in parsed_file.find_data("jetset_def"):
-            param = get_jetsetpar.match(tree.children[0].value).groupdict()
+            # This will throw an error if match is None
+            param = get_jetsetpar.match(tree.children[0].value).groupdict()  # type: ignore
             try:
                 dict_params[param["pname"]].update(
                     {int(param["pnumber"]): to_int_or_float(tree.children[1].value)}
@@ -1385,10 +1385,10 @@ def get_global_photos_flag(parsed_file):
     elif len(tree) > 1:
         warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
 
-    tree = tree[-1]
+    end_item = tree[-1]
 
     try:
-        val = tree.children[0].data
+        val = end_item.children[0].data
         return PhotosEnum.yes if val == "yes" else PhotosEnum.no
     except Exception:
         RuntimeError("Input parsed file does not seem to have the expected structure.")

@@ -35,7 +35,7 @@ class ModelDecay(object):
     """
 
     particle = attr.ib()
-    daughters = attr.ib([], converter=lambda x: x if x else [])
+    daughters = attr.ib([], converter=lambda x: x if x else [])  # type: ignore
     name = attr.ib(None)
 
     def __attrs_post_init__(self):

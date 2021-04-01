@@ -6,19 +6,22 @@
 
 from __future__ import absolute_import
 
-try:
-    from functools import lru_cache
-
-    cacher = lru_cache(maxsize=64)
-except ImportError:
-    from cachetools import cached, LFUCache
-
-    cacher = cached(cache=LFUCache(maxsize=64))
+import sys
 
 from particle import Particle
 from particle.converters import EvtGenName2PDGIDBiMap
 from particle.converters import PDG2EvtGenNameMap, EvtGen2PDGNameMap
 from particle.exceptions import MatchingIDNotFound
+
+
+if sys.version_info < (3,):
+    from cachetools import cached, LFUCache
+
+    cacher = cached(cache=LFUCache(maxsize=64))
+else:
+    from functools import lru_cache
+
+    cacher = lru_cache(maxsize=64)
 
 
 @cacher

@@ -10,7 +10,5 @@ from __future__ import print_function
 
 
 class LineFailure(RuntimeError):
-    def __init__(self, line, message, *args, **kwargs):
-        super(LineFailure, self).__init__(
-            "{}: {}".format(line, message), *args, **kwargs
-        )
+    def __init__(self, line, message):
+        super(LineFailure, self).__init__("{}: {}".format(line, message))

@@ -12,15 +12,12 @@ see the `DecFileParser` class.
 
 import itertools
 
-try:
-    counter = itertools.count().__next__
-except AttributeError:
-    counter = itertools.count().next
-
 import graphviz
 
 from particle import latex_to_html_name
 from particle.converters.bimap import DirectionalMaps
+
+counter = iter(itertools.count())
 
 
 _EvtGen2LatexNameMap, _Latex2EvtGenNameMap = DirectionalMaps("EvtGenName", "LaTexName")
@@ -122,7 +119,7 @@ class DecayChainViewer(object):
 
         def new_node_no_subchain(list_parts):
             label = html_table_label(list_parts, bgcolor="#eef3f8")
-            r = "dec%s" % counter()
+            r = "dec{}".format(next(counter))
             self.graph.node(r, label=label, style="filled", fillcolor="#eef3f8")
             return r
 
@@ -131,7 +128,7 @@ class DecayChainViewer(object):
                 list(p.keys())[0] if isinstance(p, dict) else p for p in list_parts
             ]
             label = html_table_label(list_parts, add_tags=True)
-            r = "dec%s" % counter()
+            r = "dec{}".format(next(counter))
             self.graph.node(r, shape="none", label=label)
             return r
 
