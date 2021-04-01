@@ -131,7 +131,7 @@ class DecFileParser(object):
             # Content of input file(s)
             self._dec_file = stream.read()
         else:
-            self._dec_file_names = None  # type: ignore
+            self._dec_file_names = []  # type: list
             self._dec_file = None  # type: ignore
 
         self._parsed_dec_file = None  # Parsed decay file
