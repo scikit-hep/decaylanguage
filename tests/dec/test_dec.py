@@ -97,7 +97,7 @@ def test_default_grammar_loading():
 
 def test_explicit_grammar_loading():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
-    p.load_grammar(DIR / "../../decaylanguage/data/decfile.lark")
+    p.load_grammar(DIR / "../../src/decaylanguage/data/decfile.lark")
 
     assert p.grammar_loaded is True
 
@@ -563,14 +563,14 @@ def test_creation_charge_conjugate_decays_in_decfile_without_CDecay_defs():
 
 
 def test_master_DECAYdotDEC_file():
-    p = DecFileParser(DIR / "../../decaylanguage/data/DECAY_LHCB.DEC")
+    p = DecFileParser(DIR / "../../src/decaylanguage/data/DECAY_LHCB.DEC")
     p.parse()
 
     assert p.number_of_decays == 506
 
 
 def test_BELLE2_decfile():
-    p = DecFileParser(DIR / "../../decaylanguage/data/DECAY_BELLE2.DEC")
+    p = DecFileParser(DIR / "../../src/decaylanguage/data/DECAY_BELLE2.DEC")
     p.parse()
 
     # Just check the dec file will parse since I do not know
@@ -585,7 +585,7 @@ def test_lark_file_model_list_consistency():
     to the user via
     'from decaylanguage.dec.enums import known_decay_models'.
     """
-    filename = str(DIR / "../../decaylanguage/data/decfile.lark")
+    filename = str(DIR / "../../src/decaylanguage/data/decfile.lark")
     with open(filename) as lark_file:
         lines = lark_file.readlines()
         for line in lines:

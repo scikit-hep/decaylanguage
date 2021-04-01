@@ -67,7 +67,7 @@ def test_duplicate_arrows(decfilepath, signal_mother):
     gets more than one arrow to it, which would show a bug
     in the creation of the DOT file recursively parsing the built decay chain.
     """
-    p = DecFileParser(decfilepath, DIR / "../../decaylanguage/data/DECAY_LHCB.DEC")
+    p = DecFileParser(decfilepath, DIR / "../../src/decaylanguage/data/DECAY_LHCB.DEC")
 
     p.parse()
 
@@ -107,7 +107,7 @@ def test_init_non_defaults_attributes():
 
 
 def test_graphs_with_EvtGen_specific_names():
-    p = DecFileParser(DIR / "../../decaylanguage/data/DECAY_LHCB.DEC")
+    p = DecFileParser(DIR / "../../src/decaylanguage/data/DECAY_LHCB.DEC")
     p.parse()
 
     # Not setting many of the particles as stable would result in a gargantuesque chain,
