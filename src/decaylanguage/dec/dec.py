@@ -798,8 +798,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
             info.append(d)
 
-        retval = {mother: info}
-        return retval
+        return {mother: info}
 
     def __repr__(self):
         if self._parsed_dec_file is not None:
