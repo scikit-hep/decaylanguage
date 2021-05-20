@@ -1,10 +1,10 @@
 name: Wheel and SDist
 
 on:
-  pull_request:
+  workflow_dispatch:
   push:
     branches:
-    - master
+      - master
   release:
     types:
     - published
@@ -14,27 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
 
-    - name: Install wheel and SDist requirements
-      run: python -m pip install "setuptools>=42.0" "setuptools_scm[toml]>=4.1" "wheel"
+    - name: Build wheel and SDist
+      run: pipx run build
 
-    - name: Build SDist
-      run: python setup.py sdist
+    - name: Check metadata
+      run: pipx run twine check dist/*
 
     - uses: actions/upload-artifact@v2
       with:
         path: dist/*
 
-    - name: Build wheel
-      run: >
-        python -m pip wheel . -w wheels
-
-    - uses: actions/upload-artifact@v2
-      with:
-        path: wheels/DecayLanguage*.whl
 
   publish:
     needs: [dist]
@@ -47,7 +37,6 @@ jobs:
         name: artifact
         path: dist
 
-    - uses: pypa/gh-action-pypi-publish@master
+    - uses: pypa/gh-action-pypi-publish@v1.4.2
       with:
-        user: __token__
         password: ${{ secrets.pypi_password }}
