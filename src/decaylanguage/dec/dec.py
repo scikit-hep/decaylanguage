@@ -523,7 +523,7 @@ The 'CDecay' definition(s) will be ignored ...""".format(
         if len(misses) > 0:
             msg = """\nCorresponding 'Decay' statement for 'CDecay' statement(s) of following particle(s) not found:\n{}.
 Skipping creation of these charge-conjugate decay trees.""".format(
-                "\n".join([m for m in misses])
+                "\n".join(m for m in misses)
             )
             warnings.warn(msg)
 
@@ -1134,10 +1134,8 @@ def get_charge_conjugate_decays(parsed_file):
 
     try:
         return sorted(
-            [
-                tree.children[0].children[0].value
-                for tree in parsed_file.find_data("cdecay")
-            ]
+            tree.children[0].children[0].value
+            for tree in parsed_file.find_data("cdecay")
         )
     except Exception:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
