@@ -9,8 +9,8 @@ dependencies:
   - numpy>=1.12
   - graphviz
   - pip:
-    - hepunits>=2.0.0
-    - particle==0.14.*
+    - hepunits>=2.1.0
+    - particle==0.15.*
     - lark-parser>=0.8.0,<0.8.6
     - plumbum>=1.6.9
     - RISE
