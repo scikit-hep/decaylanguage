@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 0.11 (UNDER DEVELOPMENT)
+## Version 0.11.0 (2021-05-28)
 
 * Universal representation of decay chains:
   - More documentation and testing.
@@ -12,6 +12,8 @@
   - Replaced with dependency on ``graphviz``, made a requirement.
 * Tests:
   - Check for some expected warnings, to get rid of obvious warnings.
+* Miscellaneous:
+  - Follow Scikit-HEP org guidelines for code development and packaging.
 
 ## Version 0.10.3 (2021-03-23)
 
