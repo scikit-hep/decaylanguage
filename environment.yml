@@ -8,9 +8,10 @@ dependencies:
   - six>=1.11
   - numpy>=1.12
   - graphviz
+  - plumbum>=1.6.9
+  - lark-parser>=0.8.0,<0.8.6
+  - RISE
+  - hepunits>=2.1.0
+  - particle==0.15.*
   - pip:
-    - hepunits>=2.1.0
-    - particle==0.15.*
-    - lark-parser>=0.8.0,<0.8.6
-    - plumbum>=1.6.9
-    - RISE
+    - .
