@@ -8,7 +8,8 @@ from particle import Particle, ParticleNotFound
 
 from decaylanguage import data
 from decaylanguage.dec import dec
-from lark import Lark, Transformer
+from decaylanguage.dec.enums import PhotosEnum
+from lark import Lark, Transformer, Tree
 
 import pytest
 
