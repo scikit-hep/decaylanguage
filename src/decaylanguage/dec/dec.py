@@ -48,7 +48,7 @@ import operator
 from six import StringIO
 
 from lark import Lark
-from lark import Tree, Transformer, Visitor
+from lark import Tree, Visitor
 
 from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
