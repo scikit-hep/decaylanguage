@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.11.1 (2021-06-07)
+
+* Notebook clean-ups and improvement to ``environment.yml``.
+
 ## Version 0.11.0 (2021-05-28)
 
 * Universal representation of decay chains:
