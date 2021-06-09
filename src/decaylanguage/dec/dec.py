@@ -667,8 +667,8 @@ All but the first occurrence will be discarded/removed ...""".format(
         model = get_model_name(decay_mode)
         model_params = get_model_parameters(decay_mode)
 
-        if keep_photos and list(decay_mode.find_data('photos')):
-            model = 'PHOTOS ' + model
+        if keep_photos and list(decay_mode.find_data("photos")):
+            model = "PHOTOS " + model
 
         return (bf, fsp_names, model, model_params)
 
@@ -751,7 +751,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
             if align_mode == "left":
                 row = [s.ljust(max_len) for s in cat]
-            elif align_mode == 'right':
+            elif align_mode == "right":
                 row = [s.rjust(max_len) for s in cat]
             else:
                 raise ValueError("Unknown align mode: {}".format(align_mode))
