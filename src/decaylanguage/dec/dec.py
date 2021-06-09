@@ -46,7 +46,11 @@ import sys
 import operator
 
 from six import StringIO
-from itertools import zip_longest
+
+try:
+    from itertools import zip_longest
+except ImportError:
+    from itertools import izip_longest as zip_longest
 
 from lark import Lark
 from lark import Tree, Visitor
