@@ -46,6 +46,7 @@ import sys
 import operator
 
 from six import StringIO
+from itertools import zip_longest
 
 from lark import Lark
 from lark import Tree, Visitor
@@ -655,7 +656,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             for mode in self._find_decay_modes(mother)
         ]
 
-    def _decay_mode_details(self, decay_mode):
+    def _decay_mode_details(self, decay_mode, keep_photos=False):
         """
         Parse a decay mode (Tree instance)
         and return the relevant bits of information in it.
@@ -666,10 +667,15 @@ All but the first occurrence will be discarded/removed ...""".format(
         model = get_model_name(decay_mode)
         model_params = get_model_parameters(decay_mode)
 
+        if keep_photos:
+            if list(decay_mode.find_data('photos')):
+                model = 'PHOTOS ' + model
+
         return (bf, fsp_names, model, model_params)
 
     def print_decay_modes(
-        self, mother, pdg_name=False, print_model=True, ascending=False
+        self, mother, pdg_name=False, print_model=True, ascending=False,
+        normalize=True, **kwargs
     ):
         """
         Pretty print of the decay modes of a given particle.
@@ -687,38 +693,66 @@ All but the first occurrence will be discarded/removed ...""".format(
         ascending: bool, optional, default=False
             Print the list of decay modes ordered in ascending/descending order
             of branching fraction.
+        normalize: bool, optional, default=True
+            Print branching fraction normalized.
         """
         if pdg_name:
             mother = PDG2EvtGenNameMap[mother]
 
         dms = self._find_decay_modes(mother)
 
-        ls = []
+        ls_dict = dict()
         for dm in dms:
-            if print_model:
-                dm_details = self._decay_mode_details(dm)
-                ls.append(
-                    (
-                        dm_details[0],
-                        (
-                            "%-50s %15s %s"
-                            % (
-                                "  ".join(dm_details[1]),
-                                dm_details[2],
-                                dm_details[3],
-                            )
-                        ),
-                    )
-                )
+            bf, fsp_names, model, model_params = self._decay_mode_details(
+                dm, **kwargs)
+            model_params = [str(i) for i in model_params]
+            ls_dict[bf] = (fsp_names, model, model_params)
 
-            else:
-                fsp_names = get_final_state_particle_names(dm)
-                ls.append((get_branching_fraction(dm), "%-50s" % "  ".join(fsp_names)))
+        dec_details = list(ls_dict.values())
+        ls_attrs_aligned = list(zip_longest(
+            *[self._align_items(i) for i in zip(*dec_details)], fillvalue=''))
 
+        ls = [(bf, ls_attrs_aligned[idx]) for idx, bf in enumerate(ls_dict)]
         ls.sort(key=operator.itemgetter(0), reverse=(not ascending))
+        norm = sum([bf for bf, _ in ls]) if normalize else 1
 
         for bf, info in ls:
-            print("{:12g} : {}".format(bf, info))
+            if print_model:
+                line = '  %.4f   %s     %s  %s' % (bf/norm, *info)
+            else:
+                line = '  %.4f   %s' % (bf/norm, info[0])
+            print(line.rstrip()+';')
+
+    @staticmethod
+    def _align_items(to_align, align_mode='left', sep=' '):
+        """
+        Left or right align all strings in a list to the same length.
+        By default string is space-broke into sub-strings and each set of sub-
+        string aligned individually.
+        """
+        if not isinstance(to_align[0], list):
+            max_len = max(len(s) for s in to_align)
+            if align_mode == 'left':
+                return [s.ljust(max_len) for s in to_align]
+            elif align_mode == 'right':
+                return [s.rjust(max_len) for s in to_align]
+            else:
+                raise ValueError('Unknown align mode: {}'.format(align_mode))
+
+        aligned = []
+        for cat in zip_longest(*to_align, fillvalue=''):
+            max_len = max(len(s) for s in cat)
+
+            if align_mode == 'left':
+                row = [s.ljust(max_len) for s in cat]
+            elif align_mode == 'right':
+                row = [s.ljust(max_len) for s in cat]
+            else:
+                raise ValueError('Unknown align mode: {}'.format(align_mode))
+
+            aligned.append(row)
+
+        return [sep.join(row) for row in zip(*aligned)]
 
     def build_decay_chains(self, mother, stable_particles=()):
         """
