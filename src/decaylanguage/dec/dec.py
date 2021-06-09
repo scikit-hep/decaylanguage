@@ -668,14 +668,19 @@ All but the first occurrence will be discarded/removed ...""".format(
         model_params = get_model_parameters(decay_mode)
 
         if keep_photos:
-            if list(decay_mode.find_data('photos')):
-                model = 'PHOTOS ' + model
+            if list(decay_mode.find_data("photos")):
+                model = "PHOTOS " + model
 
         return (bf, fsp_names, model, model_params)
 
     def print_decay_modes(
-        self, mother, pdg_name=False, print_model=True, ascending=False,
-        normalize=True, **kwargs
+        self,
+        mother,
+        pdg_name=False,
+        print_model=True,
+        ascending=False,
+        normalize=True,
+        **kwargs
     ):
         """
         Pretty print of the decay modes of a given particle.
@@ -703,28 +708,30 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         ls_dict = dict()
         for dm in dms:
-            bf, fsp_names, model, model_params = self._decay_mode_details(
-                dm, **kwargs)
+            bf, fsp_names, model, model_params = self._decay_mode_details(dm, **kwargs)
             model_params = [str(i) for i in model_params]
             ls_dict[bf] = (fsp_names, model, model_params)
 
         dec_details = list(ls_dict.values())
-        ls_attrs_aligned = list(zip_longest(
-            *[self._align_items(i) for i in zip(*dec_details)], fillvalue=''))
+        ls_attrs_aligned = list(
+            zip_longest(
+                *[self._align_items(i) for i in zip(*dec_details)], fillvalue=""
+            )
+        )
 
         ls = [(bf, ls_attrs_aligned[idx]) for idx, bf in enumerate(ls_dict)]
         ls.sort(key=operator.itemgetter(0), reverse=(not ascending))
-        norm = sum([bf for bf, _ in ls]) if normalize else 1
+        norm = sum(bf for bf, _ in ls) if normalize else 1
 
         for bf, info in ls:
             if print_model:
-                line = '  %.4f   %s     %s  %s' % (bf/norm, *info)
+                line = "  {:.4f}   {}     {}  {}".format(bf / norm, *info)
             else:
-                line = '  %.4f   %s' % (bf/norm, info[0])
-            print(line.rstrip()+';')
+                line = "  {:.4f}   {}".format(bf / norm, info[0])
+            print(line.rstrip() + ";")
 
     @staticmethod
-    def _align_items(to_align, align_mode='left', sep=' '):
+    def _align_items(to_align, align_mode="left", sep=" "):
         """
         Left or right align all strings in a list to the same length.
         By default string is space-broke into sub-strings and each set of sub-
@@ -732,23 +739,23 @@ All but the first occurrence will be discarded/removed ...""".format(
         """
         if not isinstance(to_align[0], list):
             max_len = max(len(s) for s in to_align)
-            if align_mode == 'left':
+            if align_mode == "left":
                 return [s.ljust(max_len) for s in to_align]
-            elif align_mode == 'right':
+            elif align_mode == "right":
                 return [s.rjust(max_len) for s in to_align]
             else:
-                raise ValueError('Unknown align mode: {}'.format(align_mode))
+                raise ValueError("Unknown align mode: {}".format(align_mode))
 
         aligned = []
-        for cat in zip_longest(*to_align, fillvalue=''):
+        for cat in zip_longest(*to_align, fillvalue=""):
             max_len = max(len(s) for s in cat)
 
-            if align_mode == 'left':
+            if align_mode == "left":
                 row = [s.ljust(max_len) for s in cat]
-            elif align_mode == 'right':
+            elif align_mode == "right":
                 row = [s.ljust(max_len) for s in cat]
             else:
-                raise ValueError('Unknown align mode: {}'.format(align_mode))
+                raise ValueError("Unknown align mode: {}".format(align_mode))
 
             aligned.append(row)
 
