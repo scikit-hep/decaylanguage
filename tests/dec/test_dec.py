@@ -598,46 +598,38 @@ def test_lark_file_model_list_consistency():
 
 
 def test_align_items_simple():
-    to_algin = ['a', 'quick', 'brown', 'fox']
+    to_algin = ["a", "quick", "brown", "fox"]
     aligned = DecFileParser._align_items(to_algin)
 
-    assert aligned == ['a    ', 'quick', 'brown', 'fox  ']
+    assert aligned == ["a    ", "quick", "brown", "fox  "]
 
 
 def test_align_items_simple_right_align():
-    to_algin = ['a', 'quick', 'brown', 'fox']
-    aligned = DecFileParser._align_items(to_algin, align_mode='right')
+    to_algin = ["a", "quick", "brown", "fox"]
+    aligned = DecFileParser._align_items(to_algin, align_mode="right")
 
-    assert aligned == ['    a', 'quick', 'brown', '  fox']
+    assert aligned == ["    a", "quick", "brown", "  fox"]
 
 
 def test_align_items_complex():
     to_align = [
-        ('alpha', 'beta', 'gamma'),
-        ('a', 'b', 'c'),
-        ('01', '02', '03'),
+        ("alpha", "beta", "gamma"),
+        ("a", "b", "c"),
+        ("01", "02", "03"),
     ]
 
     aligned = DecFileParser._align_items(to_align)
 
-    assert aligned == [
-        'alpha beta gamma',
-        'a     b    c    ',
-        '01    02   03   '
-    ]
+    assert aligned == ["alpha beta gamma", "a     b    c    ", "01    02   03   "]
 
 
 def test_align_items_complex_right_align():
     to_align = [
-        ('alpha', 'beta', 'gamma'),
-        ('a', 'b', 'c'),
-        ('01', '02', '03'),
+        ("alpha", "beta", "gamma"),
+        ("a", "b", "c"),
+        ("01", "02", "03"),
     ]
 
-    aligned = DecFileParser._align_items(to_align, align_mode='right')
+    aligned = DecFileParser._align_items(to_align, align_mode="right")
 
-    assert aligned == [
-        'alpha beta gamma',
-        '    a    b     c',
-        '   01   02    03'
-    ]
+    assert aligned == ["alpha beta gamma", "    a    b     c", "   01   02    03"]
