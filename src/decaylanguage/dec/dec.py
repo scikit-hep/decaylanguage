@@ -748,7 +748,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         By default string is space-broke into sub-strings and each set of sub-
         string aligned individually.
         """
-        if not isinstance(to_align[0], list):
+        if not isinstance(to_align[0], (list, tuple)):
             max_len = max(len(s) for s in to_align)
             if align_mode == "left":
                 return [s.ljust(max_len) for s in to_align]
