@@ -660,10 +660,17 @@ All but the first occurrence will be discarded/removed ...""".format(
             for mode in self._find_decay_modes(mother)
         ]
 
-    def _decay_mode_details(self, decay_mode, keep_photos=False):
+    def _decay_mode_details(self, decay_mode, display_photos_keyword=False):
         """
         Parse a decay mode (Tree instance)
         and return the relevant bits of information in it.
+
+        Parameters
+        ----------
+        decay_mode: str
+            Input decay mode to list its details.
+        display_photos_keyword: boolean, optional, default=False
+            Don't omit the "PHOTOS" keyword in decay models.
         """
 
         bf = get_branching_fraction(decay_mode)
@@ -671,7 +678,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         model = get_model_name(decay_mode)
         model_params = get_model_parameters(decay_mode)
 
-        if keep_photos and list(decay_mode.find_data("photos")):
+        if display_photos_keyword and list(decay_mode.find_data("photos")):
             model = "PHOTOS " + model
 
         return (bf, fsp_names, model, model_params)
@@ -702,7 +709,8 @@ All but the first occurrence will be discarded/removed ...""".format(
             Print the list of decay modes ordered in ascending/descending order
             of branching fraction.
         normalize: bool, optional, default=True
-            Print branching fraction normalized.
+            Print the branching fractions normalized to unity
+            (this does not affect the values parsed and actually stored in memory).
         """
         if pdg_name:
             mother = PDG2EvtGenNameMap[mother]
