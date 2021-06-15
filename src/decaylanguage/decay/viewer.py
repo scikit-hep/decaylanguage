@@ -242,4 +242,4 @@ class DecayChainViewer(object):
         """
         IPython display in SVG format.
         """
-        return self.graph
+        return self._graph._repr_svg_()
