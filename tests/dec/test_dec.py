@@ -598,15 +598,15 @@ def test_lark_file_model_list_consistency():
 
 
 def test_align_items_simple():
-    to_algin = ["a", "quick", "brown", "fox"]
-    aligned = DecFileParser._align_items(to_algin)
+    to_align = ["a", "quick", "brown", "fox"]
+    aligned = DecFileParser._align_items(to_align)
 
     assert aligned == ["a    ", "quick", "brown", "fox  "]
 
 
 def test_align_items_simple_right_align():
-    to_algin = ["a", "quick", "brown", "fox"]
-    aligned = DecFileParser._align_items(to_algin, align_mode="right")
+    to_align = ["a", "quick", "brown", "fox"]
+    aligned = DecFileParser._align_items(to_align, align_mode="right")
 
     assert aligned == ["    a", "quick", "brown", "  fox"]
 
