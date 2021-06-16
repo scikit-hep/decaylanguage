@@ -660,7 +660,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             for mode in self._find_decay_modes(mother)
         ]
 
-    def _decay_mode_details(self, decay_mode, display_photos_keyword=False):
+    def _decay_mode_details(self, decay_mode, display_photos_keyword):
         """
         Parse a decay mode (Tree instance)
         and return the relevant bits of information in it.
@@ -669,8 +669,8 @@ All but the first occurrence will be discarded/removed ...""".format(
         ----------
         decay_mode: str
             Input decay mode to list its details.
-        display_photos_keyword: boolean, optional, default=False
-            Don't omit the "PHOTOS" keyword in decay models.
+        display_photos_keyword: boolean
+            Omit or not the "PHOTOS" keyword in decay models.
         """
 
         bf = get_branching_fraction(decay_mode)
@@ -688,9 +688,9 @@ All but the first occurrence will be discarded/removed ...""".format(
         mother,
         pdg_name=False,
         print_model=True,
+        display_photos_keyword=True,
         ascending=False,
-        normalize=True,
-        **kwargs
+        normalize=True
     ):
         """
         Pretty print of the decay modes of a given particle.
@@ -705,6 +705,8 @@ All but the first occurrence will be discarded/removed ...""".format(
         print_model: bool, optional, default=True
             Specify whether to print the decay model and model parameters,
             if available.
+        display_photos_keyword: bool, optional, default=True
+            Display the "PHOTOS" keyword in decay models.
         ascending: bool, optional, default=False
             Print the list of decay modes ordered in ascending/descending order
             of branching fraction.
@@ -719,7 +721,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         ls_dict = dict()
         for dm in dms:
-            bf, fsp_names, model, model_params = self._decay_mode_details(dm, **kwargs)
+            bf, fsp_names, model, model_params = self._decay_mode_details(dm, display_photos_keyword)
             model_params = [str(i) for i in model_params]
             ls_dict[bf] = (fsp_names, model, model_params)
 
@@ -745,8 +747,7 @@ All but the first occurrence will be discarded/removed ...""".format(
     def _align_items(to_align, align_mode="left", sep=" "):
         """
         Left or right align all strings in a list to the same length.
-        By default string is space-broke into sub-strings and each set of sub-
-        string aligned individually.
+        By default the string is space-broke into sub-strings and each sub-string aligned individually.
         """
         if not isinstance(to_align[0], (list, tuple)):
             max_len = max(len(s) for s in to_align)
