@@ -834,7 +834,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         info = []
         for dm in self._find_decay_modes(mother):
-            list_dm_details = self._decay_mode_details(dm)
+            list_dm_details = self._decay_mode_details(dm, display_photos_keyword=False)
             d = dict(zip(keys, list_dm_details))
 
             for i, fs in enumerate(d["fs"]):
