@@ -690,7 +690,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         print_model=True,
         display_photos_keyword=True,
         ascending=False,
-        normalize=True
+        normalize=True,
     ):
         """
         Pretty print of the decay modes of a given particle.
@@ -721,7 +721,9 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         ls_dict = dict()
         for dm in dms:
-            bf, fsp_names, model, model_params = self._decay_mode_details(dm, display_photos_keyword)
+            bf, fsp_names, model, model_params = self._decay_mode_details(
+                dm, display_photos_keyword
+            )
             model_params = [str(i) for i in model_params]
             ls_dict[bf] = (fsp_names, model, model_params)
 
