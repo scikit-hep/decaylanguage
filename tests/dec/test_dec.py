@@ -247,7 +247,7 @@ def test_decay_mode_details():
 
     tree_Dp = p._find_decay_modes("D+")[0]
     output = (1.0, ["K-", "pi+", "pi+", "pi0"], "PHSP", "")
-    assert p._decay_mode_details(tree_Dp) == output
+    assert p._decay_mode_details(tree_Dp, display_photos_keyword=False) == output
 
 
 def test_decay_model_parsing():
