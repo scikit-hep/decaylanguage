@@ -247,7 +247,7 @@ def test_decay_mode_details():
 
     tree_Dp = p._find_decay_modes("D+")[0]
     output = (1.0, ["K-", "pi+", "pi+", "pi0"], "PHSP", "")
-    assert p._decay_mode_details(tree_Dp) == output
+    assert p._decay_mode_details(tree_Dp, display_photos_keyword=False) == output
 
 
 def test_decay_model_parsing():
@@ -595,3 +595,41 @@ def test_lark_file_model_list_consistency():
         models = [m.strip('"') for m in models]
 
         assert models == list(known_decay_models)
+
+
+def test_align_items_simple():
+    to_align = ["a", "quick", "brown", "fox"]
+    aligned = DecFileParser._align_items(to_align)
+
+    assert aligned == ["a    ", "quick", "brown", "fox  "]
+
+
+def test_align_items_simple_right_align():
+    to_align = ["a", "quick", "brown", "fox"]
+    aligned = DecFileParser._align_items(to_align, align_mode="right")
+
+    assert aligned == ["    a", "quick", "brown", "  fox"]
+
+
+def test_align_items_complex():
+    to_align = [
+        ("alpha", "beta", "gamma"),
+        ("a", "b", "c"),
+        ("01", "02", "03"),
+    ]
+
+    aligned = DecFileParser._align_items(to_align)
+
+    assert aligned == ["alpha beta gamma", "a     b    c    ", "01    02   03   "]
+
+
+def test_align_items_complex_right_align():
+    to_align = [
+        ("alpha", "beta", "gamma"),
+        ("a", "b", "c"),
+        ("01", "02", "03"),
+    ]
+
+    aligned = DecFileParser._align_items(to_align, align_mode="right")
+
+    assert aligned == ["alpha beta gamma", "    a    b     c", "   01   02    03"]
