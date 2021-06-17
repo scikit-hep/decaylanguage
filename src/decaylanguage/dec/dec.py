@@ -756,7 +756,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         align_mode: {"left", "right"}, optional, default="left"
             Specify whether each sub-string set should be left or right aligned.
         sep: str, optional, default=" "
-            Specify the separate between sub-strings
+            Specify the separation between sub-strings.
         """
         if not isinstance(to_align[0], (list, tuple)):
             max_len = max(len(s) for s in to_align)
