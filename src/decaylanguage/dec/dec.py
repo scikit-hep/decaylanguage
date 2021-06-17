@@ -750,6 +750,13 @@ All but the first occurrence will be discarded/removed ...""".format(
         """
         Left or right align all strings in a list to the same length.
         By default the string is space-broke into sub-strings and each sub-string aligned individually.
+
+        Parameters
+        ----------
+        align_mode: {"left", "right"}, optional, default="left"
+            Specify whether each sub-string set should be left or right aligned.
+        sep: str, optional, default=" "
+            Specify the separate between sub-strings
         """
         if not isinstance(to_align[0], (list, tuple)):
             max_len = max(len(s) for s in to_align)
