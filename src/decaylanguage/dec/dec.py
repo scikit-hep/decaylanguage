@@ -719,7 +719,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         dms = self._find_decay_modes(mother)
 
-        ls_dict = dict()
+        ls_dict = {}
         for dm in dms:
             bf, fsp_names, model, model_params = self._decay_mode_details(
                 dm, display_photos_keyword
