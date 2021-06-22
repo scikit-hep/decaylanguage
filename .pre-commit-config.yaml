@@ -43,7 +43,7 @@ repos:
   hooks:
   - id: mypy
     files: src
-    additional_dependencies: [attrs==19.3.0]
+    additional_dependencies: [attrs==19.3.0, types-six]
 
 - repo: https://github.com/PyCQA/flake8
   rev: 3.9.2
