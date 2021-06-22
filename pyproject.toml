@@ -8,3 +8,27 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
 write_to = "src/decaylanguage/_version.py"
+
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.mypy]
+files = "src"
+python_version = "3.6"
+warn_unused_configs = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "lark",
+    "graphviz",
+    "pandas",
+    "plumbum",
+]
+ignore_missing_imports = true
+
+
+# PyTest config cannot be moved here until Python 2 support is dropped and
+# PyTest 6+ can be required.
