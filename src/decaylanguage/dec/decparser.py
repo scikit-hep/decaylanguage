@@ -89,7 +89,7 @@ class Decay(object):
             strs += [dau] * self.daughters[dau]
 
         def sortkey(x):
-            p = Particle.from_search_list(name=x)
+            p = Particle.findall(name=x)
             if len(p) == 1:
                 return p[0]
             else:
