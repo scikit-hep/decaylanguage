@@ -347,11 +347,7 @@ class interactive(cmd.Cmd):
                 self.termpart.append(p)
         declist = self.getDecList(part)
         self.termpart[:] = termpartcpy
-        sublist = []
-        for dec in declist:
-            #            print dec[1].daughters
-            if dec[1].daughters == finalhash:
-                sublist.append(dec)
+        sublist = [dec for dec in declist if dec[1].daughters == finalhash]
         sublist.sort(key=lambda x: x[1].bf, reverse=True)
         for entry in sublist:
             print(entry[1].bf, end=" ")
