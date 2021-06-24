@@ -153,7 +153,7 @@ class AmplitudeChain(ModelDecay):
     def ls_enum(self):
         if not self.lineshape:
             return LS.RBW
-        elif "GSpline.EFF" == self.lineshape:
+        elif self.lineshape == "GSpline.EFF":
             return LS.GSpline
         elif self.lineshape.startswith("kMatrix"):
             return LS.kMatrix
