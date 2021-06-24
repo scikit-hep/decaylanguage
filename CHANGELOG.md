@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.11.2 (2021-06-24)
+
+* Universal representation of decay chains:
+  - ``DecFileParser.print_decay_modes()`` enhanced.
+  - Fix to visualisation of ``DecayChainViewer`` instances in notebooks.
+* Miscellaneous:
+  - CI improvements and updates.
+
 ## Version 0.11.1 (2021-06-07)
 
 * Notebook clean-ups and improvement to ``environment.yml``.
