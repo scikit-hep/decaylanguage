@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 0.11.3 (2021-07-28)
+
+* Parsing of decay files (aka .dec files):
+  - Fix to parsing of a couple of decay models (subtletly of Lark parsing priorities).
+* Miscellaneous:
+  - CI updates.
+
 ## Version 0.11.2 (2021-06-24)
 
 * Universal representation of decay chains:
