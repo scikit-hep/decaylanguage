@@ -20,8 +20,6 @@ include LICENSE
 include README.md
 include Pipfile
 
-include tox.ini .travis.yml .appveyor.yml
-
 recursive-include decaylanguage *.py
 recursive-include decaylanguage *.csv
 recursive-include decaylanguage *.txt
