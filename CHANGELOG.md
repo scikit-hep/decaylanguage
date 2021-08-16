@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.11.4 (in preparation)
+
+* Miscellaneous:
+  - Removed Azure pipelines since superseded by GitHub Actions.
+
 ## Version 0.11.3 (2021-07-28)
 
 * Parsing of decay files (aka .dec files):
