@@ -8,17 +8,11 @@ graft models
 prune docs/html
 prune notebooks/.ipynb_checkpoints
 
-include .bumpversion.cfg
-include .coveragerc
-include .cookiecutterrc
-include .editorconfig
+include AUTHORS.rst CHANGELOG.md CONTRIBUTING.rst
+include LICENSE README.md
+include pyproject.toml setup.py setup.cfg
 
-include AUTHORS.rst
-include CHANGELOG.md
-include CONTRIBUTING.rst
-include LICENSE
-include README.md
-include Pipfile
+exclude .pre-commit-config.yaml environment.yml codecov.yml
 
 recursive-include decaylanguage *.py
 recursive-include decaylanguage *.csv
