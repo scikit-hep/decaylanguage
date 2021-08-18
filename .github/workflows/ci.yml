@@ -20,7 +20,7 @@ jobs:
             python-version: '3.7'
           - os: windows-latest
             python-version: ['3.7', '3.8']
-    name: Check Python ${{ matrix.python-version }}
+    name: Check ${{ matrix.os }} Python ${{ matrix.python-version }}
 
     steps:
     - uses: actions/checkout@v2
@@ -37,5 +37,5 @@ jobs:
       run: python -m pytest ./tests --doctest-modules --cov=src/decaylanguage --cov-report=xml
 
     - name: Test coverage with Codecov
-      if: "matrix.os != 'Windows' || matrix.python-version != 3.6 || matrix.python-version != 3.7"
+      if: "runner.os != 'Windows' && matrix.python-version != 3.6 && matrix.python-version != 3.7"
       uses: codecov/codecov-action@v2
