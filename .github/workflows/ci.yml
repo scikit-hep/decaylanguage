@@ -18,8 +18,12 @@ jobs:
         exclude:
           - os: macos-latest
             python-version: '3.7'
+          - os: macos-latest
+            python-version: '3.8'
           - os: windows-latest
-            python-version: ['3.7', '3.8']
+            python-version: '3.7'
+          - os: windows-latest
+            python-version: '3.8'
     name: Check ${{ matrix.os }} Python ${{ matrix.python-version }}
 
     steps:
