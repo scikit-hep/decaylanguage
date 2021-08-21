@@ -8,20 +8,24 @@ on:
 
 jobs:
  checks:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
     strategy:
       fail-fast: false
       matrix:
-        python-version:
-        - 2.7
-        - 3.5
-        - 3.6
-        - 3.8
-        - 3.9
-    name: Check Python ${{ matrix.python-version }}
+        os: [ubuntu-latest]
+        python-version: ['2.7', '3.5', '3.6', '3.7', '3.8', '3.9']
+        include:
+          - {os: macos-latest, python-version: '2.7'}
+          - {os: macos-latest, python-version: '3.9'}
+          - {os: windows-latest, python-version: '3.7'}
+          - {os: windows-latest, python-version: '3.9'}
+        exclude:
+          - {os: ubuntu-latest, python-version: '3.7'}
+    name: Check ${{ matrix.os }} Python ${{ matrix.python-version }}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
     - name: Setup Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
@@ -35,4 +39,5 @@ jobs:
       run: python -m pytest ./tests --doctest-modules --cov=src/decaylanguage --cov-report=xml
 
     - name: Test coverage with Codecov
+      if: "runner.os != 'Windows' && matrix.python-version != 3.6 && matrix.python-version != 3.7"
       uses: codecov/codecov-action@v2
