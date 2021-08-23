@@ -607,6 +607,11 @@ class DecayChain(object):
             If provided, ignores the sub-decays of the listed particles,
             considering them as stable.
 
+        Note
+        ----
+        After flattening the only `DecayMode` metadata kept is that of the top-level decay,
+        i.e. that of the mother particle (nothing else would make sense).
+
         Examples
         --------
         >>> dm1 = DecayMode(0.0124, 'K_S0 pi0', model='PHSP')
