@@ -4,25 +4,28 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
-import pytest
 import sys
+
+import pytest
 
 try:
     from pathlib2 import Path
 except ImportError:
     from pathlib import Path
 
-from lark import Tree, Token
+from lark import Token, Tree
 
-from decaylanguage.dec.dec import DecFileParser
-from decaylanguage.dec.dec import DecFileNotParsed, DecayNotFound
-from decaylanguage.dec.dec import DecayModelParamValueReplacement
-from decaylanguage.dec.dec import ChargeConjugateReplacement
-from decaylanguage.dec.dec import get_decay_mother_name
-from decaylanguage.dec.dec import get_final_state_particle_names
-from decaylanguage.dec.dec import get_model_name
-from decaylanguage.dec.dec import get_model_parameters
-
+from decaylanguage.dec.dec import (
+    ChargeConjugateReplacement,
+    DecayModelParamValueReplacement,
+    DecayNotFound,
+    DecFileNotParsed,
+    DecFileParser,
+    get_decay_mother_name,
+    get_final_state_particle_names,
+    get_model_name,
+    get_model_parameters,
+)
 from decaylanguage.dec.enums import known_decay_models
 
 if sys.version_info < (3,):
