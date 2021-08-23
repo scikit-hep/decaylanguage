@@ -1,8 +1,10 @@
 # Changelog
 
-## Version 0.11.4 (in preparation)
+## Version 0.11.4 (2021-08-23)
 
-* Miscellaneous:
+* CI and tests:
+  - Run the CI on Linux, MacOS and Windows (#179) 
+  - Re-added coverage tests replacing Coveralls with Codecov.
   - Removed Azure pipelines since superseded by GitHub Actions.
 
 ## Version 0.11.3 (2021-07-28)
