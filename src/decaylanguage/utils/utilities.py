@@ -13,8 +13,7 @@ def iter_flatten(iterable):
     """
     for e in iterable:
         if isinstance(e, (list, tuple)):
-            for f in iter_flatten(e):
-                yield f
+            yield from iter_flatten(e)
         else:
             yield e
 
