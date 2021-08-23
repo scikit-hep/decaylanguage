@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, division, absolute_import
+from __future__ import absolute_import, division, print_function
 
 import cmd
 import os
 
 from particle import Particle
-
 
 DIR = os.path.dirname(__file__)
 

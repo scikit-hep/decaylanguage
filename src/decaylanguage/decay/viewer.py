@@ -13,7 +13,6 @@ see the `DecFileParser` class.
 import itertools
 
 import graphviz
-
 from particle import latex_to_html_name
 from particle.converters.bimap import DirectionalMaps
 

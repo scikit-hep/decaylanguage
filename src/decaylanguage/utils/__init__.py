@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from .particleutils import charge_conjugate_name
 from .errors import LineFailure
-from .utilities import filter_lines
-from .utilities import iter_flatten
-from .utilities import split
+from .particleutils import charge_conjugate_name
+from .utilities import filter_lines, iter_flatten, split
 
 __all__ = (
     "LineFailure",

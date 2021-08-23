@@ -8,20 +8,16 @@
 This is a GooFit adaptor for amplitude chain.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 from enum import Enum
 
 import pandas as pd
-
 from particle import SpinType
 from particle.particle.utilities import programmatic_name
 
 from ..utils import LineFailure
-from .amplitudechain import LS
-from .amplitudechain import AmplitudeChain
+from .amplitudechain import LS, AmplitudeChain
 
 
 class SF_4Body(Enum):
