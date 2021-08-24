@@ -39,11 +39,11 @@ Basic assumptions
 
 from __future__ import absolute_import, division, print_function
 
+import operator
 import os
-import warnings
 import re
 import sys
-import operator
+import warnings
 
 from six import StringIO
 
@@ -52,17 +52,13 @@ if sys.version_info < (3,):
 else:
     from itertools import zip_longest
 
-from lark import Lark
-from lark import Tree, Visitor
-
+from lark import Lark, Tree, Visitor
 from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
 
-from .enums import PhotosEnum
-
-from ..utils import charge_conjugate_name
-
 from .. import data
+from ..utils import charge_conjugate_name
+from .enums import PhotosEnum
 
 # New in Python 3
 if sys.version_info < (3,):

@@ -10,20 +10,16 @@ This is a function that takes a filename and either prints out or returns
 a string output with the converted set of decay chains and variables.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import datetime
 from functools import partial
 
+from particle import SpinType
 from plumbum import colors
 from six import StringIO
 
-from particle import SpinType
-
-from decaylanguage.modeling.goofit import GooFitChain
-from decaylanguage.modeling.goofit import SF_4Body
+from decaylanguage.modeling.goofit import GooFitChain, SF_4Body
 
 
 def ampgen2goofit(filename, ret_output=False):

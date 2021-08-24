@@ -8,10 +8,10 @@
 A class representing a set of decays. Can be subclassed to provide custom converters.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
+import os
+import re
 import sys
 from copy import copy
 from enum import Enum
@@ -20,20 +20,13 @@ from itertools import product
 import attr
 import numpy as np
 import pandas as pd
-import re
-
 from lark import Lark
-
 from particle import Particle
 
-import os
-
-from .decay import ModelDecay
-
-from ..data import open_text
 from .. import data
-
+from ..data import open_text
 from .ampgentransform import AmpGenTransformer, get_from_parser
+from .decay import ModelDecay
 
 
 class LS(Enum):

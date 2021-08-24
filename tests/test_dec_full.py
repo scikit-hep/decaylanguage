@@ -4,14 +4,13 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
+import pytest
+from lark import Lark, Transformer, Tree
 from particle import Particle, ParticleNotFound
 
 from decaylanguage import data
 from decaylanguage.dec import dec
 from decaylanguage.dec.enums import PhotosEnum
-from lark import Lark, Transformer, Tree
-
-import pytest
 
 
 class TreeToDec(Transformer):

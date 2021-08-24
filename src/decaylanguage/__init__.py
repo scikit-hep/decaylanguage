@@ -11,11 +11,8 @@ from ._version import version as __version__
 # Direct access to decay file parsing tools
 from .dec import DecFileParser
 
-# Direct access to decay chain visualization tools
-from .decay import DecayChainViewer
-
-# Direct access to decay chain representation classes
-from .decay import DaughtersDict, DecayMode, DecayChain
+# Direct access to decay chain representation classes and visualization tools
+from .decay import DaughtersDict, DecayChain, DecayChainViewer, DecayMode
 
 __all__ = (
     "__version__",

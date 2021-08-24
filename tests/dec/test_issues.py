@@ -14,7 +14,6 @@ except ImportError:
 
 from decaylanguage.dec.dec import DecFileParser
 
-
 DIR = Path(__file__).parent.resolve()
 
 

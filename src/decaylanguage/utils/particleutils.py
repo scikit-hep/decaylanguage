@@ -9,13 +9,15 @@ from __future__ import absolute_import
 import sys
 
 from particle import Particle
-from particle.converters import EvtGenName2PDGIDBiMap
-from particle.converters import PDG2EvtGenNameMap, EvtGen2PDGNameMap
+from particle.converters import (
+    EvtGen2PDGNameMap,
+    EvtGenName2PDGIDBiMap,
+    PDG2EvtGenNameMap,
+)
 from particle.exceptions import MatchingIDNotFound
 
-
 if sys.version_info < (3,):
-    from cachetools import cached, LFUCache
+    from cachetools import LFUCache, cached
 
     cacher = cached(cache=LFUCache(maxsize=64))
 else:

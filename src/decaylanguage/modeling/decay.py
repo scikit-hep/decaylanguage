@@ -9,16 +9,14 @@ A general base class representing decays.
 """
 
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
-import attr
 import warnings
 from itertools import product
 
-from ..utils import iter_flatten
+import attr
 
+from ..utils import iter_flatten
 
 try:
     import graphviz
