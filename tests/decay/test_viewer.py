@@ -17,7 +17,6 @@ import pytest
 from decaylanguage.dec.dec import DecFileParser
 from decaylanguage.decay.viewer import DecayChainViewer
 
-
 DIR = Path(__file__).parent.resolve()
 
 
