@@ -13,7 +13,6 @@ except ImportError:
 
 import pytest
 
-
 DIR = Path(__file__).parent.resolve()
 
 

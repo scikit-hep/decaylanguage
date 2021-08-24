@@ -8,9 +8,7 @@
 import pytest
 from pytest import approx
 
-from decaylanguage.decay.decay import DaughtersDict
-from decaylanguage.decay.decay import DecayMode
-from decaylanguage.decay.decay import DecayChain
+from decaylanguage.decay.decay import DaughtersDict, DecayChain, DecayMode
 
 
 def test_DaughtersDict_constructor_from_dict():
