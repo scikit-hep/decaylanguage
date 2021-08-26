@@ -52,13 +52,15 @@ class DecayChainViewer(object):
         Parameters
         ----------
         decaychain: dict
-            Input .dec decay file name.
+            Input decay chain in dict format, typically created from `decaylanguage.DecFileParser.build_decay_chains`
+            after parsing a .dec decay file, or from building a decay chain representation with `decaylanguage.DecayChain.to_dict`.
         attrs: optional
             User input `graphviz.dot.Digraph` class attributes.
 
         See also
         --------
-        decaylanguage.dec.dec.DecFileParser: class for creating an input decay chain.
+        decaylanguage.DecFileParser.build_decay_chains for creating a decay chain dict from parsing a .dec file.
+        decaylanguage.DecFileParser: class for creating an input decay chain.
         """
         # Store the input decay chain
         self._chain = decaychain
