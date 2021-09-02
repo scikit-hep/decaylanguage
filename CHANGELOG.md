@@ -1,5 +1,16 @@
 # Changelog
 
+## Version 0.12.0 (2021-09-02)
+
+* Dependencies:
+  - Package dependent on ``Particle`` version 0.16.
+  - Support for Python 3.5 removed.
+* Universal representation of decay chains:
+  - Documentation updates.
+* Tests:
+  - CI enhanced adding isort checks to pre-commit hooks.
+  - Various hooks version updates.
+
 ## Version 0.11.4 (2021-08-23)
 
 * CI and tests:
