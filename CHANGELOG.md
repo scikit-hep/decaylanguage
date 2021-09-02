@@ -4,6 +4,7 @@
 
 * Dependencies:
   - Package dependent on ``Particle`` version 0.16.
+  - Support for Python 3.5 removed.
 * Universal representation of decay chains:
   - Documentation updates.
 * Tests:
