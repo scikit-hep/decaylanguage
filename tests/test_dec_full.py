@@ -94,11 +94,8 @@ class TreeToDec2(Transformer):
 
 @pytest.mark.skip
 def test_dec_full():
-    with data.open_text(data, "DECAY_LHCB.DEC") as f:
-        txt = f.read()
-
-    with data.open_text(data, "decfile.lark") as f:
-        grammar = f.read()
+    txt = data.basepath.joinpath("DECAY_LHCB.DEC").read_text()
+    grammar = data.basepath.joinpath("decfile.lark").read_text()
 
     la = Lark(grammar, parser="lalr", lexer="standard")  # , transformer = TreeToDec())
 

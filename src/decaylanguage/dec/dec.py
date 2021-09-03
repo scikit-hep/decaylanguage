@@ -271,7 +271,7 @@ class DecFileParser(object):
 
         if filename is None:
             filename = "decfile.lark"
-            with data.open_text(data, filename) as f:
+            with data.basepath.joinpath(filename).open() as f:
                 self._grammar = f.read()
         else:
             # Conversion to handle pathlib on Python < 3.6:
