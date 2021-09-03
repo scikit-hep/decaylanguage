@@ -1,7 +1,7 @@
 DecayLanguage data folder contents
 ==================================
 
-You can ``import decaylanguage.data``, then use ``decaylanguage.data.open_text(decaylanguage.data, <A_FILE>)``
+You can ``import decaylanguage.data``, then use ``decaylanguage.data.joinpath(<A_FILE>).open()``
 to access data reliably regardless of how you have installed or are running the package (even from a zip file!).
 
 

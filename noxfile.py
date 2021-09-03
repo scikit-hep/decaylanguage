@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import nox
 
 
@@ -11,10 +12,7 @@ def lint(session):
 def tests(session):
     session.install(".[test]")
     session.run(
-        "pytest",
-        "--cov=src/decaylanguage",
-        "--cov-report=xml",
-        *session.posargs
+        "pytest", "--cov=src/decaylanguage", "--cov-report=xml", *session.posargs
     )
 
 

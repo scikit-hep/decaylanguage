@@ -1,9 +1,21 @@
 # -*- coding: utf-8 -*-
+
 import sys
 
-if sys.version_info < (3, 7):
-    from importlib_resources import open_text
-else:
-    from importlib.resources import open_text
+from deprecated import deprecated
 
-__all__ = ("open_text",)
+if sys.version_info < (3, 9):
+    import importlib_resources as resources
+else:
+    import importlib.resources as resources
+
+
+__all__ = ("basepath", "open_text")
+
+
+basepath = resources.files(__name__)
+
+
+open_text = deprecated(
+    version="0.12.0", reason="Use decaylanguage.data.basepath instead."
+)(resources.open_text)

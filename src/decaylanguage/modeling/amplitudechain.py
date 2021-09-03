@@ -24,7 +24,6 @@ from lark import Lark
 from particle import Particle
 
 from .. import data
-from ..data import open_text
 from .ampgentransform import AmpGenTransformer, get_from_parser
 from .decay import ModelDecay
 
@@ -221,7 +220,7 @@ class AmplitudeChain(ModelDecay):
         """
 
         if grammar is None:
-            grammar = open_text(data, "ampgen.lark")
+            grammar = data.basepath.joinpath("ampgen.lark").read_text()
 
         # Read the file in, ignore empty lines and comments
         if filename is not None:
