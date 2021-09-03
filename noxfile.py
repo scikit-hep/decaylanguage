@@ -11,9 +11,7 @@ def lint(session):
 @nox.session
 def tests(session):
     session.install(".[test]")
-    session.run(
-        "pytest", "--cov=src/decaylanguage", "--cov-report=xml", *session.posargs
-    )
+    session.run("pytest", *session.posargs)
 
 
 @nox.session

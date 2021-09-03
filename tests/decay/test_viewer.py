@@ -49,18 +49,18 @@ def test_simple_decay_chain():
 
 
 checklist_decfiles = (
-    (DIR / "../data/test_Bc2BsPi_Bs2KK.dec", "B_c+sig"),
-    (DIR / "../data/test_Bd2DDst_Ds2DmPi0.dec", "B0sig"),
-    (DIR / "../data/test_Bd2DmTauNu_Dm23PiPi0_Tau2MuNu.dec", "B0sig"),
-    (DIR / "../data/test_Bd2DMuNu.dec", "anti-B0sig"),
-    (DIR / "../data/test_Bd2DstDst.dec", "anti-B0sig"),
-    (DIR / "../data/test_example_Dst.dec", "D*+"),
-    (DIR / "../data/test_Xicc2XicPiPi.dec", "Xi_cc+sig"),
+    (DIR / "../data/test_Bc2BsPi_Bs2KK.dec", "B_c+sig", False),
+    (DIR / "../data/test_Bd2DDst_Ds2DmPi0.dec", "B0sig", True),
+    (DIR / "../data/test_Bd2DmTauNu_Dm23PiPi0_Tau2MuNu.dec", "B0sig", False),
+    (DIR / "../data/test_Bd2DMuNu.dec", "anti-B0sig", False),
+    (DIR / "../data/test_Bd2DstDst.dec", "anti-B0sig", False),
+    (DIR / "../data/test_example_Dst.dec", "D*+", True),
+    (DIR / "../data/test_Xicc2XicPiPi.dec", "Xi_cc+sig", False),
 )
 
 
-@pytest.mark.parametrize("decfilepath,signal_mother", checklist_decfiles)
-def test_duplicate_arrows(decfilepath, signal_mother):
+@pytest.mark.parametrize("decfilepath,signal_mother,dup", checklist_decfiles)
+def test_duplicate_arrows(decfilepath, signal_mother, dup):
     """
     This test effectively checks whether any box node (node with subdecays)
     gets more than one arrow to it, which would show a bug
@@ -68,7 +68,11 @@ def test_duplicate_arrows(decfilepath, signal_mother):
     """
     p = DecFileParser(decfilepath, DIR / "../../src/decaylanguage/data/DECAY_LHCB.DEC")
 
-    p.parse()
+    if dup:
+        with pytest.warns(UserWarning, match="pi0"):
+            p.parse()
+    else:
+        p.parse()
 
     chain = p.build_decay_chains(signal_mother)
 
