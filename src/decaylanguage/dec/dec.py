@@ -277,7 +277,8 @@ class DecFileParser(object):
             # Conversion to handle pathlib on Python < 3.6:
             filename = str(filename)
 
-            self._grammar = open(filename).read()
+            with open(filename) as f:
+                self._grammar = f.read()
 
         self._grammar_info = dict(
             lark_file=filename, parser=parser, lexer=lexer, **options

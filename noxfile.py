@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import nox
 
+PYTHON_VERSIONS = ["2.7", "3.6", "3.7", "3.8", "3.9", "3.10"]
+
 
 @nox.session
 def lint(session):
@@ -8,12 +10,10 @@ def lint(session):
     session.run("pre-commit", "run", "--all-files", *session.posargs)
 
 
-@nox.session
+@nox.session(python=PYTHON_VERSIONS)
 def tests(session):
     session.install(".[test]")
-    session.run(
-        "pytest", "--cov=src/decaylanguage", "--cov-report=xml", *session.posargs
-    )
+    session.run("pytest", *session.posargs)
 
 
 @nox.session
