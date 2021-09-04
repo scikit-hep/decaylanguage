@@ -11,3 +11,7 @@ __all__ = (
     "filter_lines",
     "charge_conjugate_name",
 )
+
+
+def __dir__():
+    return __all__
