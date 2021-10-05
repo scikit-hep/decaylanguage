@@ -1033,7 +1033,7 @@ def get_branching_fraction(decay_mode):
     except RuntimeError:
         raise RuntimeError(
             "'decayline' Tree does not seem to have the usual structure. Check it."
-        )
+        ) from None
 
 
 def get_final_state_particles(decay_mode):

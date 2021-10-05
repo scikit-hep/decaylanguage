@@ -195,7 +195,7 @@ class decparser(cmd.Cmd):
         try:
             bf = float(spl[0])
         except Exception:
-            raise RuntimeError("Cannot parse decay line: %s" % line)
+            raise RuntimeError("Cannot parse decay line: %s" % line) from None
         #        mod_found = False
         #         for x in known_models:
         #             if x in line:
