@@ -1,5 +1,9 @@
 # Changelog
 
+## WIP
+
+* Dropped Python 2.7 / 3.5 support
+
 ## Version 0.12.0 (2021-09-02)
 
 * Dependencies:
