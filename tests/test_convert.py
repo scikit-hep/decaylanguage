@@ -3,14 +3,11 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
-from decaylanguage.modeling.ampgen2goofit import ampgen2goofit
-
-try:
-    from pathlib2 import Path
-except ImportError:
-    from pathlib import Path
+from pathlib import Path
 
 import pytest
+
+from decaylanguage.modeling.ampgen2goofit import ampgen2goofit
 
 DIR = Path(__file__).parent.resolve()
 

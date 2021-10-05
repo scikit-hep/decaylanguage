@@ -53,10 +53,6 @@ from .. import data
 from ..utils import charge_conjugate_name
 from .enums import PhotosEnum
 
-# New in Python 3
-if sys.version_info < (3,):
-    FileNotFoundError = IOError
-
 
 class DecFileNotParsed(RuntimeError):
     pass

@@ -4,14 +4,9 @@
 # or https://github.com/scikit-hep/decaylanguage for details.
 
 import sys
+from pathlib import Path
 
 import pytest
-
-try:
-    from pathlib2 import Path
-except ImportError:
-    from pathlib import Path
-
 from lark import Token, Tree
 
 from decaylanguage.dec.dec import (
@@ -26,9 +21,6 @@ from decaylanguage.dec.dec import (
     get_model_parameters,
 )
 from decaylanguage.dec.enums import known_decay_models
-
-if sys.version_info < (3,):
-    FileNotFoundError = IOError
 
 
 DIR = Path(__file__).parent.resolve()

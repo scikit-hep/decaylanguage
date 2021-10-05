@@ -3,13 +3,10 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
+from pathlib import Path
+
 import pytest
 from lark import UnexpectedToken
-
-try:
-    from pathlib2 import Path
-except ImportError:
-    from pathlib import Path
 
 from decaylanguage.dec.dec import DecFileParser
 

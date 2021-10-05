@@ -1,6 +1,6 @@
 import nox
 
-PYTHON_VERSIONS = ["2.7", "3.6", "3.7", "3.8", "3.9", "3.10"]
+PYTHON_VERSIONS = ["3.6", "3.7", "3.8", "3.9", "3.10"]
 
 
 @nox.session
