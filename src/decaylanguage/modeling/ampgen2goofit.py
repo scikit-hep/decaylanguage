@@ -12,10 +12,10 @@ a string output with the converted set of decay chains and variables.
 
 import datetime
 from functools import partial
+from io import StringIO
 
 from particle import SpinType
 from plumbum import colors
-from six import StringIO
 
 from decaylanguage.modeling.goofit import GooFitChain, SF_4Body
 

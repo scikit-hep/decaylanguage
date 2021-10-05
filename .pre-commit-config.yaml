@@ -51,7 +51,7 @@ repos:
   - id: mypy
     files: src
     args: [--scripts-are-modules]
-    additional_dependencies: [attrs, types-six, particle, importlib_resources, numpy, types-deprecated]
+    additional_dependencies: [attrs, particle, importlib_resources, numpy, types-deprecated]
 
 - repo: https://github.com/PyCQA/flake8
   rev: 3.9.2

@@ -42,12 +42,12 @@ import os
 import re
 import sys
 import warnings
+from io import StringIO
 from itertools import zip_longest
 
 from lark import Lark, Tree, Visitor
 from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
-from six import StringIO
 
 from .. import data
 from ..utils import charge_conjugate_name
