@@ -230,7 +230,7 @@ class DecayMode(object):
             bf = dm.pop("bf")
             daughters = dm.pop("fs")
         except Exception:
-            raise RuntimeError("Input not in the expected format!")
+            raise RuntimeError("Input not in the expected format!") from None
 
         return cls(bf=bf, daughters=daughters, **dm)
 
@@ -273,7 +273,7 @@ class DecayMode(object):
 
             daughters = [EvtGenName2PDGIDBiMap[PDGID(d)] for d in daughters]
         except ParticleNotFound:
-            raise ParticleNotFound("Please check your input PDG IDs!")
+            raise ParticleNotFound("Please check your input PDG IDs!") from None
 
         # Override the default settings with the user input, if any
         return cls(bf=bf, daughters=daughters, **info)
@@ -419,7 +419,7 @@ class DecayChain(object):
         try:
             assert len(decay_chain_dict.keys()) == 1
         except Exception:
-            raise RuntimeError("Input not in the expected format!")
+            raise RuntimeError("Input not in the expected format!") from None
 
         def has_no_subdecay(ds):
             return all(isinstance(p, str) for p in ds)
