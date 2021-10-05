@@ -30,5 +30,11 @@ module = [
 ignore_missing_imports = true
 
 
-# pytest config cannot be moved here until Python 2 support is dropped and
-# pytest 6+ can be required.
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+   "-ra",
+   "--doctest-modules",
+   '--doctest-glob=\*.rst',
+]
+log_cli_level = "DEBUG"
