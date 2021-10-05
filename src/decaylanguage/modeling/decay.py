@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2018-2021, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
@@ -8,8 +7,6 @@
 A general base class representing decays.
 """
 
-
-from __future__ import absolute_import, division, print_function
 
 import warnings
 from itertools import product
@@ -26,10 +23,10 @@ except ImportError:
 
 
 @attr.s(slots=True)
-class ModelDecay(object):
+class ModelDecay:
     """
     This describes a decay very generally, with search and print features.
-    Subclassed for futher usage.
+    Subclassed for further usage.
     """
 
     particle = attr.ib()

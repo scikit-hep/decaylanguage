@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import, division, print_function
+#!/usr/bin/env python3
 
 import cmd
 import os
@@ -69,13 +66,13 @@ class DaughterList(dict):
         self[daughter] = self.get(daughter, 0)
 
 
-class AllowedDecays(object):
+class AllowedDecays:
     def __init__(self, particle):
         self.decay_of = particle
         self.decays = []
 
 
-class Decay(object):
+class Decay:
     def __init__(self, bf=0, daughters=None):
         if daughters is None:
             daughters = DaughterList()
@@ -194,8 +191,8 @@ class decparser(cmd.Cmd):
         spl = line.split()
         try:
             bf = float(spl[0])
-        except Exception:
-            raise RuntimeError("Cannot parse decay line: %s" % line)
+        except Exception as e:
+            raise RuntimeError("Cannot parse decay line: %s" % line) from e
         #        mod_found = False
         #         for x in known_models:
         #             if x in line:
@@ -252,7 +249,7 @@ class interactive(cmd.Cmd):
     def do_readfile(self, line):
         "Read a file in (defaults to the one built into this package)"
         fname = defdecfile if line == "" else line
-        with open(fname, "r") as infile:
+        with open(fname) as infile:
             q = decparser(stdin=infile)
             q.use_rawinput = False
             q.cmdloop()

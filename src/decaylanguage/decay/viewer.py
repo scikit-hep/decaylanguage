@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2018-2021, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
@@ -26,7 +25,7 @@ class GraphNotBuiltError(RuntimeError):
     pass
 
 
-class DecayChainViewer(object):
+class DecayChainViewer:
     """
     The class to visualize a decay chain.
 
@@ -65,7 +64,7 @@ class DecayChainViewer(object):
         # Store the input decay chain
         self._chain = decaychain
 
-        # Instantiate the digraph with defaults possibly overriden by user attributes
+        # Instantiate the digraph with defaults possibly overridden by user attributes
         self._graph = self._instantiate_graph(**attrs)
 
         # Build the actual graph from the input decay chain structure
@@ -120,7 +119,7 @@ class DecayChainViewer(object):
 
         def new_node_no_subchain(list_parts):
             label = html_table_label(list_parts, bgcolor="#eef3f8")
-            r = "dec{}".format(next(counter))
+            r = f"dec{next(counter)}"
             self.graph.node(r, label=label, style="filled", fillcolor="#eef3f8")
             return r
 
@@ -129,7 +128,7 @@ class DecayChainViewer(object):
                 list(p.keys())[0] if isinstance(p, dict) else p for p in list_parts
             ]
             label = html_table_label(list_parts, add_tags=True)
-            r = "dec{}".format(next(counter))
+            r = f"dec{next(counter)}"
             self.graph.node(r, shape="none", label=label)
             return r
 
@@ -146,9 +145,7 @@ class DecayChainViewer(object):
                     if link_pos is None:
                         self.graph.edge(top_node, _ref, label=str(_bf))
                     else:
-                        self.graph.edge(
-                            "{}:p{}".format(top_node, link_pos), _ref, label=str(_bf)
-                        )
+                        self.graph.edge(f"{top_node}:p{link_pos}", _ref, label=str(_bf))
                 else:
                     _ref_1 = new_node_with_subchain(_list_parts)
                     _bf_1 = subchain[idm]["bf"]
@@ -156,7 +153,7 @@ class DecayChainViewer(object):
                         self.graph.edge(top_node, _ref_1, label=str(_bf_1))
                     else:
                         self.graph.edge(
-                            "{}:p{}".format(top_node, link_pos),
+                            f"{top_node}:p{link_pos}",
                             _ref_1,
                             label=str(_bf_1),
                         )
@@ -194,7 +191,7 @@ class DecayChainViewer(object):
         """
         Return a ``graphviz.dot.Digraph` class instance using the default attributes
         specified in this class:
-        - Default graph attributes are overriden by input by the user.
+        - Default graph attributes are overridden by input by the user.
         - Class and node and edge defaults.
         """
         graph_attr = self._get_graph_defaults()

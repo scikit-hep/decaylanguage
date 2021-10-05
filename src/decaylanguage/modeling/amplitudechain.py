@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2018-2021, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
@@ -8,7 +7,6 @@
 A class representing a set of decays. Can be subclassed to provide custom converters.
 """
 
-from __future__ import absolute_import, division, print_function
 
 import os
 import re
@@ -152,7 +150,7 @@ class AmplitudeChain(ModelDecay):
         elif self.lineshape.startswith("FOCUS"):
             return LS.FOCUS
         else:
-            raise RuntimeError("Unimplemented lineshape {}".format(self.lineshape))
+            raise RuntimeError(f"Unimplemented lineshape {self.lineshape}")
 
     @property
     def full_amp(self):
@@ -184,7 +182,7 @@ class AmplitudeChain(ModelDecay):
     def _get_html(self):
         name = self.particle.html_name
         name = re.sub(
-            r'<SPAN STYLE="text-decoration:overline">(.*)</SPAN>', u"\\1\u0305", name
+            r'<SPAN STYLE="text-decoration:overline">(.*)</SPAN>', "\\1\u0305", name
         )
 
         if self.spinfactor or self.lineshape:

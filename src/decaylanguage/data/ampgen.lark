@@ -39,7 +39,7 @@ particle : LABEL
 
 subdecay : "{" decay "," decay "}"
 
-// Terminal defintions
+// Terminal definitions
 
 %import common.WS_INLINE
 %import common.SIGNED_NUMBER

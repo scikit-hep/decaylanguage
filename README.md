@@ -34,7 +34,9 @@ pip install decaylanguage
 ```
 
 You can use a virtual environment through pipenv or with `--user` if you know
-what those are. [Python 2.7 and 3.4+](http://docs.python-guide.org/en/latest/starting/installation) are supported.
+what those are. [Python
+3.6+](http://docs.python-guide.org/en/latest/starting/installation) supported
+(see version 0.12 for Python 2 & 3.5 support).
 
 <details><summary>Dependencies: (click to expand)</summary><p>
 
@@ -43,7 +45,7 @@ Required and compatibility dependencies will be automatically installed by pip.
 ### Required dependencies:
 
 -   [particle](https://github.com/scikit-hep/particle): PDG particle data and identification codes
--   [Numpy](https://scipy.org/install.html): The numerical library for Python
+-   [NumPy](https://scipy.org/install.html): The numerical library for Python
 -   [pandas](https://pandas.pydata.org/): Tabular data in Python
 -   [attrs](https://github.com/python-attrs/attrs): DataClasses for Python
 -   [plumbum](https://github.com/tomerfiliba/plumbum): Command line tools
@@ -52,9 +54,6 @@ Required and compatibility dependencies will be automatically installed by pip.
     descriptions and visualizations of decay chains.
 
 ### Python compatibility:
--   [six](https://github.com/benjaminp/six): Compatibility library
--   [pathlib2](https://github.com/mcmtroffaes/pathlib2) backport if using Python 2.7
--   [enum34](https://bitbucket.org/stoneleaf/enum34) backport if using Python /< 3.5
 -   [importlib_resources](http://importlib-resources.readthedocs.io/en/latest/) backport if using Python /< 3.7
 </p></details>
 

@@ -14,9 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ['2.7', '3.5', '3.7', '3.9', '3.10-dev']
+        python-version: ['3.6', '3.7', '3.8', '3.10']
         include:
-          - {os: macos-latest, python-version: '2.7'}
           - {os: macos-latest, python-version: '3.9'}
           - {os: windows-latest, python-version: '3.7'}
           - {os: windows-latest, python-version: '3.9'}
@@ -33,7 +32,7 @@ jobs:
     - name: Install package
       run: python -m pip install -e .[test]
 
-    - name: PyTest
+    - name: Pytest
       if: runner.os == 'Linux'
       run: python -m pip install pytest-github-actions-annotate-failures
 
@@ -41,5 +40,5 @@ jobs:
       run: python -m pytest ./tests --doctest-modules --cov=src/decaylanguage --cov-report=xml
 
     - name: Test coverage with Codecov
-      if: "runner.os != 'Windows' && matrix.python-version != 3.5 && matrix.python-version != 3.7"
+      if: "runner.os != 'Windows' && matrix.python-version != 3.7"
       uses: codecov/codecov-action@v2

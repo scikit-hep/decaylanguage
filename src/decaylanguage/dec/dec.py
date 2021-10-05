@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2018-2021, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
@@ -37,20 +36,13 @@ Basic assumptions
     with another 'CopyDecay' statement.
 """
 
-from __future__ import absolute_import, division, print_function
 
 import operator
 import os
 import re
-import sys
 import warnings
-
-from six import StringIO
-
-if sys.version_info < (3,):
-    from itertools import izip_longest as zip_longest
-else:
-    from itertools import zip_longest
+from io import StringIO
+from itertools import zip_longest
 
 from lark import Lark, Tree, Visitor
 from particle import Particle
@@ -59,10 +51,6 @@ from particle.converters import PDG2EvtGenNameMap
 from .. import data
 from ..utils import charge_conjugate_name
 from .enums import PhotosEnum
-
-# New in Python 3
-if sys.version_info < (3,):
-    FileNotFoundError = IOError
 
 
 class DecFileNotParsed(RuntimeError):
@@ -73,7 +61,7 @@ class DecayNotFound(RuntimeError):
     pass
 
 
-class DecFileParser(object):
+class DecFileParser:
     """
     The class to parse a .dec decay file.
 
@@ -114,9 +102,9 @@ class DecFileParser(object):
             for filename in self._dec_file_names:
                 # Check input file
                 if not os.path.exists(filename):
-                    raise FileNotFoundError("'{}'!".format(filename))
+                    raise FileNotFoundError(f"'{filename}'!")
 
-                with open(filename, "r") as file:
+                with open(filename) as file:
                     for line in file:
                         # We need to strip the unicode byte ordering if present before checking for *
                         beg = line.lstrip("\ufeff").lstrip()
@@ -739,7 +727,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             if print_model:
                 line = "  {:.4f}   {}     {}  {}".format(bf / norm, *info)
             else:
-                line = "  {:.4f}   {}".format(bf / norm, info[0])
+                line = f"  {bf / norm:.4f}   {info[0]}"
             print(line.rstrip() + ";")
 
     @staticmethod
@@ -762,7 +750,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             elif align_mode == "right":
                 return [s.rjust(max_len) for s in to_align]
             else:
-                raise ValueError("Unknown align mode: {}".format(align_mode))
+                raise ValueError(f"Unknown align mode: {align_mode}")
 
         aligned = []
         for cat in zip_longest(*to_align, fillvalue=""):
@@ -773,7 +761,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             elif align_mode == "right":
                 row = [s.rjust(max_len) for s in cat]
             else:
-                raise ValueError("Unknown align mode: {}".format(align_mode))
+                raise ValueError(f"Unknown align mode: {align_mode}")
 
             aligned.append(row)
 
@@ -1030,10 +1018,10 @@ def get_branching_fraction(decay_mode):
     # and tree.children[0].children[0].value is the BF stored as a str
     try:  # the branching fraction value as a float
         return float(decay_mode.children[0].children[0].value)
-    except RuntimeError:
+    except RuntimeError as e:
         raise RuntimeError(
             "'decayline' Tree does not seem to have the usual structure. Check it."
-        )
+        ) from e
 
 
 def get_final_state_particles(decay_mode):
