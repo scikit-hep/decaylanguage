@@ -166,7 +166,7 @@ class GooFitChain(AmplitudeChain):
 
         raise LineFailure(
             self,
-            "Spinfactors not currenly included!: {spindet}".format(
+            "Spinfactors not currently included!: {spindet}".format(
                 spindet=self.spindetails()
             ),
         )

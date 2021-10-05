@@ -26,7 +26,7 @@ except ImportError:
 class ModelDecay:
     """
     This describes a decay very generally, with search and print features.
-    Subclassed for futher usage.
+    Subclassed for further usage.
     """
 
     particle = attr.ib()

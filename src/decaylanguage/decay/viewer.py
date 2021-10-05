@@ -64,7 +64,7 @@ class DecayChainViewer:
         # Store the input decay chain
         self._chain = decaychain
 
-        # Instantiate the digraph with defaults possibly overriden by user attributes
+        # Instantiate the digraph with defaults possibly overridden by user attributes
         self._graph = self._instantiate_graph(**attrs)
 
         # Build the actual graph from the input decay chain structure
@@ -191,7 +191,7 @@ class DecayChainViewer:
         """
         Return a ``graphviz.dot.Digraph` class instance using the default attributes
         specified in this class:
-        - Default graph attributes are overriden by input by the user.
+        - Default graph attributes are overridden by input by the user.
         - Class and node and edge defaults.
         """
         graph_attr = self._get_graph_defaults()

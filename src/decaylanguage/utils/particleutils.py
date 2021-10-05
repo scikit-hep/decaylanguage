@@ -4,7 +4,6 @@
 # or https://github.com/scikit-hep/decaylanguage for details.
 
 
-import sys
 from functools import lru_cache
 
 from particle import Particle

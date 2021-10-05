@@ -43,7 +43,7 @@ model_options : (value | LABEL | _NEWLINE)+
 // model : model_generic
 // model_helamp : "HELAMP" (SIGNED_NUMBER SIGNED_NUMBER)+
 
-// Terminal defintions
+// Terminal definitions
 // To use a fast parser, we need to avoid conflicts
 
 %import common.WS_INLINE

@@ -1023,10 +1023,10 @@ def get_branching_fraction(decay_mode):
     # and tree.children[0].children[0].value is the BF stored as a str
     try:  # the branching fraction value as a float
         return float(decay_mode.children[0].children[0].value)
-    except RuntimeError:
+    except RuntimeError as e:
         raise RuntimeError(
             "'decayline' Tree does not seem to have the usual structure. Check it."
-        )
+        ) from e
 
 
 def get_final_state_particles(decay_mode):

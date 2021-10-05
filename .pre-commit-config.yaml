@@ -63,8 +63,8 @@ repos:
   rev: v2.1.0
   hooks:
   - id: codespell
-    args: ["-L", "hist,nd,circularly,ba"]
-    exclude: ^(notebooks/xarray.ipynb|notebooks/BoostHistogramHandsOn.ipynb)$
+    args: ["-L", "vertexes,unkown,te"]
+    exclude: '^(.*\.DEC|notebooks/ExampleDecFileParsingWithLark\.ipynb)$'
 
 - repo: local
   hooks:
