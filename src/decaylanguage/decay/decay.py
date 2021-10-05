@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2018-2021, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
-from __future__ import absolute_import, print_function
 
 from collections import Counter
 from copy import deepcopy
@@ -59,7 +57,7 @@ class DaughtersDict(Counter):
             iterable = {k: v for k, v in iterable.items() if v > 0}
         elif iterable and isinstance(iterable, str):
             iterable = iterable.split()
-        super(DaughtersDict, self).__init__(iterable, **kwds)
+        super().__init__(iterable, **kwds)
 
     def to_string(self):
         """
@@ -123,14 +121,14 @@ class DaughtersDict(Counter):
         """
         Add two final states, particle-type-wise.
         """
-        dd = super(DaughtersDict, self).__add__(other)
+        dd = super().__add__(other)
         return self.__class__(dd)
 
     def __iter__(self):
         return self.elements()
 
 
-class DecayMode(object):
+class DecayMode:
     """
     Class holding a particle decay mode, which is typically a branching fraction
     and a list of final-state particles (i.e. a list of DaughtersDict instances).
@@ -296,7 +294,7 @@ class DecayMode(object):
         if keys:
             val += "\n    Extra info:\n"
         for key in keys:
-            val += "        {k}: {v}\n".format(k=key, v=self.metadata[key])
+            val += f"        {key}: {self.metadata[key]}\n"
 
         return val
 
@@ -368,7 +366,7 @@ class DecayMode(object):
         return repr(self)
 
 
-class DecayChain(object):
+class DecayChain:
     """
     Class holding a particle decay chain, which is typically a top-level decay
     (mother particle, branching fraction and final-state particles)

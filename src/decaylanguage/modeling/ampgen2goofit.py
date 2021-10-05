@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 # Copyright (c) 2018-2021, Eduardo Rodrigues and Henry Schreiner.
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
@@ -10,7 +9,6 @@ This is a function that takes a filename and either prints out or returns
 a string output with the converted set of decay chains and variables.
 """
 
-from __future__ import absolute_import, division, print_function
 
 import datetime
 from functools import partial
@@ -48,7 +46,7 @@ def ampgen2goofit(filename, ret_output=False):
             for p in sorted(GooFitChain.all_particles)
             if p.spin_type == spintype
         ]
-        printer("{spintype.name:>12}:".format(spintype=spintype), *ps)
+        printer(f"{spintype.name:>12}:", *ps)
 
     printer("\n")
     for n, line in enumerate(lines):

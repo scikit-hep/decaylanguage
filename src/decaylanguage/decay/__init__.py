@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from .decay import DaughtersDict, DecayChain, DecayMode
 from .viewer import DecayChainViewer
 
