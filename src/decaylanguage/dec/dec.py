@@ -40,7 +40,6 @@ Basic assumptions
 import operator
 import os
 import re
-import sys
 import warnings
 from io import StringIO
 from itertools import zip_longest
