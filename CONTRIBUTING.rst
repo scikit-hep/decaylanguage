@@ -81,4 +81,4 @@ Tips
 
 To run a subset of tests::
 
-    tox -s tests-3.9 -- -k test_myfeature
+    nox -s tests-3.9 -- -k test_myfeature
