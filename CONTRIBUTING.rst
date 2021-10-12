@@ -39,6 +39,7 @@ To set up `decaylanguage` for local development:
 
 1. Fork `decaylanguage <https://github.com/scikit-hep/decaylanguage>`_
    (look for the "Fork" button).
+
 2. Clone your fork locally::
 
     git clone git@github.com:your_name_here/decaylanguage.git
@@ -49,9 +50,9 @@ To set up `decaylanguage` for local development:
 
    Now you can make your changes locally.
 
-4. When you're done making changes, run all the checks, doc builder and spell checker with `tox <http://tox.readthedocs.io/en/latest/install.html>`_ one command::
+4. When you're done making changes, run all the checks, doc builder and spell checker with `nox <https://nox.thea.codes/en/stable/>`_ one command::
 
-    tox
+    nox
 
 5. Commit your changes and push your branch to GitHub::
 
@@ -68,23 +69,16 @@ If you need some code review or feedback while you're developing the code just m
 
 For merging, you should:
 
-1. Include passing tests (run ``tox``) [1]_.
+1. Include passing tests (run ``nox``) [1]_.
 2. Update documentation when there's new API, functionality etc.
 3. Add a note to ``CHANGELOG.md`` about the changes.
 4. Add yourself to ``AUTHORS.rst``.
 
-.. [1] If you don't have all the necessary python versions available locally you can rely on Travis - it will
-       `run the tests <https://travis-ci.org/scikit-hep/decaylanguage/pull_requests>`_ for each change you add in the pull request.
-
-       It will be slower though ...
+.. [1] If you don't have all the necessary python versions available locally, you can run a specific nox session with  ``nox -s tests-3.9``, for example. GitHub Actions will run all the tests for you in the pull request.
 
 Tips
 ----
 
 To run a subset of tests::
 
-    tox -e envname -- py.test -k test_myfeature
-
-To run all the test environments in *parallel* (you need to ``pip install detox``)::
-
-    detox
+    tox -s tests-3.9 -- -k test_myfeature
