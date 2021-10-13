@@ -74,7 +74,7 @@ For merging, you should:
 3. Add a note to ``CHANGELOG.md`` about the changes.
 4. Add yourself to ``AUTHORS.rst``.
 
-.. [1] If you don't have all the necessary python versions available locally, you can run a specific nox session with  ``nox -s tests-3.9``, for example. GitHub Actions will run all the tests for you in the pull request.
+.. [1] If you don't have all the necessary python versions available locally, you can run a specific nox session with  ``nox -s tests-3.9``, for example. GitHub Actions will run all the tests whenver a pull request is made, so testing all versions of Python locally is usually not necessary.
 
 Tips
 ----
