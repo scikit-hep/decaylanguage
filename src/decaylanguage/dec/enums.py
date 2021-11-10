@@ -7,7 +7,6 @@
 Collection of enums and info to help characterising .dec decay files.
 """
 
-# Backport needed if Python 2 is used
 from enum import IntEnum
 
 
