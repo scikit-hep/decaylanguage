@@ -30,7 +30,7 @@ repos:
   - id: end-of-file-fixer
 
 - repo: https://github.com/PyCQA/isort
-  rev: 5.10.0
+  rev: 5.10.1
   hooks:
   - id: isort
 
