@@ -1,10 +1,15 @@
 # Changelog
 
+## WIP
+
+* Tests:
+  - Various hooks version updates.
+
 ## Version 0.13.0 (2021-11-10)
 
 * Dependencies:
   - Dropped Python 2 (2.7) support.
-  - Added support for Python 3.10 and dropped 3.5
+  - Added support for Python 3.10 and dropped 3.5.
   - Dependency on `lark-parser` upgraded to recent versions.
 * Tests:
   - Dependency on Pytest upgraded.
