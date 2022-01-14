@@ -240,4 +240,7 @@ class DecayChainViewer:
         """
         IPython display in SVG format.
         """
-        return self._graph._repr_svg_()
+        try:
+            return self._graph._repr_image_svg_xml()  # for graphviz >= 0.19
+        except AttributeError:
+            return self._graph._repr_svg_()  # for graphviz < 0.19
