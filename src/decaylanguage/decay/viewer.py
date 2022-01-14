@@ -236,11 +236,11 @@ class DecayChainViewer:
     def _get_edge_defaults(self):
         return dict(fontcolor="#4c4c4c", fontsize="11")
 
-    def _repr_svg_(self):
+    def _repr_mimebundle_(self, include=None, exclude=None, **kwargs):
         """
-        IPython display in SVG format.
+        IPython display helper.
         """
         try:
-            return self._graph._repr_image_svg_xml()  # for graphviz >= 0.19
+            return self._graph._repr_mimebundle_(include=include, exclude=exclude, **kwargs)
         except AttributeError:
-            return self._graph._repr_svg_()  # for graphviz < 0.19
+            return {"image/svg+xml": self._graph._repr_svg_()}  # for graphviz < 0.19
