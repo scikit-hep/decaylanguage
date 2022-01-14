@@ -122,6 +122,8 @@ class ModelDecay:
 
         def _repr_svg_(self):
             try:
-                return sself._make_graphviz()._repr_image_svg_xml()  # for graphviz >= 0.19
+                return (
+                    sself._make_graphviz()._repr_image_svg_xml()
+                )  # for graphviz >= 0.19
             except AttributeError:
                 return self._make_graphviz()._repr_svg_()  # for graphviz < 0.19
