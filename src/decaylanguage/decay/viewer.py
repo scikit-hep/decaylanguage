@@ -241,6 +241,8 @@ class DecayChainViewer:
         IPython display helper.
         """
         try:
-            return self._graph._repr_mimebundle_(include=include, exclude=exclude, **kwargs)
+            return self._graph._repr_mimebundle_(
+                include=include, exclude=exclude, **kwargs
+            )
         except AttributeError:
             return {"image/svg+xml": self._graph._repr_svg_()}  # for graphviz < 0.19
