@@ -1,6 +1,6 @@
 # Changelog
 
-## WIP
+## Version 0.13.1 (2022-01-15)
 
 * Universal representation of decay chains:
   - Adapt DOT representations to work with graphviz >= 0.19, which broke the API removing `_repr_svg_()`.
