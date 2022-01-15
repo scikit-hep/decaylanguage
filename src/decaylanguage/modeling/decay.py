@@ -120,5 +120,12 @@ class ModelDecay:
             self._add_nodes(d)
             return d
 
-        def _repr_svg_(self):
-            return self._make_graphviz()._repr_svg_()
+        def _repr_mimebundle_(self, include=None, exclude=None, **kwargs):
+            try:
+                return self._make_graphviz()._repr_mimebundle_(
+                    include=include, exclude=exclude, **kwargs
+                )
+            except AttributeError:
+                return {
+                    "image/svg+xml": self._make_graphviz()._repr_svg_()
+                }  # for graphviz < 0.19
