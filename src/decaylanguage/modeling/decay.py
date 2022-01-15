@@ -124,4 +124,4 @@ class ModelDecay:
             try:
                 return self._make_graphviz()._repr_mimebundle_(include=include, exclude=exclude, **kwargs)
             except AttributeError:
-                return {"image/svg+xml": self._make_graphviz()._repr_svg_()}  # for graphviz < 0.1
+                return {"image/svg+xml": self._make_graphviz()._repr_svg_()}  # for graphviz < 0.19
