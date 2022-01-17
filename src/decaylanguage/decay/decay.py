@@ -59,7 +59,7 @@ class DaughtersDict(Counter):
             iterable = iterable.split()
         super().__init__(iterable, **kwds)
 
-    def to_string(self):
+    def to_string(self) -> str:
         """
         Return the daughters as a string representation (ordered list of names).
         """
@@ -104,7 +104,7 @@ class DaughtersDict(Counter):
             self=self, daughters=self.to_list()
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return repr(self)
 
     def __len__(self):
