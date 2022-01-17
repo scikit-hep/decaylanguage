@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.14.0 (2022-01-17)
+
+Package dependent on Python 3 only ``Particle`` version 0.20.
+Otherwise identical to series 0.13.
+
 ## Version 0.13.1 (2022-01-15)
 
 * Universal representation of decay chains:
