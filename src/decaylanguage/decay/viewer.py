@@ -10,6 +10,7 @@ see the `DecFileParser` class.
 """
 
 import itertools
+from typing import Any, Optional
 
 import graphviz
 from particle import latex_to_html_name
@@ -44,7 +45,7 @@ class DecayChainViewer:
 
     __slots__ = ("_chain", "_graph", "_graph_attributes")
 
-    def __init__(self, decaychain, **attrs):
+    def __init__(self, decaychain: dict, **attrs):
         """
         Default constructor.
 
@@ -76,7 +77,7 @@ class DecayChainViewer:
         in the DOT language.
         """
 
-        def safe_html_name(name):
+        def safe_html_name(name: str) -> str:
             """
             Get a safe HTML name from the EvtGen name.
 
@@ -94,7 +95,7 @@ class DecayChainViewer:
             except Exception:
                 return name
 
-        def html_table_label(names, add_tags=False, bgcolor="#9abad6"):
+        def html_table_label(names, add_tags: bool = False, bgcolor: str = "#9abad6") -> str:
             if add_tags:
                 label = (
                     '<<TABLE BORDER="0" CELLSPACING="0" BGCOLOR="{bgcolor}">'.format(
@@ -117,13 +118,13 @@ class DecayChainViewer:
             label += "{tr}</TABLE>>".format(tr="" if add_tags else "</TR>")
             return label
 
-        def new_node_no_subchain(list_parts):
+        def new_node_no_subchain(list_parts: list) -> str:
             label = html_table_label(list_parts, bgcolor="#eef3f8")
             r = f"dec{next(counter)}"
             self.graph.node(r, label=label, style="filled", fillcolor="#eef3f8")
             return r
 
-        def new_node_with_subchain(list_parts):
+        def new_node_with_subchain(list_parts: list) -> str:
             list_parts = [
                 list(p.keys())[0] if isinstance(p, dict) else p for p in list_parts
             ]
@@ -132,7 +133,7 @@ class DecayChainViewer:
             self.graph.node(r, shape="none", label=label)
             return r
 
-        def iterate_chain(subchain, top_node=None, link_pos=None):
+        def iterate_chain(subchain: str, top_node: Optional[str] = None, link_pos: Optional[str] = None) -> None:
             if not top_node:
                 top_node = "mother"
                 self.graph.node("mother", shape="none", label=label)
@@ -162,7 +163,7 @@ class DecayChainViewer:
                             _k = list(_p.keys())[0]
                             iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
 
-        def has_subdecay(ds):
+        def has_subdecay(ds: dict[str,str]) -> bool:
             return not all(isinstance(p, str) for p in ds)
 
         k = list(self._chain.keys())[0]
@@ -180,7 +181,7 @@ class DecayChainViewer:
         """
         return self._graph
 
-    def to_string(self):
+    def to_string(self) -> str:
         """
         Return a string representation of the built graph in the DOT language.
         The function is a trivial shortcut for ``graphviz.dot.Digraph.source`.
@@ -214,7 +215,7 @@ class DecayChainViewer:
             graph_attr=graph_attr, node_attr=node_attr, edge_attr=edge_attr, **arguments
         )
 
-    def _get_default_arguments(self):
+    def _get_default_arguments(self) -> dict[str,str]:
         """
         `graphviz.dot.Digraph` default arguments.
         """
@@ -225,18 +226,18 @@ class DecayChainViewer:
             format="png",
         )
 
-    def _get_graph_defaults(self):
+    def _get_graph_defaults(self) -> dict[str,str]:
         d = self._get_default_arguments()
         d.update(rankdir="LR")
         return d
 
-    def _get_node_defaults(self):
+    def _get_node_defaults(self) -> dict[str,str]:
         return dict(fontname="Helvetica", fontsize="11", shape="oval")
 
-    def _get_edge_defaults(self):
+    def _get_edge_defaults(self) -> dict[str,str]:
         return dict(fontcolor="#4c4c4c", fontsize="11")
 
-    def _repr_mimebundle_(self, include=None, exclude=None, **kwargs):
+    def _repr_mimebundle_(self, include=None, exclude=None, **kwargs: Any) -> dict:
         """
         IPython display helper.
         """
