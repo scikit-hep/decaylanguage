@@ -10,7 +10,7 @@ dependencies:
   - plumbum>=1.6.9
   - lark-parser>=0.8.0,<0.8.6
   - RISE
-  - hepunits>=2.1.0
-  - particle==0.16.*
+  - hepunits>=2.2.0
+  - particle==0.20.*
   - pip:
     - .
