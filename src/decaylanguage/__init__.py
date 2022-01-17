@@ -3,6 +3,7 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
+from typing import Tuple
 
 # Convenient access to the version number
 from ._version import version as __version__
@@ -23,5 +24,5 @@ __all__ = (
 )
 
 
-def __dir__():
+def __dir__() -> Tuple[str, ...]:
     return __all__
