@@ -127,4 +127,5 @@ def test_graphs_with_EvtGen_specific_names():
     dcv = DecayChainViewer(chain)
 
     assert "(cs)<SUB>0</SUB>" in dcv.to_string()  # not 'cs_0' ;-)
-    assert "&Xi;<SUB>c</SUB><SUP>0</SUP>" in dcv.to_string()
+    assert "&#x039e;<SUB>b</SUB><SUP>-</SUP>" in dcv.to_string()
+    assert "&#x039e;<SUB>c</SUB><SUP>0</SUP>" in dcv.to_string()
