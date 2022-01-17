@@ -5,5 +5,5 @@
 
 
 class LineFailure(RuntimeError):
-    def __init__(self, line, message):
+    def __init__(self, line: str, message: str) -> None:
         super().__init__(f"{line}: {message}")
