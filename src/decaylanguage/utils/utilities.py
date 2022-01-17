@@ -3,8 +3,10 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
+from typing import Any, Generator, Iterable, Iterator, Union
 
-def iter_flatten(iterable):
+
+def iter_flatten(iterable: Iterator[Union[list, tuple]]) -> Generator:
     """
     Flatten nested tuples and lists
     """
@@ -15,7 +17,7 @@ def iter_flatten(iterable):
             yield e
 
 
-def split(x):
+def split(x: Iterable[Any]) -> list:
     """
     Break up a comma separated list, but respect curly brackets.
 
@@ -42,7 +44,7 @@ def split(x):
         i += 1
 
 
-def filter_lines(matcher, inp):
+def filter_lines(matcher, inp) -> list[list]:
     """
     Filter out lines into new variable if they match a regular expression
     """
