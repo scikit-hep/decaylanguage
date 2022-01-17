@@ -15,9 +15,11 @@ profile = "black"
 
 [tool.mypy]
 files = "src"
-python_version = "3.6"
+python_version = "3.9"
 warn_unused_configs = true
+warn_unused_ignores = true
 check_untyped_defs = true
+strict = true
 
 [[tool.mypy.overrides]]
 module = [
