@@ -10,7 +10,7 @@ see the `DecFileParser` class.
 """
 
 import itertools
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import graphviz
 from particle import latex_to_html_name
@@ -45,7 +45,7 @@ class DecayChainViewer:
 
     __slots__ = ("_chain", "_graph", "_graph_attributes")
 
-    def __init__(self, decaychain: dict, **attrs):
+    def __init__(self, decaychain: dict[str,list[Union[float,str,list[str]]]], **attrs: Any) -> None:
         """
         Default constructor.
 
@@ -71,7 +71,7 @@ class DecayChainViewer:
         # Build the actual graph from the input decay chain structure
         self._build_decay_graph()
 
-    def _build_decay_graph(self):
+    def _build_decay_graph(self) -> None:
         """
         Recursively navigate the decay chain tree and produce a Digraph
         in the DOT language.
@@ -95,7 +95,7 @@ class DecayChainViewer:
             except Exception:
                 return name
 
-        def html_table_label(names, add_tags: bool = False, bgcolor: str = "#9abad6") -> str:
+        def html_table_label(names: list[str], add_tags: Optional[bool] = False, bgcolor: Optional[str] = "#9abad6") -> str:
             if add_tags:
                 label = (
                     '<<TABLE BORDER="0" CELLSPACING="0" BGCOLOR="{bgcolor}">'.format(
@@ -118,22 +118,22 @@ class DecayChainViewer:
             label += "{tr}</TABLE>>".format(tr="" if add_tags else "</TR>")
             return label
 
-        def new_node_no_subchain(list_parts: list) -> str:
+        def new_node_no_subchain(list_parts: list[str]) -> str:
             label = html_table_label(list_parts, bgcolor="#eef3f8")
             r = f"dec{next(counter)}"
             self.graph.node(r, label=label, style="filled", fillcolor="#eef3f8")
             return r
 
-        def new_node_with_subchain(list_parts: list) -> str:
-            list_parts = [
+        def new_node_with_subchain(list_parts: list[dict[str,list[Union[float,str,list[str]]]]]) -> str:
+            _list_parts = [
                 list(p.keys())[0] if isinstance(p, dict) else p for p in list_parts
             ]
-            label = html_table_label(list_parts, add_tags=True)
+            label = html_table_label(_list_parts, add_tags=True)
             r = f"dec{next(counter)}"
             self.graph.node(r, shape="none", label=label)
             return r
 
-        def iterate_chain(subchain: str, top_node: Optional[str] = None, link_pos: Optional[str] = None) -> None:
+        def iterate_chain(subchain: list[dict[str,Union[float,str,list[str]]]], top_node: Optional[str] = None, link_pos: Optional[str] = None) -> None:
             if not top_node:
                 top_node = "mother"
                 self.graph.node("mother", shape="none", label=label)
@@ -163,7 +163,7 @@ class DecayChainViewer:
                             _k = list(_p.keys())[0]
                             iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
 
-        def has_subdecay(ds: dict[str,str]) -> bool:
+        def has_subdecay(ds: dict[str,Union[float,str,list[str]]]) -> bool:
             return not all(isinstance(p, str) for p in ds)
 
         k = list(self._chain.keys())[0]
@@ -174,7 +174,7 @@ class DecayChainViewer:
         iterate_chain(sc)
 
     @property
-    def graph(self):
+    def graph(self) -> graphviz.dot.Digraph:
         """
         Get the actual `graphviz.dot.Digraph` object.
         The user now has full control ...
@@ -188,7 +188,7 @@ class DecayChainViewer:
         """
         return self.graph.source
 
-    def _instantiate_graph(self, **attrs):
+    def _instantiate_graph(self, **attrs: Union[int,float,str]) -> graphviz.dot.Digraph:
         """
         Return a ``graphviz.dot.Digraph` class instance using the default attributes
         specified in this class:
@@ -237,7 +237,7 @@ class DecayChainViewer:
     def _get_edge_defaults(self) -> dict[str,str]:
         return dict(fontcolor="#4c4c4c", fontsize="11")
 
-    def _repr_mimebundle_(self, include=None, exclude=None, **kwargs: Any) -> dict:
+    def _repr_mimebundle_(self, include: Optional[bool] = None, exclude: Optional[bool] = None, **kwargs: Any) -> dict[str,str]:
         """
         IPython display helper.
         """
