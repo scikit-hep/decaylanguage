@@ -91,8 +91,8 @@ class DecFileParser:
         filenames: non-keyworded variable length argument
             Input .dec decay file name(s).
         """
-        self._grammar = None  # Loaded Lark grammar definition file
-        self._grammar_info = None  # Name of Lark grammar definition file
+        self._grammar: str = None  # Loaded Lark grammar definition file
+        self._grammar_info: dict[str,Any] = None  # Name of Lark grammar definition file
 
         # Name(s) of the input decay file(s)
         if filenames:
@@ -124,8 +124,8 @@ class DecFileParser:
             self._dec_file_names = []
             self._dec_file = None  # type: ignore
 
-        self._parsed_dec_file = None  # Parsed decay file
-        self._parsed_decays = None  # Particle decays found in the decay file
+        self._parsed_dec_file: Union[str, None] = None  # Parsed decay file
+        self._parsed_decays: Union[Any,None] = None  # Particle decays found in the decay file
 
         # By default, consider charge-conjugate decays when parsing
         self._include_ccdecays = True
@@ -238,7 +238,7 @@ class DecFileParser:
 
         return self._grammar_info
 
-    def load_grammar(self, filename: Optional[str] = None, parser: Optional[str] = "lalr", lexer: Optional[str] = "standard", **options: Any) -> None:
+    def load_grammar(self, filename: Optional[str] = None, parser: str = "lalr", lexer: str = "standard", **options: Any) -> None:
         """
         Load a Lark grammar definition file, either the default one,
         or a user-specified one, optionally setting Lark parsing options.
@@ -325,7 +325,7 @@ class DecFileParser:
         """
         return get_pythia_definitions(self._parsed_dec_file)
 
-    def dict_jetset_definitions(self) -> dict[str,dict[str,float]]:
+    def dict_jetset_definitions(self) -> dict[str,dict[int,Union[int,float,str]]]:
         """
         Return a dictionary of all JETSET definitions in the input parsed file,
         of the form
@@ -336,7 +336,7 @@ class DecFileParser:
         """
         return get_jetset_definitions(self._parsed_dec_file)
 
-    def list_lineshape_definitions(self) -> list[tuple[list[str]]]:
+    def list_lineshape_definitions(self) -> list[tuple[list[str], int]]:
         """
         Return a list of all SetLineshapePW definitions in the input parsed file,
         of the form
@@ -593,7 +593,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         return len(self._parsed_decays) 
 
-    def list_decay_mother_names(self) -> list[str]:
+    def list_decay_mother_names(self) -> list[Union[str, Any]]:
         """
         Return a list of all decay mother names found in the parsed decay file.
         """
@@ -601,7 +601,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         return [get_decay_mother_name(d) for d in self._parsed_decays] 
 
-    def _find_decay_modes(self, mother: str) -> tuple[Tree]:
+    def _find_decay_modes(self, mother: str) -> tuple[Any,...]:
         """
         Return a tuple of Lark Tree instances describing all the decay modes
         of the input mother particle as defined in the parsed .dec file.
@@ -619,7 +619,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         raise DecayNotFound("Decays of particle '%s' not found in .dec file!" % mother)
 
-    def list_decay_modes(self, mother: str, pdg_name: Optional[bool] = False):
+    def list_decay_modes(self, mother: str, pdg_name: Optional[bool] = False) -> list[str]:
         """
         Return a list of decay modes for the given mother particle.
 
@@ -646,14 +646,14 @@ All but the first occurrence will be discarded/removed ...""".format(
             for mode in self._find_decay_modes(mother)
         ]
 
-    def _decay_mode_details(self, decay_mode: str, display_photos_keyword: bool) -> tuple[float,list[str],str,str]:
+    def _decay_mode_details(self, decay_mode: Tree, display_photos_keyword: bool) -> tuple[float,list[str],str,Union[str,list[Union[str,Any]]]]:
         """
         Parse a decay mode (Tree instance)
         and return the relevant bits of information in it.
 
         Parameters
         ----------
-        decay_mode: str
+        decay_mode: Tree
             Input decay mode to list its details.
         display_photos_keyword: boolean
             Omit or not the "PHOTOS" keyword in decay models.
@@ -768,7 +768,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         return [sep.join(row) for row in zip(*aligned)]
 
-    def build_decay_chains(self, mother: str, stable_particles: Optional[list[str]] = ()) -> dict[str,list[Union[float,str,list[str]]]]:
+    def build_decay_chains(self, mother: str, stable_particles: Union[list[str],tuple[str]] = ()) -> dict[str,list[Union[float,str,list[str]]]]:
         """
         Iteratively build the entire decay chains of a given mother particle,
         optionally considering, on the fly, certain particles as stable.
@@ -862,7 +862,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         return repr(self)
 
 
-class DecayModelParamValueReplacement(Visitor):
+class DecayModelParamValueReplacement(Visitor):  # type: ignore
     """
     Lark Visitor implementing the replacement of decay model parameter names
     with the actual parameter values provided in 'Define' statements,
@@ -914,7 +914,7 @@ class DecayModelParamValueReplacement(Visitor):
             self._replacement(child)
 
 
-class ChargeConjugateReplacement(Visitor):
+class ChargeConjugateReplacement(Visitor):  # type: ignore
     """
     Lark Visitor implementing the replacement of all particle names
     with their charge conjugate particle names
@@ -984,7 +984,7 @@ def find_charge_conjugate_match(pname: str, dict_cc_names: Optional[dict[str,str
     return charge_conjugate_name(pname)
 
 
-def get_decay_mother_name(decay_tree: Tree) -> str:
+def get_decay_mother_name(decay_tree: Tree) -> Union[str, Any]:
     """
     Return the mother particle name for the decay mode defined
     in the input Tree of name 'decay'.
@@ -1102,7 +1102,7 @@ def get_model_name(decay_mode: Tree) -> str:
     return str(lm[0].children[0].value)
 
 
-def get_model_parameters(decay_mode: Tree) -> list[Union[float,str]]:
+def get_model_parameters(decay_mode: Tree) -> Union[str,list[Union[str, Any]]]:
     """
     Return a list of decay model parameters in a Tree of name 'decayline',
     if defined, else an empty string.
@@ -1135,7 +1135,7 @@ def get_model_parameters(decay_mode: Tree) -> list[Union[float,str]]:
 
     lmo = list(decay_mode.find_data("model_options"))
 
-    def _value(t: Tree) -> float:
+    def _value(t: Tree) -> Union[str, Any]:
         try:
             return t.children[0].value
         except AttributeError:
@@ -1282,7 +1282,7 @@ def get_charge_conjugate_defs(parsed_file: str) -> dict[str,str]:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
-def get_pythia_definitions(parsed_file: str) -> dict[str,str]:
+def get_pythia_definitions(parsed_file: str) -> dict[str,Union[str,float]]:
     """
     Return a dictionary of all Pythia definitions in the input parsed file,
     of the form
@@ -1316,7 +1316,7 @@ def get_pythia_definitions(parsed_file: str) -> dict[str,str]:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
-def get_jetset_definitions(parsed_file: str) -> dict[str,dict[str,float]]:
+def get_jetset_definitions(parsed_file: str) -> dict[str,dict[int,Union[int,float,str]]]:
     """
     Return a dictionary of all JETSET definitions in the input parsed file,
     of the form
@@ -1357,7 +1357,7 @@ def get_jetset_definitions(parsed_file: str) -> dict[str,dict[str,float]]:
                 return n
 
     try:
-        dict_params: dict[str,dict[str,float]] = {}
+        dict_params: dict[str,dict[int,Union[int,float,str]]] = {}
         for tree in parsed_file.find_data("jetset_def"):
             # This will throw an error if match is None
             param = get_jetsetpar.match(tree.children[0].value).groupdict()  # type: ignore
@@ -1374,7 +1374,7 @@ def get_jetset_definitions(parsed_file: str) -> dict[str,dict[str,float]]:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
-def get_lineshape_definitions(parsed_file: str) -> list[tuple[list[str]]]:
+def get_lineshape_definitions(parsed_file: str) -> list[tuple[list[str], int]]:
     """
     Return a list of all SetLineshapePW definitions in the input parsed file,
     of the form
