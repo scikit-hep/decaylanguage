@@ -29,7 +29,11 @@ class DaughtersDict(Counter[str]):
     ``{'K+': 1, 'K-': 2, 'pi+': 1, 'pi0': 1}``.
     """
 
-    def __init__(self, iterable: Optional[Union[dict[str,int],list[str],str]] = None, **kwds: Any) -> None:
+    def __init__(
+        self,
+        iterable: Optional[Union[dict[str, int], list[str], str]] = None,
+        **kwds: Any,
+    ) -> None:
         """
         Default constructor.
 
@@ -152,7 +156,12 @@ class DecayMode:
 
     __slots__ = ("bf", "daughters", "metadata")
 
-    def __init__(self, bf: float = 0, daughters: Optional[Union[DaughtersDict,str]] = None, **info: Any) -> None:
+    def __init__(
+        self,
+        bf: float = 0,
+        daughters: Optional[Union[DaughtersDict, str]] = None,
+        **info: Any,
+    ) -> None:
         """
         Default constructor.
 
@@ -204,7 +213,9 @@ class DecayMode:
         self.metadata.update(**info)
 
     @classmethod
-    def from_dict(cls, decay_mode_dict: dict[str,Union[float,str,list[str]]]) -> DecayMode:
+    def from_dict(
+        cls, decay_mode_dict: dict[str, Union[float, str, list[str]]]
+    ) -> DecayMode:
         """
         Constructor from a dictionary of the form
         {'bf': <float>, 'fs': [...], ...}.
@@ -237,7 +248,12 @@ class DecayMode:
         return cls(bf=bf, daughters=daughters, **dm)
 
     @classmethod
-    def from_pdgids(cls, bf: float = 0, daughters: Optional[Union[list[int],tuple[int]]] = None, **info: Any) -> DecayMode:
+    def from_pdgids(
+        cls,
+        bf: float = 0,
+        daughters: Optional[Union[list[int], tuple[int]]] = None,
+        **info: Any,
+    ) -> DecayMode:
         """
         Constructor for a final state given as a list of particle PDG IDs.
 
@@ -302,7 +318,7 @@ class DecayMode:
 
         return val
 
-    def to_dict(self) -> dict[str,Union[int,str]]:
+    def to_dict(self) -> dict[str, Union[int, str]]:
         """
         Return the decay mode as a dictionary in the format understood
         by the `DecayChainViewer` class.
@@ -390,7 +406,7 @@ class DecayChain:
 
     __slots__ = ("mother", "decays")
 
-    def __init__(self, mother: str, decays: dict[str,DecayMode]) -> None:
+    def __init__(self, mother: str, decays: dict[str, DecayMode]) -> None:
         """
         Default constructor.
 
@@ -412,7 +428,9 @@ class DecayChain:
         self.decays = decays
 
     @classmethod
-    def from_dict(cls, decay_chain_dict: dict[str,list[Union[float,str,list[str]]]]) -> DecayMode:
+    def from_dict(
+        cls, decay_chain_dict: dict[str, list[Union[float, str, list[str]]]]
+    ) -> DecayMode:
         """
         Constructor from a decay chain represented as a dictionary.
         The format is the same as that returned by
@@ -426,7 +444,7 @@ class DecayChain:
         def has_no_subdecay(ds: list[str]) -> bool:
             return all(isinstance(p, str) for p in ds)
 
-        def build_decay_modes(dc_dict: dict[str,list[str]]) -> None:
+        def build_decay_modes(dc_dict: dict[str, list[str]]) -> None:
             mother = list(dc_dict.keys())[0]
             dms = dc_dict[mother]
 
@@ -534,7 +552,12 @@ class DecayChain:
         bar = "|"
 
         # TODO: simplify logic and perform further checks
-        def _print(decay_dict: dict[str,list[str]], depth: int = 0, link: bool = False, last: bool = False) -> None:
+        def _print(
+            decay_dict: dict[str, list[str]],
+            depth: int = 0,
+            link: bool = False,
+            last: bool = False,
+        ) -> None:
             mother = list(decay_dict.keys())[0]
             prefix = bar if (link and depth > 1) else ""
             prefix = prefix + " " * indent * (depth - 1)
@@ -562,7 +585,7 @@ class DecayChain:
         dc_dict = self.to_dict()
         _print(dc_dict)
 
-    def to_dict(self) -> dict[str,list[str]]:
+    def to_dict(self) -> dict[str, list[str]]:
         """
         Return the decay chain as a dictionary representation.
         The format is the same as `DecFileParser.build_decay_chains(...)`.
@@ -584,7 +607,7 @@ class DecayChain:
             'model_params': ''}]}
         """
 
-        def recursively_replace(mother: str) -> dict[str,list[str]]:
+        def recursively_replace(mother: str) -> dict[str, list[str]]:
             dm = self.decays[mother].to_dict()
             result = []
             list_fsp = dm["fs"]
@@ -597,7 +620,9 @@ class DecayChain:
 
         return recursively_replace(self.mother)
 
-    def flatten(self, stable_particles:  Iterable[Union[dict[str,int],list[str],str]] = ()) -> DecayChain:
+    def flatten(
+        self, stable_particles: Iterable[Union[dict[str, int], list[str], str]] = ()
+    ) -> DecayChain:
         """
         Flatten the decay chain replacing all intermediate, decaying particles,
         with their final states.

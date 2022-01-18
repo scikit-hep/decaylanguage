@@ -4,6 +4,7 @@
 # or https://github.com/scikit-hep/decaylanguage for details.
 
 from typing import Tuple
+
 from .errors import LineFailure
 from .particleutils import charge_conjugate_name
 from .utilities import filter_lines, iter_flatten, split
