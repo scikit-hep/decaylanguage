@@ -23,4 +23,6 @@ recursive-include images *.pdf
 recursive-include images *.png
 recursive-include images *.svg
 
+recursive-include py.typed
+
 global-exclude *.py[cod] __pycache__ *.so *.dylib
