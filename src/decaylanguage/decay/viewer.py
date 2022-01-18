@@ -45,7 +45,9 @@ class DecayChainViewer:
 
     __slots__ = ("_chain", "_graph", "_graph_attributes")
 
-    def __init__(self, decaychain: dict[str,list[Union[float,str,list[str]]]], **attrs: Any) -> None:
+    def __init__(
+        self, decaychain: dict[str, list[Union[float, str, list[str]]]], **attrs: Any
+    ) -> None:
         """
         Default constructor.
 
@@ -95,7 +97,11 @@ class DecayChainViewer:
             except Exception:
                 return name
 
-        def html_table_label(names: list[str], add_tags: Optional[bool] = False, bgcolor: Optional[str] = "#9abad6") -> str:
+        def html_table_label(
+            names: list[str],
+            add_tags: Optional[bool] = False,
+            bgcolor: Optional[str] = "#9abad6",
+        ) -> str:
             if add_tags:
                 label = (
                     '<<TABLE BORDER="0" CELLSPACING="0" BGCOLOR="{bgcolor}">'.format(
@@ -124,7 +130,9 @@ class DecayChainViewer:
             self.graph.node(r, label=label, style="filled", fillcolor="#eef3f8")
             return r
 
-        def new_node_with_subchain(list_parts: list[dict[str,list[Union[float,str,list[str]]]]]) -> str:
+        def new_node_with_subchain(
+            list_parts: list[dict[str, list[Union[float, str, list[str]]]]]
+        ) -> str:
             _list_parts = [
                 list(p.keys())[0] if isinstance(p, dict) else p for p in list_parts
             ]
@@ -133,7 +141,11 @@ class DecayChainViewer:
             self.graph.node(r, shape="none", label=label)
             return r
 
-        def iterate_chain(subchain: list[dict[str,Union[float,str,list[str]]]], top_node: Optional[str] = None, link_pos: Optional[str] = None) -> None:
+        def iterate_chain(
+            subchain: list[dict[str, Union[float, str, list[str]]]],
+            top_node: Optional[str] = None,
+            link_pos: Optional[str] = None,
+        ) -> None:
             if not top_node:
                 top_node = "mother"
                 self.graph.node("mother", shape="none", label=label)
@@ -163,7 +175,7 @@ class DecayChainViewer:
                             _k = list(_p.keys())[0]
                             iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
 
-        def has_subdecay(ds: dict[str,Union[float,str,list[str]]]) -> bool:
+        def has_subdecay(ds: dict[str, Union[float, str, list[str]]]) -> bool:
             return not all(isinstance(p, str) for p in ds)
 
         k = list(self._chain.keys())[0]
@@ -188,7 +200,9 @@ class DecayChainViewer:
         """
         return self.graph.source
 
-    def _instantiate_graph(self, **attrs: Union[int,float,str]) -> graphviz.dot.Digraph:
+    def _instantiate_graph(
+        self, **attrs: Union[int, float, str]
+    ) -> graphviz.dot.Digraph:
         """
         Return a ``graphviz.dot.Digraph` class instance using the default attributes
         specified in this class:
@@ -215,7 +229,7 @@ class DecayChainViewer:
             graph_attr=graph_attr, node_attr=node_attr, edge_attr=edge_attr, **arguments
         )
 
-    def _get_default_arguments(self) -> dict[str,str]:
+    def _get_default_arguments(self) -> dict[str, str]:
         """
         `graphviz.dot.Digraph` default arguments.
         """
@@ -226,18 +240,23 @@ class DecayChainViewer:
             format="png",
         )
 
-    def _get_graph_defaults(self) -> dict[str,str]:
+    def _get_graph_defaults(self) -> dict[str, str]:
         d = self._get_default_arguments()
         d.update(rankdir="LR")
         return d
 
-    def _get_node_defaults(self) -> dict[str,str]:
+    def _get_node_defaults(self) -> dict[str, str]:
         return dict(fontname="Helvetica", fontsize="11", shape="oval")
 
-    def _get_edge_defaults(self) -> dict[str,str]:
+    def _get_edge_defaults(self) -> dict[str, str]:
         return dict(fontcolor="#4c4c4c", fontsize="11")
 
-    def _repr_mimebundle_(self, include: Optional[bool] = None, exclude: Optional[bool] = None, **kwargs: Any) -> dict[str,str]:
+    def _repr_mimebundle_(
+        self,
+        include: Optional[bool] = None,
+        exclude: Optional[bool] = None,
+        **kwargs: Any,
+    ) -> dict[str, str]:
         """
         IPython display helper.
         """
