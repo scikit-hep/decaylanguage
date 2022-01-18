@@ -4,6 +4,7 @@
 # or https://github.com/scikit-hep/decaylanguage for details.
 
 from typing import Tuple
+
 from .dec import DecFileParser
 from .enums import known_decay_models
 
