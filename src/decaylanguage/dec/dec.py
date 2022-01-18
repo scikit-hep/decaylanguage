@@ -40,10 +40,10 @@ Basic assumptions
 import operator
 import os
 import re
-from typing import Any, Optional, Iterable, Union
 import warnings
 from io import StringIO
 from itertools import zip_longest
+from typing import Any, Iterable, Optional, Union
 
 from lark import Lark, Tree, Visitor
 from particle import Particle
@@ -92,7 +92,9 @@ class DecFileParser:
             Input .dec decay file name(s).
         """
         self._grammar: str = None  # Loaded Lark grammar definition file
-        self._grammar_info: dict[str,Any] = None  # Name of Lark grammar definition file
+        self._grammar_info: dict[
+            str, Any
+        ] = None  # Name of Lark grammar definition file
 
         # Name(s) of the input decay file(s)
         if filenames:
@@ -125,7 +127,9 @@ class DecFileParser:
             self._dec_file = None  # type: ignore
 
         self._parsed_dec_file: Union[str, None] = None  # Parsed decay file
-        self._parsed_decays: Union[Any,None] = None  # Particle decays found in the decay file
+        self._parsed_decays: Union[
+            Any, None
+        ] = None  # Particle decays found in the decay file
 
         # By default, consider charge-conjugate decays when parsing
         self._include_ccdecays = True
@@ -222,7 +226,7 @@ class DecFileParser:
 
         return self._grammar
 
-    def grammar_info(self) -> dict[str,str]:
+    def grammar_info(self) -> dict[str, str]:
         """
         Access the internal Lark grammar definition file name and
         parser options, effectively loading the default grammar
@@ -238,7 +242,13 @@ class DecFileParser:
 
         return self._grammar_info
 
-    def load_grammar(self, filename: Optional[str] = None, parser: str = "lalr", lexer: str = "standard", **options: Any) -> None:
+    def load_grammar(
+        self,
+        filename: Optional[str] = None,
+        parser: str = "lalr",
+        lexer: str = "standard",
+        **options: Any,
+    ) -> None:
         """
         Load a Lark grammar definition file, either the default one,
         or a user-specified one, optionally setting Lark parsing options.
@@ -280,7 +290,7 @@ class DecFileParser:
         """
         return self._grammar is not None
 
-    def dict_decays2copy(self) -> dict[str,str]:
+    def dict_decays2copy(self) -> dict[str, str]:
         """
         Return a dictionary of all statements in the input parsed file
         defining a decay to be copied, of the form
@@ -289,7 +299,7 @@ class DecFileParser:
         """
         return get_decays2copy_statements(self._parsed_dec_file)
 
-    def dict_definitions(self) -> dict[str,float]:
+    def dict_definitions(self) -> dict[str, float]:
         """
         Return a dictionary of all definitions in the input parsed file,
         of the form "Define <NAME> <VALUE>",
@@ -297,7 +307,7 @@ class DecFileParser:
         """
         return get_definitions(self._parsed_dec_file)
 
-    def dict_aliases(self) -> dict[str,str]:
+    def dict_aliases(self) -> dict[str, str]:
         """
         Return a dictionary of all alias definitions in the input parsed file,
         of the form "Alias <NAME> <ALIAS>",
@@ -305,7 +315,7 @@ class DecFileParser:
         """
         return get_aliases(self._parsed_dec_file)
 
-    def dict_charge_conjugates(self) ->  dict[str,str]:
+    def dict_charge_conjugates(self) -> dict[str, str]:
         """
         Return a dictionary of all charge conjugate definitions
         in the input parsed file, of the form
@@ -314,7 +324,7 @@ class DecFileParser:
         """
         return get_charge_conjugate_defs(self._parsed_dec_file)
 
-    def dict_pythia_definitions(self) -> dict[str,str]:
+    def dict_pythia_definitions(self) -> dict[str, str]:
         """
         Return a dictionary of all Pythia definitions in the input parsed file,
         of the form
@@ -325,7 +335,7 @@ class DecFileParser:
         """
         return get_pythia_definitions(self._parsed_dec_file)
 
-    def dict_jetset_definitions(self) -> dict[str,dict[int,Union[int,float,str]]]:
+    def dict_jetset_definitions(self) -> dict[str, dict[int, Union[int, float, str]]]:
         """
         Return a dictionary of all JETSET definitions in the input parsed file,
         of the form
@@ -591,7 +601,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         """Return the number of particle decays defined in the parsed .dec file."""
         self._check_parsing()
 
-        return len(self._parsed_decays) 
+        return len(self._parsed_decays)
 
     def list_decay_mother_names(self) -> list[Union[str, Any]]:
         """
@@ -599,9 +609,9 @@ All but the first occurrence will be discarded/removed ...""".format(
         """
         self._check_parsing()
 
-        return [get_decay_mother_name(d) for d in self._parsed_decays] 
+        return [get_decay_mother_name(d) for d in self._parsed_decays]
 
-    def _find_decay_modes(self, mother: str) -> tuple[Any,...]:
+    def _find_decay_modes(self, mother: str) -> tuple[Any, ...]:
         """
         Return a tuple of Lark Tree instances describing all the decay modes
         of the input mother particle as defined in the parsed .dec file.
@@ -619,7 +629,9 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         raise DecayNotFound("Decays of particle '%s' not found in .dec file!" % mother)
 
-    def list_decay_modes(self, mother: str, pdg_name: Optional[bool] = False) -> list[str]:
+    def list_decay_modes(
+        self, mother: str, pdg_name: Optional[bool] = False
+    ) -> list[str]:
         """
         Return a list of decay modes for the given mother particle.
 
@@ -646,7 +658,9 @@ All but the first occurrence will be discarded/removed ...""".format(
             for mode in self._find_decay_modes(mother)
         ]
 
-    def _decay_mode_details(self, decay_mode: Tree, display_photos_keyword: bool) -> tuple[float,list[str],str,Union[str,list[Union[str,Any]]]]:
+    def _decay_mode_details(
+        self, decay_mode: Tree, display_photos_keyword: bool
+    ) -> tuple[float, list[str], str, Union[str, list[Union[str, Any]]]]:
         """
         Parse a decay mode (Tree instance)
         and return the relevant bits of information in it.
@@ -671,12 +685,12 @@ All but the first occurrence will be discarded/removed ...""".format(
 
     def print_decay_modes(
         self,
-        mother:str,
+        mother: str,
         pdg_name: Optional[bool] = False,
         print_model: Optional[bool] = True,
         display_photos_keyword: Optional[bool] = True,
         ascending: Optional[bool] = False,
-        normalize: Optional[bool] =True,
+        normalize: Optional[bool] = True,
     ) -> None:
         """
         Pretty print of the decay modes of a given particle.
@@ -732,7 +746,9 @@ All but the first occurrence will be discarded/removed ...""".format(
             print(line.rstrip() + ";")
 
     @staticmethod
-    def _align_items(to_align: str, align_mode: Optional[str] = "left", sep: Optional[str] =" ") -> list[str]:
+    def _align_items(
+        to_align: str, align_mode: Optional[str] = "left", sep: Optional[str] = " "
+    ) -> list[str]:
         """
         Left or right align all strings in a list to the same length.
         By default the string is space-broke into sub-strings and each sub-string aligned individually.
@@ -768,7 +784,9 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         return [sep.join(row) for row in zip(*aligned)]
 
-    def build_decay_chains(self, mother: str, stable_particles: Union[list[str],tuple[str]] = ()) -> dict[str,list[Union[float,str,list[str]]]]:
+    def build_decay_chains(
+        self, mother: str, stable_particles: Union[list[str], tuple[str]] = ()
+    ) -> dict[str, list[Union[float, str, list[str]]]]:
         """
         Iteratively build the entire decay chains of a given mother particle,
         optionally considering, on the fly, certain particles as stable.
@@ -894,7 +912,7 @@ class DecayModelParamValueReplacement(Visitor):  # type: ignore
     Tree(model_options, [Token(LABEL, 507000000000.0)])])])])
     """
 
-    def __init__(self, define_defs: Optional[dict[str,Union[Any]]] = None) -> None:
+    def __init__(self, define_defs: Optional[dict[str, Union[Any]]] = None) -> None:
         self.define_defs = define_defs or {}
 
     def _replacement(self, t: Tree) -> None:
@@ -949,7 +967,7 @@ class ChargeConjugateReplacement(Visitor):  # type: ignore
     Tree(particle, [Token(LABEL, 'pi-')]), Tree(model, [Token(MODEL_NAME, 'PHSP')])])])
     """
 
-    def __init__(self, charge_conj_defs: Optional[dict[str,str]] = None) -> None:
+    def __init__(self, charge_conj_defs: Optional[dict[str, str]] = None) -> None:
         self.charge_conj_defs = charge_conj_defs or {}
 
     def particle(self, tree: Tree) -> None:
@@ -963,7 +981,9 @@ class ChargeConjugateReplacement(Visitor):  # type: ignore
         tree.children[0].value = ccpname
 
 
-def find_charge_conjugate_match(pname: str, dict_cc_names: Optional[dict[str,str]]=None) -> str:
+def find_charge_conjugate_match(
+    pname: str, dict_cc_names: Optional[dict[str, str]] = None
+) -> str:
     """
     Find the charge-conjugate particle name making use of user information
     from "ChargeConj" statements in a decay file.
@@ -1102,7 +1122,7 @@ def get_model_name(decay_mode: Tree) -> str:
     return str(lm[0].children[0].value)
 
 
-def get_model_parameters(decay_mode: Tree) -> Union[str,list[Union[str, Any]]]:
+def get_model_parameters(decay_mode: Tree) -> Union[str, list[Union[str, Any]]]:
     """
     Return a list of decay model parameters in a Tree of name 'decayline',
     if defined, else an empty string.
@@ -1189,7 +1209,7 @@ def get_charge_conjugate_decays(parsed_file: str) -> list[str]:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
-def get_decays2copy_statements(parsed_file: str) -> dict[str,str]:
+def get_decays2copy_statements(parsed_file: str) -> dict[str, str]:
     """
     Return a dictionary of all statements in the input parsed file
     defining a decay to be copied, of the form
@@ -1213,7 +1233,7 @@ def get_decays2copy_statements(parsed_file: str) -> dict[str,str]:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
-def get_definitions(parsed_file: str) -> dict[str,float]:
+def get_definitions(parsed_file: str) -> dict[str, float]:
     """
     Return a dictionary of all definitions in the input parsed file, of the form
     "Define <NAME> <VALUE>", as {'NAME1': VALUE1, 'NAME2': VALUE2, ...}.
@@ -1237,7 +1257,7 @@ def get_definitions(parsed_file: str) -> dict[str,float]:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
-def get_aliases(parsed_file: str) -> dict[str,str]:
+def get_aliases(parsed_file: str) -> dict[str, str]:
     """
     Return a dictionary of all aliases in the input parsed file, of the form
     "Alias <NAME> <ALIAS>", as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
@@ -1259,7 +1279,7 @@ def get_aliases(parsed_file: str) -> dict[str,str]:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
-def get_charge_conjugate_defs(parsed_file: str) -> dict[str,str]:
+def get_charge_conjugate_defs(parsed_file: str) -> dict[str, str]:
     """
     Return a dictionary of all charge conjugate definitions
     in the input parsed file, of the form "ChargeConj <PARTICLE> <CC_PARTICLE>",
@@ -1282,7 +1302,7 @@ def get_charge_conjugate_defs(parsed_file: str) -> dict[str,str]:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
-def get_pythia_definitions(parsed_file: str) -> dict[str,Union[str,float]]:
+def get_pythia_definitions(parsed_file: str) -> dict[str, Union[str, float]]:
     """
     Return a dictionary of all Pythia definitions in the input parsed file,
     of the form
@@ -1299,7 +1319,7 @@ def get_pythia_definitions(parsed_file: str) -> dict[str,Union[str,float]]:
     if not isinstance(parsed_file, Tree):
         raise RuntimeError("Input not an instance of a Tree!")
 
-    def str_or_float(arg: str) -> Union[str,float]:
+    def str_or_float(arg: str) -> Union[str, float]:
         try:
             return float(arg)
         except Exception:
@@ -1316,7 +1336,9 @@ def get_pythia_definitions(parsed_file: str) -> dict[str,Union[str,float]]:
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
-def get_jetset_definitions(parsed_file: str) -> dict[str,dict[int,Union[int,float,str]]]:
+def get_jetset_definitions(
+    parsed_file: str,
+) -> dict[str, dict[int, Union[int, float, str]]]:
     """
     Return a dictionary of all JETSET definitions in the input parsed file,
     of the form
@@ -1342,7 +1364,7 @@ def get_jetset_definitions(parsed_file: str) -> dict[str,dict[int,Union[int,floa
         re.VERBOSE,
     )
 
-    def to_int_or_float(n: str) -> Union[int,float,str]:
+    def to_int_or_float(n: str) -> Union[int, float, str]:
         """
         Trivial helper function to convert the parsed (as strings)
         JETSET parameters into what they are, namely integers or floats.
@@ -1357,7 +1379,7 @@ def get_jetset_definitions(parsed_file: str) -> dict[str,dict[int,Union[int,floa
                 return n
 
     try:
-        dict_params: dict[str,dict[int,Union[int,float,str]]] = {}
+        dict_params: dict[str, dict[int, Union[int, float, str]]] = {}
         for tree in parsed_file.find_data("jetset_def"):
             # This will throw an error if match is None
             param = get_jetsetpar.match(tree.children[0].value).groupdict()  # type: ignore
