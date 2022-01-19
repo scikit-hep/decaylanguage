@@ -46,8 +46,9 @@ class DecayChainViewer:
     __slots__ = ("_chain", "_graph", "_graph_attributes")
 
     def __init__(
-        self, decaychain: dict[str, list[dict[str, Union[float, str, list[Any]]]]], 
-        **attrs: dict[str,Union[bool,int, float, str]]
+        self,
+        decaychain: dict[str, list[dict[str, Union[float, str, list[Any]]]]],
+        **attrs: dict[str, Union[bool, int, float, str]],
     ) -> None:
         """
         Default constructor.
@@ -131,9 +132,7 @@ class DecayChainViewer:
             self.graph.node(r, label=label, style="filled", fillcolor="#eef3f8")
             return r
 
-        def new_node_with_subchain(
-            list_parts: list[Any]
-        ) -> str:
+        def new_node_with_subchain(list_parts: list[Any]) -> str:
             _list_parts = [
                 list(p.keys())[0] if isinstance(p, dict) else p for p in list_parts
             ]
@@ -230,7 +229,7 @@ class DecayChainViewer:
             graph_attr=graph_attr, node_attr=node_attr, edge_attr=edge_attr, **arguments
         )
 
-    def _get_default_arguments(self) -> dict[str, Union[bool,int, float, str]]:
+    def _get_default_arguments(self) -> dict[str, Union[bool, int, float, str]]:
         """
         `graphviz.dot.Digraph` default arguments.
         """
@@ -241,15 +240,15 @@ class DecayChainViewer:
             format="png",
         )
 
-    def _get_graph_defaults(self) -> dict[str, Union[bool,int, float, str]]:
+    def _get_graph_defaults(self) -> dict[str, Union[bool, int, float, str]]:
         d = self._get_default_arguments()
         d.update(rankdir="LR")
         return d
 
-    def _get_node_defaults(self) -> dict[str, Union[bool,int, float, str]]:
+    def _get_node_defaults(self) -> dict[str, Union[bool, int, float, str]]:
         return dict(fontname="Helvetica", fontsize="11", shape="oval")
 
-    def _get_edge_defaults(self) -> dict[str, Union[bool,int, float, str]]:
+    def _get_edge_defaults(self) -> dict[str, Union[bool, int, float, str]]:
         return dict(fontcolor="#4c4c4c", fontsize="11")
 
     def _repr_mimebundle_(
