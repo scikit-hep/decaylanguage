@@ -46,7 +46,8 @@ class DecayChainViewer:
     __slots__ = ("_chain", "_graph", "_graph_attributes")
 
     def __init__(
-        self, decaychain: dict[str, list[Union[float, str, list[str]]]], **attrs: Any
+        self, decaychain: dict[str, list[dict[str, Union[float, str, list[Any]]]]], 
+        **attrs: dict[str,Union[bool,int, float, str]]
     ) -> None:
         """
         Default constructor.
@@ -99,8 +100,8 @@ class DecayChainViewer:
 
         def html_table_label(
             names: list[str],
-            add_tags: Optional[bool] = False,
-            bgcolor: Optional[str] = "#9abad6",
+            add_tags: bool = False,
+            bgcolor: str = "#9abad6",
         ) -> str:
             if add_tags:
                 label = (
@@ -131,7 +132,7 @@ class DecayChainViewer:
             return r
 
         def new_node_with_subchain(
-            list_parts: list[dict[str, list[Union[float, str, list[str]]]]]
+            list_parts: list[Any]
         ) -> str:
             _list_parts = [
                 list(p.keys())[0] if isinstance(p, dict) else p for p in list_parts
@@ -142,9 +143,9 @@ class DecayChainViewer:
             return r
 
         def iterate_chain(
-            subchain: list[dict[str, Union[float, str, list[str]]]],
+            subchain: list[dict[str, Union[float, str, list[Any]]]],
             top_node: Optional[str] = None,
-            link_pos: Optional[str] = None,
+            link_pos: Optional[int] = None,
         ) -> None:
             if not top_node:
                 top_node = "mother"
@@ -152,15 +153,15 @@ class DecayChainViewer:
             n_decaymodes = len(subchain)
             for idm in range(n_decaymodes):
                 _list_parts = subchain[idm]["fs"]
-                if not has_subdecay(_list_parts):
-                    _ref = new_node_no_subchain(_list_parts)
+                if not has_subdecay(_list_parts):  # type: ignore
+                    _ref = new_node_no_subchain(_list_parts)  # type: ignore
                     _bf = subchain[idm]["bf"]
                     if link_pos is None:
                         self.graph.edge(top_node, _ref, label=str(_bf))
                     else:
                         self.graph.edge(f"{top_node}:p{link_pos}", _ref, label=str(_bf))
                 else:
-                    _ref_1 = new_node_with_subchain(_list_parts)
+                    _ref_1 = new_node_with_subchain(_list_parts)  # type: ignore
                     _bf_1 = subchain[idm]["bf"]
                     if link_pos is None:
                         self.graph.edge(top_node, _ref_1, label=str(_bf_1))
@@ -170,12 +171,12 @@ class DecayChainViewer:
                             _ref_1,
                             label=str(_bf_1),
                         )
-                    for i, _p in enumerate(_list_parts):
+                    for i, _p in enumerate(_list_parts):  # type: ignore
                         if not isinstance(_p, str):
                             _k = list(_p.keys())[0]
                             iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
 
-        def has_subdecay(ds: dict[str, Union[float, str, list[str]]]) -> bool:
+        def has_subdecay(ds: list[Any]) -> bool:
             return not all(isinstance(p, str) for p in ds)
 
         k = list(self._chain.keys())[0]
@@ -198,10 +199,10 @@ class DecayChainViewer:
         Return a string representation of the built graph in the DOT language.
         The function is a trivial shortcut for ``graphviz.dot.Digraph.source`.
         """
-        return self.graph.source
+        return self.graph.source  # type: ignore
 
     def _instantiate_graph(
-        self, **attrs: Union[int, float, str]
+        self, **attrs: dict[str, Union[bool, int, float, str]]
     ) -> graphviz.dot.Digraph:
         """
         Return a ``graphviz.dot.Digraph` class instance using the default attributes
@@ -223,13 +224,13 @@ class DecayChainViewer:
             attrs.pop("edge_attr")
 
         arguments = self._get_default_arguments()
-        arguments.update(**attrs)
+        arguments.update(**attrs)  # type: ignore
 
         return graphviz.Digraph(
             graph_attr=graph_attr, node_attr=node_attr, edge_attr=edge_attr, **arguments
         )
 
-    def _get_default_arguments(self) -> dict[str, str]:
+    def _get_default_arguments(self) -> dict[str, Union[bool,int, float, str]]:
         """
         `graphviz.dot.Digraph` default arguments.
         """
@@ -240,15 +241,15 @@ class DecayChainViewer:
             format="png",
         )
 
-    def _get_graph_defaults(self) -> dict[str, str]:
+    def _get_graph_defaults(self) -> dict[str, Union[bool,int, float, str]]:
         d = self._get_default_arguments()
         d.update(rankdir="LR")
         return d
 
-    def _get_node_defaults(self) -> dict[str, str]:
+    def _get_node_defaults(self) -> dict[str, Union[bool,int, float, str]]:
         return dict(fontname="Helvetica", fontsize="11", shape="oval")
 
-    def _get_edge_defaults(self) -> dict[str, str]:
+    def _get_edge_defaults(self) -> dict[str, Union[bool,int, float, str]]:
         return dict(fontcolor="#4c4c4c", fontsize="11")
 
     def _repr_mimebundle_(
@@ -256,7 +257,7 @@ class DecayChainViewer:
         include: Optional[bool] = None,
         exclude: Optional[bool] = None,
         **kwargs: Any,
-    ) -> dict[str, str]:
+    ) -> Any:
         """
         IPython display helper.
         """
