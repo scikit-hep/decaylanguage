@@ -16,7 +16,7 @@ profile = "black"
 [tool.mypy]
 files = "src"
 exclude = [
-    'decaylanguage\.modeling\.*',
+    '^decaylanguage/modeling',
 ]
 python_version = "3.9"
 warn_unused_configs = true
