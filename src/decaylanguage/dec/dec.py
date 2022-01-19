@@ -43,8 +43,7 @@ import re
 import warnings
 from io import StringIO
 from itertools import zip_longest
-from typing import Any, Iterable, Optional, Union
-from typing import no_type_check
+from typing import Any, Iterable, Optional, Union, no_type_check
 
 from lark import Lark, Tree, Visitor
 from particle import Particle
@@ -93,7 +92,9 @@ class DecFileParser:
             Input .dec decay file name(s).
         """
         self._grammar: Optional[str] = None  # Loaded Lark grammar definition file
-        self._grammar_info: Optional[dict[str, Any]] = None  # Name of Lark grammar definition file
+        self._grammar_info: Optional[
+            dict[str, Any]
+        ] = None  # Name of Lark grammar definition file
 
         # Name(s) of the input decay file(s)
         if filenames:
@@ -126,7 +127,9 @@ class DecFileParser:
             self._dec_file = None  # type: ignore
 
         self._parsed_dec_file: Optional[str] = None  # Parsed decay file
-        self._parsed_decays: Optional[Any] = None  # Particle decays found in the decay file
+        self._parsed_decays: Optional[
+            Any
+        ] = None  # Particle decays found in the decay file
 
         # By default, consider charge-conjugate decays when parsing
         self._include_ccdecays = True
@@ -553,7 +556,7 @@ Skipping creation of charge-conjugate decay Tree.""".format(
         ]
 
         # ... and add all these charge-conjugate decays to the list of decays!
-        self._parsed_decays.extend(cdecays)  #type: ignore
+        self._parsed_decays.extend(cdecays)  # type: ignore
 
     def _check_parsing(self) -> None:
         """Has the .parse() method been called already?"""
@@ -599,7 +602,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         """Return the number of particle decays defined in the parsed .dec file."""
         self._check_parsing()
 
-        return len(self._parsed_decays)  #type: ignore
+        return len(self._parsed_decays)  # type: ignore
 
     def list_decay_mother_names(self) -> list[Union[str, Any]]:
         """
@@ -607,7 +610,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         """
         self._check_parsing()
 
-        return [get_decay_mother_name(d) for d in self._parsed_decays]  #type: ignore
+        return [get_decay_mother_name(d) for d in self._parsed_decays]  # type: ignore
 
     def _find_decay_modes(self, mother: str) -> tuple[Any, ...]:
         """
@@ -1394,7 +1397,9 @@ def get_jetset_definitions(
         RuntimeError("Input parsed file does not seem to have the expected structure.")
 
 
-def get_lineshape_definitions(parsed_file: Optional[str]) -> list[tuple[list[str], int]]:
+def get_lineshape_definitions(
+    parsed_file: Optional[str],
+) -> list[tuple[list[str], int]]:
     """
     Return a list of all SetLineshapePW definitions in the input parsed file,
     of the form

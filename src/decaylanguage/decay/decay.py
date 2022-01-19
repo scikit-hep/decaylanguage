@@ -6,8 +6,16 @@
 
 from collections import Counter
 from copy import deepcopy
-from typing import Any, Iterable, Iterator, Optional, Type, TypeVar, Union
-from typing import no_type_check
+from typing import (
+    Any,
+    Iterable,
+    Iterator,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    no_type_check,
+)
 
 from ..utils import charge_conjugate_name
 
@@ -160,7 +168,9 @@ class DecayMode:
     def __init__(
         self,
         bf: float = 0,
-        daughters: Optional[Union[DaughtersDict, dict[str, int], list[str], tuple[str], str]] = None,
+        daughters: Optional[
+            Union[DaughtersDict, dict[str, int], list[str], tuple[str], str]
+        ] = None,
         **info: Any,
     ) -> None:
         """
@@ -246,7 +256,7 @@ class DecayMode:
         except Exception as e:
             raise RuntimeError("Input not in the expected format!") from e
 
-        return cls(bf=bf, daughters=daughters, **dm)  #type: ignore
+        return cls(bf=bf, daughters=daughters, **dm)  # type: ignore
 
     @classmethod
     def from_pdgids(
@@ -446,7 +456,9 @@ class DecayChain:
         def has_no_subdecay(ds: list[Any]) -> bool:
             return all(isinstance(p, str) for p in ds)
 
-        def build_decay_modes(dc_dict: dict[str, list[dict[str, Union[float, str, list[Any]]]]]) -> None:
+        def build_decay_modes(
+            dc_dict: dict[str, list[dict[str, Union[float, str, list[Any]]]]]
+        ) -> None:
             mother = list(dc_dict.keys())[0]
             dms = dc_dict[mother]
 
