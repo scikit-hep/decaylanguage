@@ -14,14 +14,14 @@ write_to = "src/decaylanguage/_version.py"
 profile = "black"
 
 [tool.mypy]
-files = "src"
-exclude = [
-    '^decaylanguage/modeling',
+files = [
+    "src/decaylanguage/decay",
+    "src/decaylanguage/dec",
+    "src/decaylanguage/utils",
 ]
 python_version = "3.9"
 warn_unused_configs = true
 warn_unused_ignores = true
-check_untyped_defs = true
 strict = true
 
 [[tool.mypy.overrides]]
@@ -30,10 +30,8 @@ module = [
     "graphviz",
     "pandas",
     "plumbum",
-    "decaylanguage._version",
 ]
 ignore_missing_imports = true
-
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
