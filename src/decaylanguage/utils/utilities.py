@@ -3,7 +3,7 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
-from typing import Any, Iterable, Iterator, Union
+from typing import Iterator, Union
 
 
 def iter_flatten(iterable: Union[list[str], tuple[str]]) -> Iterator[str]:

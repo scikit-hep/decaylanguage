@@ -11,7 +11,6 @@ from typing import (
     Iterable,
     Iterator,
     Optional,
-    Type,
     TypeVar,
     Union,
     no_type_check,
