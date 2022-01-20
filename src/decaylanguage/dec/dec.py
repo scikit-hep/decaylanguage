@@ -786,7 +786,9 @@ All but the first occurrence will be discarded/removed ...""".format(
         return [sep.join(row) for row in zip(*aligned)]
 
     def build_decay_chains(
-        self, mother: str, stable_particles: Union[list[str], set[str], tuple[str], tuple[()]] = ()
+        self,
+        mother: str,
+        stable_particles: Union[list[str], set[str], tuple[str], tuple[()]] = (),
     ) -> dict[str, list[dict[str, Union[float, str, list[Any]]]]]:
         """
         Iteratively build the entire decay chains of a given mother particle,
