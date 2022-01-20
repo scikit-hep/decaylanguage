@@ -43,7 +43,7 @@ import re
 import warnings
 from io import StringIO
 from itertools import zip_longest
-from typing import Any, Iterable, Optional, Union, no_type_check
+from typing import Any, Iterable, Optional, Type, TypeVar, Union, no_type_check
 
 from lark import Lark, Tree, Visitor
 from particle import Particle
@@ -60,6 +60,9 @@ class DecFileNotParsed(RuntimeError):
 
 class DecayNotFound(RuntimeError):
     pass
+
+
+Self_DecFileParser = TypeVar("Self_DecFileParser", bound="DecFileParser")
 
 
 class DecFileParser:
@@ -135,7 +138,7 @@ class DecFileParser:
         self._include_ccdecays = True
 
     @classmethod
-    def from_string(cls, filecontent: str) -> DecFileParser:
+    def from_string(cls: Type[Self_DecFileParser], filecontent: str) -> Self_DecFileParser:
         """
         Parse a .dec decay file provided as a multi-line string.
 

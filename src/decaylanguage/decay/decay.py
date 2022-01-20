@@ -11,6 +11,8 @@ from typing import (
     Iterable,
     Iterator,
     Optional,
+    TYPE_CHECKING,
+    Type,
     TypeVar,
     Union,
     no_type_check,
@@ -19,7 +21,16 @@ from typing import (
 from ..utils import charge_conjugate_name
 
 
-class DaughtersDict(Counter[str]):
+Self_DaughtersDict = TypeVar("Self_DaughtersDict", bound="DaughtersDict")
+
+
+if TYPE_CHECKING:
+    CounterStr = Counter[str]
+else:
+    CounterStr = Counter
+
+
+class DaughtersDict(CounterStr):
     """
     Class holding a decay final state as a dictionary.
     It is a building block for the digital representation of full decay chains.
@@ -84,7 +95,7 @@ class DaughtersDict(Counter[str]):
         """
         return sorted(list(self.elements()))
 
-    def charge_conjugate(self, pdg_name: bool = False) -> DaughtersDict:
+    def charge_conjugate(self: Self_DaughtersDict, pdg_name: bool = False) -> Self_DaughtersDict:
         """
         Return the charge-conjugate final state.
 
@@ -130,7 +141,7 @@ class DaughtersDict(Counter[str]):
         """
         return sum(self.values())
 
-    def __add__(self, other: Counter[str]) -> DaughtersDict:
+    def __add__(self: Self_DaughtersDict, other: CounterStr) -> Self_DaughtersDict:
         """
         Add two final states, particle-type-wise.
         """
@@ -141,7 +152,7 @@ class DaughtersDict(Counter[str]):
         return self.elements()
 
 
-Self = TypeVar("Self", bound="DecayMode")
+Self_DecayMode = TypeVar("Self_DecayMode", bound="DecayMode")
 
 
 class DecayMode:
@@ -224,8 +235,8 @@ class DecayMode:
 
     @classmethod
     def from_dict(
-        cls, decay_mode_dict: dict[str, Union[int, float, str, list[str]]]
-    ) -> DecayMode:
+        cls: Type[Self_DecayMode], decay_mode_dict: dict[str, Union[int, float, str, list[str]]]
+    ) -> Self_DecayMode:
         """
         Constructor from a dictionary of the form
         {'bf': <float>, 'fs': [...], ...}.
@@ -259,11 +270,11 @@ class DecayMode:
 
     @classmethod
     def from_pdgids(
-        cls,
+        cls: Type[Self_DecayMode],
         bf: float = 0,
         daughters: Optional[Union[list[int], tuple[int]]] = None,
         **info: Any,
-    ) -> DecayMode:
+    ) -> Self_DecayMode:
         """
         Constructor for a final state given as a list of particle PDG IDs.
 
@@ -351,7 +362,7 @@ class DecayMode:
             d["model_params"] = ""
         return d  # type: ignore
 
-    def charge_conjugate(self, pdg_name: bool = False) -> DecayMode:
+    def charge_conjugate(self: Self_DecayMode, pdg_name: bool = False) -> Self_DecayMode:
         """
         Return the charge-conjugate decay mode.
 
@@ -394,6 +405,9 @@ class DecayMode:
 
     def __str__(self) -> str:
         return repr(self)
+
+
+Self_DecayChain = TypeVar("Self_DecayChain", bound="DecayChain")
 
 
 class DecayChain:
@@ -440,8 +454,8 @@ class DecayChain:
     @no_type_check
     @classmethod
     def from_dict(
-        cls, decay_chain_dict: dict[str, list[dict[str, Union[float, str, list[Any]]]]]
-    ) -> DecayMode:
+        cls: Type[Self_DecayChain], decay_chain_dict: dict[str, list[dict[str, Union[float, str, list[Any]]]]]
+    ) -> Self_DecayChain:
         """
         Constructor from a decay chain represented as a dictionary.
         The format is the same as that returned by
@@ -635,8 +649,8 @@ class DecayChain:
         return recursively_replace(self.mother)  # type: ignore
 
     def flatten(
-        self, stable_particles: Iterable[Union[dict[str, int], list[str], str]] = ()
-    ) -> DecayChain:
+        self: Self_DecayChain, stable_particles: Iterable[Union[dict[str, int], list[str], str]] = ()
+    ) -> Self_DecayChain:
         """
         Flatten the decay chain replacing all intermediate, decaying particles,
         with their final states.
@@ -691,7 +705,7 @@ class DecayChain:
                     fs[k] -= n_k
             further_to_replace = any(fs[_k] > 0 for _k in keys)
 
-        return DecayChain(
+        return self.__class__(
             self.mother,
             {self.mother: DecayMode(vis_bf, fs, **self.top_level_decay().metadata)},
         )
