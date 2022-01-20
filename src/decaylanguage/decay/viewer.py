@@ -10,7 +10,7 @@ see the `DecFileParser` class.
 """
 
 import itertools
-from typing import Any, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import graphviz
 from particle import latex_to_html_name
@@ -47,8 +47,8 @@ class DecayChainViewer:
 
     def __init__(
         self,
-        decaychain: dict[str, list[dict[str, Union[float, str, list[Any]]]]],
-        **attrs: dict[str, Union[bool, int, float, str]],
+        decaychain: Dict[str, List[Dict[str, Union[float, str, List[Any]]]]],
+        **attrs: Dict[str, Union[bool, int, float, str]],
     ) -> None:
         """
         Default constructor.
@@ -100,7 +100,7 @@ class DecayChainViewer:
                 return name
 
         def html_table_label(
-            names: list[str],
+            names: List[str],
             add_tags: bool = False,
             bgcolor: str = "#9abad6",
         ) -> str:
@@ -126,13 +126,13 @@ class DecayChainViewer:
             label += "{tr}</TABLE>>".format(tr="" if add_tags else "</TR>")
             return label
 
-        def new_node_no_subchain(list_parts: list[str]) -> str:
+        def new_node_no_subchain(list_parts: List[str]) -> str:
             label = html_table_label(list_parts, bgcolor="#eef3f8")
             r = f"dec{next(counter)}"
             self.graph.node(r, label=label, style="filled", fillcolor="#eef3f8")
             return r
 
-        def new_node_with_subchain(list_parts: list[Any]) -> str:
+        def new_node_with_subchain(list_parts: List[Any]) -> str:
             _list_parts = [
                 list(p.keys())[0] if isinstance(p, dict) else p for p in list_parts
             ]
@@ -142,7 +142,7 @@ class DecayChainViewer:
             return r
 
         def iterate_chain(
-            subchain: list[dict[str, Union[float, str, list[Any]]]],
+            subchain: List[Dict[str, Union[float, str, List[Any]]]],
             top_node: Optional[str] = None,
             link_pos: Optional[int] = None,
         ) -> None:
@@ -175,7 +175,7 @@ class DecayChainViewer:
                             _k = list(_p.keys())[0]
                             iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
 
-        def has_subdecay(ds: list[Any]) -> bool:
+        def has_subdecay(ds: List[Any]) -> bool:
             return not all(isinstance(p, str) for p in ds)
 
         k = list(self._chain.keys())[0]
@@ -201,7 +201,7 @@ class DecayChainViewer:
         return self.graph.source  # type: ignore [no-any-return]
 
     def _instantiate_graph(
-        self, **attrs: dict[str, Union[bool, int, float, str]]
+        self, **attrs: Dict[str, Union[bool, int, float, str]]
     ) -> graphviz.Digraph:
         """
         Return a ``graphviz.Digraph` class instance using the default attributes
@@ -229,7 +229,7 @@ class DecayChainViewer:
             graph_attr=graph_attr, node_attr=node_attr, edge_attr=edge_attr, **arguments
         )
 
-    def _get_default_arguments(self) -> dict[str, Union[bool, int, float, str]]:
+    def _get_default_arguments(self) -> Dict[str, Union[bool, int, float, str]]:
         """
         `graphviz.Digraph` default arguments.
         """
@@ -240,15 +240,15 @@ class DecayChainViewer:
             format="png",
         )
 
-    def _get_graph_defaults(self) -> dict[str, Union[bool, int, float, str]]:
+    def _get_graph_defaults(self) -> Dict[str, Union[bool, int, float, str]]:
         d = self._get_default_arguments()
         d.update(rankdir="LR")
         return d
 
-    def _get_node_defaults(self) -> dict[str, Union[bool, int, float, str]]:
+    def _get_node_defaults(self) -> Dict[str, Union[bool, int, float, str]]:
         return dict(fontname="Helvetica", fontsize="11", shape="oval")
 
-    def _get_edge_defaults(self) -> dict[str, Union[bool, int, float, str]]:
+    def _get_edge_defaults(self) -> Dict[str, Union[bool, int, float, str]]:
         return dict(fontcolor="#4c4c4c", fontsize="11")
 
     def _repr_mimebundle_(

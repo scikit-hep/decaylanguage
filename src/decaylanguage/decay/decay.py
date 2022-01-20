@@ -9,9 +9,12 @@ from copy import deepcopy
 from typing import (
     TYPE_CHECKING,
     Any,
+    Dict,
     Iterable,
     Iterator,
+    List,
     Optional,
+    Tuple,
     Type,
     TypeVar,
     Union,
@@ -49,7 +52,7 @@ class DaughtersDict(CounterStr):
 
     def __init__(
         self,
-        iterable: Optional[Union[dict[str, int], list[str], tuple[str], str]] = None,
+        iterable: Optional[Union[Dict[str, int], List[str], Tuple[str], str]] = None,
         **kwds: Any,
     ) -> None:
         """
@@ -88,7 +91,7 @@ class DaughtersDict(CounterStr):
         """
         return " ".join(sorted(self.elements()))
 
-    def to_list(self) -> list[str]:
+    def to_list(self) -> List[str]:
         """
         Return the daughters as an ordered list of names.
         """
@@ -180,7 +183,7 @@ class DecayMode:
         self,
         bf: float = 0,
         daughters: Optional[
-            Union[DaughtersDict, dict[str, int], list[str], tuple[str], str]
+            Union[DaughtersDict, Dict[str, int], List[str], Tuple[str], str]
         ] = None,
         **info: Any,
     ) -> None:
@@ -237,7 +240,7 @@ class DecayMode:
     @classmethod
     def from_dict(
         cls: Type[Self_DecayMode],
-        decay_mode_dict: dict[str, Union[int, float, str, list[str]]],
+        decay_mode_dict: Dict[str, Union[int, float, str, List[str]]],
     ) -> Self_DecayMode:
         """
         Constructor from a dictionary of the form
@@ -274,7 +277,7 @@ class DecayMode:
     def from_pdgids(
         cls: Type[Self_DecayMode],
         bf: float = 0,
-        daughters: Optional[Union[list[int], tuple[int]]] = None,
+        daughters: Optional[Union[List[int], Tuple[int]]] = None,
         **info: Any,
     ) -> Self_DecayMode:
         """
@@ -341,7 +344,7 @@ class DecayMode:
 
         return val
 
-    def to_dict(self) -> dict[str, Union[int, float, str, list[str]]]:
+    def to_dict(self) -> Dict[str, Union[int, float, str, List[str]]]:
         """
         Return the decay mode as a dictionary in the format understood
         by the `DecayChainViewer` class.
@@ -434,7 +437,7 @@ class DecayChain:
 
     __slots__ = ("mother", "decays")
 
-    def __init__(self, mother: str, decays: dict[str, DecayMode]) -> None:
+    def __init__(self, mother: str, decays: Dict[str, DecayMode]) -> None:
         """
         Default constructor.
 
@@ -459,7 +462,7 @@ class DecayChain:
     @classmethod
     def from_dict(
         cls: Type[Self_DecayChain],
-        decay_chain_dict: dict[str, list[dict[str, Union[float, str, list[Any]]]]],
+        decay_chain_dict: Dict[str, List[Dict[str, Union[float, str, List[Any]]]]],
     ) -> Self_DecayChain:
         """
         Constructor from a decay chain represented as a dictionary.
@@ -471,11 +474,11 @@ class DecayChain:
         except Exception as e:
             raise RuntimeError("Input not in the expected format!") from e
 
-        def has_no_subdecay(ds: list[Any]) -> bool:
+        def has_no_subdecay(ds: List[Any]) -> bool:
             return all(isinstance(p, str) for p in ds)
 
         def build_decay_modes(
-            dc_dict: dict[str, list[dict[str, Union[float, str, list[Any]]]]]
+            dc_dict: Dict[str, List[Dict[str, Union[float, str, List[Any]]]]]
         ) -> None:
             mother = list(dc_dict.keys())[0]
             dms = dc_dict[mother]
@@ -496,7 +499,7 @@ class DecayChain:
                     # has a sub-decay
                     decay_modes[mother] = DecayMode.from_dict(d)
 
-        decay_modes: dict[str, list[dict[str, Union[float, str, list[Any]]]]] = dict()
+        decay_modes: Dict[str, List[Dict[str, Union[float, str, List[Any]]]]] = dict()
         mother = list(decay_chain_dict.keys())[0]
         build_decay_modes(decay_chain_dict)
 
@@ -585,7 +588,7 @@ class DecayChain:
 
         # TODO: simplify logic and perform further checks
         def _print(
-            decay_dict: dict[str, list[dict[str, Union[float, str, list[Any]]]]],
+            decay_dict: Dict[str, List[Dict[str, Union[float, str, List[Any]]]]],
             depth: int = 0,
             link: bool = False,
             last: bool = False,
@@ -617,7 +620,7 @@ class DecayChain:
         dc_dict = self.to_dict()
         _print(dc_dict)
 
-    def to_dict(self) -> dict[str, list[dict[str, Union[float, str, list[Any]]]]]:
+    def to_dict(self) -> Dict[str, List[Dict[str, Union[float, str, List[Any]]]]]:
         """
         Return the decay chain as a dictionary representation.
         The format is the same as `DecFileParser.build_decay_chains(...)`.
@@ -655,7 +658,7 @@ class DecayChain:
 
     def flatten(
         self: Self_DecayChain,
-        stable_particles: Iterable[Union[dict[str, int], list[str], str]] = (),
+        stable_particles: Iterable[Union[Dict[str, int], List[str], str]] = (),
     ) -> Self_DecayChain:
         """
         Flatten the decay chain replacing all intermediate, decaying particles,
