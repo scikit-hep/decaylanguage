@@ -10,10 +10,9 @@ see the `DecFileParser` class.
 """
 
 import itertools
-import graphviz
-
 from typing import Any, Optional, Union
 
+import graphviz
 from particle import latex_to_html_name
 from particle.converters.bimap import DirectionalMaps
 
