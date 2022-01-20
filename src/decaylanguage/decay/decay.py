@@ -270,7 +270,7 @@ class DecayMode:
         except Exception as e:
             raise RuntimeError("Input not in the expected format!") from e
 
-        return cls(bf=bf, daughters=daughters, **dm)  # type: ignore [arg-type]
+        return cls(bf=bf, daughters=daughters, **dm)  # type: ignore[arg-type]
 
     @classmethod
     def from_pdgids(
@@ -364,7 +364,7 @@ class DecayMode:
         d.update(self.metadata)
         if d["model_params"] is None:
             d["model_params"] = ""
-        return d  # type: ignore [return-value]
+        return d  # type: ignore[return-value]
 
     def charge_conjugate(
         self: Self_DecayMode, pdg_name: bool = False
@@ -603,9 +603,9 @@ class DecayChain:
             for i_decay in decay_dict[mother]:
                 print(prefix, arrow if depth > 0 else "", mother, sep="")
                 fsps = i_decay["fs"]
-                n = len(list(fsps))  # type: ignore [arg-type]
+                n = len(list(fsps))  # type: ignore[arg-type]
                 depth += 1
-                for j, fsp in enumerate(fsps):  # type: ignore [arg-type]
+                for j, fsp in enumerate(fsps):  # type: ignore[arg-type]
                     prefix = bar if (link and depth > 1) else ""
                     if last:
                         prefix = prefix + " " * indent * (depth - 1) + " "
@@ -657,7 +657,7 @@ class DecayChain:
 
             for pos, fsp in enumerate(list_fsp):
                 if fsp in self.decays.keys():
-                    list_fsp[pos] = recursively_replace(fsp)  # type: ignore [call-overload]
+                    list_fsp[pos] = recursively_replace(fsp)  # type: ignore[call-overload]
             result.append(dm)
             return {mother: result}
 
@@ -717,7 +717,7 @@ class DecayChain:
                     n_k = fs[k]
                     vis_bf *= self.decays[k].bf ** n_k
                     for _ in range(n_k):
-                        fs += self.decays[k].daughters  # type: ignore [misc]
+                        fs += self.decays[k].daughters  # type: ignore[misc]
                     fs[k] -= n_k
             further_to_replace = any(fs[_k] > 0 for _k in keys)
 

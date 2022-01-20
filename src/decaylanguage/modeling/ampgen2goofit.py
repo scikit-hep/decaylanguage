@@ -25,7 +25,7 @@ def ampgen2goofit(filename, ret_output=False):
         output = StringIO()
         printer = partial(print, file=output)
     else:
-        printer = print  # type: ignore
+        printer = print
 
     lines, all_states = GooFitChain.read_ampgen(str(filename))
 
