@@ -14,11 +14,7 @@ write_to = "src/decaylanguage/_version.py"
 profile = "black"
 
 [tool.mypy]
-files = [
-    "src/decaylanguage/decay",
-    "src/decaylanguage/dec",
-    "src/decaylanguage/utils",
-]
+files = "src"
 exclude = "src/decaylanguage/(data|modeling)"
 python_version = "3.9"
 warn_unused_configs = true
