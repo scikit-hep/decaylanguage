@@ -17,7 +17,7 @@ def iter_flatten(iterable: Union[list[str], tuple[str]]) -> Iterator[str]:
             yield e
 
 
-def split(x):  # type: ignore
+def split(x):  # type: ignore [no-untyped-def]
     """
     Break up a comma separated list, but respect curly brackets.
 
@@ -45,7 +45,7 @@ def split(x):  # type: ignore
     return out
 
 
-def filter_lines(matcher, inp):  # type: ignore
+def filter_lines(matcher, inp):  # type: ignore [no-untyped-def]
     """
     Filter out lines into new variable if they match a regular expression
     """
