@@ -53,6 +53,7 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    Set,
     no_type_check,
 )
 
@@ -804,7 +805,7 @@ All but the first occurrence will be discarded/removed ...""".format(
     def build_decay_chains(
         self,
         mother: str,
-        stable_particles: Union[List[str], set[str], Tuple[str], Tuple[()]] = (),
+        stable_particles: Union[List[str], Set[str], Tuple[str], Tuple[()]] = (),
     ) -> Dict[str, List[Dict[str, Union[float, str, List[Any]]]]]:
         """
         Iteratively build the entire decay chains of a given mother particle,
