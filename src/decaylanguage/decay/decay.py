@@ -7,11 +7,11 @@
 from collections import Counter
 from copy import deepcopy
 from typing import (
+    TYPE_CHECKING,
     Any,
     Iterable,
     Iterator,
     Optional,
-    TYPE_CHECKING,
     Type,
     TypeVar,
     Union,
@@ -19,7 +19,6 @@ from typing import (
 )
 
 from ..utils import charge_conjugate_name
-
 
 Self_DaughtersDict = TypeVar("Self_DaughtersDict", bound="DaughtersDict")
 
@@ -95,7 +94,9 @@ class DaughtersDict(CounterStr):
         """
         return sorted(list(self.elements()))
 
-    def charge_conjugate(self: Self_DaughtersDict, pdg_name: bool = False) -> Self_DaughtersDict:
+    def charge_conjugate(
+        self: Self_DaughtersDict, pdg_name: bool = False
+    ) -> Self_DaughtersDict:
         """
         Return the charge-conjugate final state.
 
@@ -235,7 +236,8 @@ class DecayMode:
 
     @classmethod
     def from_dict(
-        cls: Type[Self_DecayMode], decay_mode_dict: dict[str, Union[int, float, str, list[str]]]
+        cls: Type[Self_DecayMode],
+        decay_mode_dict: dict[str, Union[int, float, str, list[str]]],
     ) -> Self_DecayMode:
         """
         Constructor from a dictionary of the form
@@ -362,7 +364,9 @@ class DecayMode:
             d["model_params"] = ""
         return d  # type: ignore
 
-    def charge_conjugate(self: Self_DecayMode, pdg_name: bool = False) -> Self_DecayMode:
+    def charge_conjugate(
+        self: Self_DecayMode, pdg_name: bool = False
+    ) -> Self_DecayMode:
         """
         Return the charge-conjugate decay mode.
 
@@ -454,7 +458,8 @@ class DecayChain:
     @no_type_check
     @classmethod
     def from_dict(
-        cls: Type[Self_DecayChain], decay_chain_dict: dict[str, list[dict[str, Union[float, str, list[Any]]]]]
+        cls: Type[Self_DecayChain],
+        decay_chain_dict: dict[str, list[dict[str, Union[float, str, list[Any]]]]],
     ) -> Self_DecayChain:
         """
         Constructor from a decay chain represented as a dictionary.
@@ -649,7 +654,8 @@ class DecayChain:
         return recursively_replace(self.mother)  # type: ignore
 
     def flatten(
-        self: Self_DecayChain, stable_particles: Iterable[Union[dict[str, int], list[str], str]] = ()
+        self: Self_DecayChain,
+        stable_particles: Iterable[Union[dict[str, int], list[str], str]] = (),
     ) -> Self_DecayChain:
         """
         Flatten the decay chain replacing all intermediate, decaying particles,
