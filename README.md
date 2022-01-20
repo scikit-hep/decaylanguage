@@ -175,13 +175,13 @@ dcv = DecayChainViewer(d)
 dcv.graph
 ```
 
-making all `graphviz.dot.Digraph` class properties and methods available, such as
+making all `graphviz.Digraph` class properties and methods available, such as
 
 ```python
 dcv.graph.render(filename='mygraph', format='pdf', view=True, cleanup=True)
 ```
 
-In the same way, all `graphviz.dot.Digraph` class attributes are settable
+In the same way, all `graphviz.Digraph` class attributes are settable
 upon instantiation of `DecayChainViewer`:
 
 ```python

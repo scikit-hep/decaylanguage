@@ -15,9 +15,11 @@ profile = "black"
 
 [tool.mypy]
 files = "src"
-python_version = "3.6"
+exclude = "src/decaylanguage/(data|modeling)"
+python_version = "3.9"
 warn_unused_configs = true
-check_untyped_defs = true
+warn_unused_ignores = true
+strict = true
 
 [[tool.mypy.overrides]]
 module = [
@@ -25,10 +27,8 @@ module = [
     "graphviz",
     "pandas",
     "plumbum",
-    "decaylanguage._version",
 ]
 ignore_missing_imports = true
-
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

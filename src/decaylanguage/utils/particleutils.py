@@ -18,7 +18,7 @@ cacher = lru_cache(maxsize=64)
 
 
 @cacher
-def charge_conjugate_name(name, pdg_name=False):
+def charge_conjugate_name(name: str, pdg_name: bool = False) -> str:
     """
     Return the charge-conjugate particle name matching the given name.
     If no matching is found, return "ChargeConj(pname)".

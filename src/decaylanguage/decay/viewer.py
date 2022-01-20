@@ -10,6 +10,7 @@ see the `DecFileParser` class.
 """
 
 import itertools
+from typing import Any, Dict, List, Optional, Union
 
 import graphviz
 from particle import latex_to_html_name
@@ -38,13 +39,17 @@ class DecayChainViewer:
     >>> dcv  # display the SVG figure in a notebook
 
     When not in notebooks the graph can easily be visualized with the
-    `graphviz.dot.Digraph.render` or `graphviz.dot.Digraph.view` functions, e.g.:
+    `graphviz.Digraph.render` or `graphviz.Digraph.view` functions, e.g.:
     >>> dcv.graph.render(filename="test", format="pdf", view=True, cleanup=True)
     """
 
     __slots__ = ("_chain", "_graph", "_graph_attributes")
 
-    def __init__(self, decaychain, **attrs):
+    def __init__(
+        self,
+        decaychain: Dict[str, List[Dict[str, Union[float, str, List[Any]]]]],
+        **attrs: Dict[str, Union[bool, int, float, str]],
+    ) -> None:
         """
         Default constructor.
 
@@ -54,7 +59,7 @@ class DecayChainViewer:
             Input decay chain in dict format, typically created from `decaylanguage.DecFileParser.build_decay_chains`
             after parsing a .dec decay file, or from building a decay chain representation with `decaylanguage.DecayChain.to_dict`.
         attrs: optional
-            User input `graphviz.dot.Digraph` class attributes.
+            User input `graphviz.Digraph` class attributes.
 
         See also
         --------
@@ -70,13 +75,13 @@ class DecayChainViewer:
         # Build the actual graph from the input decay chain structure
         self._build_decay_graph()
 
-    def _build_decay_graph(self):
+    def _build_decay_graph(self) -> None:
         """
         Recursively navigate the decay chain tree and produce a Digraph
         in the DOT language.
         """
 
-        def safe_html_name(name):
+        def safe_html_name(name: str) -> str:
             """
             Get a safe HTML name from the EvtGen name.
 
@@ -94,7 +99,11 @@ class DecayChainViewer:
             except Exception:
                 return name
 
-        def html_table_label(names, add_tags=False, bgcolor="#9abad6"):
+        def html_table_label(
+            names: List[str],
+            add_tags: bool = False,
+            bgcolor: str = "#9abad6",
+        ) -> str:
             if add_tags:
                 label = (
                     '<<TABLE BORDER="0" CELLSPACING="0" BGCOLOR="{bgcolor}">'.format(
@@ -117,37 +126,41 @@ class DecayChainViewer:
             label += "{tr}</TABLE>>".format(tr="" if add_tags else "</TR>")
             return label
 
-        def new_node_no_subchain(list_parts):
+        def new_node_no_subchain(list_parts: List[str]) -> str:
             label = html_table_label(list_parts, bgcolor="#eef3f8")
             r = f"dec{next(counter)}"
             self.graph.node(r, label=label, style="filled", fillcolor="#eef3f8")
             return r
 
-        def new_node_with_subchain(list_parts):
-            list_parts = [
+        def new_node_with_subchain(list_parts: List[Any]) -> str:
+            _list_parts = [
                 list(p.keys())[0] if isinstance(p, dict) else p for p in list_parts
             ]
-            label = html_table_label(list_parts, add_tags=True)
+            label = html_table_label(_list_parts, add_tags=True)
             r = f"dec{next(counter)}"
             self.graph.node(r, shape="none", label=label)
             return r
 
-        def iterate_chain(subchain, top_node=None, link_pos=None):
+        def iterate_chain(
+            subchain: List[Dict[str, Union[float, str, List[Any]]]],
+            top_node: Optional[str] = None,
+            link_pos: Optional[int] = None,
+        ) -> None:
             if not top_node:
                 top_node = "mother"
                 self.graph.node("mother", shape="none", label=label)
             n_decaymodes = len(subchain)
             for idm in range(n_decaymodes):
                 _list_parts = subchain[idm]["fs"]
-                if not has_subdecay(_list_parts):
-                    _ref = new_node_no_subchain(_list_parts)
+                if not has_subdecay(_list_parts):  # type: ignore [arg-type]
+                    _ref = new_node_no_subchain(_list_parts)  # type: ignore [arg-type]
                     _bf = subchain[idm]["bf"]
                     if link_pos is None:
                         self.graph.edge(top_node, _ref, label=str(_bf))
                     else:
                         self.graph.edge(f"{top_node}:p{link_pos}", _ref, label=str(_bf))
                 else:
-                    _ref_1 = new_node_with_subchain(_list_parts)
+                    _ref_1 = new_node_with_subchain(_list_parts)  # type: ignore [arg-type]
                     _bf_1 = subchain[idm]["bf"]
                     if link_pos is None:
                         self.graph.edge(top_node, _ref_1, label=str(_bf_1))
@@ -157,12 +170,12 @@ class DecayChainViewer:
                             _ref_1,
                             label=str(_bf_1),
                         )
-                    for i, _p in enumerate(_list_parts):
+                    for i, _p in enumerate(_list_parts):  # type: ignore [arg-type]
                         if not isinstance(_p, str):
                             _k = list(_p.keys())[0]
                             iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
 
-        def has_subdecay(ds):
+        def has_subdecay(ds: List[Any]) -> bool:
             return not all(isinstance(p, str) for p in ds)
 
         k = list(self._chain.keys())[0]
@@ -173,23 +186,25 @@ class DecayChainViewer:
         iterate_chain(sc)
 
     @property
-    def graph(self):
+    def graph(self) -> graphviz.Digraph:
         """
-        Get the actual `graphviz.dot.Digraph` object.
+        Get the actual `graphviz.Digraph` object.
         The user now has full control ...
         """
         return self._graph
 
-    def to_string(self):
+    def to_string(self) -> str:
         """
         Return a string representation of the built graph in the DOT language.
-        The function is a trivial shortcut for ``graphviz.dot.Digraph.source`.
+        The function is a trivial shortcut for ``graphviz.Digraph.source`.
         """
-        return self.graph.source
+        return self.graph.source  # type: ignore [no-any-return]
 
-    def _instantiate_graph(self, **attrs):
+    def _instantiate_graph(
+        self, **attrs: Dict[str, Union[bool, int, float, str]]
+    ) -> graphviz.Digraph:
         """
-        Return a ``graphviz.dot.Digraph` class instance using the default attributes
+        Return a ``graphviz.Digraph` class instance using the default attributes
         specified in this class:
         - Default graph attributes are overridden by input by the user.
         - Class and node and edge defaults.
@@ -208,15 +223,15 @@ class DecayChainViewer:
             attrs.pop("edge_attr")
 
         arguments = self._get_default_arguments()
-        arguments.update(**attrs)
+        arguments.update(**attrs)  # type: ignore [call-overload]
 
         return graphviz.Digraph(
             graph_attr=graph_attr, node_attr=node_attr, edge_attr=edge_attr, **arguments
         )
 
-    def _get_default_arguments(self):
+    def _get_default_arguments(self) -> Dict[str, Union[bool, int, float, str]]:
         """
-        `graphviz.dot.Digraph` default arguments.
+        `graphviz.Digraph` default arguments.
         """
         return dict(
             name="DecayChainGraph",
@@ -225,18 +240,23 @@ class DecayChainViewer:
             format="png",
         )
 
-    def _get_graph_defaults(self):
+    def _get_graph_defaults(self) -> Dict[str, Union[bool, int, float, str]]:
         d = self._get_default_arguments()
         d.update(rankdir="LR")
         return d
 
-    def _get_node_defaults(self):
+    def _get_node_defaults(self) -> Dict[str, Union[bool, int, float, str]]:
         return dict(fontname="Helvetica", fontsize="11", shape="oval")
 
-    def _get_edge_defaults(self):
+    def _get_edge_defaults(self) -> Dict[str, Union[bool, int, float, str]]:
         return dict(fontcolor="#4c4c4c", fontsize="11")
 
-    def _repr_mimebundle_(self, include=None, exclude=None, **kwargs):
+    def _repr_mimebundle_(
+        self,
+        include: Optional[bool] = None,
+        exclude: Optional[bool] = None,
+        **kwargs: Any,
+    ) -> Any:
         """
         IPython display helper.
         """
