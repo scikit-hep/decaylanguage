@@ -7,7 +7,7 @@ on:
     - master
 
 jobs:
- checks:
+  checks:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -42,7 +42,6 @@ jobs:
     - name: Test coverage with Codecov
       if: "runner.os != 'Windows' && matrix.python-version != 3.7"
       uses: codecov/codecov-action@v2
-
 
   notebooks:
     runs-on: ubuntu-latest
