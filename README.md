@@ -10,7 +10,7 @@
 
 [![GitHub Actions Status: CI](https://github.com/scikit-hep/decaylanguage/workflows/CI/badge.svg)](https://github.com/scikit-hep/decaylanguage/actions)
 [![Code Coverage](https://codecov.io/gh/scikit-hep/decaylanguage/graph/badge.svg?branch=master)](https://codecov.io/gh/scikit-hep/decaylanguage?branch=master)
-[![Documentation Status](https://readthedocs.org/projects/decaylanguage/badge/?style=flat)](https://readthedocs.org/projects/decaylanguage)
+[![Documentation Status](https://readthedocs.org/projects/decaylanguage/badge/?style=flat)](https://decaylanguage.readthedocs.io)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 [![Binder demo](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scikit-hep/decaylanguage/master?urlpath=lab/tree/notebooks/DecayLanguageDemo.ipynb)
@@ -63,7 +63,7 @@ Required and compatibility dependencies will be automatically installed by pip.
 The [Binder demo](https://mybinder.org/v2/gh/scikit-hep/decaylanguage/master?urlpath=lab/tree/notebooks/DecayLanguageDemo.ipynb)
 is an excellent way to get started with `DecayLanguage`.
 
-This is a quick user guide. For a full API docs, go [here](https://decaylanguage.readthedocs.io/en/latest/)
+This is a quick user guide. For a full API docs, go [here](https://decaylanguage.readthedocs.io)
 (note that it is presently work-in-progress).
 
 ### What is DecayLanguage?
