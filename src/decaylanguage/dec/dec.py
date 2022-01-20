@@ -43,19 +43,7 @@ import re
 import warnings
 from io import StringIO
 from itertools import zip_longest
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Set,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-    no_type_check,
-)
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple, Type, TypeVar, Union
 
 from lark import Lark, Tree, Visitor
 from particle import Particle
@@ -239,7 +227,7 @@ class DecFileParser:
             The Lark grammar definition file.
         """
         if not self.grammar_loaded:
-            self.load_grammar()  # type: ignore [no-untyped-call]
+            self.load_grammar()
 
         return self._grammar  # type: ignore [return-value]
 
@@ -255,11 +243,11 @@ class DecFileParser:
             The Lark grammar definition file name and parser options.
         """
         if not self.grammar_loaded:
-            self.load_grammar()  # type: ignore [no-untyped-call]
+            self.load_grammar()
+        assert self._grammar_info is not None
 
-        return self._grammar_info  # type: ignore [return-value]
+        return self._grammar_info
 
-    @no_type_check
     def load_grammar(
         self,
         filename: Optional[str] = None,
@@ -288,14 +276,14 @@ class DecFileParser:
 
         if filename is None:
             filename = "decfile.lark"
-            with data.basepath.joinpath(filename).open() as f:
-                self._grammar = f.read()
+            with data.basepath.joinpath(filename).open() as f1:
+                self._grammar = f1.read()
         else:
             # Conversion to handle pathlib on Python < 3.6:
             filename = str(filename)
 
-            with open(filename) as f:
-                self._grammar = f.read()
+            with open(filename) as f2:
+                self._grammar = f2.read()
 
         self._grammar_info = dict(
             lark_file=filename, parser=parser, lexer=lexer, **options

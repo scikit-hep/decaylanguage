@@ -18,7 +18,6 @@ from typing import (
     Type,
     TypeVar,
     Union,
-    no_type_check,
 )
 
 from ..utils import charge_conjugate_name
@@ -415,6 +414,38 @@ class DecayMode:
 
 
 Self_DecayChain = TypeVar("Self_DecayChain", bound="DecayChain")
+DecayModeDict = Dict[str, List[Dict[str, Union[float, str, List[Any]]]]]
+
+
+def _has_no_subdecay(ds: List[Any]) -> bool:
+    return all(isinstance(p, str) for p in ds)
+
+
+def _build_decay_modes(
+    decay_modes: Dict[str, DecayMode], dc_dict: DecayModeDict
+) -> None:
+    mother = list(dc_dict.keys())[0]
+    dms = dc_dict[mother]
+
+    for dm in dms:
+        fs = dm["fs"]
+        assert isinstance(fs, list)
+        if _has_no_subdecay(fs):
+            decay_modes[mother] = DecayMode.from_dict(dm)
+        else:
+            d = deepcopy(dm)
+            fs_local = d["fs"]
+            assert isinstance(fs_local, list)
+            for i in range(len(fs_local)):
+                if isinstance(fs_local[i], dict):
+                    # Replace the element with the key and
+                    # store the present decay mode ignoring sub-decays
+                    fs_local[i] = list(fs_local[i].keys())[0]
+                    # Recursively continue ...
+                    _build_decay_modes(decay_modes, fs[i])
+            # Create the decay mode now that none of its particles
+            # has a sub-decay
+            decay_modes[mother] = DecayMode.from_dict(d)
 
 
 class DecayChain:
@@ -458,11 +489,9 @@ class DecayChain:
         self.mother = mother
         self.decays = decays
 
-    @no_type_check
     @classmethod
     def from_dict(
-        cls: Type[Self_DecayChain],
-        decay_chain_dict: Dict[str, List[Dict[str, Union[float, str, List[Any]]]]],
+        cls: Type[Self_DecayChain], decay_chain_dict: DecayModeDict
     ) -> Self_DecayChain:
         """
         Constructor from a decay chain represented as a dictionary.
@@ -474,34 +503,9 @@ class DecayChain:
         except Exception as e:
             raise RuntimeError("Input not in the expected format!") from e
 
-        def has_no_subdecay(ds: List[Any]) -> bool:
-            return all(isinstance(p, str) for p in ds)
-
-        def build_decay_modes(
-            dc_dict: Dict[str, List[Dict[str, Union[float, str, List[Any]]]]]
-        ) -> None:
-            mother = list(dc_dict.keys())[0]
-            dms = dc_dict[mother]
-
-            for dm in dms:
-                if has_no_subdecay(dm["fs"]):
-                    decay_modes[mother] = DecayMode.from_dict(dm)
-                else:
-                    d = deepcopy(dm)
-                    for i in range(len(d["fs"])):
-                        if isinstance(d["fs"][i], dict):
-                            # Replace the element with the key and
-                            # store the present decay mode ignoring sub-decays
-                            d["fs"][i] = list(d["fs"][i].keys())[0]
-                            # Recursively continue ...
-                            build_decay_modes(dm["fs"][i])
-                    # Create the decay mode now that none of its particles
-                    # has a sub-decay
-                    decay_modes[mother] = DecayMode.from_dict(d)
-
-        decay_modes: Dict[str, List[Dict[str, Union[float, str, List[Any]]]]] = dict()
+        decay_modes: Dict[str, DecayMode] = {}
         mother = list(decay_chain_dict.keys())[0]
-        build_decay_modes(decay_chain_dict)
+        _build_decay_modes(decay_modes, decay_chain_dict)
 
         return cls(mother, decay_modes)
 
@@ -642,19 +646,22 @@ class DecayChain:
             'model_params': ''}]}
         """
 
-        @no_type_check
-        def recursively_replace(mother):
+        # Ideally this would be a recursive type, DecayDict = dict[str, list[str | DecayDict]]
+        DecayDict = Dict[str, List[Any]]
+
+        def recursively_replace(mother: str) -> DecayDict:
             dm = self.decays[mother].to_dict()
             result = []
             list_fsp = dm["fs"]
+            assert isinstance(list_fsp, list)
 
             for pos, fsp in enumerate(list_fsp):
                 if fsp in self.decays.keys():
-                    list_fsp[pos] = recursively_replace(fsp)
+                    list_fsp[pos] = recursively_replace(fsp)  # type: ignore [call-overload]
             result.append(dm)
             return {mother: result}
 
-        return recursively_replace(self.mother)  # type: ignore [no-any-return]
+        return recursively_replace(self.mother)
 
     def flatten(
         self: Self_DecayChain,
