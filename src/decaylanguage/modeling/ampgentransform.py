@@ -44,7 +44,7 @@ class AmpGenTransformer(Transformer):
 
     def decay(self, lines):
         (particle,) = lines[0].children
-        dic = OrderedDict()  # type: Dict[str, Any]
+        dic: Dict[str, Any] = OrderedDict()
         dic["name"] = str(particle)
         dic["daughters"] = []
 

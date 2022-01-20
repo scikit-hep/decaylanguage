@@ -35,7 +35,7 @@ If you are proposing a feature:
 Development
 ===========
 
-To set up `decaylanguage` for local development:
+To set up ``decaylanguage`` for local development:
 
 1. Fork `decaylanguage <https://github.com/scikit-hep/decaylanguage>`_
    (look for the "Fork" button).

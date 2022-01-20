@@ -127,7 +127,7 @@ class DecFileParser:
             self._dec_file = stream.read()
         else:
             self._dec_file_names = []
-            self._dec_file = None  # type: ignore [assignment]
+            self._dec_file = None  # type: ignore[assignment]
 
         self._parsed_dec_file: Optional[str] = None  # Parsed decay file
         self._parsed_decays: Optional[
@@ -229,7 +229,7 @@ class DecFileParser:
         if not self.grammar_loaded:
             self.load_grammar()
 
-        return self._grammar  # type: ignore [return-value]
+        return self._grammar  # type: ignore[return-value]
 
     def grammar_info(self) -> Dict[str, Any]:
         """
@@ -429,7 +429,7 @@ class DecFileParser:
         # match name -> position in list self._parsed_decays
         name2treepos = {
             t.children[0].children[0].value: i
-            for i, t in enumerate(self._parsed_decays)  # type: ignore [arg-type]
+            for i, t in enumerate(self._parsed_decays)  # type: ignore[arg-type]
         }
 
         # Make the copies taking care to change the name of the mother particle
@@ -437,7 +437,7 @@ class DecFileParser:
         misses = []
         for decay2copy, decay2becopied in decays2copy.items():
             try:
-                match = self._parsed_decays[name2treepos[decay2becopied]]  # type: ignore [index]
+                match = self._parsed_decays[name2treepos[decay2becopied]]  # type: ignore[index]
                 copied_decay = match.__deepcopy__(None)
                 copied_decay.children[0].children[0].value = decay2copy
                 copied_decays.append(copied_decay)
@@ -452,7 +452,7 @@ Skipping creation of these copied decay trees.""".format(
             warnings.warn(msg)
 
         # Actually add all these copied decays to the list of decays!
-        self._parsed_decays.extend(copied_decays)  # type: ignore [union-attr]
+        self._parsed_decays.extend(copied_decays)  # type: ignore[union-attr]
 
     def _add_charge_conjugate_decays(self) -> None:
         """
@@ -484,7 +484,7 @@ Skipping creation of these copied decay trees.""".format(
         # Cross-check - make sure charge conjugate decays are not defined
         # with both 'Decay' and 'CDecay' statements!
         mother_names_decays = [
-            get_decay_mother_name(tree) for tree in self._parsed_decays  # type: ignore [union-attr]
+            get_decay_mother_name(tree) for tree in self._parsed_decays  # type: ignore[union-attr]
         ]
 
         duplicates = [n for n in mother_names_ccdecays if n in mother_names_decays]
@@ -515,7 +515,7 @@ The 'CDecay' definition(s) will be ignored ...""".format(
         # match name -> position in list self._parsed_decays
         name2treepos = {
             t.children[0].children[0].value: i
-            for i, t in enumerate(self._parsed_decays)  # type: ignore [arg-type]
+            for i, t in enumerate(self._parsed_decays)  # type: ignore[arg-type]
         }
 
         trees_to_conjugate = []
@@ -523,7 +523,7 @@ The 'CDecay' definition(s) will be ignored ...""".format(
         for ccname in mother_names_ccdecays:
             name = find_charge_conjugate_match(ccname, dict_cc_names)
             try:
-                match = self._parsed_decays[name2treepos[name]]  # type: ignore [index]
+                match = self._parsed_decays[name2treepos[name]]  # type: ignore[index]
                 trees_to_conjugate.append(match)
             except Exception:
                 misses.append(ccname)
@@ -561,7 +561,7 @@ Skipping creation of charge-conjugate decay Tree.""".format(
         ]
 
         # ... and add all these charge-conjugate decays to the list of decays!
-        self._parsed_decays.extend(cdecays)  # type: ignore [union-attr]
+        self._parsed_decays.extend(cdecays)  # type: ignore[union-attr]
 
     def _check_parsing(self) -> None:
         """Has the .parse() method been called already?"""
@@ -596,18 +596,18 @@ All but the first occurrence will be discarded/removed ...""".format(
                 duplicates_to_remove.extend([item] * (c - 1))
 
         # Actually remove all but the first occurrence of duplicate decays
-        for tree in reversed(self._parsed_decays):  # type: ignore [arg-type]
+        for tree in reversed(self._parsed_decays):  # type: ignore[arg-type]
             val = tree.children[0].children[0].value
             if val in duplicates_to_remove:
                 duplicates_to_remove.remove(val)
-                self._parsed_decays.remove(tree)  # type: ignore [union-attr]
+                self._parsed_decays.remove(tree)  # type: ignore[union-attr]
 
     @property
     def number_of_decays(self) -> int:
         """Return the number of particle decays defined in the parsed .dec file."""
         self._check_parsing()
 
-        return len(self._parsed_decays)  # type: ignore [arg-type]
+        return len(self._parsed_decays)  # type: ignore[arg-type]
 
     def list_decay_mother_names(self) -> List[Union[str, Any]]:
         """
@@ -615,7 +615,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         """
         self._check_parsing()
 
-        return [get_decay_mother_name(d) for d in self._parsed_decays]  # type: ignore [union-attr]
+        return [get_decay_mother_name(d) for d in self._parsed_decays]  # type: ignore[union-attr]
 
     def _find_decay_modes(self, mother: str) -> Tuple[Any, ...]:
         """
@@ -629,7 +629,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         """
         self._check_parsing()
 
-        for decay_Tree in self._parsed_decays:  # type: ignore [union-attr]
+        for decay_Tree in self._parsed_decays:  # type: ignore[union-attr]
             if get_decay_mother_name(decay_Tree) == mother:
                 return tuple(decay_Tree.find_data("decayline"))
 
@@ -856,7 +856,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             list_dm_details = self._decay_mode_details(dm, display_photos_keyword=False)
             d = dict(zip(keys, list_dm_details))
 
-            for i, fs in enumerate(d["fs"]):  # type: ignore [arg-type, var-annotated]
+            for i, fs in enumerate(d["fs"]):  # type: ignore[arg-type, var-annotated]
                 if fs in stable_particles:
                     continue
 
@@ -866,13 +866,13 @@ All but the first occurrence will be discarded/removed ...""".format(
                     # _n_dms = len(self._find_decay_modes(fs))
 
                     _info = self.build_decay_chains(fs, stable_particles)
-                    d["fs"][i] = _info  # type: ignore [index]
+                    d["fs"][i] = _info  # type: ignore[index]
                 except DecayNotFound:
                     pass
 
             info.append(d)
 
-        return {mother: info}  # type: ignore [dict-item]
+        return {mother: info}  # type: ignore[dict-item]
 
     def __repr__(self) -> str:
         if self._parsed_dec_file is not None:
@@ -888,7 +888,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         return repr(self)
 
 
-class DecayModelParamValueReplacement(Visitor):  # type: ignore [misc]
+class DecayModelParamValueReplacement(Visitor):  # type: ignore[misc]
     """
     Lark Visitor implementing the replacement of decay model parameter names
     with the actual parameter values provided in 'Define' statements,
@@ -940,7 +940,7 @@ class DecayModelParamValueReplacement(Visitor):  # type: ignore [misc]
             self._replacement(child)
 
 
-class ChargeConjugateReplacement(Visitor):  # type: ignore [misc]
+class ChargeConjugateReplacement(Visitor):  # type: ignore[misc]
     """
     Lark Visitor implementing the replacement of all particle names
     with their charge conjugate particle names
@@ -1404,7 +1404,7 @@ def get_jetset_definitions(
         dict_params: Dict[str, Dict[int, Union[int, float, str]]] = {}
         for tree in parsed_file.find_data("jetset_def"):
             # This will throw an error if match is None
-            param = get_jetsetpar.match(tree.children[0].value).groupdict()  # type: ignore [union-attr]
+            param = get_jetsetpar.match(tree.children[0].value).groupdict()  # type: ignore[union-attr]
             try:
                 dict_params[param["pname"]].update(
                     {int(param["pnumber"]): to_int_or_float(tree.children[1].value)}
