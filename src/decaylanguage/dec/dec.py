@@ -138,7 +138,9 @@ class DecFileParser:
         self._include_ccdecays = True
 
     @classmethod
-    def from_string(cls: Type[Self_DecFileParser], filecontent: str) -> Self_DecFileParser:
+    def from_string(
+        cls: Type[Self_DecFileParser], filecontent: str
+    ) -> Self_DecFileParser:
         """
         Parse a .dec decay file provided as a multi-line string.
 
