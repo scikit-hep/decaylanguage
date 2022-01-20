@@ -49,11 +49,11 @@ from typing import (
     Iterable,
     List,
     Optional,
+    Set,
     Tuple,
     Type,
     TypeVar,
     Union,
-    Set,
     no_type_check,
 )
 
