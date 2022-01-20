@@ -19,6 +19,7 @@ files = [
     "src/decaylanguage/dec",
     "src/decaylanguage/utils",
 ]
+exclude = "src/decaylanguage/(data|modeling)"
 python_version = "3.9"
 warn_unused_configs = true
 warn_unused_ignores = true
