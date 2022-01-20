@@ -49,6 +49,7 @@ repos:
   rev: v0.931
   hooks:
   - id: mypy
+    files: '^src/decaylanguage/(decay|dec|utils)/'
     args: [--show-error-codes]
     additional_dependencies: [attrs, particle, importlib_resources, numpy, types-deprecated]
 
