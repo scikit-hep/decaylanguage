@@ -39,7 +39,7 @@ class DecayChainViewer:
     >>> dcv  # display the SVG figure in a notebook
 
     When not in notebooks the graph can easily be visualized with the
-    `graphviz.dot.Digraph.render` or `graphviz.dot.Digraph.view` functions, e.g.:
+    `graphviz.Digraph.render` or `graphviz.Digraph.view` functions, e.g.:
     >>> dcv.graph.render(filename="test", format="pdf", view=True, cleanup=True)
     """
 
@@ -59,7 +59,7 @@ class DecayChainViewer:
             Input decay chain in dict format, typically created from `decaylanguage.DecFileParser.build_decay_chains`
             after parsing a .dec decay file, or from building a decay chain representation with `decaylanguage.DecayChain.to_dict`.
         attrs: optional
-            User input `graphviz.dot.Digraph` class attributes.
+            User input `graphviz.Digraph` class attributes.
 
         See also
         --------
@@ -186,9 +186,9 @@ class DecayChainViewer:
         iterate_chain(sc)
 
     @property
-    def graph(self) -> graphviz.dot.Digraph:
+    def graph(self) -> graphviz.Digraph:
         """
-        Get the actual `graphviz.dot.Digraph` object.
+        Get the actual `graphviz.Digraph` object.
         The user now has full control ...
         """
         return self._graph
@@ -196,15 +196,15 @@ class DecayChainViewer:
     def to_string(self) -> str:
         """
         Return a string representation of the built graph in the DOT language.
-        The function is a trivial shortcut for ``graphviz.dot.Digraph.source`.
+        The function is a trivial shortcut for ``graphviz.Digraph.source`.
         """
         return self.graph.source  # type: ignore [no-any-return]
 
     def _instantiate_graph(
         self, **attrs: dict[str, Union[bool, int, float, str]]
-    ) -> graphviz.dot.Digraph:
+    ) -> graphviz.Digraph:
         """
-        Return a ``graphviz.dot.Digraph` class instance using the default attributes
+        Return a ``graphviz.Digraph` class instance using the default attributes
         specified in this class:
         - Default graph attributes are overridden by input by the user.
         - Class and node and edge defaults.
@@ -231,7 +231,7 @@ class DecayChainViewer:
 
     def _get_default_arguments(self) -> dict[str, Union[bool, int, float, str]]:
         """
-        `graphviz.dot.Digraph` default arguments.
+        `graphviz.Digraph` default arguments.
         """
         return dict(
             name="DecayChainGraph",
