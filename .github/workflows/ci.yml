@@ -60,4 +60,4 @@ jobs:
       run: python -m pip install nbconvert jupyter_client ipykernel
 
     - name: Run the notebooks inplace
-      run: jupyter nbconvert --execute --inplace notebooks/*.ipynb
+      run: jupyter nbconvert --execute --inplace notebooks/DecayLanguageDemo.ipynb notebooks/ExampleDecFileParsingWithLark.ipynb
