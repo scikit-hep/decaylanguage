@@ -25,6 +25,11 @@ def test_DaughtersDict_constructor_from_string():
     assert dd == {"K+": 1, "K-": 1, "pi0": 1}
 
 
+def test_DaughtersDict_constructor_kwargs():
+    dd = DaughtersDict('K+ K-', pi0=1, gamma=2)
+    assert dd == {"K+": 1, "K-": 1, "pi0": 1, "gamma": 2}
+
+
 def test_DaughtersDict_string_repr():
     dd = DaughtersDict(["K+", "K-", "K-", "pi+", "pi0"])
     assert dd.__str__() == "<DaughtersDict: ['K+', 'K-', 'K-', 'pi+', 'pi0']>"
@@ -45,6 +50,18 @@ def test_DaughtersDict_add():
 def test_DaughtersDict_to_string():
     dd1 = DaughtersDict({"K+": 1, "K-": 2, "pi0": 3})
     assert dd1.to_string() == "K+ K- K- pi0 pi0 pi0"
+
+
+def test_DaughtersDict_charge_conjugate():
+    dd = DaughtersDict({'K+': 2, 'pi0': 1})
+    assert dd.charge_conjugate() == {'K-': 2, 'pi0': 1}
+
+
+def test_DaughtersDict_charge_conjugate_pdg_names():
+    dd = DaughtersDict({'K(S)0': 1, 'pi+': 1})  # PDG names!
+    assert dd == {'K(S)0': 1, 'pi+': 1}  # PDG names kept as-is
+    assert dd.charge_conjugate() == {'ChargeConj(K(S)0)': 1, 'pi-': 1}
+    assert dd.charge_conjugate(pdg_name=True) =={'K(S)0': 1, 'pi-': 1}
 
 
 def test_DecayMode_constructor_default():
