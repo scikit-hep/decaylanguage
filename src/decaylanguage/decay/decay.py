@@ -252,30 +252,30 @@ class DecayMode:
         decay_mode_dict: Dict[str, Union[int, float, str, List[str]]],
     ) -> Self_DecayMode:
         """
-        Constructor from a dictionary of the form
-        {'bf': <float>, 'fs': [...], ...}.
-        These two keys are mandatory. All others are interpreted as
-        model information or metadata, see the constructor signature and doc.
+                Constructor from a dictionary of the form
+                {'bf': <float>, 'fs': [...], ...}.
+                These two keys are mandatory. All others are interpreted as
+                model information or metadata, see the constructor signature and doc.
 
-        Note
-        ----
-        This class assumes EvtGen particle names, though this assumption is only
-        relevant for the `charge_conjugate` method.
-        Otherwise, all other class methods smoothly deal
-        with any kind of particle names (basically an iterable of strings).
+                Note
+                ----
+                This class assumes EvtGen particle names, though this assumption is only
+                relevant for the `charge_conjugate` method.
+                Otherwise, all other class methods smoothly deal
+                with any kind of particle names (basically an iterable of strings).
 
-        Examples
-        --------
-        >>> DecayMode.from_dict({'bf': 0.98823,
-                                 'fs': ['gamma', 'gamma'],
-                                 'model': 'PHSP',
-                                 'model_params': ''})
-        <DecayMode: daughters=gamma gamma, BF=0.98823>
+                Examples
+                --------
+                >>> DecayMode.from_dict({'bf': 0.98823,
+                                         'fs': ['gamma', 'gamma'],
+                                         'model': 'PHSP',
+                                         'model_params': ''})
+                <DecayMode: daughters=gamma gamma, BF=0.98823>
 
-        >>> # Decay mode with metadata for generators such as zfit's phasespace
-        >>> dm = DecayMode.from_dict({'bf': 0.5, 'fs': ["K+, K-"], "zfit": {"B0": "gauss"}})
-        >>> dm.metadata
-Out[9]: {'model': '', 'model_params': '', 'zfit': {'B0': 'gauss'}}
+                >>> # Decay mode with metadata for generators such as zfit's phasespace
+                >>> dm = DecayMode.from_dict({'bf': 0.5, 'fs': ["K+, K-"], "zfit": {"B0": "gauss"}})
+                >>> dm.metadata
+        Out[9]: {'model': '', 'model_params': '', 'zfit': {'B0': 'gauss'}}
         """
         dm = deepcopy(decay_mode_dict)
 
@@ -318,7 +318,7 @@ Out[9]: {'model': '', 'model_params': '', 'zfit': {'B0': 'gauss'}}
         --------
         >>> DecayMode.from_pdgids(0.5, [321, -321])
         <DecayMode: daughters=K+ K-, BF=0.5>
-        
+
         >>> DecayMode.from_pdgids(0.5, (310, 310))
         <DecayMode: daughters=K_S0 K_S0, BF=0.5>
 
