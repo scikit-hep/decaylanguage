@@ -77,6 +77,9 @@ class DaughtersDict(CounterStr):
 
         >>> # Constructor from a string representing the final state
         >>> dd = DaughtersDict('K+ K- pi0')
+
+        >>> # "Mixed" constructor
+        >>> dd = DaughtersDict('K+ K-', pi0=1, gamma=2)
         """
         if isinstance(iterable, dict):
             iterable = {k: v for k, v in iterable.items() if v > 0}
@@ -118,9 +121,12 @@ class DaughtersDict(CounterStr):
         >>> dd.charge_conjugate()
         <DaughtersDict: ['K_S0', 'pi0']>
         >>>
-        >>> dd = DaughtersDict({'K(S)0': 1, 'pi0': 1})  # PDG names!
+        >>> dd = DaughtersDict({'K(S)0': 1, 'pi+': 1})  # PDG names!
+        >>> # 'K(S)0' unrecognised in charge conjugation unless specified that these are PDG names
+        >>> dd.charge_conjugate()
+        <DaughtersDict: ['ChargeConj(K(S)0)', 'pi-']>
         >>> dd.charge_conjugate(pdg_name=True)
-        <DaughtersDict: ['K(S)0', 'pi0']>
+        <DaughtersDict: ['K(S)0', 'pi-']>
         """
         return self.__class__(
             {charge_conjugate_name(p, pdg_name): n for p, n in self.items()}
@@ -229,6 +235,10 @@ class DecayMode:
         >>> # Decay mode with user metadata
         >>> dd = DaughtersDict('K+ K-')
         >>> dm = DecayMode(0.5, dd, model='PHSP', study='toy', year=2019)
+
+        >>> # Decay mode with metadata for generators such as zfit's phasespace
+        >>> dm = DecayMode(0.5, "K+ K-", zfit={"B0": "gauss"})
+        >>> dm.metadata['zfit'] == {'B0': 'gauss'}
         """
         self.bf = bf
         self.daughters = DaughtersDict(daughters)
@@ -261,6 +271,11 @@ class DecayMode:
                                  'model': 'PHSP',
                                  'model_params': ''})
         <DecayMode: daughters=gamma gamma, BF=0.98823>
+
+        >>> # Decay mode with metadata for generators such as zfit's phasespace
+        >>> dm = DecayMode.from_dict({'bf': 0.5, 'fs': ["K+, K-"], "zfit": {"B0": "gauss"}})
+        >>> dm.metadata
+        {'model': '', 'model_params': '', 'zfit': {'B0': 'gauss'}}
         """
         dm = deepcopy(decay_mode_dict)
 
@@ -303,9 +318,14 @@ class DecayMode:
         --------
         >>> DecayMode.from_pdgids(0.5, [321, -321])
         <DecayMode: daughters=K+ K-, BF=0.5>
-        >>>
+
         >>> DecayMode.from_pdgids(0.5, (310, 310))
         <DecayMode: daughters=K_S0 K_S0, BF=0.5>
+
+        >>> # Decay mode with metadata
+        >>> dm = DecayMode.from_pdgids(0.5, (310, 310), model="PHSP")
+        >>> dm.metadata
+        {'model': 'PHSP', 'model_params': ''}
         """
         if not daughters:
             return cls(bf=bf, daughters=None, **info)
