@@ -271,6 +271,11 @@ class DecayMode:
                                  'model': 'PHSP',
                                  'model_params': ''})
         <DecayMode: daughters=gamma gamma, BF=0.98823>
+
+        >>> # Decay mode with metadata for generators such as zfit's phasespace
+        >>> dm = DecayMode.from_dict({'bf': 0.5, 'fs': ["K+, K-"], "zfit": {"B0": "gauss"}})
+        >>> dm.metadata
+Out[9]: {'model': '', 'model_params': '', 'zfit': {'B0': 'gauss'}}
         """
         dm = deepcopy(decay_mode_dict)
 
@@ -313,9 +318,14 @@ class DecayMode:
         --------
         >>> DecayMode.from_pdgids(0.5, [321, -321])
         <DecayMode: daughters=K+ K-, BF=0.5>
-        >>>
+        
         >>> DecayMode.from_pdgids(0.5, (310, 310))
         <DecayMode: daughters=K_S0 K_S0, BF=0.5>
+
+        >>> # Decay mode with metadata
+        >>> dm = DecayMode.from_pdgids(0.5, (310, 310), model="PHSP")
+        >>> dm.metadata
+        {'model': 'PHSP', 'model_params': ''}
         """
         if not daughters:
             return cls(bf=bf, daughters=None, **info)
