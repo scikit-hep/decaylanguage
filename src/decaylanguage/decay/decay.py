@@ -478,7 +478,9 @@ def _build_decay_modes(
         try:
             fs = dm["fs"]
         except Exception as e:
-            raise RuntimeError("Internal dict representation not in the expected format - no 'fs' key is present!") from e
+            raise RuntimeError(
+                "Internal dict representation not in the expected format - no 'fs' key is present!"
+            ) from e
         assert isinstance(fs, list)
         if _has_no_subdecay(fs):
             decay_modes[mother] = DecayMode.from_dict(dm)
