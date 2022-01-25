@@ -266,6 +266,12 @@ class DecayMode:
 
         Examples
         --------
+        >>> Simplest construction
+        >>> DecayMode.from_dict({'bf': 0.98823,
+                                 'fs': ['gamma', 'gamma']})
+        <DecayMode: daughters=gamma gamma, BF=0.98823>
+
+        >>> # Decay mode with decay model details
         >>> DecayMode.from_dict({'bf': 0.98823,
                                  'fs': ['gamma', 'gamma'],
                                  'model': 'PHSP',
@@ -279,6 +285,7 @@ class DecayMode:
         """
         dm = deepcopy(decay_mode_dict)
 
+        # Ensure the input dict has the 2 required keys 'bf' and 'fs'
         try:
             bf = dm.pop("bf")
             daughters = dm.pop("fs")
@@ -438,17 +445,40 @@ DecayModeDict = Dict[str, List[Dict[str, Union[float, str, List[Any]]]]]
 
 
 def _has_no_subdecay(ds: List[Any]) -> bool:
+    """
+    Internal function to check whether the input list
+    is an end-of-chain final state or a final state with further sub-decays.
+
+    Example end-of-chain final state:
+        ['pi+', 'pi-']
+
+    Example final state with further sub-decays:
+        [{'K_S0': [{'bf': 0.692, 'fs': ['pi+', 'pi-'], 'model': '', 'model_params': ''}]},
+         'pi+',
+         'pi-']
+    """
     return all(isinstance(p, str) for p in ds)
 
 
 def _build_decay_modes(
     decay_modes: Dict[str, DecayMode], dc_dict: DecayModeDict
 ) -> None:
+    """
+    Internal recursive function that identifies and creates all `DecayMode` instances
+    effectively contained in the dict representation of a `DecayChain`,
+    which is for example the format returned by `DecFileParser.build_decay_chains(...)`,
+
+    Given the input dict representation of a `DecayChain`
+    it returns a dict of mother particles and their final states as `DecayMode` instances.
+    """
     mother = list(dc_dict.keys())[0]
     dms = dc_dict[mother]
 
     for dm in dms:
-        fs = dm["fs"]
+        try:
+            fs = dm["fs"]
+        except Exception as e:
+            raise RuntimeError("Internal dict representation not in the expected format - no 'fs' key is present!") from e
         assert isinstance(fs, list)
         if _has_no_subdecay(fs):
             decay_modes[mother] = DecayMode.from_dict(dm)
