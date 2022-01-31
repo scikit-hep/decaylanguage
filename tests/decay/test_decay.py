@@ -302,7 +302,7 @@ def test_DecayChain_flatten_complex():
     assert dc_flatten.decays[dc_flatten.mother].daughters == DaughtersDict(
         {"gamma": 6, "pi+": 3, "pi-": 2}
     )
-    assert dc_flatten.bf == approx(1.0 * 0.0124 * (0.692 ** 2) * (0.98823 ** 3))
+    assert dc_flatten.bf == approx(1.0 * 0.0124 * (0.692**2) * (0.98823**3))
 
 
 def test_DecayChain_flatten_with_stable_particles():
@@ -317,7 +317,7 @@ def test_DecayChain_flatten_with_stable_particles():
     assert dc_flatten.decays[dc_flatten.mother].daughters == DaughtersDict(
         {"pi0": 4, "pi+": 3, "pi-": 2}
     )
-    assert dc_flatten.bf == approx(0.5 * (0.0124 ** 2) * (0.692 ** 2))
+    assert dc_flatten.bf == approx(0.5 * (0.0124**2) * (0.692**2))
 
 
 def test_DecayChain_string_repr(dc):
