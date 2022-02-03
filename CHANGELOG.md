@@ -1,5 +1,16 @@
 # Changelog
 
+## Version 0.14.1 (2022-02-03)
+
+* Universal representation of decay chains:
+  - Extra documentation and examples of usage.
+  - Test suite extended.
+* Miscellaneous:
+  - Type checking introduced.
+* Tests:
+  - CI now tests the notebooks as well.
+  - Various hooks version updates.
+
 ## Version 0.14.0 (2022-01-17)
 
 Package dependent on Python 3 only ``Particle`` version 0.20.
