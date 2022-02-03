@@ -102,7 +102,7 @@ parser.list_decay_mother_names()
 ```
 
 A copy of the master DECAY.DEC file used by the LHCb experiment is provided
-[here](https://github.com/scikit-hep/decaylanguage/tree/master/decaylanguage/data)
+[here](https://github.com/scikit-hep/decaylanguage/tree/master/src/decaylanguage/data)
 for convenience.
 
 The `DecFileParser` class implements a series of methods giving access to all
