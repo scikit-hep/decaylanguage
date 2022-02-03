@@ -102,7 +102,7 @@ parser.list_decay_mother_names()
 ```
 
 A copy of the master DECAY.DEC file used by the LHCb experiment is provided
-[here](https://github.com/scikit-hep/decaylanguage/tree/master/decaylanguage/data)
+[here](https://github.com/scikit-hep/decaylanguage/tree/master/src/decaylanguage/data)
 for convenience.
 
 The `DecFileParser` class implements a series of methods giving access to all
@@ -159,8 +159,8 @@ The class `DecayChainViewer` allows the visualization of parsed decay chains:
 ```python
 from decaylanguage import DecayChainViewer
 
-# Build the (dictionary-like) D*+ decay chain representation setting the D+ and D0 mesons to stable,
-# to avoid too cluttered an image
+# Build the (dictionary-like) D*+ decay chain representation setting the
+# D+ and D0 mesons to stable, to avoid too cluttered an image
 d = dfp.build_decay_chains('D*+', stable_particles=('D+', 'D0'))
 DecayChainViewer(d)  # works in a notebook
 ```
