@@ -60,7 +60,7 @@ def ampgen2goofit(filename, ret_output=False):
 
     printer(colors.bold & colors.green | "\n\nAll discovered spin configurations:")
 
-    for line in sorted({line.spindetails() for line in lines}):
+    for line in sorted({iline.spindetails() for iline in lines}):
         printer(colors.green | line)
 
     printer(colors.bold & colors.blue | "\n\nAll known spin configurations:")
