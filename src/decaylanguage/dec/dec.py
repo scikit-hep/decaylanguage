@@ -697,6 +697,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         display_photos_keyword: Optional[bool] = True,
         ascending: Optional[bool] = False,
         normalize: Optional[bool] = True,
+        normalization_bf: Optional[float] = 1,
     ) -> None:
         """
         Pretty print of the decay modes of a given particle.
@@ -716,10 +717,21 @@ All but the first occurrence will be discarded/removed ...""".format(
         ascending: bool, optional, default=False
             Print the list of decay modes ordered in ascending/descending order
             of branching fraction.
-        normalize: bool, optional, default=True
-            Print the branching fractions normalized to unity
-            (this does not affect the values parsed and actually stored in memory).
+        normalize: bool, optional, default=False
+            Print the branching fractions normalized to be value defined
+            by the argument `normalization_bf`, which defaults to unity.
+            The printing does not affect the values parsed and actually stored in memory.
+        normalization_bf: float, optional, default=1
+            To be used together with normalize=True.
+            The branching fractions (BFs) of all listed modes are normalized
+            to this given value (instead of unity), which is taken to be
+            the BF of the highest-BF mode of the list.
         """
+        # Following does not catch the case "normalization_bf == 1 and not normalize"
+        # but that's harmless anyway ;-)
+        if (normalization_bf != 1) and not normalize:
+            raise RuntimeError("Be consistent with normalize and normalization_bf arguments!")
+
         if pdg_name:
             mother = PDG2EvtGenNameMap[mother]
 
@@ -742,7 +754,12 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         ls = [(bf, ls_attrs_aligned[idx]) for idx, bf in enumerate(ls_dict)]
         ls.sort(key=operator.itemgetter(0), reverse=(not ascending))
-        norm = sum(bf for bf, _ in ls) if normalize else 1
+        norm = 1
+        if normalize:
+            # Get the largest branching fraction
+            i = -1 if ascending else 0
+            # Either normalize to 1 or normalization_bf
+            norm = ls[i][0] / normalization_bf if normalization_bf != 1 else sum(bf for bf, _ in ls)
 
         for bf, info in ls:
             if print_model:
