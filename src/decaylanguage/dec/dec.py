@@ -730,7 +730,9 @@ All but the first occurrence will be discarded/removed ...""".format(
         # Following does not catch the case "normalization_bf == 1 and not normalize"
         # but that's harmless anyway ;-)
         if (normalization_bf != 1) and not normalize:
-            raise RuntimeError("Be consistent with normalize and normalization_bf arguments!")
+            raise RuntimeError(
+                "Be consistent with normalize and normalization_bf arguments!"
+            )
 
         if pdg_name:
             mother = PDG2EvtGenNameMap[mother]
@@ -759,7 +761,11 @@ All but the first occurrence will be discarded/removed ...""".format(
             # Get the largest branching fraction
             i = -1 if ascending else 0
             # Either normalize to 1 or normalization_bf
-            norm = ls[i][0] / normalization_bf if normalization_bf != 1 else sum(bf for bf, _ in ls)
+            norm = (
+                ls[i][0] / normalization_bf
+                if normalization_bf != 1
+                else sum(bf for bf, _ in ls)
+            )
 
         for bf, info in ls:
             if print_model:
