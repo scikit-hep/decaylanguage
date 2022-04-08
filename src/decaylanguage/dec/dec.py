@@ -696,7 +696,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         print_model: bool = True,
         display_photos_keyword: bool = True,
         ascending: bool = False,
-        normalize: bool = True,
+        normalize: bool = False,
         normalization_bf: float = 1.0,
     ) -> None:
         """
@@ -726,13 +726,52 @@ All but the first occurrence will be discarded/removed ...""".format(
             The branching fractions (BFs) of all listed modes are normalized
             to this given value (instead of unity), which is taken to be
             the BF of the highest-BF mode of the list.
+
+        Examples
+        --------
+        >>> s = '''Decay MyD_0*+
+        ...  0.533   MyD0   pi+        PHSP;
+        ...  0.08    MyD*0  pi+  pi0   PHSP;
+        ...  0.0271  MyD*+  pi0  pi0   PHSP;
+        ...  0.0542  MyD*+  pi+  pi-   PHSP;
+        ... Enddecay
+        ... '''
+        >>> p = DecFileParser.from_string(s)
+        >>> p.parse()
+        >>>
+        >>> # Simply print what has been parsed
+        >>> p.print_decay_modes("MyD_0*+")
+          0.533             MyD0  pi+         PHSP;
+          0.08              MyD*0 pi+ pi0     PHSP;
+          0.0542            MyD*+ pi+ pi-     PHSP;
+          0.0271            MyD*+ pi0 pi0     PHSP;
+        >>>
+        >>> # Print normalizing the sum of all mode BFs to unity
+        >>> p.print_decay_modes("MyD_0*+", normalize=True)
+          0.7676796774      MyD0  pi+         PHSP;
+          0.1152239666      MyD*0 pi+ pi0     PHSP;
+          0.07806423736     MyD*+ pi+ pi-     PHSP;
+          0.03903211868     MyD*+ pi0 pi0     PHSP;
+        >>>
+        >>> # Print normalizing all BFs relative to the BF of the highest-BF mode in the list,
+        >>> # the latter being set to the value "normalization_bf"
+        >>> p.print_decay_modes("MyD_0*+", normalize=True, normalization_bf=0.5)
+          0.5               MyD0  pi+         PHSP;
+          0.07504690432     MyD*0 pi+ pi0     PHSP;
+          0.05084427767     MyD*+ pi+ pi-     PHSP;
+          0.02542213884     MyD*+ pi0 pi0     PHSP;
         """
         # Following does not catch the case "normalization_bf == 1 and not normalize"
         # but that's harmless anyway ;-)
-        if (normalization_bf != 1.0) and not normalize:
-            raise RuntimeError(
-                "Be consistent with normalize and normalization_bf arguments!"
-            )
+        if normalization_bf != 1.0:
+            if not normalize:
+                raise RuntimeError(
+                    "Be consistent with normalize and normalization_bf arguments!"
+                )
+            if normalization_bf > 1.0:
+                raise RuntimeError(
+                    "A branching fraction cannot be larger than 1! (normalization_bf={normalization_bf})"
+                )
 
         if pdg_name:
             mother = PDG2EvtGenNameMap[mother]
@@ -769,9 +808,9 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         for bf, info in ls:
             if print_model:
-                line = "  {:.4f}   {}     {}  {}".format(bf / norm, *info)
+                line = "  {:<15.10g}   {}     {}  {}".format(bf / norm, *info)
             else:
-                line = f"  {bf / norm:.4f}   {info[0]}"
+                line = f"  {bf / norm:<15.10g}   {info[0]}"
             print(line.rstrip() + ";")
 
     @staticmethod
