@@ -692,12 +692,12 @@ All but the first occurrence will be discarded/removed ...""".format(
     def print_decay_modes(
         self,
         mother: str,
-        pdg_name: Optional[bool] = False,
-        print_model: Optional[bool] = True,
-        display_photos_keyword: Optional[bool] = True,
-        ascending: Optional[bool] = False,
-        normalize: Optional[bool] = True,
-        normalization_bf: Optional[float] = 1,
+        pdg_name: bool = False,
+        print_model: bool = True,
+        display_photos_keyword: bool = True,
+        ascending: bool = False,
+        normalize: bool = True,
+        normalization_bf: float = 1.0,
     ) -> None:
         """
         Pretty print of the decay modes of a given particle.
@@ -729,7 +729,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         """
         # Following does not catch the case "normalization_bf == 1 and not normalize"
         # but that's harmless anyway ;-)
-        if (normalization_bf != 1) and not normalize:
+        if (normalization_bf != 1.0) and not normalize:
             raise RuntimeError(
                 "Be consistent with normalize and normalization_bf arguments!"
             )
@@ -756,14 +756,14 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         ls = [(bf, ls_attrs_aligned[idx]) for idx, bf in enumerate(ls_dict)]
         ls.sort(key=operator.itemgetter(0), reverse=(not ascending))
-        norm = 1
+        norm = 1.0
         if normalize:
             # Get the largest branching fraction
             i = -1 if ascending else 0
             # Either normalize to 1 or normalization_bf
             norm = (
                 ls[i][0] / normalization_bf
-                if normalization_bf != 1
+                if normalization_bf != 1.0
                 else sum(bf for bf, _ in ls)
             )
 
@@ -776,7 +776,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
     @staticmethod
     def _align_items(
-        to_align: str, align_mode: Optional[str] = "left", sep: Optional[str] = " "
+        to_align: str, align_mode: str = "left", sep: str = " "
     ) -> List[str]:
         """
         Left or right align all strings in a list to the same length.
