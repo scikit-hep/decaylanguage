@@ -718,7 +718,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             Print the list of decay modes ordered in ascending/descending order
             of branching fraction.
         normalize: bool, optional, default=False
-            Print the branching fractions normalized to be value defined
+            Print the branching fractions normalized to the value defined
             by the argument `normalization_bf`, which defaults to unity.
             The printing does not affect the values parsed and actually stored in memory.
         normalization_bf: float, optional, default=1
@@ -754,7 +754,10 @@ All but the first occurrence will be discarded/removed ...""".format(
           0.03903211868     MyD*+ pi0 pi0     PHSP;
         >>>
         >>> # Print normalizing all BFs relative to the BF of the highest-BF mode in the list,
-        >>> # the latter being set to the value "normalization_bf"
+        >>> # the latter being set to the value "normalization_bf".
+        >>> # In this example the decay file as printed would effectively signal, for inspection,
+        >>> # that about 35% of the total decay width is not accounted for in the list of modes,
+        >>> # since the sum of probabilities, interpreted as BFs, sum to about 65%.
         >>> p.print_decay_modes("MyD_0*+", normalize=True, normalization_bf=0.5)
           0.5               MyD0  pi+         PHSP;
           0.07504690432     MyD*0 pi+ pi0     PHSP;

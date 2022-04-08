@@ -3,6 +3,8 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
+import io
+import sys
 from pathlib import Path
 
 import pytest
@@ -330,7 +332,7 @@ def test_list_decay_modes_on_the_fly():
     assert p.list_decay_modes("MyantiXic-") == [["anti-p-", "K+", "pi-"]]
 
 
-def test_print_decay_modes():
+def test_print_decay_modes_basics():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
@@ -338,6 +340,42 @@ def test_print_decay_modes():
         p.print_decay_modes("D*(2010)-")
 
     p.print_decay_modes("D*(2010)-", pdg_name=True)
+
+
+def test_print_decay_modes_options():
+
+    p1 = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p1.parse()
+
+    p2 = DecFileParser(DIR / "../data/test_Bc2BsPi_Bs2KK.dec")
+    p2.parse()
+
+    # Temporarily direct prints of several calls below to a string
+    old_stdout = sys.stdout
+    tmp_stdout = io.StringIO()
+    sys.stdout = tmp_stdout
+
+    p1.print_decay_modes("D*+")
+    out_default = tmp_stdout.getvalue()
+
+    tmp_stdout = io.StringIO()
+    sys.stdout = tmp_stdout
+    p1.print_decay_modes("D*+", normalize=True)
+    out_normalized = tmp_stdout.getvalue()
+
+    tmp_stdout = io.StringIO()
+    sys.stdout = tmp_stdout
+    p2.print_decay_modes("B_c+sig", display_photos_keyword=False)
+    no_photos = tmp_stdout.getvalue()
+    tmp_stdout.truncate(0)
+
+    assert "PHOTOS" not in no_photos
+    # This specific dec file happens to have been defined normalized
+    assert out_default == out_normalized
+
+    # Do not forget to reset sys.stdout and clean up!
+    sys.stdout = old_stdout
+    del old_stdout, tmp_stdout
 
 
 def test_build_decay_chains():
