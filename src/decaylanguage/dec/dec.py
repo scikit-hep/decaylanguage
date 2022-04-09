@@ -319,6 +319,7 @@ class DecFileParser:
         of the form "Alias <NAME> <ALIAS>",
         as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
         """
+        self._check_parsing()
         return get_aliases(self._parsed_dec_file)
 
     def dict_charge_conjugates(self) -> Dict[str, str]:
@@ -328,6 +329,7 @@ class DecFileParser:
         "ChargeConj <PARTICLE> <CC_PARTICLE>", as
         {'PARTICLE1': CC_PARTICLE1, 'PARTICLE2': CC_PARTICLE2, ...}.
         """
+        self._check_parsing()
         return get_charge_conjugate_defs(self._parsed_dec_file)
 
     def dict_pythia_definitions(self) -> Dict[str, Union[str, float]]:
@@ -339,6 +341,7 @@ class DecFileParser:
         "PythiaBothParam <NAME>=<NUMBER>",
         as {'NAME1': 'LABEL1', 'NAME2': VALUE2, ...}.
         """
+        self._check_parsing()
         return get_pythia_definitions(self._parsed_dec_file)
 
     def dict_jetset_definitions(self) -> Dict[str, Dict[int, Union[int, float, str]]]:
@@ -350,6 +353,7 @@ class DecFileParser:
             'PARAM2': {...},
             ...}.
         """
+        self._check_parsing()
         return get_jetset_definitions(self._parsed_dec_file)
 
     def list_lineshape_definitions(self) -> List[Tuple[List[str], int]]:
@@ -362,6 +366,7 @@ class DecFileParser:
         (['MOTHER2', 'DAUGHTER2-1', 'DAUGHTER2-2'], VALUE2),
         ...]
         """
+        self._check_parsing()
         return get_lineshape_definitions(self._parsed_dec_file)
 
     def global_photos_flag(self) -> int:
@@ -377,6 +382,7 @@ class DecFileParser:
         out: PhotosEnum, default=PhotosEnum.no
             PhotosEnum.yes / PhotosEnum.no if PHOTOS enabled / disabled
         """
+        self._check_parsing()
         return get_global_photos_flag(self._parsed_dec_file)
 
     def list_charge_conjugate_decays(self) -> List[str]:
@@ -385,6 +391,7 @@ class DecFileParser:
         in the input parsed file, of the form "CDecay <MOTHER>", as
         ['MOTHER1', 'MOTHER2', ...].
         """
+        self._check_parsing()
         return get_charge_conjugate_decays(self._parsed_dec_file)
 
     def _find_parsed_decays(self) -> None:
@@ -403,8 +410,7 @@ class DecFileParser:
         2) Charge conjugates need to be dealt with differently,
         see 'self._add_charge_conjugate_decays()'.
         """
-        if self._parsed_dec_file is not None:
-            self._parsed_decays = get_decays(self._parsed_dec_file)
+        self._parsed_decays = get_decays(self._parsed_dec_file)
 
         # Check for duplicates - should be considered a bug in the .dec file!
         self._check_parsed_decays()
@@ -1085,7 +1091,7 @@ def get_decay_mother_name(decay_tree: Tree) -> Union[str, Any]:
     decay_tree: Lark Tree instance
         Input Tree satisfying Tree.data=='decay'.
     """
-    if not isinstance(decay_tree, Tree) or decay_tree.data != "decay":
+    if decay_tree.data != "decay":
         raise RuntimeError("Input not an instance of a 'decay' Tree!")
 
     # For a 'decay' Tree, tree.children[0] is the mother particle Tree
@@ -1103,7 +1109,7 @@ def get_branching_fraction(decay_mode: Tree) -> float:
     decay_mode: Lark Tree instance
         Input Tree satisfying Tree.data=='decayline'.
     """
-    if not isinstance(decay_mode, Tree) or decay_mode.data != "decayline":
+    if decay_mode.data != "decayline":
         raise RuntimeError("Check your input, not an instance of a 'decayline' Tree!")
 
     # For a 'decayline' Tree, Tree.children[0] is the branching fraction Tree
@@ -1136,7 +1142,7 @@ def get_final_state_particles(decay_mode: Tree) -> List[Tree]:
         [Tree(particle, [Token(LABEL, 'K+')]), Tree(particle, [Token(LABEL, 'K-')])]
     will be returned.
     """
-    if not isinstance(decay_mode, Tree) or decay_mode.data != "decayline":
+    if decay_mode.data != "decayline":
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
     # list of Trees of final-state particles
@@ -1161,7 +1167,7 @@ def get_final_state_particle_names(decay_mode: Tree) -> List[str]:
         Enddecay
     the list ['K+', 'K-'] will be returned.
     """
-    if not isinstance(decay_mode, Tree) or decay_mode.data != "decayline":
+    if decay_mode.data != "decayline":
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
     fsps = get_final_state_particles(decay_mode)
@@ -1186,7 +1192,7 @@ def get_model_name(decay_mode: Tree) -> str:
         Enddecay
     the string 'SSD_CP' will be returned.
     """
-    if not isinstance(decay_mode, Tree) or decay_mode.data != "decayline":
+    if decay_mode.data != "decayline":
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
     lm = list(decay_mode.find_data("model"))
@@ -1221,7 +1227,7 @@ def get_model_parameters(decay_mode: Tree) -> Union[str, List[Union[str, Any]]]:
         ['DtoKpipipi_v1']
     will be returned.
     """
-    if not isinstance(decay_mode, Tree) or decay_mode.data != "decayline":
+    if decay_mode.data != "decayline":
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
     lmo = list(decay_mode.find_data("model_options"))
@@ -1235,7 +1241,7 @@ def get_model_parameters(decay_mode: Tree) -> Union[str, List[Union[str, Any]]]:
     return [_value(tree) for tree in lmo[0].children] if len(lmo) == 1 else ""
 
 
-def get_decays(parsed_file: Optional[str]) -> List[Tree]:
+def get_decays(parsed_file: Tree) -> List[Tree]:
     """
     Return a list of all decay definitions in the input parsed file,
     of the form "Decay <MOTHER>",
@@ -1248,9 +1254,6 @@ def get_decays(parsed_file: Optional[str]) -> List[Tree]:
     parsed_file: Lark Tree instance
         Input parsed file.
     """
-    if not isinstance(parsed_file, Tree):
-        raise RuntimeError("Input not an instance of a Tree!")
-
     try:
         return list(parsed_file.find_data("decay"))
     except Exception as err:
@@ -1259,7 +1262,7 @@ def get_decays(parsed_file: Optional[str]) -> List[Tree]:
         ) from err
 
 
-def get_charge_conjugate_decays(parsed_file: Optional[str]) -> List[str]:
+def get_charge_conjugate_decays(parsed_file: Tree) -> List[str]:
     """
     Return a (sorted) list of all charge conjugate decay definitions
     in the input parsed file, of the form "CDecay <MOTHER>", as
@@ -1270,8 +1273,6 @@ def get_charge_conjugate_decays(parsed_file: Optional[str]) -> List[str]:
     parsed_file: Lark Tree instance
         Input parsed file.
     """
-    if not isinstance(parsed_file, Tree):
-        raise RuntimeError("Input not an instance of a Tree!")
 
     try:
         return sorted(
@@ -1284,7 +1285,7 @@ def get_charge_conjugate_decays(parsed_file: Optional[str]) -> List[str]:
         ) from err
 
 
-def get_decays2copy_statements(parsed_file: Optional[str]) -> Dict[str, str]:
+def get_decays2copy_statements(parsed_file: Tree) -> Dict[str, str]:
     """
     Return a dictionary of all statements in the input parsed file
     defining a decay to be copied, of the form
@@ -1296,9 +1297,6 @@ def get_decays2copy_statements(parsed_file: Optional[str]) -> Dict[str, str]:
     parsed_file: Lark Tree instance
         Input parsed file.
     """
-    if not isinstance(parsed_file, Tree):
-        raise RuntimeError("Input not an instance of a Tree!")
-
     try:
         return {
             tree.children[0].children[0].value: tree.children[1].children[0].value
@@ -1310,7 +1308,7 @@ def get_decays2copy_statements(parsed_file: Optional[str]) -> Dict[str, str]:
         ) from err
 
 
-def get_definitions(parsed_file: Optional[str]) -> Dict[str, float]:
+def get_definitions(parsed_file: Tree) -> Dict[str, float]:
     """
     Return a dictionary of all definitions in the input parsed file, of the form
     "Define <NAME> <VALUE>", as {'NAME1': VALUE1, 'NAME2': VALUE2, ...}.
@@ -1320,9 +1318,6 @@ def get_definitions(parsed_file: Optional[str]) -> Dict[str, float]:
     parsed_file: Lark Tree instance
         Input parsed file.
     """
-    if not isinstance(parsed_file, Tree):
-        raise RuntimeError("Input not an instance of a Tree!")
-
     try:
         return {
             tree.children[0]
@@ -1336,7 +1331,7 @@ def get_definitions(parsed_file: Optional[str]) -> Dict[str, float]:
         ) from err
 
 
-def get_aliases(parsed_file: Optional[str]) -> Dict[str, str]:
+def get_aliases(parsed_file: Tree) -> Dict[str, str]:
     """
     Return a dictionary of all aliases in the input parsed file, of the form
     "Alias <NAME> <ALIAS>", as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
@@ -1346,9 +1341,6 @@ def get_aliases(parsed_file: Optional[str]) -> Dict[str, str]:
     parsed_file: Lark Tree instance
         Input parsed file.
     """
-    if not isinstance(parsed_file, Tree):
-        raise RuntimeError("Input not an instance of a Tree!")
-
     try:
         return {
             tree.children[0].children[0].value: tree.children[1].children[0].value
@@ -1360,7 +1352,7 @@ def get_aliases(parsed_file: Optional[str]) -> Dict[str, str]:
         ) from err
 
 
-def get_charge_conjugate_defs(parsed_file: Optional[str]) -> Dict[str, str]:
+def get_charge_conjugate_defs(parsed_file: Tree) -> Dict[str, str]:
     """
     Return a dictionary of all charge conjugate definitions
     in the input parsed file, of the form "ChargeConj <PARTICLE> <CC_PARTICLE>",
@@ -1371,9 +1363,6 @@ def get_charge_conjugate_defs(parsed_file: Optional[str]) -> Dict[str, str]:
     parsed_file: Lark Tree instance
         Input parsed file.
     """
-    if not isinstance(parsed_file, Tree):
-        raise RuntimeError("Input not an instance of a Tree!")
-
     try:
         return {
             tree.children[0].children[0].value: tree.children[1].children[0].value
@@ -1385,7 +1374,7 @@ def get_charge_conjugate_defs(parsed_file: Optional[str]) -> Dict[str, str]:
         ) from err
 
 
-def get_pythia_definitions(parsed_file: Optional[str]) -> Dict[str, Union[str, float]]:
+def get_pythia_definitions(parsed_file: Tree) -> Dict[str, Union[str, float]]:
     """
     Return a dictionary of all Pythia definitions in the input parsed file,
     of the form
@@ -1399,8 +1388,6 @@ def get_pythia_definitions(parsed_file: Optional[str]) -> Dict[str, Union[str, f
     parsed_file: Lark Tree instance
         Input parsed file.
     """
-    if not isinstance(parsed_file, Tree):
-        raise RuntimeError("Input not an instance of a Tree!")
 
     def str_or_float(arg: str) -> Union[str, float]:
         try:
@@ -1422,7 +1409,7 @@ def get_pythia_definitions(parsed_file: Optional[str]) -> Dict[str, Union[str, f
 
 
 def get_jetset_definitions(
-    parsed_file: Optional[str],
+    parsed_file: Tree,
 ) -> Dict[str, Dict[int, Union[int, float, str]]]:
     """
     Return a dictionary of all JETSET definitions in the input parsed file,
@@ -1437,9 +1424,6 @@ def get_jetset_definitions(
     parsed_file: Lark Tree instance
         Input parsed file.
     """
-    if not isinstance(parsed_file, Tree):
-        raise RuntimeError("Input not an instance of a Tree!")
-
     get_jetsetpar = re.compile(
         r"""
     ^                                     # Beginning of string
@@ -1484,7 +1468,7 @@ def get_jetset_definitions(
 
 
 def get_lineshape_definitions(
-    parsed_file: Optional[str],
+    parsed_file: Tree,
 ) -> List[Tuple[List[str], int]]:
     """
     Return a list of all SetLineshapePW definitions in the input parsed file,
@@ -1500,9 +1484,6 @@ def get_lineshape_definitions(
     parsed_file: Lark Tree instance
         Input parsed file.
     """
-    if not isinstance(parsed_file, Tree):
-        raise RuntimeError("Input not an instance of a Tree!")
-
     try:
         d = []
         for tree in parsed_file.find_data("setlspw"):
@@ -1516,7 +1497,7 @@ def get_lineshape_definitions(
         ) from err
 
 
-def get_global_photos_flag(parsed_file: Optional[str]) -> int:
+def get_global_photos_flag(parsed_file: Tree) -> int:
     """
     Return a boolean-like PhotosEnum enum specifying whether or not PHOTOS
     has been enabled.
@@ -1534,9 +1515,6 @@ def get_global_photos_flag(parsed_file: Optional[str]) -> int:
     out: PhotosEnum, default=PhotosEnum.no
         PhotosEnum.yes / PhotosEnum.no if PHOTOS enabled / disabled
     """
-    if not isinstance(parsed_file, Tree):
-        raise RuntimeError("Input not an instance of a Tree!")
-
     # Check if the flag is not set more than once, just in case ...
     tree = tuple(parsed_file.find_data("global_photos"))
     if not tree:
