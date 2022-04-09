@@ -697,10 +697,12 @@ All but the first occurrence will be discarded/removed ...""".format(
         display_photos_keyword: bool = True,
         ascending: bool = False,
         normalize: bool = False,
-        normalization_bf: float = 1.0,
+        scale: Optional[float] = None,
     ) -> None:
         """
-        Pretty print of the decay modes of a given particle.
+        Pretty print of the decay modes of a given particle,
+        optionally with decay model information and/or normalisation or scaling
+        of the branching fractions.
 
         Parameters
         ----------
@@ -718,14 +720,12 @@ All but the first occurrence will be discarded/removed ...""".format(
             Print the list of decay modes ordered in ascending/descending order
             of branching fraction.
         normalize: bool, optional, default=False
-            Print the branching fractions normalized to the value defined
-            by the argument `normalization_bf`, which defaults to unity.
+            Print the branching fractions normalized to unity.
             The printing does not affect the values parsed and actually stored in memory.
-        normalization_bf: float, optional, default=1
-            To be used together with normalize=True.
-            The branching fractions (BFs) of all listed modes are normalized
-            to this given value (instead of unity), which is taken to be
-            the BF of the highest-BF mode of the list.
+        scale: float | None, optional, default=None
+            If not None, the branching fractions (BFs) are normalized to the given value,
+            which is taken to be the BF of the highest-BF mode of the list.
+            Must be a number in the range ]0, 1].
 
         Examples
         --------
@@ -753,27 +753,27 @@ All but the first occurrence will be discarded/removed ...""".format(
           0.07806423736     MyD*+ pi+ pi-     PHSP;
           0.03903211868     MyD*+ pi0 pi0     PHSP;
         >>>
-        >>> # Print normalizing all BFs relative to the BF of the highest-BF mode in the list,
-        >>> # the latter being set to the value "normalization_bf".
+        >>> # Print scaling all BFs relative to the BF of the highest-BF mode in the list,
+        >>> # the latter being set to the value of "scale".
         >>> # In this example the decay file as printed would effectively signal, for inspection,
         >>> # that about 35% of the total decay width is not accounted for in the list of modes,
         >>> # since the sum of probabilities, interpreted as BFs, sum to about 65%.
-        >>> p.print_decay_modes("MyD_0*+", normalize=True, normalization_bf=0.5)
+        >>> p.print_decay_modes("MyD_0*+", scale=0.5)
           0.5               MyD0  pi+         PHSP;
           0.07504690432     MyD*0 pi+ pi0     PHSP;
           0.05084427767     MyD*+ pi+ pi-     PHSP;
           0.02542213884     MyD*+ pi0 pi0     PHSP;
         """
-        # Following does not catch the case "normalization_bf == 1 and not normalize"
-        # but that's harmless anyway ;-)
-        if normalization_bf != 1.0:
-            if not normalize:
+
+        if scale is not None:
+            # One cannot normalize and scale at the same time, clearly
+            if normalize:
                 raise RuntimeError(
-                    "Be consistent with normalize and normalization_bf arguments!"
+                    "Be consistent - use either 'normalize' and 'scale'!"
                 )
-            if normalization_bf > 1.0:
+            elif not (0.0 < scale <= 1.0):
                 raise RuntimeError(
-                    "A branching fraction cannot be larger than 1! (normalization_bf={normalization_bf})"
+                    "A branching fraction must be in the range ]0, 1]! You set scale = {scale}."
                 )
 
         if pdg_name:
@@ -798,16 +798,14 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         ls = [(bf, ls_attrs_aligned[idx]) for idx, bf in enumerate(ls_dict)]
         ls.sort(key=operator.itemgetter(0), reverse=(not ascending))
+
         norm = 1.0
         if normalize:
+            norm = sum(bf for bf, _ in ls)
+        elif scale is not None:
             # Get the largest branching fraction
             i = -1 if ascending else 0
-            # Either normalize to 1 or normalization_bf
-            norm = (
-                ls[i][0] / normalization_bf
-                if normalization_bf != 1.0
-                else sum(bf for bf, _ in ls)
-            )
+            norm = ls[i][0] / scale
 
         for bf, info in ls:
             if print_model:
