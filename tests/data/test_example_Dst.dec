@@ -3,9 +3,9 @@
 # as there are no instructions on how to decay the anti-D0 and the D-!
 
 Decay D*+
-0.6770    D0  pi+                    VSS;
-0.3070    D+  pi0                    VSS;
-0.0160    D+  gamma                  VSP_PWAVE;
+  0.677             D0 pi+       VSS;
+  0.307             D+ pi0       VSS;
+  0.016             D+ gamma     VSP_PWAVE;
 Enddecay
 
 Decay D*-

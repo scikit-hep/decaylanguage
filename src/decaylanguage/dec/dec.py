@@ -692,14 +692,17 @@ All but the first occurrence will be discarded/removed ...""".format(
     def print_decay_modes(
         self,
         mother: str,
-        pdg_name: Optional[bool] = False,
-        print_model: Optional[bool] = True,
-        display_photos_keyword: Optional[bool] = True,
-        ascending: Optional[bool] = False,
-        normalize: Optional[bool] = True,
+        pdg_name: bool = False,
+        print_model: bool = True,
+        display_photos_keyword: bool = True,
+        ascending: bool = False,
+        normalize: bool = False,
+        scale: Optional[float] = None,
     ) -> None:
         """
-        Pretty print of the decay modes of a given particle.
+        Pretty print of the decay modes of a given particle,
+        optionally with decay model information and/or normalisation or scaling
+        of the branching fractions.
 
         Parameters
         ----------
@@ -716,10 +719,63 @@ All but the first occurrence will be discarded/removed ...""".format(
         ascending: bool, optional, default=False
             Print the list of decay modes ordered in ascending/descending order
             of branching fraction.
-        normalize: bool, optional, default=True
-            Print the branching fractions normalized to unity
-            (this does not affect the values parsed and actually stored in memory).
+        normalize: bool, optional, default=False
+            Print the branching fractions normalized to unity.
+            The printing does not affect the values parsed and actually stored in memory.
+        scale: float | None, optional, default=None
+            If not None, the branching fractions (BFs) are normalized to the given value,
+            which is taken to be the BF of the highest-BF mode of the list.
+            Must be a number in the range ]0, 1].
+
+        Examples
+        --------
+        >>> s = '''Decay MyD_0*+
+        ...  0.533   MyD0   pi+        PHSP;
+        ...  0.08    MyD*0  pi+  pi0   PHSP;
+        ...  0.0271  MyD*+  pi0  pi0   PHSP;
+        ...  0.0542  MyD*+  pi+  pi-   PHSP;
+        ... Enddecay
+        ... '''
+        >>> p = DecFileParser.from_string(s)
+        >>> p.parse()
+        >>>
+        >>> # Simply print what has been parsed
+        >>> p.print_decay_modes("MyD_0*+")
+          0.533             MyD0  pi+         PHSP;
+          0.08              MyD*0 pi+ pi0     PHSP;
+          0.0542            MyD*+ pi+ pi-     PHSP;
+          0.0271            MyD*+ pi0 pi0     PHSP;
+        >>>
+        >>> # Print normalizing the sum of all mode BFs to unity
+        >>> p.print_decay_modes("MyD_0*+", normalize=True)
+          0.7676796774      MyD0  pi+         PHSP;
+          0.1152239666      MyD*0 pi+ pi0     PHSP;
+          0.07806423736     MyD*+ pi+ pi-     PHSP;
+          0.03903211868     MyD*+ pi0 pi0     PHSP;
+        >>>
+        >>> # Print scaling all BFs relative to the BF of the highest-BF mode in the list,
+        >>> # the latter being set to the value of "scale".
+        >>> # In this example the decay file as printed would effectively signal, for inspection,
+        >>> # that about 35% of the total decay width is not accounted for in the list of modes,
+        >>> # since the sum of probabilities, interpreted as BFs, sum to about 65%.
+        >>> p.print_decay_modes("MyD_0*+", scale=0.5)
+          0.5               MyD0  pi+         PHSP;
+          0.07504690432     MyD*0 pi+ pi0     PHSP;
+          0.05084427767     MyD*+ pi+ pi-     PHSP;
+          0.02542213884     MyD*+ pi0 pi0     PHSP;
         """
+
+        if scale is not None:
+            # One cannot normalize and scale at the same time, clearly
+            if normalize:
+                raise RuntimeError(
+                    "Be consistent - use either 'normalize' and 'scale'!"
+                )
+            elif not (0.0 < scale <= 1.0):
+                raise RuntimeError(
+                    "A branching fraction must be in the range ]0, 1]! You set scale = {scale}."
+                )
+
         if pdg_name:
             mother = PDG2EvtGenNameMap[mother]
 
@@ -742,18 +798,25 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         ls = [(bf, ls_attrs_aligned[idx]) for idx, bf in enumerate(ls_dict)]
         ls.sort(key=operator.itemgetter(0), reverse=(not ascending))
-        norm = sum(bf for bf, _ in ls) if normalize else 1
+
+        norm = 1.0
+        if normalize:
+            norm = sum(bf for bf, _ in ls)
+        elif scale is not None:
+            # Get the largest branching fraction
+            i = -1 if ascending else 0
+            norm = ls[i][0] / scale
 
         for bf, info in ls:
             if print_model:
-                line = "  {:.4f}   {}     {}  {}".format(bf / norm, *info)
+                line = "  {:<15.10g}   {}     {}  {}".format(bf / norm, *info)
             else:
-                line = f"  {bf / norm:.4f}   {info[0]}"
+                line = f"  {bf / norm:<15.10g}   {info[0]}"
             print(line.rstrip() + ";")
 
     @staticmethod
     def _align_items(
-        to_align: str, align_mode: Optional[str] = "left", sep: Optional[str] = " "
+        to_align: str, align_mode: str = "left", sep: str = " "
     ) -> List[str]:
         """
         Left or right align all strings in a list to the same length.
