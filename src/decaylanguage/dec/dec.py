@@ -158,7 +158,7 @@ class DecFileParser:
 
         return _cls
 
-    def parse(self, include_ccdecays: Optional[bool] = True) -> None:
+    def parse(self, include_ccdecays: bool = True) -> None:
         """
         Parse the given .dec decay file(s) according to the default Lark parser
         and specified options.
@@ -641,9 +641,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         raise DecayNotFound("Decays of particle '%s' not found in .dec file!" % mother)
 
-    def list_decay_modes(
-        self, mother: str, pdg_name: Optional[bool] = False
-    ) -> List[List[str]]:
+    def list_decay_modes(self, mother: str, pdg_name: bool = False) -> List[List[str]]:
         """
         Return a list of decay modes for the given mother particle.
 
@@ -671,7 +669,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         ]
 
     def _decay_mode_details(
-        self, decay_mode: Tree, display_photos_keyword: Optional[bool] = True
+        self, decay_mode: Tree, display_photos_keyword: bool = True
     ) -> Tuple[float, List[str], str, Union[str, List[Union[str, Any]]]]:
         """
         Parse a decay mode (Tree instance)
