@@ -31,9 +31,9 @@ Basic assumptions
 3) As a consequence, particles that are self-conjugate should not be used
    in 'CDecay' statements, obviously.
 
- 4) Decays defined via a 'CopyDecay' statement are simply (deep) copied
-    and no copy of the corresponding antiparticle is performed unless explicitly requested
-    with another 'CopyDecay' statement.
+4) Decays defined via a 'CopyDecay' statement are simply (deep) copied
+   and no copy of the corresponding antiparticle is performed unless explicitly requested
+   with another 'CopyDecay' statement.
 """
 
 
@@ -142,7 +142,7 @@ class DecFileParser:
         cls: Type[Self_DecFileParser], filecontent: str
     ) -> Self_DecFileParser:
         """
-        Parse a .dec decay file provided as a multi-line string.
+        Constructor from a .dec decay file provided as a multi-line string.
 
         Parameters
         ----------
@@ -173,7 +173,7 @@ class DecFileParser:
             Choose whether or not to consider charge-conjugate decays,
             which are specified via "CDecay <MOTHER>".
             Make sure you understand the consequences of ignoring
-            charge conjugate decays - you won't have a complete picture!
+            charge conjugate decays - you won't have a complete picture otherwise!
         """
         # Has a file been parsed already?
         if self._parsed_decays is not None:
@@ -279,9 +279,6 @@ class DecFileParser:
             with data.basepath.joinpath(filename).open() as f1:
                 self._grammar = f1.read()
         else:
-            # Conversion to handle pathlib on Python < 3.6:
-            filename = str(filename)
-
             with open(filename) as f2:
                 self._grammar = f2.read()
 
@@ -303,6 +300,7 @@ class DecFileParser:
         "CopyDecay <NAME> <DECAY_TO_COPY>",
         as {'NAME1': DECAY_TO_COPY1, 'NAME2': DECAY_TO_COPY2, ...}.
         """
+        self._check_parsing()
         return get_decays2copy_statements(self._parsed_dec_file)
 
     def dict_definitions(self) -> Dict[str, float]:
@@ -311,6 +309,7 @@ class DecFileParser:
         of the form "Define <NAME> <VALUE>",
         as {'NAME1': VALUE1, 'NAME2': VALUE2, ...}.
         """
+        self._check_parsing()
         return get_definitions(self._parsed_dec_file)
 
     def dict_aliases(self) -> Dict[str, str]:
