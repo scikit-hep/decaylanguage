@@ -769,7 +769,7 @@ class DecayChain:
                     n_k = fs[k]
                     vis_bf *= self.decays[k].bf ** n_k
                     for _ in range(n_k):
-                        fs += self.decays[k].daughters  # type: ignore[misc]
+                        fs += self.decays[k].daughters
                     fs[k] -= n_k
             further_to_replace = any(fs[_k] > 0 for _k in keys)
 
