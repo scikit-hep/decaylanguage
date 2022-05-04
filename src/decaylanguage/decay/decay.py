@@ -150,7 +150,7 @@ class DaughtersDict(CounterStr):
         """
         return sum(self.values())
 
-    def __add__(self: Self_DaughtersDict, other: CounterStr) -> Self_DaughtersDict:
+    def __add__(self: Self_DaughtersDict, other: Self_DaughtersDict) -> Self_DaughtersDict:  # type: ignore[override]
         """
         Add two final states, particle-type-wise.
         """
