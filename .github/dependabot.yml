@@ -7,3 +7,4 @@ updates:
       interval: "weekly"
     ignore:
       - dependency-name: "actions/*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
