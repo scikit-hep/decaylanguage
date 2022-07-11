@@ -1,5 +1,16 @@
 # Changelog
 
+## Version 0.14.2 (2022-07-11)
+
+* Parsing of decay files (aka .dec files):
+  - Minor improvements such as in type checking.
+  - Documentation updates.
+  - More tests.
+* CI and tests:
+  - Several improvements to GHAs.
+  - Various hooks version updates.
+  - Added a `dependabot.yml`.
+
 ## Version 0.14.1 (2022-02-03)
 
 * Universal representation of decay chains:
