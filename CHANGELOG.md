@@ -156,7 +156,7 @@ Otherwise identical to series 0.13.
 ## Version 0.6.1 (2020-01-15)
 
 * Parsing of decay files (aka .dec files):
-  - Simpifications in various methods of class ``DecFileParser``.
+  - Simplifications in various methods of class ``DecFileParser``.
   - A couple more tests added.
 * Minor fixes.
 

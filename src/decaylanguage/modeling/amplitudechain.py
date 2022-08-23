@@ -117,7 +117,7 @@ class AmplitudeChain(ModelDecay):
 
         """
 
-        # If the Tree has daugthers, run on those
+        # If the Tree has daughters, run on those
         if self.daughters:
             dlist = [d.expand_lines(linelist) for d in self.daughters]
             retlist = []
