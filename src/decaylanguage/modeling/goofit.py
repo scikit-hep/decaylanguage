@@ -8,6 +8,8 @@ This is a GooFit adaptor for amplitude chain.
 """
 
 
+from __future__ import annotations
+
 from enum import Enum
 
 import pandas as pd

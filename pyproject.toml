@@ -11,6 +11,8 @@ write_to = "src/decaylanguage/_version.py"
 
 [tool.isort]
 profile = "black"
+add_imports = ["from __future__ import annotations"]
+
 
 [tool.mypy]
 files = "src"

@@ -3,10 +3,12 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
-from typing import Any, Dict, Iterator, List, Pattern, Tuple, Union
+from __future__ import annotations
+
+from typing import Any, Iterator, Pattern
 
 
-def iter_flatten(iterable: Union[List[str], Tuple[str, ...]]) -> Iterator[str]:
+def iter_flatten(iterable: list[str] | tuple[str, ...]) -> Iterator[str]:
     """
     Flatten nested tuples and lists
     """
@@ -17,7 +19,7 @@ def iter_flatten(iterable: Union[List[str], Tuple[str, ...]]) -> Iterator[str]:
             yield e
 
 
-def split(x: str) -> List[str]:
+def split(x: str) -> list[str]:
     """
     Break up a comma separated list, but respect curly brackets.
 
@@ -46,8 +48,8 @@ def split(x: str) -> List[str]:
 
 
 def filter_lines(
-    matcher: Pattern[str], inp: List[str]
-) -> Tuple[List[Dict[str, Union[str, Any]]], List[str]]:
+    matcher: Pattern[str], inp: list[str]
+) -> tuple[list[dict[str, str | Any]], list[str]]:
     """
     Filter out lines into new variable if they match a regular expression
     """

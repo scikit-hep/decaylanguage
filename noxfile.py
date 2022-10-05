@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import nox
 
-PYTHON_VERSIONS = ["3.6", "3.7", "3.8", "3.9", "3.10"]
+PYTHON_VERSIONS = ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
 
 @nox.session

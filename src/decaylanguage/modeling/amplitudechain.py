@@ -8,6 +8,8 @@ A class representing a set of decays. Can be subclassed to provide custom conver
 """
 
 
+from __future__ import annotations
+
 import os
 import re
 import sys

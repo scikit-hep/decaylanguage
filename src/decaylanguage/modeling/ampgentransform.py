@@ -3,8 +3,10 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
+from __future__ import annotations
+
 from collections import OrderedDict
-from typing import Any, Dict
+from typing import Any
 
 from lark import Transformer, Tree
 
@@ -44,7 +46,7 @@ class AmpGenTransformer(Transformer):
 
     def decay(self, lines):
         (particle,) = lines[0].children
-        dic: Dict[str, Any] = OrderedDict()
+        dic: dict[str, Any] = OrderedDict()
         dic["name"] = str(particle)
         dic["daughters"] = []
 

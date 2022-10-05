@@ -4,6 +4,8 @@
 # or https://github.com/scikit-hep/decaylanguage for details.
 
 
+from __future__ import annotations
+
 import pytest
 from pytest import approx
 

@@ -10,6 +10,8 @@ a string output with the converted set of decay chains and variables.
 """
 
 
+from __future__ import annotations
+
 import datetime
 from functools import partial
 from io import StringIO

@@ -3,7 +3,7 @@
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/scikit-hep/decaylanguage for details.
 
-from typing import Tuple
+from __future__ import annotations
 
 from .errors import LineFailure
 from .particleutils import charge_conjugate_name
@@ -18,5 +18,5 @@ __all__ = (
 )
 
 
-def __dir__() -> Tuple[str, ...]:
+def __dir__() -> tuple[str, ...]:
     return __all__
