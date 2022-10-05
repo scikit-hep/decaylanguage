@@ -5,6 +5,8 @@
 # or https://github.com/scikit-hep/decaylanguage for details.
 
 
+from __future__ import annotations
+
 from plumbum import cli
 
 from decaylanguage.modeling.ampgen2goofit import ampgen2goofit

@@ -4,6 +4,9 @@
 # or https://github.com/scikit-hep/decaylanguage for details.
 
 
+from __future__ import annotations
+
+
 class LineFailure(RuntimeError):
     def __init__(self, line: str, message: str) -> None:
         super().__init__(f"{line}: {message}")

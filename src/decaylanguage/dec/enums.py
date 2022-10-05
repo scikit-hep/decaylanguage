@@ -7,6 +7,8 @@
 Collection of enums and info to help characterising .dec decay files.
 """
 
+from __future__ import annotations
+
 from enum import IntEnum
 
 
