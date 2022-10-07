@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import nox
 
 PYTHON_VERSIONS = ["3.7", "3.8", "3.9", "3.10", "3.11"]
@@ -23,5 +25,10 @@ def build(session):
     Build an SDist and wheel.
     """
 
-    session.install("build")
+    session.install("build", "twine")
+    session.install("build", "twine", "check-wheel-contents")
     session.run("python", "-m", "build")
+    session.run("twine", "check", "--strict", "dist/*")
+    session.run(
+        "check-wheel-contents", str(*Path("dist").glob("*.whl")), "--ignore=W002"
+    )
