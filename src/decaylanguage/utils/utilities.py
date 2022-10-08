@@ -35,7 +35,7 @@ def split(x: str) -> list[str]:
         if i + 1 == len(x):
             out.append(x[: i + 1])
             return out
-        elif x[i] == "," and c == 0:
+        if x[i] == "," and c == 0:
             out.append(x[:i])
             x = x[i + 1 :]
             i = -1

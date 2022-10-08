@@ -84,8 +84,7 @@ class ModelDecay:
         """
         if self.daughters:
             return [d.structure for d in self.daughters]
-        else:
-            return self.particle
+        return self.particle
 
     def list_structure(self, final_states):
         """

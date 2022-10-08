@@ -39,6 +39,7 @@ Basic assumptions
 
 from __future__ import annotations
 
+import copy
 import operator
 import os
 import re
@@ -112,7 +113,7 @@ class DecFileParser:
                 if not os.path.exists(filename):
                     raise FileNotFoundError(f"'{filename}'!")
 
-                with open(filename) as file:
+                with open(filename, encoding="utf_8") as file:
                     for line in file:
                         # We need to strip the unicode byte ordering if present before checking for *
                         beg = line.lstrip("\ufeff").lstrip()
@@ -281,7 +282,7 @@ class DecFileParser:
             with data.basepath.joinpath(filename).open() as f1:
                 self._grammar = f1.read()
         else:
-            with open(filename) as f2:
+            with open(filename, encoding="utf_8") as f2:
                 self._grammar = f2.read()
 
         self._grammar_info = dict(
@@ -445,7 +446,7 @@ class DecFileParser:
         for decay2copy, decay2becopied in decays2copy.items():
             try:
                 match = self._parsed_decays[name2treepos[decay2becopied]]  # type: ignore[index]
-                copied_decay = match.__deepcopy__(None)
+                copied_decay = copy.deepcopy(match)
                 copied_decay.children[0].children[0].value = decay2copy
                 copied_decays.append(copied_decay)
             except Exception:
@@ -496,10 +497,9 @@ Skipping creation of these copied decay trees.""".format(
 
         duplicates = [n for n in mother_names_ccdecays if n in mother_names_decays]
         if len(duplicates) > 0:
-            msg = """The following particles are defined in the input .dec file with both 'Decay' and 'CDecay': {}!
-The 'CDecay' definition(s) will be ignored ...""".format(
-                ", ".join(d for d in duplicates)
-            )
+            str_duplicates = ", ".join(d for d in duplicates)
+            msg = f"""The following particles are defined in the input .dec file with both 'Decay' and 'CDecay': {str_duplicates}!
+The 'CDecay' definition(s) will be ignored ..."""
             warnings.warn(msg)
 
         # If that's the case, proceed using the decay definitions specified
@@ -541,7 +541,7 @@ Skipping creation of these charge-conjugate decay trees.""".format(
             )
             warnings.warn(msg)
 
-        cdecays = [tree.__deepcopy__(None) for tree in trees_to_conjugate]
+        cdecays = [copy.deepcopy(tree) for tree in trees_to_conjugate]
 
         # Finally, perform all particle -> anti(particle) replacements,
         # taking care of charge conjugate decays defined via aliases,
@@ -556,16 +556,13 @@ Skipping creation of charge-conjugate decay Tree.""".format(
                     )
                     warnings.warn(msg)
                     return False
-                else:
-                    return True
+                return True
             except Exception:
                 return True
 
-        [
-            ChargeConjugateReplacement(charge_conj_defs=dict_cc_names).visit(t)
-            for t in cdecays
-            if _is_not_self_conj(t)
-        ]
+        for t in cdecays:
+            if _is_not_self_conj(t):
+                ChargeConjugateReplacement(charge_conj_defs=dict_cc_names).visit(t)
 
         # ... and add all these charge-conjugate decays to the list of decays!
         self._parsed_decays.extend(cdecays)  # type: ignore[union-attr]
@@ -776,7 +773,7 @@ All but the first occurrence will be discarded/removed ...""".format(
                 raise RuntimeError(
                     "Be consistent - use either 'normalize' and 'scale'!"
                 )
-            elif not (0.0 < scale <= 1.0):
+            if not 0.0 < scale <= 1.0:
                 raise RuntimeError(
                     "A branching fraction must be in the range ]0, 1]! You set scale = {scale}."
                 )
@@ -838,10 +835,9 @@ All but the first occurrence will be discarded/removed ...""".format(
             max_len = max(len(s) for s in to_align)
             if align_mode == "left":
                 return [s.ljust(max_len) for s in to_align]
-            elif align_mode == "right":
+            if align_mode == "right":
                 return [s.rjust(max_len) for s in to_align]
-            else:
-                raise ValueError(f"Unknown align mode: {align_mode}")
+            raise ValueError(f"Unknown align mode: {align_mode}")
 
         aligned = []
         for cat in zip_longest(*to_align, fillvalue=""):
@@ -947,10 +943,9 @@ All but the first occurrence will be discarded/removed ...""".format(
             return "<{self.__class__.__name__}: decfile(s)={decfile}, n_decays={n_decays}>".format(
                 self=self, decfile=self._dec_file_names, n_decays=self.number_of_decays
             )
-        else:
-            return "<{self.__class__.__name__}: decfile(s)={decfile}>".format(
-                self=self, decfile=self._dec_file_names
-            )
+        return "<{self.__class__.__name__}: decfile(s)={decfile}>".format(
+            self=self, decfile=self._dec_file_names
+        )
 
     def __str__(self) -> str:
         return repr(self)
@@ -1518,7 +1513,7 @@ def get_global_photos_flag(parsed_file: Tree) -> int:
     tree = tuple(parsed_file.find_data("global_photos"))
     if not tree:
         return PhotosEnum.no
-    elif len(tree) > 1:
+    if len(tree) > 1:
         warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
 
     end_item = tree[-1]

@@ -4,6 +4,8 @@ from pathlib import Path
 
 import nox
 
+nox.options.sessions = ["lint", "pylint", "tests"]
+
 PYTHON_VERSIONS = ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
 
@@ -11,6 +13,17 @@ PYTHON_VERSIONS = ["3.7", "3.8", "3.9", "3.10", "3.11"]
 def lint(session):
     session.install("pre-commit")
     session.run("pre-commit", "run", "--all-files", *session.posargs)
+
+
+@nox.session
+def pylint(session: nox.Session) -> None:
+    """
+    Run pylint.
+    """
+
+    session.install("pylint~=2.15.0")
+    session.install("-e", ".[dev]")
+    session.run("pylint", "src", *session.posargs)
 
 
 @nox.session(python=PYTHON_VERSIONS)

@@ -10,6 +10,9 @@ from collections import Counter
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, TypeVar, Union
 
+from particle import PDGID, ParticleNotFound
+from particle.converters import EvtGenName2PDGIDBiMap
+
 from ..utils import charge_conjugate_name
 
 Self_DaughtersDict = TypeVar("Self_DaughtersDict", bound="DaughtersDict")
@@ -21,6 +24,7 @@ else:
     CounterStr = Counter
 
 
+# pylint: disable-next=abstract-method
 class DaughtersDict(CounterStr):
     """
     Class holding a decay final state as a dictionary.
@@ -327,9 +331,6 @@ class DecayMode:
             return cls(bf=bf, daughters=None, **info)
 
         try:
-            from particle import PDGID, ParticleNotFound
-            from particle.converters import EvtGenName2PDGIDBiMap
-
             _daughters = [EvtGenName2PDGIDBiMap[PDGID(d)] for d in daughters]
         except ParticleNotFound:
             raise ParticleNotFound("Please check your input PDG IDs!") from None
@@ -477,11 +478,11 @@ def _build_decay_modes(
             d = deepcopy(dm)
             fs_local = d["fs"]
             assert isinstance(fs_local, list)
-            for i in range(len(fs_local)):
-                if isinstance(fs_local[i], dict):
+            for i, ifs in enumerate(fs_local):
+                if isinstance(ifs, dict):
                     # Replace the element with the key and
                     # store the present decay mode ignoring sub-decays
-                    fs_local[i] = list(fs_local[i].keys())[0]
+                    fs_local[i] = list(ifs.keys())[0]
                     # Recursively continue ...
                     _build_decay_modes(decay_modes, fs[i])
             # Create the decay mode now that none of its particles
@@ -629,7 +630,7 @@ class DecayChain:
         """
         indent = 4
         arrow = "+--> "
-        bar = "|"
+        bar = "|"  # pylint: disable=disallowed-name
 
         # TODO: simplify logic and perform further checks
         def _print(
@@ -748,7 +749,7 @@ class DecayChain:
         if stable_particles:
             keys = [k for k in self.decays.keys() if k not in stable_particles]
         else:
-            keys = [k for k in self.decays.keys()]
+            keys = list(self.decays.keys())
         keys.insert(0, keys.pop(keys.index(self.mother)))
 
         further_to_replace = True
