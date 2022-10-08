@@ -6,7 +6,7 @@ requires = [
 build-backend = "hatchling.build"
 
 [project]
-name = "DecayLanguage"
+name = "decaylanguage"
 description = "A language to describe, manipulate and convert particle decays"
 readme = "README.md"
 requires-python = ">=3.7"
