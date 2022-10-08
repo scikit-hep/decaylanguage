@@ -110,3 +110,6 @@ addopts = [
     "--strict-config",
 ]
 log_cli_level = "DEBUG"
+filterwarnings = [
+    "error",
+]
