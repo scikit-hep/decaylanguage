@@ -86,3 +86,4 @@ def ampgen2goofit(filename, ret_output=False):
 
     if ret_output:
         return output.getvalue()
+    return None

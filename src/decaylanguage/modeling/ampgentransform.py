@@ -23,9 +23,11 @@ class AmpGenTransformer(Transformer):
     def event_type(self, lines):
         return Tree("event_type", [str(p.children[0]) for p in lines])
 
+    # pylint: disable-next=unused-argument
     def fixed(self, lines):
         return False
 
+    # pylint: disable-next=unused-argument
     def free(self, lines):
         return True
 

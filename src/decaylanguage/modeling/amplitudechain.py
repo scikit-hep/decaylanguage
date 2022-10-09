@@ -145,14 +145,14 @@ class AmplitudeChain(ModelDecay):
     def ls_enum(self):
         if not self.lineshape:
             return LS.RBW
-        elif self.lineshape == "GSpline.EFF":
+        if self.lineshape == "GSpline.EFF":
             return LS.GSpline
-        elif self.lineshape.startswith("kMatrix"):
+        if self.lineshape.startswith("kMatrix"):
             return LS.kMatrix
-        elif self.lineshape.startswith("FOCUS"):
+        if self.lineshape.startswith("FOCUS"):
             return LS.FOCUS
-        else:
-            raise RuntimeError(f"Unimplemented lineshape {self.lineshape}")
+
+        raise RuntimeError(f"Unimplemented lineshape {self.lineshape}")
 
     @property
     def full_amp(self):
@@ -171,8 +171,7 @@ class AmplitudeChain(ModelDecay):
         max_spin = S + s1 + s2
         if not conserveParity:
             return (min_spin, max_spin)
-        else:
-            raise RuntimeError("Strong decays not implemented yet")
+        raise RuntimeError("Strong decays not implemented yet")
 
     @property
     def L(self):
@@ -224,7 +223,7 @@ class AmplitudeChain(ModelDecay):
 
         # Read the file in, ignore empty lines and comments
         if filename is not None:
-            with open(filename) as f:
+            with open(filename, encoding="utf_8") as f:
                 text = f.read()
         elif text is None:
             raise RuntimeError("Must have filename or text")

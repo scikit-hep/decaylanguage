@@ -82,6 +82,7 @@ add_imports = [
     "from __future__ import annotations",
 ]
 
+
 [tool.mypy]
 files = "src"
 exclude = "src/decaylanguage/(data|modeling)"
@@ -99,6 +100,7 @@ module = [
 ]
 ignore_missing_imports = true
 
+
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = ["tests"]
@@ -112,4 +114,36 @@ addopts = [
 log_cli_level = "DEBUG"
 filterwarnings = [
     "error",
+]
+
+
+[tool.pylint]
+master.py-version = "3.7"
+reports.output-format = "colorized"
+similarities.ignore-imports = "yes"
+master.jobs = "0"
+messages_control.enable = [
+    "useless-suppression",
+]
+messages_control.disable = [
+    "fixme",
+    "line-too-long",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "missing-module-docstring",
+    "too-few-public-methods",
+    "too-many-arguments",
+    "too-many-branches",
+    "too-many-instance-attributes",
+    "too-many-lines",
+    "too-many-locals",
+    "too-many-public-methods",
+    "too-many-return-statements",
+    "too-many-statements",
+    "wrong-import-position",
+    "invalid-name",
+    "consider-using-f-string",  # TODO
+    "broad-except",  # TODO
+    "protected-access",  # TODO
+    "no-member",  # TODO
 ]
