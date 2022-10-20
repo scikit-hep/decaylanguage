@@ -28,7 +28,7 @@ boolean_photos : "yesPhotos" -> yes
                 | "noPhotos"  -> no
 
 decay : "Decay" particle _NEWLINE+ decayline+ "Enddecay"
-decayline : value particle* photos? model (_NEWLINE | _SEMICOLON)+ // There is always a ; here
+decayline : value particle* photos? model _NEWLINE+
 value : SIGNED_NUMBER
 photos : "PHOTOS"
 
@@ -37,7 +37,7 @@ copydecay : "CopyDecay" label label
 label : LABEL
 particle : LABEL // Add full particle parsing here
 
-model : MODEL_NAME model_options?
+model : (MODEL_NAME_AND_SC | MODEL_NAME_AND_WS model_options _SEMICOLON+)
 model_options : (value | LABEL | _NEWLINE)+
 
 // model : model_generic
@@ -46,15 +46,18 @@ model_options : (value | LABEL | _NEWLINE)+
 // Terminal definitions
 // To use a fast parser, we need to avoid conflicts
 
+// We must set priorities here to use lalr - match model name above label, and label above something else
+MODEL_NAME_AND_WS.2: MODEL_NAME _WS+
+MODEL_NAME_AND_SC.2: MODEL_NAME _WS* _SEMICOLON+
+MODEL_NAME : "BaryonPCR"|"BCL"|"BGL"|"BT02PI_CP_ISO"|"BTO3PI_CP"|"BTOSLLALI"|"BTOSLLBALL"|"BTOXSGAMMA"|"BTOXSLL"|"CB3PI-MPP"|"CB3PI-P00"|"D_DALITZ"|"ETAPRIME_DALITZ"|"ETA_DALITZ"|"ETA_FULLDALITZ"|"ETA_PI0DALITZ"|"FLATQ2"|"GENERIC_DALITZ"|"GOITY_ROBERTS"|"HELAMP"|"HQET3"|"HQET2"|"HQET"|"ISGW2"|"ISGW"|"LbAmpGen"|"LLSW"|"MELIKHOV"|"OMEGA_DALITZ"|"PARTWAVE"|"PHSP"|"PI0_DALITZ"|"PROPSLPOLE"|"PVV_CPLH"|"PYCONT"|"PYTHIA"|"SLBKPOLE"|"SLN"|"SLPOLE"|"SSD_CP"|"SSD_DirectCP"|"SSS_CP"|"SSS_CP_PNG"|"SSS_CPT"|"STS_CP"|"STS"|"SVP_CP"|"SVP_HELAMP"|"SVP"|"SVS_CP_ISO"|"SVS_CPLH"|"SVS_CP"|"SVS_NONCPEIGEN"|"SVS"|"SVV_CPLH"|"SVV_CP"|"SVV_HELAMP"|"SVV_NONCPEIGEN"|"SVVHELCPMIX"|"TAUHADNU"|"TAULNUNU"|"TAUSCALARNU"|"TAUVECTORNU"|"TSS"|"TVP"|"TVS_PWAVE"|"VLL"|"VSP_PWAVE"|"VSS_BMIX"|"VSS_MIX"|"VSS"|"VUB"|"VVPIPI"|"VVP"|"VVS_PWAVE"|"YMSTOYNSPIPICLEO"
+
 %import common.WS_INLINE
 %import common.SIGNED_NUMBER
 
 // New lines filter our comments too, and multiple new lines
 _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )
 _SEMICOLON: /;/
-
-// We must set priorities here to use lalr - match model name above label, and label above something else
-MODEL_NAME.2 : "BaryonPCR"|"BCL"|"BGL"|"BT02PI_CP_ISO"|"BTO3PI_CP"|"BTOSLLALI"|"BTOSLLBALL"|"BTOXSGAMMA"|"BTOXSLL"|"CB3PI-MPP"|"CB3PI-P00"|"D_DALITZ"|"ETAPRIME_DALITZ"|"ETA_DALITZ"|"ETA_FULLDALITZ"|"ETA_PI0DALITZ"|"FLATQ2"|"GENERIC_DALITZ"|"GOITY_ROBERTS"|"HELAMP"|"HQET2"|"HQET"|"ISGW2"|"ISGW"|"LbAmpGen"|"LLSW"|"MELIKHOV"|"OMEGA_DALITZ"|"PARTWAVE"|"PHSP"|"PI0_DALITZ"|"PROPSLPOLE"|"PVV_CPLH"|"PYCONT"|"PYTHIA"|"SLBKPOLE"|"SLN"|"SLPOLE"|"SSD_CP"|"SSD_DirectCP"|"SSS_CP"|"SSS_CP_PNG"|"SSS_CPT"|"STS_CP"|"STS"|"SVP_CP"|"SVP_HELAMP"|"SVP"|"SVS_CP_ISO"|"SVS_CPLH"|"SVS_CP"|"SVS_NONCPEIGEN"|"SVS"|"SVV_CPLH"|"SVV_CP"|"SVV_HELAMP"|"SVV_NONCPEIGEN"|"SVVHELCPMIX"|"TAUHADNU"|"TAULNUNU"|"TAUSCALARNU"|"TAUVECTORNU"|"TSS"|"TVP"|"TVS_PWAVE"|"VLL"|"VSP_PWAVE"|"VSS_BMIX"|"VSS_MIX"|"VSS"|"VUB"|"VVPIPI"|"VVP"|"VVS_PWAVE"|"YMSTOYNSPIPICLEO"
+_WS: WS_INLINE 
 
 LABEL : /[a-zA-Z0-9\/\-+*_()']+/
 COMMENT : /[#][^\n]*/
