@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+title: DecayLanguage
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+abstract: "DecayLanguage is a Python library to describe, manipulate and convert particle decays."
+authors:
+  - family-names: Rodrigues
+    given-names: Eduardo
+    affiliation: University of Liverpool
+    orcid: "https://orcid.org/0000-0003-2846-7625"
+  - family-names: Schreiner
+    given-names: Henry
+    affiliation: Princeton University
+    orcid: "https://orcid.org/0000-0002-7833-783X"
+doi: 10.5281/zenodo.3257423
+repository-code: "https://github.com/scikit-hep/decaylanguage"
+keywords:
+  - python
+  - particle decays
+  - decay files
+  - scikit-hep
+license: "BSD-3-Clause"
