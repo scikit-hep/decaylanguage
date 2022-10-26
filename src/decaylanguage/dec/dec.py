@@ -161,7 +161,7 @@ class DecFileParser:
 
         return _cls
 
-    def parse(self, include_ccdecays: bool = True, parseopts=None) -> None:
+    def parse(self, include_ccdecays: bool = True) -> None:
         """
         Parse the given .dec decay file(s) according to the default Lark parser
         and specified options.
@@ -196,10 +196,7 @@ class DecFileParser:
         parser = Lark(
             self.grammar(), parser=opts["parser"], lexer=opts["lexer"], **extraopts
         )
-        if parseopts:
-            self._parsed_dec_file = parser.parse(self._dec_file, **parseopts)
-        else:
-            self._parsed_dec_file = parser.parse(self._dec_file)
+        self._parsed_dec_file = parser.parse(self._dec_file)
 
         # At last, find all particle decays defined in the .dec decay file ...
         self._find_parsed_decays()
@@ -1228,7 +1225,7 @@ def get_model_name(decay_mode: Tree) -> str:
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
 
     lm = list(decay_mode.find_data("model"))
-    return str(lm[0].children[0].value)
+    return str(lm[0].children[0].value).strip(";").strip()
 
 
 def get_model_parameters(decay_mode: Tree) -> str | list[str | Any]:
