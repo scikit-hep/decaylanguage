@@ -161,7 +161,7 @@ class DecFileParser:
 
         return _cls
 
-    def parse(self, include_ccdecays: bool = True) -> None:
+    def parse(self, include_ccdecays: bool = True, parseopts=None) -> None:
         """
         Parse the given .dec decay file(s) according to the default Lark parser
         and specified options.
@@ -196,8 +196,10 @@ class DecFileParser:
         parser = Lark(
             self.grammar(), parser=opts["parser"], lexer=opts["lexer"], **extraopts
         )
-
-        self._parsed_dec_file = parser.parse(self._dec_file)
+        if parseopts:
+            self._parsed_dec_file = parser.parse(self._dec_file, **parseopts)
+        else:
+            self._parsed_dec_file = parser.parse(self._dec_file)
 
         # At last, find all particle decays defined in the .dec decay file ...
         self._find_parsed_decays()
@@ -209,6 +211,10 @@ class DecFileParser:
         dict_define_defs = self.dict_definitions()
         for tree in self._parsed_decays:
             DecayModelParamValueReplacement(define_defs=dict_define_defs).visit(tree)
+
+        dict_model_alias = self.dict_model_aliases()
+        for tree in self._parsed_decays:
+            DecayModelAliasReplacement(define_defs=dict_model_alias).visit(tree)
 
         # Create on the fly the decays to be copied, if requested
         if self.dict_decays2copy():
@@ -314,6 +320,15 @@ class DecFileParser:
         """
         self._check_parsing()
         return get_definitions(self._parsed_dec_file)
+
+    def dict_model_aliases(self) -> dict[str, float]:
+        """
+        Return a dictionary of all model alias definitions in the input parsed file,
+        of the form "ModelAlias <NAME> <MODEL>",
+        as {'NAME1': MODEL1, 'NAME2': MODEL2, ...}.
+        """
+        self._check_parsing()
+        return get_model_aliases(self._parsed_dec_file)
 
     def dict_aliases(self) -> dict[str, str]:
         """
@@ -951,6 +966,29 @@ All but the first occurrence will be discarded/removed ...""".format(
         return repr(self)
 
 
+class DecayModelAliasReplacement(Visitor):  # type: ignore[misc]
+    """ """
+
+    def __init__(self, define_defs: Optional[Dict[str, Union[Any]]] = None) -> None:
+        self.define_defs = define_defs or {}
+
+    def _replacement(self, t: Tree) -> None:
+        try:
+            t.children[0].value = float(t.children[0].value)
+        except AttributeError:
+            if t.value in self.define_defs:
+                t.value = self.define_defs[t.value]
+
+    def model_alias(self, tree: Tree) -> None:
+        """
+        Method for the rule (here, a replacement) we wish to implement.
+        """
+        assert tree.data == "model_alias"
+
+        for child in tree.children:
+            self._replacement(child)
+
+
 class DecayModelParamValueReplacement(Visitor):  # type: ignore[misc]
     """
     Lark Visitor implementing the replacement of decay model parameter names
@@ -1318,6 +1356,21 @@ def get_definitions(parsed_file: Tree) -> dict[str, float]:
             .children[0]
             .value: float(tree.children[1].children[0].value)
             for tree in parsed_file.find_data("define")
+        }
+    except Exception as err:
+        raise RuntimeError(
+            "Input parsed file does not seem to have the expected structure."
+        ) from err
+
+
+def get_model_aliases(parsed_file: Tree) -> dict[str, str]:
+    """
+    TODO
+    """
+    try:
+        return {
+            tree.children[0].children[0].value: tree.children[1].children[0].value
+            for tree in parsed_file.find_data("model_alias")
         }
     except Exception as err:
         raise RuntimeError(

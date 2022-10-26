@@ -4,7 +4,7 @@
 // or https://github.com/scikit-hep/decaylanguage for details.
 
 start : _NEWLINE* (line _NEWLINE+)+ ("End" _NEWLINE+)?
-?line : define | pythia_def | jetset_def | alias | chargeconj | commands | decay | cdecay | copydecay | setlspw
+?line : define | pythia_def | jetset_def | model_alias | alias | chargeconj | commands | decay | cdecay | copydecay | setlspw
 
 pythia_def : "PythiaBothParam" LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)
 
@@ -15,6 +15,8 @@ setlspw : "SetLineshapePW" label label label value
 cdecay : "CDecay" label
 
 define : "Define" label value
+
+model_alias : "ModelAlias" model_label model
 
 alias : "Alias" label label
 
@@ -36,8 +38,9 @@ copydecay : "CopyDecay" label label
 
 label : LABEL
 particle : LABEL // Add full particle parsing here
+model_label : LABEL
 
-model : (MODEL_NAME_AND_SC | MODEL_NAME_AND_WS model_options _SEMICOLON+)
+model : (model_label _SEMICOLON+ | MODEL_NAME_AND_SC | MODEL_NAME_AND_WS model_options _SEMICOLON+)
 model_options : (value | LABEL | _NEWLINE)+
 
 // model : model_generic
@@ -49,7 +52,7 @@ model_options : (value | LABEL | _NEWLINE)+
 // We must set priorities here to use lalr - match model name above label, and label above something else
 MODEL_NAME_AND_WS.2: MODEL_NAME _WS+
 MODEL_NAME_AND_SC.2: MODEL_NAME _WS* _SEMICOLON+
-MODEL_NAME : "BaryonPCR"|"BCL"|"BGL"|"BT02PI_CP_ISO"|"BTO3PI_CP"|"BTOSLLALI"|"BTOSLLBALL"|"BTOXSGAMMA"|"BTOXSLL"|"CB3PI-MPP"|"CB3PI-P00"|"D_DALITZ"|"ETAPRIME_DALITZ"|"ETA_DALITZ"|"ETA_FULLDALITZ"|"ETA_PI0DALITZ"|"FLATQ2"|"GENERIC_DALITZ"|"GOITY_ROBERTS"|"HELAMP"|"HQET3"|"HQET2"|"HQET"|"ISGW2"|"ISGW"|"LbAmpGen"|"LLSW"|"MELIKHOV"|"OMEGA_DALITZ"|"PARTWAVE"|"PHSP"|"PI0_DALITZ"|"PROPSLPOLE"|"PVV_CPLH"|"PYCONT"|"PYTHIA"|"SLBKPOLE"|"SLN"|"SLPOLE"|"SSD_CP"|"SSD_DirectCP"|"SSS_CP"|"SSS_CP_PNG"|"SSS_CPT"|"STS_CP"|"STS"|"SVP_CP"|"SVP_HELAMP"|"SVP"|"SVS_CP_ISO"|"SVS_CPLH"|"SVS_CP"|"SVS_NONCPEIGEN"|"SVS"|"SVV_CPLH"|"SVV_CP"|"SVV_HELAMP"|"SVV_NONCPEIGEN"|"SVVHELCPMIX"|"TAUHADNU"|"TAULNUNU"|"TAUSCALARNU"|"TAUVECTORNU"|"TSS"|"TVP"|"TVS_PWAVE"|"VLL"|"VSP_PWAVE"|"VSS_BMIX"|"VSS_MIX"|"VSS"|"VUB"|"VVPIPI"|"VVP"|"VVS_PWAVE"|"YMSTOYNSPIPICLEO"
+MODEL_NAME : "BaryonPCR"|"BCL"|"BGL"|"BT02PI_CP_ISO"|"BTO3PI_CP"|"BTOSLLALI"|"BTOSLLBALL"|"BTOXSGAMMA"|"BTOXSLL"|"CB3PI-MPP"|"CB3PI-P00"|"D_DALITZ"|"ETAPRIME_DALITZ"|"ETA_DALITZ"|"ETA_FULLDALITZ"|"ETA_PI0DALITZ"|"FLATQ2"|"GENERIC_DALITZ"|"GOITY_ROBERTS"|"HELAMP"|"HQET3"|"HQET2"|"HQET"|"ISGW2"|"ISGW"|"LbAmpGen"|"LLSW"|"MELIKHOV"|"OMEGA_DALITZ"|"PARTWAVE"|"PHSP"|"PI0_DALITZ"|"PROPSLPOLE"|"PVV_CPLH"|"PYCONT"|"PYTHIA"|"SLBKPOLE"|"SLN"|"SLPOLE"|"SSD_CP"|"SSD_DirectCP"|"SSS_CP"|"SSS_CP_PNG"|"SSS_CPT"|"STS_CP"|"STS"|"SVP_CP"|"SVP_HELAMP"|"SVP"|"SVS_CP_ISO"|"SVS_CPLH"|"SVS_CP"|"SVS_NONCPEIGEN"|"SVS"|"SVV_CPLH"|"SVV_CP"|"SVV_HELAMP"|"SVV_NONCPEIGEN"|"SVVHELCPMIX"|"TAUHADNU"|"TAULNUNU"|"TAUSCALARNU"|"TAUVECTORNU"|"TSS"|"TVP"|"TVS_PWAVE"|"VLL"|"VSP_PWAVE"|"VSS_BMIX"|"VSS_MIX"|"VSS"|"VUB"|"VVPIPI"|"VVP"|"VVS_PWAVE"|"YMSTOYNSPIPICLEO"|"YMSTOYNSPIPICLEOBOOST"
 
 %import common.WS_INLINE
 %import common.SIGNED_NUMBER
@@ -57,7 +60,7 @@ MODEL_NAME : "BaryonPCR"|"BCL"|"BGL"|"BT02PI_CP_ISO"|"BTO3PI_CP"|"BTOSLLALI"|"BT
 // New lines filter our comments too, and multiple new lines
 _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )
 _SEMICOLON: /;/
-_WS: WS_INLINE 
+_WS: WS_INLINE
 
 LABEL : /[a-zA-Z0-9\/\-+*_()']+/
 COMMENT : /[#][^\n]*/
