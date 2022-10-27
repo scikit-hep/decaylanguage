@@ -1001,30 +1001,31 @@ class DecayModelAliasReplacement(Transformer):  # type: ignore[misc]
 
     """
 
-    def __init__(self, define_defs: Optional[Dict[str, Union[Any]]] = None) -> None:
+    def __init__(self, define_defs: dict[str, Any] | None = None) -> None:
+        super().__init__()
         self.define_defs = define_defs or {}
 
     def _replacement(self, t: Token) -> Token:
-        model_label = t.value
-        if model_label in self.define_defs:
-            return self.define_defs[model_label]
-        else:
+
+        if t.value not in self.define_defs:
             raise ValueError(
                 f"ModelAlias {t.value} is not defined. Please define this ModelAlias in the decayfile."
             )
+        return self.define_defs[t.value]
 
-    def model(self, treelist: List[Tree]) -> None:
+    def model(self, treelist: list[Tree]) -> Tree:
         """
         Method for the rule (here, a replacement) we wish to implement.
         Must happen on model level to replace a Lark Token with a Lark Tree.
+        Doesn't do anything if no model_label is found.
         """
-        if type(treelist[0]) == Tree:
+        if isinstance(treelist[0], Tree):
             assert (
                 treelist[0].data == "model_label"
             ), f"Instead of a subtree of type 'model_label' one of type {treelist[0].data} has been passed."
             return Tree("model", self._replacement(treelist[0].children[0]))
-        else:
-            return Tree("model", treelist)
+
+        return Tree("model", treelist)
 
 
 class DecayModelParamValueReplacement(Visitor):  # type: ignore[misc]

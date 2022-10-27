@@ -24,7 +24,6 @@ else:
     CounterStr = Counter
 
 
-# pylint: disable-next=abstract-method
 class DaughtersDict(CounterStr):
     """
     Class holding a decay final state as a dictionary.
