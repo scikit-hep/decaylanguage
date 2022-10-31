@@ -14,10 +14,12 @@ from lark import Token, Tree
 
 from decaylanguage.dec.dec import (
     ChargeConjugateReplacement,
+    DecayModelAliasReplacement,
     DecayModelParamValueReplacement,
     DecayNotFound,
     DecFileNotParsed,
     DecFileParser,
+    ModelNameCleanup,
     get_decay_mother_name,
     get_final_state_particle_names,
     get_model_name,
@@ -191,6 +193,25 @@ def test_missing_global_photos_flag():
     assert not p.global_photos_flag()
 
 
+def test_model_aliases():
+    p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
+    p.parse()
+
+    assert len(p.dict_model_aliases()) == 7
+    assert p.dict_model_aliases()["SLBKPOLE_DtoKlnu"] == [
+        Token("MODEL_NAME_AND_WS", "SLBKPOLE"),
+        Tree(
+            "model_options",
+            [
+                Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
+                Tree("value", [Token("SIGNED_NUMBER", "0.303")]),
+                Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
+                Tree("value", [Token("SIGNED_NUMBER", "2.112")]),
+            ],
+        ),
+    ]
+
+
 def test_list_charge_conjugate_decays():
     p = DecFileParser(DIR / "../data/test_Bd2DmTauNu_Dm23PiPi0_Tau2MuNu.dec")
     p.parse()
@@ -286,6 +307,34 @@ def test_decay_model_parsing_with_variable_defs():
     dl = p._parsed_decays[0].children[1]
     assert get_model_name(dl) == "VSS_BMIX"
     assert get_model_parameters(dl) == [0.507e12]
+
+
+def test_decay_model_parsing_with_model_alias():
+    """
+    In this example the decay model details are "SLBKPOLE_DtoKlnu",
+    where SLBKPOLE_DtoKlnu stands for an alias whose value is defined via the statement
+    "ModelAlias SLBKPOLE_DtoKlnu SLBKPOLE 1.0 param1;" (semicolon matters here).
+    "param1" is here defined via the statement "Define param1 -0.303".
+    The parser should recognise this and return SLBKPOLE as the model name and [1.0, -0.303] as the model parameters.
+    """
+    p = DecFileParser(DIR / "../data/test_DtoKlnu.dec")
+    p.parse()
+    assert p.dict_model_aliases() == {
+        "SLBKPOLE_DtoKlnu": [
+            Token("MODEL_NAME_AND_WS", "SLBKPOLE"),
+            Tree(
+                "model_options",
+                [
+                    Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
+                    Token("LABEL", "param1"),
+                ],
+            ),
+        ]
+    }
+
+    dl = p._parsed_decays[0].children[1]
+    assert get_model_name(dl) == "SLBKPOLE"
+    assert get_model_parameters(dl) == [1.0, -0.303]
 
 
 def test_duplicate_decay_definitions():
@@ -397,6 +446,121 @@ def test_build_decay_chains():
     assert p.build_decay_chains("D+", stable_particles=["pi0"]) == output
 
 
+def test_Lark_ModelNameCleanup_Transformer_no_params():
+
+    t = Tree(
+        "decay",
+        [
+            Tree("particle", [Token("LABEL", "D0")]),
+            Tree(
+                "decayline",
+                [
+                    Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
+                    Tree("particle", [Token("LABEL", "K-")]),
+                    Tree("particle", [Token("LABEL", "pi+")]),
+                    Tree("model", [Token("MODEL_NAME_AND_SC", "PHSP;")]),
+                ],
+            ),
+        ],
+    )
+
+    cleaned_tree = ModelNameCleanup().transform(t)
+    tree_decayline = list(cleaned_tree.find_data("decayline"))[0]
+    assert get_model_name(tree_decayline) == "PHSP"
+
+
+def test_Lark_ModelNameCleanup_Transformer_with_params():
+
+    t = Tree(
+        "decay",
+        [
+            Tree("particle", [Token("LABEL", "B0sig")]),
+            Tree(
+                "decayline",
+                [
+                    Tree("value", [Token("SIGNED_NUMBER", "1.000")]),
+                    Tree("particle", [Token("LABEL", "MyFirstD*-")]),
+                    Tree("particle", [Token("LABEL", "MySecondD*+")]),
+                    Tree(
+                        "model",
+                        [
+                            Token("MODEL_NAME_AND_WS", "SVV_HELAMP  "),
+                            Tree(
+                                "model_options",
+                                [
+                                    Tree("value", [Token("SIGNED_NUMBER", "0.0")]),
+                                    Tree("value", [Token("SIGNED_NUMBER", "0.0")]),
+                                    Tree("value", [Token("SIGNED_NUMBER", "0.0")]),
+                                    Tree("value", [Token("SIGNED_NUMBER", "0.0")]),
+                                    Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
+                                    Tree("value", [Token("SIGNED_NUMBER", "0.0")]),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+        ],
+    )
+
+    cleaned_tree = ModelNameCleanup().transform(t)
+    tree_decayline = list(cleaned_tree.find_data("decayline"))[0]
+    assert get_model_name(tree_decayline) == "SVV_HELAMP"
+    assert get_model_parameters(tree_decayline) == [
+        "0.0",
+        "0.0",
+        "0.0",
+        "0.0",
+        "1.0",
+        "0.0",
+    ]
+
+
+def test_Lark_DecayModelAliasReplacement_Transformer():
+
+    t = Tree(
+        "decay",
+        [
+            Tree("particle", [Token("LABEL", "D+")]),
+            Tree(
+                "decayline",
+                [
+                    Tree("value", [Token("SIGNED_NUMBER", "1.000")]),
+                    Tree("particle", [Token("LABEL", "anti-K0")]),
+                    Tree("particle", [Token("LABEL", "e+")]),
+                    Tree("particle", [Token("LABEL", "nu_e")]),
+                    Tree(
+                        "model",
+                        [Tree("model_label", [Token("LABEL", "SLBKPOLE_DtoKlnu")])],
+                    ),
+                ],
+            ),
+        ],
+    )
+    dict_model_aliases = {
+        "SLBKPOLE_DtoKlnu": [
+            Token("MODEL_NAME_AND_WS", "SLBKPOLE"),
+            Tree(
+                "model_options",
+                [
+                    Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
+                    Tree("value", [Token("SIGNED_NUMBER", "0.303")]),
+                    Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
+                    Tree("value", [Token("SIGNED_NUMBER", "2.112")]),
+                ],
+            ),
+        ]
+    }
+
+    unaliased_tree = DecayModelAliasReplacement(
+        model_alias_defs=dict_model_aliases
+    ).transform(t)
+
+    tree_decayline = list(unaliased_tree.find_data("decayline"))[0]
+    assert get_model_name(tree_decayline) == "SLBKPOLE"
+    assert get_model_parameters(tree_decayline) == ["1.0", "0.303", "1.0", "2.112"]
+
+
 def test_Lark_DecayModelParamValueReplacement_Visitor_no_params():
     t = Tree(
         "decay",
@@ -408,7 +572,7 @@ def test_Lark_DecayModelParamValueReplacement_Visitor_no_params():
                     Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
                     Tree("particle", [Token("LABEL", "K-")]),
                     Tree("particle", [Token("LABEL", "pi+")]),
-                    Tree("model", [Token("MODEL_NAME", "PHSP")]),
+                    Tree("model", [Token("MODEL_NAME_AND_SC", "PHSP")]),
                 ],
             ),
         ],
@@ -436,7 +600,7 @@ def test_Lark_DecayModelParamValueReplacement_Visitor_single_value():
                     Tree(
                         "model",
                         [
-                            Token("MODEL_NAME", "VSS_BMIX"),
+                            Token("MODEL_NAME_AND_WS", "VSS_BMIX"),
                             Tree("model_options", [Token("LABEL", "dm")]),
                         ],
                     ),
@@ -476,7 +640,7 @@ def test_Lark_DecayModelParamValueReplacement_Visitor_list():
                     Tree(
                         "model",
                         [
-                            Token("MODEL_NAME", "SVV_HELAMP"),
+                            Token("MODEL_NAME_AND_WS", "SVV_HELAMP"),
                             Tree(
                                 "model_options",
                                 [
@@ -519,7 +683,7 @@ def test_Lark_ChargeConjugateReplacement_Visitor():
                     Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
                     Tree("particle", [Token("LABEL", "K-")]),
                     Tree("particle", [Token("LABEL", "pi+")]),
-                    Tree("model", [Token("MODEL_NAME", "PHSP")]),
+                    Tree("model", [Token("MODEL_NAME_AND_SC", "PHSP")]),
                 ],
             ),
         ],
@@ -551,7 +715,7 @@ def test_Lark_ChargeConjugateReplacement_Visitor_with_aliases():
                     Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
                     Tree("particle", [Token("LABEL", "K-")]),
                     Tree("particle", [Token("LABEL", "pi+")]),
-                    Tree("model", [Token("MODEL_NAME", "PHSP")]),
+                    Tree("model", [Token("MODEL_NAME_AND_SC", "PHSP")]),
                 ],
             ),
         ],
