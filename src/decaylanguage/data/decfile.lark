@@ -49,11 +49,10 @@ model_options : (value | LABEL | _NEWLINE)+
 // Terminal definitions
 // To use a fast parser, we need to avoid conflicts
 
-
 %import common.WS_INLINE
 %import common.SIGNED_NUMBER
 
-// New lines filter our comments too, and multiple new lines
+// Disregard comments, (multiple) newlines and whitespace in parser tree
 _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )
 _SEMICOLON: /;/
 _WS: WS_INLINE

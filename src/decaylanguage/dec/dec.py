@@ -198,16 +198,18 @@ class DecFileParser:
         )
         self._parsed_dec_file = parser.parse(self._dec_file)
 
-        # Strip whitespace and semicolons from model names
+        # Strip whitespace and semicolons (necessary for LALR(1) grammar) from model names
         self._parsed_dec_file = ModelNameCleanup().transform(self._parsed_dec_file)
 
         # At last, find all particle decays defined in the .dec decay file ...
         self._find_parsed_decays()
-
-        # Replace model aliases with the actual models and model parameters
-        dict_model_alias = self.dict_model_aliases()
+        # Replace model aliases with the actual models and model parameters. Deepcopy to avoid modification of dict by
+        # DecayModelParamValueReplacement Visitor.
+        dict_model_aliases = copy.deepcopy(self.dict_model_aliases())
         self._parsed_decays = [
-            DecayModelAliasReplacement(define_defs=dict_model_alias).transform(tree)
+            DecayModelAliasReplacement(model_alias_defs=dict_model_aliases).transform(
+                tree
+            )
             for tree in self._parsed_decays
         ]
 
@@ -218,7 +220,6 @@ class DecFileParser:
         dict_define_defs = self.dict_definitions()
         for tree in self._parsed_decays:
             DecayModelParamValueReplacement(define_defs=dict_define_defs).visit(tree)
-
         # Create on the fly the decays to be copied, if requested
         if self.dict_decays2copy():
             self._add_decays_to_be_copied()
@@ -324,14 +325,14 @@ class DecFileParser:
         self._check_parsing()
         return get_definitions(self._parsed_dec_file)
 
-    def dict_model_aliases(self) -> dict[str, float]:
+    def dict_model_aliases(self) -> dict[str, list[Token | Tree]]:
         """
         Return a dictionary of all model alias definitions in the input parsed file,
         of the form "ModelAlias <NAME> <MODEL>",
-        as {'NAME1': MODEL1, 'NAME2': MODEL2, ...}.
+        as {'NAME1': MODELTREE1, 'NAME2': MODELTREE2, ...}.
         """
         self._check_parsing()
-        return get_model_aliases(self._parsed_dec_file)
+        return copy.deepcopy(get_model_aliases(self._parsed_dec_file))
 
     def dict_aliases(self) -> dict[str, str]:
         """
@@ -995,15 +996,15 @@ class DecayModelAliasReplacement(Transformer):  # type: ignore[misc]
 
     Parameters
     ----------
-    define_defs: dict, optional, default={}
+    model_alias_defs: dict, optional, default={}
         Dictionary with the 'ModelAlias' definitions in the parsed file.
         Argument to be passed to the class constructor.
 
     """
 
-    def __init__(self, define_defs: dict[str, Any] | None = None) -> None:
+    def __init__(self, model_alias_defs: dict[str, Any] | None = None) -> None:
         super().__init__()
-        self.define_defs = define_defs or {}
+        self.define_defs = model_alias_defs or {}
 
     def _replacement(self, t: Token) -> Token:
 
@@ -1402,7 +1403,7 @@ def get_definitions(parsed_file: Tree) -> dict[str, float]:
         ) from err
 
 
-def get_model_aliases(parsed_file: Tree) -> dict[str, str]:
+def get_model_aliases(parsed_file: Tree) -> dict[str, list[Token | Tree]]:
     """
     Return a dictionary of all model alias definitions in the input parsed file, of the form
     "ModelAlias <NAME> <MODEL_NAME> <MODEL_OPTIONS>", as {'NAME1': MODEL1[MODEL_NAME, MODEL_OPTIONS], 'NAME2': MODEL2[...], ...}.
