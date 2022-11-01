@@ -7,6 +7,46 @@
   "commitConvention": "angular",
   "contributors": [
     {
+      "login": "eduardo-rodrigues",
+      "name": "Eduardo Rodrigues",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5013581?v=4",
+      "profile": "http://cern.ch/eduardo.rodrigues",
+      "contributions": [
+        "maintenance",
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "henryiii",
+      "name": "Henry Schreiner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4616906?v=4",
+      "profile": "http://iscinumpy.dev",
+      "contributions": [
+        "maintenance",
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "yipengsun",
+      "name": "Yipeng Sun",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33738176?v=4",
+      "profile": "https://github.com/yipengsun",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "chrisburr",
+      "name": "Chris Burr",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5220533?v=4",
+      "profile": "https://github.com/chrisburr",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
       "login": "klieret",
       "name": "Kilian Lieret",
       "avatar_url": "https://avatars.githubusercontent.com/u/13602468?v=4",
@@ -14,7 +54,7 @@
       "contributions": [
         "doc"
       ]
-    }
+    },
   ],
   "contributorsPerLine": 7,
   "skipCi": true,
