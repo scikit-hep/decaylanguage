@@ -132,7 +132,7 @@ class DecFileParser:
             self._dec_file_names = []
             self._dec_file = None  # type: ignore[assignment]
 
-        self._parsed_dec_file: str | None = None  # Parsed decay file
+        self._parsed_dec_file: Tree | None = None  # Parsed decay file
         self._parsed_decays: None | (
             Any
         ) = None  # Particle decays found in the decay file
@@ -205,7 +205,7 @@ class DecFileParser:
         self._find_parsed_decays()
         # Replace model aliases with the actual models and model parameters. Deepcopy to avoid modification of dict by
         # DecayModelParamValueReplacement Visitor.
-        dict_model_aliases = copy.deepcopy(self.dict_model_aliases())
+        dict_model_aliases = copy.deepcopy(self._dict_raw_model_aliases())
         self._parsed_decays = [
             DecayModelAliasReplacement(model_alias_defs=dict_model_aliases).transform(
                 tree
@@ -325,14 +325,35 @@ class DecFileParser:
         self._check_parsing()
         return get_definitions(self._parsed_dec_file)
 
-    def dict_model_aliases(self) -> dict[str, list[Token | Tree]]:
+    def dict_model_aliases(self) -> dict[str, list[str]]:
+        """
+        Return a dictionary of all model alias definitions in the input parsed file,
+        of the form "ModelAlias <NAME> <MODEL>",
+        as as {'NAME1': [MODEL_NAME, MODEL_OPTION1, MODEL_OPTION2,...],}.
+        """
+        self._check_parsing()
+        return get_model_aliases(self._parsed_dec_file)
+
+    def _dict_raw_model_aliases(self) -> dict[str, list[Token | Tree]]:
         """
         Return a dictionary of all model alias definitions in the input parsed file,
         of the form "ModelAlias <NAME> <MODEL>",
         as {'NAME1': MODELTREE1, 'NAME2': MODELTREE2, ...}.
         """
         self._check_parsing()
-        return copy.deepcopy(get_model_aliases(self._parsed_dec_file))
+
+        assert self._parsed_dec_file is not None
+        try:
+            return {
+                tree.children[0]
+                .children[0]
+                .value: copy.deepcopy(tree.children[1].children)
+                for tree in self._parsed_dec_file.find_data("model_alias")
+            }
+        except Exception as err:
+            raise RuntimeError(
+                "Input parsed file does not seem to have the expected structure."
+            ) from err
 
     def dict_aliases(self) -> dict[str, str]:
         """
@@ -1403,10 +1424,11 @@ def get_definitions(parsed_file: Tree) -> dict[str, float]:
         ) from err
 
 
-def get_model_aliases(parsed_file: Tree) -> dict[str, list[Token | Tree]]:
+def get_model_aliases(parsed_file: Tree) -> dict[str, list[str]]:
     """
     Return a dictionary of all model alias definitions in the input parsed file, of the form
-    "ModelAlias <NAME> <MODEL_NAME> <MODEL_OPTIONS>", as {'NAME1': MODEL1[MODEL_NAME, MODEL_OPTIONS], 'NAME2': MODEL2[...], ...}.
+    "ModelAlias <NAME> <MODEL_NAME> <MODEL_OPTIONS>", as {'NAME1': [MODEL_NAME, MODEL_OPTION1, MODEL_OPTION2,...],
+    'NAME2': [MODEL_NAME, ...]...}.
 
     Parameters
     ----------
@@ -1415,9 +1437,14 @@ def get_model_aliases(parsed_file: Tree) -> dict[str, list[Token | Tree]]:
 
     """
     try:
+        model_alias_tokens = [
+            list(t.scan_values(lambda v: isinstance(v, Token)))
+            for t in parsed_file.find_data("model_alias")
+        ]
+
         return {
-            tree.children[0].children[0].value: tree.children[1].children
-            for tree in parsed_file.find_data("model_alias")
+            model_alias[0].value: [model.value for model in model_alias[1:]]
+            for model_alias in model_alias_tokens
         }
     except Exception as err:
         raise RuntimeError(

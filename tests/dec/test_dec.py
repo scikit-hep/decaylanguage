@@ -138,29 +138,19 @@ def test_model_aliases_parsing():
 
     assert len(p.dict_model_aliases()) == 7
     assert p.dict_model_aliases()["SLBKPOLE_DtoKlnu"] == [
-        Token("MODEL_NAME_AND_WS", "SLBKPOLE"),
-        Tree(
-            "model_options",
-            [
-                Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
-                Tree("value", [Token("SIGNED_NUMBER", "0.303")]),
-                Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
-                Tree("value", [Token("SIGNED_NUMBER", "2.112")]),
-            ],
-        ),
+        "SLBKPOLE",
+        "1.0",
+        "0.303",
+        "1.0",
+        "2.112",
     ]
 
     assert p.dict_model_aliases()["SLBKPOLE_Dtopilnu"] == [
-        Token("MODEL_NAME_AND_WS", "SLBKPOLE"),
-        Tree(
-            "model_options",
-            [
-                Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
-                Tree("value", [Token("SIGNED_NUMBER", "0.281")]),
-                Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
-                Tree("value", [Token("SIGNED_NUMBER", "2.010")]),
-            ],
-        ),
+        "SLBKPOLE",
+        "1.0",
+        "0.281",
+        "1.0",
+        "2.010",
     ]
 
 
@@ -349,7 +339,7 @@ def test_decay_model_parsing_with_model_alias():
     """
     p = DecFileParser(DIR / "../data/test_DtoKlnu.dec")
     p.parse()
-    assert p.dict_model_aliases() == {
+    assert p._dict_raw_model_aliases() == {
         "SLBKPOLE_DtoKlnu": [
             Token("MODEL_NAME_AND_WS", "SLBKPOLE"),
             Tree(
@@ -361,6 +351,8 @@ def test_decay_model_parsing_with_model_alias():
             ),
         ]
     }
+
+    assert p.dict_model_aliases() == {"SLBKPOLE_DtoKlnu": ["SLBKPOLE", "1.0", "param1"]}
 
     dl = p._parsed_decays[0].children[1]
     assert get_model_name(dl) == "SLBKPOLE"
