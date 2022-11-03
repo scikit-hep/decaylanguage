@@ -272,6 +272,7 @@ We hereby acknowledge the contributors that made this project possible ([emoji k
       <td align="center"><a href="https://github.com/yipengsun"><img src="https://avatars.githubusercontent.com/u/33738176?v=4?s=100" width="100px;" alt="Yipeng Sun"/><br /><sub><b>Yipeng Sun</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=yipengsun" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/chrisburr"><img src="https://avatars.githubusercontent.com/u/5220533?v=4?s=100" width="100px;" alt="Chris Burr"/><br /><sub><b>Chris Burr</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=chrisburr" title="Documentation">📖</a></td>
       <td align="center"><a href="https://www.lieret.net"><img src="https://avatars.githubusercontent.com/u/13602468?v=4?s=100" width="100px;" alt="Kilian Lieret"/><br /><sub><b>Kilian Lieret</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=klieret" title="Documentation">📖</a></td>
+      <td align="center"><a href="https://github.com/sognetic"><img src="https://avatars.githubusercontent.com/u/10749132?v=4?s=100" width="100px;" alt="Moritz Bauer"/><br /><sub><b>Moritz Bauer</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=sognetic" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
