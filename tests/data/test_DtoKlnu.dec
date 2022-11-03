@@ -1,6 +1,6 @@
 # Example decay for testing purposes:
-# This checks whether ModelAliases are parsed and replaced correctly during parsing
-# and if this is also works with variable definitions.
+# This checks whether model aliases are parsed and replaced correctly during parsing
+# and if this also works with variable definitions.
 
 
 Define param1 -0.303

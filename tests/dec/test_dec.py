@@ -132,6 +132,38 @@ def test_aliases_parsing():
     assert len(p.dict_aliases()) == 132
 
 
+def test_model_aliases_parsing():
+    p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
+    p.parse()
+
+    assert len(p.dict_model_aliases()) == 7
+    assert p.dict_model_aliases()["SLBKPOLE_DtoKlnu"] == [
+        Token("MODEL_NAME_AND_WS", "SLBKPOLE"),
+        Tree(
+            "model_options",
+            [
+                Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
+                Tree("value", [Token("SIGNED_NUMBER", "0.303")]),
+                Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
+                Tree("value", [Token("SIGNED_NUMBER", "2.112")]),
+            ],
+        ),
+    ]
+
+    assert p.dict_model_aliases()["SLBKPOLE_Dtopilnu"] == [
+        Token("MODEL_NAME_AND_WS", "SLBKPOLE"),
+        Tree(
+            "model_options",
+            [
+                Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
+                Tree("value", [Token("SIGNED_NUMBER", "0.281")]),
+                Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
+                Tree("value", [Token("SIGNED_NUMBER", "2.010")]),
+            ],
+        ),
+    ]
+
+
 def test_charge_conjugates_parsing():
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
@@ -191,25 +223,6 @@ def test_missing_global_photos_flag():
     p.parse()
 
     assert not p.global_photos_flag()
-
-
-def test_model_aliases():
-    p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
-    p.parse()
-
-    assert len(p.dict_model_aliases()) == 7
-    assert p.dict_model_aliases()["SLBKPOLE_DtoKlnu"] == [
-        Token("MODEL_NAME_AND_WS", "SLBKPOLE"),
-        Tree(
-            "model_options",
-            [
-                Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
-                Tree("value", [Token("SIGNED_NUMBER", "0.303")]),
-                Tree("value", [Token("SIGNED_NUMBER", "1.0")]),
-                Tree("value", [Token("SIGNED_NUMBER", "2.112")]),
-            ],
-        ),
-    ]
 
 
 def test_list_charge_conjugate_decays():
@@ -290,6 +303,23 @@ def test_decay_model_parsing():
     dl = p._parsed_decays[4].children[1]  # 'MyD0' Tree
     assert get_model_name(dl) == "LbAmpGen"
     assert get_model_parameters(dl) == ["DtoKpipipi_v1"]
+
+
+def test_decay_model_parsing_with_model_name_substring():
+    """
+    This module tests if a model name can be a substring of another
+    model name (without respecting the order in the Lark grammar).
+    """
+    p = DecFileParser(DIR / "../data/test_Upsilon2S2UpsilonPiPi.dec")
+    p.parse()
+
+    dl = p._parsed_decays[0].children[1]  # First decay mode
+    assert get_model_name(dl) == "YMSTOYNSPIPICLEOBOOST"
+    assert get_model_parameters(dl) == [-0.753, 0.0]
+
+    dl = p._parsed_decays[0].children[2]  # First decay mode
+    assert get_model_name(dl) == "YMSTOYNSPIPICLEO"
+    assert get_model_parameters(dl) == [-0.753, 0.0]
 
 
 def test_decay_model_parsing_with_variable_defs():
@@ -790,7 +820,6 @@ def test_lark_file_model_list_consistency():
         models = line.split(":")[1].strip(" ").strip("\n").split('"|"')
         models = [m.strip('"') for m in models]
 
-        assert set(models) == set(known_decay_models)
         assert models == list(known_decay_models)
 
 
