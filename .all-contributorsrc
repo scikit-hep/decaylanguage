@@ -54,6 +54,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "sognetic",
+      "name": "Moritz Bauer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10749132?v=4",
+      "profile": "https://github.com/sognetic",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
