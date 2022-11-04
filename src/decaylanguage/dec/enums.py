@@ -40,6 +40,7 @@ known_decay_models = (
     "GENERIC_DALITZ",
     "GOITY_ROBERTS",
     "HELAMP",
+    "HQET3",
     "HQET2",
     "HQET",
     "ISGW2",
@@ -95,4 +96,5 @@ known_decay_models = (
     "VVP",
     "VVS_PWAVE",
     "YMSTOYNSPIPICLEO",
+    "YMSTOYNSPIPICLEOBOOST",
 )

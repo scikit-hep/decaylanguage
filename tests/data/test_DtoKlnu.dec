@@ -1,0 +1,13 @@
+# Example decay for testing purposes:
+# This checks whether model aliases are parsed and replaced correctly during parsing
+# and if this also works with variable definitions.
+
+
+Define param1 -0.303
+
+ModelAlias SLBKPOLE_DtoKlnu SLBKPOLE 1.0 param1;
+
+
+Decay D+
+1.0 anti-K0  e+  nu_e       SLBKPOLE_DtoKlnu;
+Enddecay
