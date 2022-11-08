@@ -1,5 +1,22 @@
 # Changelog
 
+## Version 0.15.0 (2022-11-08)
+
+* Dependencies:
+  - Package dependent on ``Particle`` version 0.21.x.
+  - Adapted to Python 3 only Lark 1.x series.
+  - Support for Python 3.11 added and support for Python 3.6 removed.
+* Parsing of decay files (aka .dec files):
+  - Updated to the latest Belle II master file DECAY.DEC.
+  - Added support for ModelAlias keyword used in Belle II decay files.
+* Miscellaneous:
+  - Added a CITATION.cff file.
+  - Moved over to using hatchling.
+  - Started using AllContributors to acknowledge contributions explicitly.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+  - Various improvements to the CI.
+
 ## Version 0.14.2 (2022-07-11)
 
 * Parsing of decay files (aka .dec files):
