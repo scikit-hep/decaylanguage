@@ -265,7 +265,7 @@ class DecFileParser:
         self,
         filename: str | None = None,
         parser: str = "lalr",
-        lexer: str = "standard",
+        lexer: str = "auto",
         **options: Any,
     ) -> None:
         """
@@ -278,7 +278,7 @@ class DecFileParser:
             Input .dec decay file name. By default 'data/decfile.lark' is loaded.
         parser: str, optional, default='lalr'
             The Lark parser engine name.
-        lexer: str, optional, default='standard'
+        lexer: str, optional, default='auto'
             The Lark parser lexer mode to use.
         options: keyword arguments, optional
             Extra options to pass on to the parsing algorithm.
