@@ -49,7 +49,7 @@ Required and compatibility dependencies will be automatically installed by pip.
 -   [pandas](https://pandas.pydata.org/): Tabular data in Python
 -   [attrs](https://github.com/python-attrs/attrs): DataClasses for Python
 -   [plumbum](https://github.com/tomerfiliba/plumbum): Command line tools
--   [lark-parser](https://github.com/lark-parser/lark): A modern parsing library for Python
+-   [lark](https://github.com/lark-parser/lark): A modern parsing library for Python
 -   [graphviz](https://gitlab.com/graphviz/graphviz/) to render (DOT language) graph
     descriptions and visualizations of decay chains.
 
