@@ -96,7 +96,7 @@ def test_dec_full():
     txt = data.basepath.joinpath("DECAY_LHCB.DEC").read_text()
     grammar = data.basepath.joinpath("decfile.lark").read_text()
 
-    la = Lark(grammar, parser="lalr", lexer="standard")  # , transformer = TreeToDec())
+    la = Lark(grammar, parser="lalr", lexer="auto")  # , transformer = TreeToDec())
 
     parsed = la.parse(txt)
     assert bool(parsed)

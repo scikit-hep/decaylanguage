@@ -8,7 +8,7 @@ dependencies:
   - numpy>=1.12
   - graphviz>=0.12.0
   - plumbum>=1.6.9
-  - lark-parser>=0.8.0,<0.8.6
+  - lark>=1.0.0
   - RISE
   - hepunits>=2.2.0
   - particle==0.20.*
