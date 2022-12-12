@@ -91,7 +91,8 @@ class DaughtersDict(CounterStr):
         # more exotic cases, create a dictionary first using a dictionary
         # comprehension or dict.fromkeys().
         raise NotImplementedError(
-            "DaughtersDict.fromkeys() is undefined, just as Counter.fromkeys(). Use DaughtersDict(iterable) instead.")
+            "DaughtersDict.fromkeys() is undefined, just as Counter.fromkeys(). Use DaughtersDict(iterable) instead."
+        )
 
     def to_string(self) -> str:
         """
