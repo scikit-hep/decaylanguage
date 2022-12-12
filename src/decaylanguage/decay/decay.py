@@ -81,7 +81,7 @@ class DaughtersDict(CounterStr):
         super().__init__(iterable, **kwds)
 
     @classmethod
-    def fromkeys(cls, iterable, v=None):
+    def fromkeys(cls, iterable, v=None):  # type: ignore[no-untyped-def]
         # ==> Comment copied from Counter.fromkeys():
         # There is no equivalent method for counters because the semantics
         # would be ambiguous in cases such as Counter.fromkeys('aaabbc', v=2).
