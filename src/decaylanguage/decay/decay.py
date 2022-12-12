@@ -80,6 +80,19 @@ class DaughtersDict(CounterStr):
             iterable = iterable.split()
         super().__init__(iterable, **kwds)
 
+    @classmethod
+    def fromkeys(cls, iterable, v=None):
+        # ==> Comment copied from Counter.fromkeys():
+        # There is no equivalent method for counters because the semantics
+        # would be ambiguous in cases such as Counter.fromkeys('aaabbc', v=2).
+        # Initializing counters to zero values isn't necessary because zero
+        # is already the default value for counter lookups.  Initializing
+        # to one is easily accomplished with Counter(set(iterable)).  For
+        # more exotic cases, create a dictionary first using a dictionary
+        # comprehension or dict.fromkeys().
+        raise NotImplementedError(
+            "DaughtersDict.fromkeys() is undefined, just as Counter.fromkeys(). Use DaughtersDict(iterable) instead.")
+
     def to_string(self) -> str:
         """
         Return the daughters as a string representation (ordered list of names).
