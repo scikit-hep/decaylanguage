@@ -3,5 +3,7 @@ codecov:
 
 ignore:
   - "src/decaylanguage/__main__.py"
+  - "src/decaylanguage/__init__.py"
+  - "src/decaylanguage/*/__init__.py"
   - "src/decaylanguage/modeling/*"
   - "src/decaylanguage/dec/decparser.py"
