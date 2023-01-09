@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, TypeVar, 
 
 from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
+from particle.exceptions import MatchingIDNotFound
 
 from ..utils import charge_conjugate_name
 
@@ -19,7 +20,7 @@ Self_DaughtersDict = TypeVar("Self_DaughtersDict", bound="DaughtersDict")
 
 
 if TYPE_CHECKING:
-    CounterStr = Counter[str]
+    CounterStr = Counter[str]  # pragma: no cover
 else:
     CounterStr = Counter
 
@@ -295,7 +296,7 @@ class DecayMode:
         try:
             bf = dm.pop("bf")
             daughters = dm.pop("fs")
-        except Exception as e:
+        except KeyError as e:
             raise RuntimeError("Input not in the expected format!") from e
 
         return cls(bf=bf, daughters=daughters, **dm)  # type: ignore[arg-type]
@@ -345,7 +346,10 @@ class DecayMode:
 
         try:
             _daughters = [EvtGenName2PDGIDBiMap[PDGID(d)] for d in daughters]
-        except ParticleNotFound:
+        except MatchingIDNotFound:
+            # The bi-map raises a MatchingIDNotFound for missed match
+            # but better and more natural to raise a "particle not found"
+            # as the former is a technical, implementation, detail.
             raise ParticleNotFound("Please check your input PDG IDs!") from None
 
         # Override the default settings with the user input, if any

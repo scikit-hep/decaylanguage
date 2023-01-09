@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import pytest
+from particle import ParticleNotFound
 from pytest import approx
 
 from decaylanguage.decay.decay import DaughtersDict, DecayChain, DecayMode
@@ -20,6 +21,11 @@ def test_DaughtersDict_constructor_from_dict():
 def test_DaughtersDict_constructor_from_list():
     dd = DaughtersDict(["K+", "K-", "K-", "pi+", "pi0"])
     assert dd == {"K+": 1, "K-": 2, "pi+": 1, "pi0": 1}
+
+
+def test_DaughtersDict_constructor_fromkeys():
+    with pytest.raises(NotImplementedError):
+        _ = DaughtersDict.fromkeys({"K+": 1, "K-": 2, "pi+": 1})
 
 
 def test_DaughtersDict_constructor_from_string():
@@ -127,11 +133,24 @@ def test_DecayMode_constructor_from_pdgids():
     assert dm.daughters == DaughtersDict("K+ K-")
 
 
+def test_DecayMode_constructor_from_pdgids_ParticleNotFound():
+    with pytest.raises(ParticleNotFound):
+        _ = DecayMode.from_pdgids(0.5, [321, -1234567])
+
+
 def test_DecayMode_constructor_from_dict():
     dm = DecayMode.from_dict(
         {"bf": 0.98823, "fs": ["gamma", "gamma"], "model": "PHSP", "model_params": ""}
     )
     assert str(dm) == "<DecayMode: daughters=gamma gamma, BF=0.98823>"
+
+
+def test_DecayMode_constructor_from_dict_RuntimeError():
+    with pytest.raises(RuntimeError):
+        _ = DecayMode.from_dict({"bf": 0.98823, "model": "PHSP"})
+
+    with pytest.raises(RuntimeError):
+        _ = DecayMode.from_dict({"fs": ["gamma", "gamma"], "model": "PHSP"})
 
 
 def test_DecayMode_describe_simple():
@@ -149,6 +168,45 @@ def test_DecayMode_describe_with_user_metadata():
     assert "Extra info:" in dm.describe()
     assert "study: toy" in dm.describe()
     assert "year: 2019" in dm.describe()
+
+
+def test_DecayMode_to_dict():
+    dm = DecayMode(
+        0.2551,
+        "pi- pi0 nu_tau",
+        model="TAUHADNU",
+        model_params=[-0.108, 0.775, 0.149, 1.364, 0.400],
+        study="toy",
+        year=2019,
+    )
+    assert dm.to_dict() == {
+        "bf": 0.2551,
+        "fs": ["nu_tau", "pi-", "pi0"],
+        "model": "TAUHADNU",
+        "model_params": [-0.108, 0.775, 0.149, 1.364, 0.400],
+        "study": "toy",
+        "year": 2019,
+    }
+
+
+def test_DecayMode_to_dict_simple():
+    dm = DecayMode(0.5, "K+ K- K- pi- pi0 nu_tau", model="PHSP", model_params=None)
+    assert dm.to_dict() == {
+        "bf": 0.5,
+        "fs": ["K+", "K-", "K-", "nu_tau", "pi-", "pi0"],
+        "model": "PHSP",
+        "model_params": "",
+    }
+
+
+def test_DecayMode_to_dict_simplest():
+    dm = DecayMode(0.5, "K+ K- K- pi- pi0 nu_tau")
+    assert dm.to_dict() == {
+        "bf": 0.5,
+        "fs": ["K+", "K-", "K-", "nu_tau", "pi-", "pi0"],
+        "model": "",
+        "model_params": "",
+    }
 
 
 def test_DecayMode_charge_conjugate():
