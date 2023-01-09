@@ -11,8 +11,8 @@ from copy import deepcopy
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, TypeVar, Union
 
 from particle import PDGID, ParticleNotFound
-from particle.exceptions import MatchingIDNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
+from particle.exceptions import MatchingIDNotFound
 
 from ..utils import charge_conjugate_name
 
