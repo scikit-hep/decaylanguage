@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 import pytest
-from particle import PDGID, ParticleNotFound
+from particle import ParticleNotFound
 from pytest import approx
 
 from decaylanguage.decay.decay import DaughtersDict, DecayChain, DecayMode
