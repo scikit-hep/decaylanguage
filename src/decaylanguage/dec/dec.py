@@ -111,7 +111,7 @@ class DecFileParser:
             for filename in self._dec_file_names:
                 # Check input file
                 if not os.path.exists(filename):
-                    raise FileNotFoundError(f"'{filename}'!")
+                    raise FileNotFoundError(f"{filename!r}!")
 
                 with open(filename, encoding="utf_8") as file:
                     for line in file:
