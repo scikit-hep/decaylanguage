@@ -34,15 +34,16 @@ class DecayChainViewer:
 
     Examples
     --------
-    >>> dfp = DecFileParser('my-Dst-decay-file.dec')
-    >>> dfp.parse()
-    >>> chain = dfp.build_decay_chains('D*+')
-    >>> dcv = DecayChainViewer(chain)
-    >>> dcv  # display the SVG figure in a notebook
+    >>> dfp = DecFileParser('my-Dst-decay-file.dec')    # doctest: +SKIP
+    >>> dfp.parse()    # doctest: +SKIP
+    >>> chain = dfp.build_decay_chains('D*+')    # doctest: +SKIP
+    >>> dcv = DecayChainViewer(chain)    # doctest: +SKIP
+    >>> # display the SVG figure in a notebook
+    >>> dcv    # doctest: +SKIP
 
     When not in notebooks the graph can easily be visualized with the
     `graphviz.Digraph.render` or `graphviz.Digraph.view` functions, e.g.:
-    >>> dcv.graph.render(filename="test", format="pdf", view=True, cleanup=True)
+    >>> dcv.graph.render(filename="test", format="pdf", view=True, cleanup=True)    # doctest: +SKIP
     """
 
     __slots__ = ("_chain", "_graph", "_graph_attributes")
