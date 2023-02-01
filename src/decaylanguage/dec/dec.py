@@ -74,8 +74,8 @@ class DecFileParser:
 
     Example
     -------
-    >>> dfp = DecFileParser('my-decay-file.dec')
-    >>> dfp.parse()
+    >>> dfp = DecFileParser('my-decay-file.dec')    # doctest: +SKIP
+    >>> dfp.parse()    # doctest: +SKIP
     """
 
     __slots__ = (
@@ -693,10 +693,11 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         Example
         -------
-        >>> parser = DecFileParser('my-decay-file.dec')
-        >>> parser.parse()
-        >>> parser.list_decay_mother_names()  # Inspect what decays are defined
-        >>> parser.list_decay_modes('pi0')
+        >>> parser = DecFileParser('my-decay-file.dec')    # doctest: +SKIP
+        >>> parser.parse()    # doctest: +SKIP
+        >>> # Inspect what decays are defined
+        >>> parser.list_decay_mother_names()    # doctest: +SKIP
+        >>> parser.list_decay_modes('pi0')    # doctest: +SKIP
         """
         if pdg_name:
             mother = PDG2EvtGenNameMap[mother]
@@ -928,9 +929,9 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         Examples
         --------
-        >>> parser = DecFileParser('a-Dplus-decay-file.dec')
-        >>> parser.parse()
-        >>> parser.build_decay_chains('D+')
+        >>> parser = DecFileParser('a-Dplus-decay-file.dec')    # doctest: +SKIP
+        >>> parser.parse()    # doctest: +SKIP
+        >>> parser.build_decay_chains('D+')    # doctest: +SKIP
         {'D+': [{'bf': 1.0,
            'fs': ['K-',
             'pi+',
@@ -950,7 +951,7 @@ All but the first occurrence will be discarded/removed ...""".format(
               {'bf': 6.5e-08, 'fs': ['e+', 'e-'], 'model': 'PHSP', 'model_params': ''}]}],
            'model': 'PHSP',
            'model_params': ''}]}
-        >>> p.build_decay_chains('D+', stable_particles=['pi0'])
+        >>> p.build_decay_chains('D+', stable_particles=['pi0'])    # doctest: +SKIP
         {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'model': 'PHSP', 'model_params': ''}]}
         """
         keys = ("bf", "fs", "model", "model_params")
@@ -1067,7 +1068,7 @@ class DecayModelParamValueReplacement(Visitor):  # type: ignore[misc]
     Examples
     --------
     >>> from lark import Tree, Token
-    >>> ...
+    >>> ...  # doctest: +SKIP
     >>> t = Tree('decay', [Tree('particle', [Token('LABEL', 'Upsilon(4S)')]),
     ...         Tree('decayline', [Tree('value', [Token('SIGNED_NUMBER', '1.0')]),
     ...         Tree('particle', [Token('LABEL', 'B0')]),
@@ -1075,11 +1076,13 @@ class DecayModelParamValueReplacement(Visitor):  # type: ignore[misc]
     ...         Tree('model', [Token('MODEL_NAME', 'VSS_BMIX'),
     ...         Tree('model_options', [Token('LABEL', 'dm')])])])])
     >>> dict_define_defs = {'dm': 0.507e12}
-    >>> DecayModelParamValueReplacement(define_defs=dict_define_defs).visit(t)
-    Tree(decay, [Tree(particle, [Token(LABEL, 'Upsilon(4S)')]), Tree(decayline,
-    [Tree(value, [Token(SIGNED_NUMBER, '1.0')]), Tree(particle, [Token(LABEL, 'B0')]),
-    Tree(particle, [Token(LABEL, 'anti-B0')]), Tree(model, [Token(MODEL_NAME, 'VSS_BMIX'),
-    Tree(model_options, [Token(LABEL, 507000000000.0)])])])])
+    >>> DecayModelParamValueReplacement(define_defs=dict_define_defs).visit(t)    # doctest: +NORMALIZE_WHITESPACE
+    Tree('decay', [Tree('particle', [Token('LABEL', 'Upsilon(4S)')]),
+    Tree('decayline', [Tree('value', [Token('SIGNED_NUMBER', '1.0')]),
+    Tree('particle', [Token('LABEL', 'B0')]),
+    Tree('particle', [Token('LABEL', 'anti-B0')]),
+    Tree('model', [Token('MODEL_NAME', 'VSS_BMIX'),
+    Tree('model_options', [Token('LABEL', 507000000000.0)])])])])
     """
 
     def __init__(self, define_defs: dict[str, Any] | None = None) -> None:
@@ -1126,15 +1129,16 @@ class ChargeConjugateReplacement(Visitor):  # type: ignore[misc]
     Examples
     --------
     >>> from lark import Tree, Token
-    >>> ...
+    >>> ...    # doctest: +SKIP
     >>> t = Tree('decay', [Tree('particle', [Token('LABEL', 'D0')]), Tree('decayline', [Tree
-    ... ('value', [Token('SIGNED_NUMBER', '1.0')]), Tree('particle', [Token('LABEL', 'K-')])
-    ... , Tree('particle', [Token('LABEL', 'pi+')]), Tree('model', [Token('MODEL_NAME', 'PHS
-    ... P')])])])
-    >>> ChargeConjugateReplacement().visit(t)
-    Tree(decay, [Tree(particle, [Token(LABEL, 'D~0')]), Tree(decayline,
-    [Tree(value, [Token(SIGNED_NUMBER, '1.0')]), Tree(particle, [Token(LABEL, 'K+')]),
-    Tree(particle, [Token(LABEL, 'pi-')]), Tree(model, [Token(MODEL_NAME, 'PHSP')])])])
+    ... ('value', [Token('SIGNED_NUMBER', '1.0')]), Tree('particle', [Token('LABEL', 'K-')]),
+    ... Tree('particle', [Token('LABEL', 'pi+')]), Tree('model', [Token('MODEL_NAME', 'PHSP')])])])
+    >>> ChargeConjugateReplacement().visit(t)    # doctest: +NORMALIZE_WHITESPACE
+    Tree('decay', [Tree('particle', [Token('LABEL', 'anti-D0')]),
+    Tree('decayline', [Tree('value', [Token('SIGNED_NUMBER', '1.0')]),
+    Tree('particle', [Token('LABEL', 'K+')]),
+    Tree('particle', [Token('LABEL', 'pi-')]),
+    Tree('model', [Token('MODEL_NAME', 'PHSP')])])])
     """
 
     def __init__(self, charge_conj_defs: dict[str, str] | None = None) -> None:

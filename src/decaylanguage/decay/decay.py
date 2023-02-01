@@ -236,8 +236,8 @@ class DecayMode:
         >>> # Decay mode with decay model information
         >>> dd = DaughtersDict('pi- pi0 nu_tau')
         >>> dm = DecayMode(0.2551, dd,
-                           model='TAUHADNU',
-                           model_params=[-0.108, 0.775, 0.149, 1.364, 0.400])
+        ...                model='TAUHADNU',
+        ...                model_params=[-0.108, 0.775, 0.149, 1.364, 0.400])
 
         >>> # Decay mode with user metadata
         >>> dd = DaughtersDict('K+ K-')
@@ -246,6 +246,7 @@ class DecayMode:
         >>> # Decay mode with metadata for generators such as zfit's phasespace
         >>> dm = DecayMode(0.5, "K+ K-", zfit={"B0": "gauss"})
         >>> dm.metadata['zfit'] == {'B0': 'gauss'}
+        True
         """
         self.bf = bf
         self.daughters = DaughtersDict(daughters)
@@ -273,16 +274,15 @@ class DecayMode:
 
         Examples
         --------
-        >>> Simplest construction
-        >>> DecayMode.from_dict({'bf': 0.98823,
-                                 'fs': ['gamma', 'gamma']})
+        >>> # Simplest construction
+        >>> DecayMode.from_dict({'bf': 0.98823, 'fs': ['gamma', 'gamma']})
         <DecayMode: daughters=gamma gamma, BF=0.98823>
 
         >>> # Decay mode with decay model details
         >>> DecayMode.from_dict({'bf': 0.98823,
-                                 'fs': ['gamma', 'gamma'],
-                                 'model': 'PHSP',
-                                 'model_params': ''})
+        ...                      'fs': ['gamma', 'gamma'],
+        ...                      'model': 'PHSP',
+        ...                      'model_params': ''})
         <DecayMode: daughters=gamma gamma, BF=0.98823>
 
         >>> # Decay mode with metadata for generators such as zfit's phasespace
@@ -384,9 +384,8 @@ class DecayMode:
 
         Examples
         --------
-        >>> dm = DecayMode(0.5, 'K+ K- K- pi- pi0 nu_tau',
-                           model='PHSP', study='toy', year=2019)
-        >>> dm.to_dict()
+        >>> dm = DecayMode(0.5, 'K+ K- K- pi- pi0 nu_tau', model='PHSP', study='toy', year=2019)
+        >>> dm.to_dict()    # doctest: +NORMALIZE_WHITESPACE
         {'bf': 0.5,
          'fs': ['K+', 'K-', 'K-', 'nu_tau', 'pi-', 'pi0'],
          'model': 'PHSP',
@@ -693,7 +692,7 @@ class DecayChain:
         >>> dm1 = DecayMode(0.028, 'K_S0 pi+ pi-')
         >>> dm2 = DecayMode(0.692, 'pi+ pi-')
         >>> dc = DecayChain('D0', {'D0':dm1, 'K_S0':dm2})
-        >>> dc.to_dict()
+        >>> dc.to_dict()    # doctest: +NORMALIZE_WHITESPACE
         {'D0': [{'bf': 0.028,
             'fs': [{'K_S0': [{'bf': 0.692,
                 'fs': ['pi+', 'pi-'],
@@ -750,7 +749,7 @@ class DecayChain:
         >>>
         >>> dc.flatten()
         <DecayChain: D0 -> gamma gamma pi+ pi- (0 sub-decays), BF=0.008479803984>
-        >>> dc.flatten().to_dict()
+        >>> dc.flatten().to_dict()    # doctest: +NORMALIZE_WHITESPACE
         {'D0': [{'bf': 0.008479803984,
            'fs': ['gamma', 'gamma', 'pi+', 'pi-'],
            'model': 'PHSP',
