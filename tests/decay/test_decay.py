@@ -189,6 +189,11 @@ def test_DecayMode_to_dict():
     }
 
 
+def test_DecayMode_to_dict_default():
+    dm = DecayMode()
+    assert dm.to_dict() == {'bf': 0, 'fs': [], 'model': '', 'model_params': ''}
+
+
 def test_DecayMode_to_dict_simple():
     dm = DecayMode(0.5, "K+ K- K- pi- pi0 nu_tau", model="PHSP", model_params=None)
     assert dm.to_dict() == {
@@ -199,7 +204,7 @@ def test_DecayMode_to_dict_simple():
     }
 
 
-def test_DecayMode_to_dict_simplest():
+def test_DecayMode_to_dict_simpler():
     dm = DecayMode(0.5, "K+ K- K- pi- pi0 nu_tau")
     assert dm.to_dict() == {
         "bf": 0.5,
@@ -341,6 +346,7 @@ def test_DecayChain_to_dict(dc2):
 def test_DecayChain_properties(dc):
     assert dc.bf == 0.0124
     assert dc.visible_bf == approx(0.008479803984)
+    assert dc.ndecays == 3
 
 
 def test_DecayChain_flatten(dc2):
@@ -382,3 +388,7 @@ def test_DecayChain_flatten_with_stable_particles():
 
 def test_DecayChain_string_repr(dc):
     assert str(dc) == "<DecayChain: D0 -> K_S0 pi0 (2 sub-decays), BF=0.0124>"
+
+
+def test_DecayChain_string_repr_default():
+    assert str(DecayChain())== "Decay mode: undefined"
