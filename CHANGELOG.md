@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.15.1 (2023-02-02)
+
+* Universal representation of decay chains:
+  - Test suite extended for a significantly better test coverage.
+* CI and tests:
+  - Run doctests via pytest.
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.15.0 (2022-11-08)
 
 * Dependencies:
