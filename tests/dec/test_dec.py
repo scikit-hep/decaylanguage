@@ -416,7 +416,6 @@ def test_print_decay_modes_basics():
 
 
 def test_print_decay_modes_options():
-
     p1 = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p1.parse()
 
@@ -469,7 +468,6 @@ def test_build_decay_chains():
 
 
 def test_Lark_ModelNameCleanup_Transformer_no_params():
-
     t = Tree(
         "decay",
         [
@@ -492,7 +490,6 @@ def test_Lark_ModelNameCleanup_Transformer_no_params():
 
 
 def test_Lark_ModelNameCleanup_Transformer_with_params():
-
     t = Tree(
         "decay",
         [
@@ -539,7 +536,6 @@ def test_Lark_ModelNameCleanup_Transformer_with_params():
 
 
 def test_Lark_DecayModelAliasReplacement_Transformer():
-
     t = Tree(
         "decay",
         [

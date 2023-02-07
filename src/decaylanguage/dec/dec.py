@@ -1029,7 +1029,6 @@ class DecayModelAliasReplacement(Transformer):  # type: ignore[misc]
         self.define_defs = model_alias_defs or {}
 
     def _replacement(self, t: Token) -> Token:
-
         if t.value not in self.define_defs:
             raise ValueError(
                 f"ModelAlias {t.value} is not defined. Please define this ModelAlias in the decayfile."
