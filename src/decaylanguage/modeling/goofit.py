@@ -73,7 +73,6 @@ class GooFitChain(AmplitudeChain):
 
     @classmethod
     def make_intro(cls, all_states):
-
         header = f"    // Event type: {all_states[0]} ->  "
         header += "   ".join(f"{b} ({a})" for a, b in enumerate(all_states[1:]))
 
