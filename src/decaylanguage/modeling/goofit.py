@@ -195,7 +195,7 @@ class GooFitChain(AmplitudeChain):
 
         for name, par in cls.pars.iterrows():
             pname = programmatic_name(name)
-            if par.fix == 2:
+            if not par.fix:
                 headerlist.append(
                     '    Variable {pname} {{"{name}", {par.value}, {par.error} }};'.format(
                         pname=pname, name=name, par=par

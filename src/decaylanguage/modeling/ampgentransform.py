@@ -29,9 +29,14 @@ class AmpGenTransformer(Transformer):
     def free(self, lines):
         return True
 
+    def checkfixed(self, lines):
+        val = int(lines[0])
+        # AmpGen convention: 0 is free
+        return val > 0
+
     def variable(self, lines):
-        p, free, value, error = lines
-        return Tree("variable", [str(p.children[0]), free, float(value), float(error)])
+        p, fixed, value, error = lines
+        return Tree("variable", [str(p.children[0]), fixed, float(value), float(error)])
 
     def cplx_decay_line(self, lines):
         decay, real, imag = lines

@@ -25,8 +25,8 @@ invert_line : particle "=" particle
 
 fixed_cplx : fix SIGNED_NUMBER SIGNED_NUMBER
 
-fix : "0" -> free
-    | "2" -> fixed
+fix : SIGNED_NUMBER -> checkfixed
+
 
 decay : particle ( decaytype? subdecay )?
 
