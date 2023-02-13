@@ -235,7 +235,7 @@ class GooFitChain(AmplitudeChain):
 
         f_scatt = GooFitChain.pars.index[GooFitChain.pars.index.str.contains("f_scatt")]
         if len(f_scatt):
-            header += "\n    std::array<Variable, 5> f_scatt {{\n"
+            header += "\n    std::vector<Variable> f_scatt {{\n"
             header += strip_pararray(GooFitChain.pars, "f_scatt")
             header += "\n    }};\n"
 
@@ -248,7 +248,7 @@ class GooFitChain(AmplitudeChain):
                 j = x.str.split("_").str[1].map(names.index)
                 return i.astype(int) * 6 + j.astype(int)
 
-            header += "\n    std::array<Variable, 5*6> IS_poles {{\n"
+            header += "\n    std::vector<Variable>  IS_poles {{\n"
             header += strip_pararray(GooFitChain.pars, "IS_p", convert)
             header += "\n    }};\n"
 
@@ -259,6 +259,9 @@ class GooFitChain(AmplitudeChain):
         par = self.particle.programmatic_name
         a = structure[0] + 1
         b = structure[1] + 1
+        # order assignment
+        if a > b:
+            a, b = b, a
         L = self.L
         radius = 5.0 if "c" in self.particle.quarks.lower() else 1.5
 
@@ -289,7 +292,7 @@ class GooFitChain(AmplitudeChain):
             _, poleprod, pterm = self.lineshape.split(".")
             is_pole = "true" if poleprod == "pole" else "false"
             return """new Lineshapes::kMatrix("{name}", {pterm}, {is_pole},
-            sA0, sA, s0_prod, s0_scatt,
+            sA_0, sA, s0_prod, s0_scatt,
             f_scatt, IS_poles,
             {par}_M, {par}_W, {L}, M_{a}{b}, FF::BL2, {radius})""".format(
                 name=name,
