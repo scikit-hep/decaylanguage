@@ -180,7 +180,7 @@ class DecFileParser:
         """
         # Has a file been parsed already?
         if self._parsed_decays is not None:
-            warnings.warn("Input file being re-parsed ...")
+            warnings.warn("Input file being re-parsed ...", stacklevel=2)
 
         # Override the parsing settings for charge conjugate decays
         self._include_ccdecays = include_ccdecays or False
@@ -497,7 +497,7 @@ Skipping creation of these copied decay trees.""".format(
                 "\n".join(misses)
             )
 
-            warnings.warn(msg)
+            warnings.warn(msg, stacklevel=2)
 
         # Actually add all these copied decays to the list of decays!
         self._parsed_decays.extend(copied_decays)  # type: ignore[union-attr]
@@ -540,7 +540,7 @@ Skipping creation of these copied decay trees.""".format(
             str_duplicates = ", ".join(d for d in duplicates)
             msg = f"""The following particles are defined in the input .dec file with both 'Decay' and 'CDecay': {str_duplicates}!
 The 'CDecay' definition(s) will be ignored ..."""
-            warnings.warn(msg)
+            warnings.warn(msg, stacklevel=2)
 
         # If that's the case, proceed using the decay definitions specified
         # via the 'Decay' statement, hence discard/remove the definition
@@ -579,7 +579,7 @@ The 'CDecay' definition(s) will be ignored ..."""
 Skipping creation of these charge-conjugate decay trees.""".format(
                 "\n".join(m for m in misses)
             )
-            warnings.warn(msg)
+            warnings.warn(msg, stacklevel=2)
 
         cdecays = [copy.deepcopy(tree) for tree in trees_to_conjugate]
 
@@ -594,7 +594,7 @@ Skipping creation of these charge-conjugate decay trees.""".format(
 Skipping creation of charge-conjugate decay Tree.""".format(
                         mname
                     )
-                    warnings.warn(msg)
+                    warnings.warn(msg, stacklevel=2)
                     return False
                 return True
             except Exception:
@@ -629,7 +629,7 @@ All but the first occurrence will be discarded/removed ...""".format(
                 ", ".join(duplicates)
             )
 
-            warnings.warn(msg)
+            warnings.warn(msg, stacklevel=2)
 
         # Create a list with all occurrences to remove
         # (duplications means multiple instances to remove)
@@ -1644,7 +1644,7 @@ def get_global_photos_flag(parsed_file: Tree) -> int:
     if not tree:
         return PhotosEnum.no
     if len(tree) > 1:
-        warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
+        warnings.warn("PHOTOS flag re-set! Using flag set in last ...", stacklevel=2)
 
     end_item = tree[-1]
 
