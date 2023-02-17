@@ -21,7 +21,9 @@ try:
     import graphviz
 except ImportError:
     graphviz = None
-    warnings.warn("Graphviz is not installed. Line display not available.")
+    warnings.warn(
+        "Graphviz is not installed. Line display not available.", stacklevel=1
+    )
 
 
 @attr.s(slots=True)
