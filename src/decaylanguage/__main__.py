@@ -9,16 +9,20 @@ from __future__ import annotations
 
 from plumbum import cli
 
-from decaylanguage.modeling.ampgen2goofit import ampgen2goofit
+from decaylanguage.modeling.ampgen2goofit import ampgen2goofit, ampgen2goofitpy
 
 
 class DecayLanguageDecay(cli.Application):
-    generator = cli.SwitchAttr(["-G", "--generator"], cli.Set("goofit"), mandatory=True)
+    generator = cli.SwitchAttr(
+        ["-G", "--generator"], cli.Set("goofit", "goofitpy"), mandatory=True
+    )
 
     # pylint: disable-next=arguments-differ
     def main(self, filename):
         if self.generator == "goofit":
             ampgen2goofit(filename)
+        if self.generator == "goofitpy":
+            ampgen2goofitpy(filename)
 
 
 def main():
