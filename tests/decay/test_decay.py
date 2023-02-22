@@ -76,14 +76,14 @@ def test_DecayMode_constructor_default():
     dm = DecayMode()
     assert dm.bf == 0
     assert dm.daughters == DaughtersDict()
-    assert dm.metadata == dict(model="", model_params="")
+    assert dm.metadata == {"model": "", "model_params": ""}
 
 
 def test_DecayMode_constructor_simplest():
     dm = DecayMode(0.1234, "K+ K-")
     assert dm.bf == 0.1234
     assert dm.daughters == DaughtersDict("K+ K-")
-    assert dm.metadata == dict(model="", model_params="")
+    assert dm.metadata == {"model": "", "model_params": ""}
 
 
 def test_DecayMode_constructor_simple():
@@ -91,7 +91,7 @@ def test_DecayMode_constructor_simple():
     dm = DecayMode(0.1234, dd)
     assert dm.bf == 0.1234
     assert dm.daughters == DaughtersDict("K+ K-")
-    assert dm.metadata == dict(model="", model_params="")
+    assert dm.metadata == {"model": "", "model_params": ""}
 
 
 def test_DecayMode_constructor_with_model_info():
@@ -120,7 +120,7 @@ def test_DecayMode_constructor_from_pdgids_default():
     dm = DecayMode.from_pdgids()
     assert dm.bf == 0
     assert dm.daughters == DaughtersDict()
-    assert dm.metadata == dict(model="", model_params="")
+    assert dm.metadata == {"model": "", "model_params": ""}
 
 
 def test_DecayMode_constructor_from_pdgids():

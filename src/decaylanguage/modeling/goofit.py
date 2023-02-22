@@ -149,7 +149,7 @@ class GooFitChain(AmplitudeChain):
         else:
             raise LineFailure(self, f"{self[0]} has no daughters")
         wave = (
-            "{self[0].spinfactor}wave".format(self=self)
+            f"{self[0].spinfactor}wave"
             if self[0].spinfactor and self[0].spinfactor != "S"
             else ""
         )

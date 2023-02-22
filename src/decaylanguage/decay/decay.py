@@ -105,7 +105,7 @@ class DaughtersDict(CounterStr):
         """
         Return the daughters as an ordered list of names.
         """
-        return sorted(list(self.elements()))
+        return sorted(self.elements())
 
     def charge_conjugate(
         self: Self_DaughtersDict, pdg_name: bool = False
@@ -251,7 +251,7 @@ class DecayMode:
         self.bf = bf
         self.daughters = DaughtersDict(daughters)
 
-        self.metadata = dict(model="", model_params="")
+        self.metadata = {"model": "", "model_params": ""}
         self.metadata.update(**info)
 
     @classmethod
@@ -714,7 +714,7 @@ class DecayChain:
             assert isinstance(list_fsp, list)
 
             for pos, fsp in enumerate(list_fsp):
-                if fsp in self.decays.keys():
+                if fsp in self.decays:
                     list_fsp[pos] = recursively_replace(fsp)  # type: ignore[call-overload]
             result.append(dm)
             return {mother: result}
@@ -763,7 +763,7 @@ class DecayChain:
         fs = DaughtersDict(self.decays[self.mother].daughters)
 
         if stable_particles:
-            keys = [k for k in self.decays.keys() if k not in stable_particles]
+            keys = [k for k in self.decays if k not in stable_particles]
         else:
             keys = list(self.decays.keys())
         keys.insert(0, keys.pop(keys.index(self.mother)))

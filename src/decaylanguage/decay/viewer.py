@@ -236,12 +236,12 @@ class DecayChainViewer:
         """
         `graphviz.Digraph` default arguments.
         """
-        return dict(
-            name="DecayChainGraph",
-            comment="Created by https://github.com/scikit-hep/decaylanguage",
-            engine="dot",
-            format="png",
-        )
+        return {
+            "name": "DecayChainGraph",
+            "comment": "Created by https://github.com/scikit-hep/decaylanguage",
+            "engine": "dot",
+            "format": "png",
+        }
 
     def _get_graph_defaults(self) -> dict[str, bool | int | float | str]:
         d = self._get_default_arguments()
@@ -249,10 +249,10 @@ class DecayChainViewer:
         return d
 
     def _get_node_defaults(self) -> dict[str, bool | int | float | str]:
-        return dict(fontname="Helvetica", fontsize="11", shape="oval")
+        return {"fontname": "Helvetica", "fontsize": "11", "shape": "oval"}
 
     def _get_edge_defaults(self) -> dict[str, bool | int | float | str]:
-        return dict(fontcolor="#4c4c4c", fontsize="11")
+        return {"fontcolor": "#4c4c4c", "fontsize": "11"}
 
     def _repr_mimebundle_(
         self,
