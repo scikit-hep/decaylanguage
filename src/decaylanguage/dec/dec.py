@@ -46,7 +46,8 @@ import re
 import warnings
 from io import StringIO
 from itertools import zip_longest
-from typing import Any, Iterable, TypeVar
+from pathlib import Path
+from typing import Any, TypeVar
 
 from lark import Lark, Token, Transformer, Tree, Visitor
 from particle import Particle
@@ -88,7 +89,7 @@ class DecFileParser:
         "_include_ccdecays",
     )
 
-    def __init__(self, *filenames: Iterable[str]) -> None:
+    def __init__(self, *filenames: str | os.PathLike[str]) -> None:
         """
         Default constructor. Parse one or more .dec decay files.
 
@@ -104,16 +105,15 @@ class DecFileParser:
 
         # Name(s) of the input decay file(s)
         if filenames:
-            # Conversion to handle pathlib on Python < 3.6
-            self._dec_file_names = [str(f) for f in filenames]
+            self._dec_file_names = list(filenames)
 
             stream = StringIO()
-            for filename in self._dec_file_names:
+            for filename in map(Path, self._dec_file_names):
                 # Check input file
-                if not os.path.exists(filename):
-                    raise FileNotFoundError(f"{filename!r}!")
+                if not filename.is_file():
+                    raise FileNotFoundError(f"{str(filename)!r}!")
 
-                with open(filename, encoding="utf_8") as file:
+                with filename.open(encoding="utf_8") as file:
                     for line in file:
                         # We need to strip the unicode byte ordering if present before checking for *
                         beg = line.lstrip("\ufeff").lstrip()
@@ -292,7 +292,7 @@ class DecFileParser:
             with data.basepath.joinpath(filename).open() as f1:
                 self._grammar = f1.read()
         else:
-            with open(filename, encoding="utf_8") as f2:
+            with Path(filename).open(encoding="utf_8") as f2:
                 self._grammar = f2.read()
 
         self._grammar_info = dict(
@@ -855,7 +855,7 @@ All but the first occurrence will be discarded/removed ...""".format(
                 line = "  {:<15.10g}   {}     {}  {}".format(bf / norm, *info)
             else:
                 line = f"  {bf / norm:<15.10g}   {info[0]}"
-            print(line.rstrip() + ";")
+            print(line.rstrip() + ";")  # noqa: T201
 
     @staticmethod
     def _align_items(

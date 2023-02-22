@@ -16,6 +16,6 @@ DIR = Path(__file__).parent.resolve()
 
 
 def test_issue_90():
+    p = DecFileParser(DIR / "../data/test_issue90.dec")
     with pytest.raises(UnexpectedToken):
-        p = DecFileParser(DIR / "../data/test_issue90.dec")
         p.parse()

@@ -18,9 +18,8 @@ from ..utils import charge_conjugate_name
 
 Self_DaughtersDict = TypeVar("Self_DaughtersDict", bound="DaughtersDict")
 
-
-if TYPE_CHECKING:
-    CounterStr = Counter[str]  # pragma: no cover
+if TYPE_CHECKING:  # noqa: SIM108
+    CounterStr = Counter[str]
 else:
     CounterStr = Counter
 
@@ -659,7 +658,7 @@ class DecayChain:
             prefix = bar if (link and depth > 1) else ""
             prefix = prefix + " " * indent * (depth - 1)
             for i_decay in decay_dict[mother]:
-                print(prefix, arrow if depth > 0 else "", mother, sep="")
+                print(prefix, arrow if depth > 0 else "", mother, sep="")  # noqa: T201
                 fsps = i_decay["fs"]
                 n = len(list(fsps))  # type: ignore[arg-type]
                 depth += 1
@@ -670,7 +669,7 @@ class DecayChain:
                     else:
                         prefix = (prefix + " " * indent) * (depth - 1)
                     if isinstance(fsp, str):
-                        print(prefix, arrow, fsp, sep="")
+                        print(prefix, arrow, fsp, sep="")  # noqa: T201
                     else:
                         _print(
                             fsp,
