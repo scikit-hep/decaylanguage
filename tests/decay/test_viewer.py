@@ -55,7 +55,7 @@ checklist_decfiles = (
 )
 
 
-@pytest.mark.parametrize("decfilepath,signal_mother,dup", checklist_decfiles)
+@pytest.mark.parametrize(("decfilepath", "signal_mother", "dup"), checklist_decfiles)
 def test_duplicate_arrows(decfilepath, signal_mother, dup):
     """
     This test effectively checks whether any box node (node with subdecays)
@@ -97,12 +97,12 @@ def test_init_non_defaults_attributes():
     p.parse()
 
     chain = p.build_decay_chains("D*+")
-    node_attr = dict(shape="egg")
-    edge_attr = dict(fontsize="9")
+    node_attr = {"shape": "egg"}
+    edge_attr = {"fontsize": "9"}
     dcv = DecayChainViewer(chain, node_attr=node_attr, edge_attr=edge_attr)
 
-    assert dcv.graph.node_attr == dict(fontname="Helvetica", fontsize="11", shape="egg")
-    assert dcv.graph.edge_attr == dict(fontcolor="#4c4c4c", fontsize="9")
+    assert dcv.graph.node_attr == {"fontname": "Helvetica", "fontsize": "11", "shape": "egg"}
+    assert dcv.graph.edge_attr == {"fontcolor": "#4c4c4c", "fontsize": "9"}
 
 
 def test_graphs_with_EvtGen_specific_names():

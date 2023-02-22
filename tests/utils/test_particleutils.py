@@ -26,11 +26,11 @@ matches_pdg = (
 )
 
 
-@pytest.mark.parametrize("p_name,ccp_name", matches_evtgen)
+@pytest.mark.parametrize(("p_name", "ccp_name"), matches_evtgen)
 def test_charge_conjugate_name_defaults(p_name, ccp_name):
     assert charge_conjugate_name(p_name) == ccp_name
 
 
-@pytest.mark.parametrize("p_name,ccp_name", matches_pdg)
+@pytest.mark.parametrize(("p_name", "ccp_name"), matches_pdg)
 def test_charge_conjugate_name_with_pdg_name(p_name, ccp_name):
     assert charge_conjugate_name(p_name, pdg_name=True) == ccp_name
