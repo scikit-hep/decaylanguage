@@ -15,10 +15,10 @@ from decaylanguage.dec.enums import PhotosEnum
 
 
 class TreeToDec(Transformer):
-    def yes(self, items):
+    def yes(self, _items):
         return True
 
-    def no(self, items):
+    def no(self, _items):
         return False
 
     def global_photos(self, items):
@@ -33,7 +33,7 @@ class TreeToDec(Transformer):
         (item,) = items
         return str(item)
 
-    def photos(self, items):
+    def photos(self, _items):
         return PhotosEnum.yes
 
 

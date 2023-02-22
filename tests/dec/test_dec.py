@@ -76,15 +76,15 @@ def test_unknown_decfile():
 
 
 def test_non_parsed_decfile():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     with pytest.raises(DecFileNotParsed):
-        p = DecFileParser(DIR / "../data/test_example_Dst.dec")
         p.list_decay_mother_names()
 
 
 def test_non_existent_decay():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
     with pytest.raises(DecayNotFound):
-        p = DecFileParser(DIR / "../data/test_example_Dst.dec")
-        p.parse()
         p.list_decay_modes("XYZ")
 
 
@@ -800,7 +800,7 @@ def test_lark_file_model_list_consistency():
     'from decaylanguage.dec.enums import known_decay_models'.
     """
     filename = str(DIR / "../../src/decaylanguage/data/decfile.lark")
-    with open(filename) as lark_file:
+    with Path(filename).open(encoding="utf-8") as lark_file:
         lines = lark_file.readlines()
         for line in lines:
             if "MODEL_NAME :" in line:

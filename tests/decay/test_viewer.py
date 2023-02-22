@@ -101,7 +101,11 @@ def test_init_non_defaults_attributes():
     edge_attr = {"fontsize": "9"}
     dcv = DecayChainViewer(chain, node_attr=node_attr, edge_attr=edge_attr)
 
-    assert dcv.graph.node_attr == {"fontname": "Helvetica", "fontsize": "11", "shape": "egg"}
+    assert dcv.graph.node_attr == {
+        "fontname": "Helvetica",
+        "fontsize": "11",
+        "shape": "egg",
+    }
     assert dcv.graph.edge_attr == {"fontcolor": "#4c4c4c", "fontsize": "9"}
 
 

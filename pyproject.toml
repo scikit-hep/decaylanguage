@@ -139,6 +139,7 @@ messages_control.disable = [
     "broad-except",  # TODO
     "protected-access",  # TODO
     "no-member",  # TODO
+    "unused-argument",  # covered by Ruff
 ]
 
 
@@ -166,6 +167,7 @@ select = [
 extend-ignore = [
   "PLR",    # Design related pylint codes
   "E501",   # Line too long
+  "PT013",  # Incorrect import of pytest
 ]
 target-version = "py37"
 src = ["src"]
@@ -176,3 +178,7 @@ unfixable = [
 exclude = []
 flake8-unused-arguments.ignore-variadic-names = true
 isort.required-imports = ["from __future__ import annotations"]
+
+[tool.ruff.per-file-ignores]
+"tests/**" = ["T20"]
+"src/decaylanguage/modeling/*.py" = ["ARG002", "PTH", "T201"]  # Should be fixed later
