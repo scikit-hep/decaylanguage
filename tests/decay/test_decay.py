@@ -11,6 +11,7 @@ from particle import ParticleNotFound
 from pytest import approx
 
 from decaylanguage.decay.decay import DaughtersDict, DecayChain, DecayMode
+from decaylanguage.decay.decay import _build_decay_modes
 
 
 def test_DaughtersDict_constructor_from_dict():
@@ -395,3 +396,17 @@ def test_DecayChain_flatten_with_stable_particles():
 
 def test_DecayChain_string_repr(dc):
     assert str(dc) == "<DecayChain: D0 -> K_S0 pi0 (2 sub-decays), BF=0.0124>"
+
+
+def test_build_decay_modes(dc2):
+    decay_modes = {}
+    _build_decay_modes(decay_modes, dc2.to_dict())
+    assert len(decay_modes) == 4
+
+
+def test_build_decay_modes_RuntimeError(dc2):
+    # For the sake of example remove some part of a valid dict
+    bad_dc_of_mother_as_dict = dc2.to_dict()
+    del bad_dc_of_mother_as_dict["D*+"][0]["fs"]
+    with pytest.raises(RuntimeError):
+        _ = _build_decay_modes(decay_modes, bad_dc_of_mother_as_dict)
