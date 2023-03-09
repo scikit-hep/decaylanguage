@@ -784,9 +784,6 @@ class DecayChain:
         )
 
     def __repr__(self) -> str:
-        if self.mother is None:
-            return "Decay mode: undefined"
-
         return "<{self.__class__.__name__}: {mother} -> {tldecay} ({n} sub-decays), BF={bf}>".format(
             self=self,
             mother=self.mother,

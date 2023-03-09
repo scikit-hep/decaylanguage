@@ -297,6 +297,13 @@ def test_DecayChain_constructor_from_dict():
     assert DecayChain.from_dict(dc_dict).to_dict() == dc_dict
 
 
+def test_DecayChain_constructor_from_dict_RuntimeError(dc2):
+    # For the sake of example remove some parts of a valid dict
+    bad_dict_repr = dc2.to_dict()["D*+"][0]
+    with pytest.raises(RuntimeError):
+        _ = DecayChain.from_dict(bad_dict_repr)
+
+
 def test_DecayChain_to_dict(dc2):
     assert dc2.to_dict() == {
         "D*+": [
@@ -388,7 +395,3 @@ def test_DecayChain_flatten_with_stable_particles():
 
 def test_DecayChain_string_repr(dc):
     assert str(dc) == "<DecayChain: D0 -> K_S0 pi0 (2 sub-decays), BF=0.0124>"
-
-
-def test_DecayChain_string_repr_default():
-    assert str(DecayChain()) == "Decay mode: undefined"
