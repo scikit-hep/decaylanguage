@@ -19,7 +19,7 @@ from ..utils import charge_conjugate_name
 Self_DaughtersDict = TypeVar("Self_DaughtersDict", bound="DaughtersDict")
 
 if TYPE_CHECKING:  # noqa: SIM108
-    CounterStr = Counter[str]
+    CounterStr = Counter[str]  # pragma: no cover
 else:
     CounterStr = Counter
 
@@ -602,7 +602,7 @@ class DecayChain:
         """
         return len(self.decays)
 
-    def print_as_tree(self) -> None:
+    def print_as_tree(self) -> None:  # pragma: no cover
         """
         Tree-structure like print of the entire decay chain.
 

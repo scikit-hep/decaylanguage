@@ -99,7 +99,8 @@ def test_init_non_defaults_attributes():
     chain = p.build_decay_chains("D*+")
     node_attr = {"shape": "egg"}
     edge_attr = {"fontsize": "9"}
-    dcv = DecayChainViewer(chain, node_attr=node_attr, edge_attr=edge_attr)
+    graph_attr = {"rankdir": "TB"}
+    dcv = DecayChainViewer(chain, node_attr=node_attr, edge_attr=edge_attr, graph_attr=graph_attr)
 
     assert dcv.graph.node_attr == {
         "fontname": "Helvetica",
@@ -107,6 +108,7 @@ def test_init_non_defaults_attributes():
         "shape": "egg",
     }
     assert dcv.graph.edge_attr == {"fontcolor": "#4c4c4c", "fontsize": "9"}
+    assert dcv.graph.graph_attr["rankdir"] == "TB"
 
 
 def test_graphs_with_EvtGen_specific_names():
