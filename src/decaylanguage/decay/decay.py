@@ -543,6 +543,11 @@ class DecayChain:
         >>> dm3 = DecayMode(0.98823, 'gamma gamma')
         >>> dc = DecayChain('D0', {'D0':dm1, 'K_S0':dm2, 'pi0':dm3})
         """
+        if mother not in decays.keys():
+            raise RuntimeError(
+                "Input decay modes do not include the mother particle!"
+            ) from None
+
         self.mother = mother
         self.decays = decays
 
@@ -784,9 +789,6 @@ class DecayChain:
         )
 
     def __repr__(self) -> str:
-        if self.mother is None:
-            return "Decay mode: undefined"
-
         return "<{self.__class__.__name__}: {mother} -> {tldecay} ({n} sub-decays), BF={bf}>".format(
             self=self,
             mother=self.mother,

@@ -10,7 +10,12 @@ import pytest
 from particle import ParticleNotFound
 from pytest import approx
 
-from decaylanguage.decay.decay import DaughtersDict, DecayChain, DecayMode
+from decaylanguage.decay.decay import (
+    DaughtersDict,
+    DecayChain,
+    DecayMode,
+    _build_decay_modes,
+)
 
 
 def test_DaughtersDict_constructor_from_dict():
@@ -189,6 +194,11 @@ def test_DecayMode_to_dict():
     }
 
 
+def test_DecayMode_to_dict_default():
+    dm = DecayMode()
+    assert dm.to_dict() == {"bf": 0, "fs": [], "model": "", "model_params": ""}
+
+
 def test_DecayMode_to_dict_simple():
     dm = DecayMode(0.5, "K+ K- K- pi- pi0 nu_tau", model="PHSP", model_params=None)
     assert dm.to_dict() == {
@@ -199,7 +209,7 @@ def test_DecayMode_to_dict_simple():
     }
 
 
-def test_DecayMode_to_dict_simplest():
+def test_DecayMode_to_dict_simpler():
     dm = DecayMode(0.5, "K+ K- K- pi- pi0 nu_tau")
     assert dm.to_dict() == {
         "bf": 0.5,
@@ -252,6 +262,18 @@ def dc2():
     return DecayChain("D*+", {"D*+": dm1, "D0": dm2, "K_S0": dm3, "pi0": dm4})
 
 
+def test_DecayChain_constructor_default():
+    d = DecayChain(mother="a", decays={"a": DecayMode()})
+    assert d.mother == "a"
+    assert d.ndecays == 1
+    assert d.bf == 0
+
+
+def test_DecayChain_constructor_RuntimeError():
+    with pytest.raises(RuntimeError):
+        _ = DecayChain(mother="a", decays={"b": DecayMode()})
+
+
 def test_DecayChain_constructor_subdecays(dc):
     assert len(dc.decays) == 3
     assert dc.mother == "D0"
@@ -290,6 +312,13 @@ def test_DecayChain_constructor_from_dict():
         ]
     }
     assert DecayChain.from_dict(dc_dict).to_dict() == dc_dict
+
+
+def test_DecayChain_constructor_from_dict_RuntimeError(dc2):
+    # For the sake of example remove some parts of a valid dict
+    bad_dict_repr = dc2.to_dict()["D*+"][0]
+    with pytest.raises(RuntimeError):
+        _ = DecayChain.from_dict(bad_dict_repr)
 
 
 def test_DecayChain_to_dict(dc2):
@@ -341,6 +370,7 @@ def test_DecayChain_to_dict(dc2):
 def test_DecayChain_properties(dc):
     assert dc.bf == 0.0124
     assert dc.visible_bf == approx(0.008479803984)
+    assert dc.ndecays == 3
 
 
 def test_DecayChain_flatten(dc2):
@@ -382,3 +412,18 @@ def test_DecayChain_flatten_with_stable_particles():
 
 def test_DecayChain_string_repr(dc):
     assert str(dc) == "<DecayChain: D0 -> K_S0 pi0 (2 sub-decays), BF=0.0124>"
+
+
+def test_build_decay_modes(dc2):
+    decay_modes = {}
+    _build_decay_modes(decay_modes, dc2.to_dict())
+    assert len(decay_modes) == 4
+
+
+def test_build_decay_modes_RuntimeError(dc2):
+    # For the sake of example remove some part of a valid dict
+    bad_dc_of_mother_as_dict = dc2.to_dict()
+    del bad_dc_of_mother_as_dict["D*+"][0]["fs"]
+    decay_modes = {}
+    with pytest.raises(RuntimeError):
+        _ = _build_decay_modes(decay_modes, bad_dc_of_mother_as_dict)
