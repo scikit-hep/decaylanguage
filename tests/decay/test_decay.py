@@ -10,8 +10,12 @@ import pytest
 from particle import ParticleNotFound
 from pytest import approx
 
-from decaylanguage.decay.decay import DaughtersDict, DecayChain, DecayMode
-from decaylanguage.decay.decay import _build_decay_modes
+from decaylanguage.decay.decay import (
+    DaughtersDict,
+    DecayChain,
+    DecayMode,
+    _build_decay_modes,
+)
 
 
 def test_DaughtersDict_constructor_from_dict():
