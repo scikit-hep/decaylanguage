@@ -263,7 +263,7 @@ def dc2():
 
 
 def test_DecayChain_constructor_default():
-    d = DecayChain(mother="a", decays = {"a": DecayMode()})
+    d = DecayChain(mother="a", decays={"a": DecayMode()})
     assert d.mother == "a"
     assert d.ndecays == 1
     assert d.bf == 0
@@ -271,7 +271,7 @@ def test_DecayChain_constructor_default():
 
 def test_DecayChain_constructor_RuntimeError():
     with pytest.raises(RuntimeError):
-        _ = DecayChain(mother="a", decays = {"b": DecayMode()})
+        _ = DecayChain(mother="a", decays={"b": DecayMode()})
 
 
 def test_DecayChain_constructor_subdecays(dc):
