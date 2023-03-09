@@ -191,7 +191,7 @@ def test_DecayMode_to_dict():
 
 def test_DecayMode_to_dict_default():
     dm = DecayMode()
-    assert dm.to_dict() == {'bf': 0, 'fs': [], 'model': '', 'model_params': ''}
+    assert dm.to_dict() == {"bf": 0, "fs": [], "model": "", "model_params": ""}
 
 
 def test_DecayMode_to_dict_simple():
@@ -391,4 +391,4 @@ def test_DecayChain_string_repr(dc):
 
 
 def test_DecayChain_string_repr_default():
-    assert str(DecayChain())== "Decay mode: undefined"
+    assert str(DecayChain()) == "Decay mode: undefined"
