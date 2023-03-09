@@ -343,9 +343,7 @@ class DecFileParser:
         self._check_parsing()
         assert self._parsed_dec_file is not None
         return {
-            tree.children[0]
-            .children[0]
-            .value: copy.deepcopy(tree.children[1].children)
+            tree.children[0].children[0].value: copy.deepcopy(tree.children[1].children)
             for tree in self._parsed_dec_file.find_data("model_alias")
         }
 

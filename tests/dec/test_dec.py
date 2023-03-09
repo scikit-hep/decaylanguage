@@ -25,7 +25,7 @@ from decaylanguage.dec.dec import (
     get_model_name,
     get_model_parameters,
 )
-from decaylanguage.dec.enums import known_decay_models, PhotosEnum
+from decaylanguage.dec.enums import PhotosEnum, known_decay_models
 
 DIR = Path(__file__).parent.resolve()
 
@@ -105,6 +105,7 @@ def test_non_existent_decay():
 def test_no_grammar_loading_by_default():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     assert not p.grammar_loaded
+
 
 def test_default_grammar_loading():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
@@ -232,6 +233,7 @@ def test_missing_global_photos_flag():
     p.parse()
 
     assert not p.global_photos_flag()
+
 
 def test_duplicated_global_photos_flag():
     s = """
