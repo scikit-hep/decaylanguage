@@ -341,19 +341,11 @@ class DecFileParser:
         as {'NAME1': MODELTREE1, 'NAME2': MODELTREE2, ...}.
         """
         self._check_parsing()
-
         assert self._parsed_dec_file is not None
-        try:
-            return {
-                tree.children[0]
-                .children[0]
-                .value: copy.deepcopy(tree.children[1].children)
-                for tree in self._parsed_dec_file.find_data("model_alias")
-            }
-        except Exception as err:
-            raise RuntimeError(
-                "Input parsed file does not seem to have the expected structure."
-            ) from err
+        return {
+            tree.children[0].children[0].value: copy.deepcopy(tree.children[1].children)
+            for tree in self._parsed_dec_file.find_data("model_alias")
+        }
 
     def dict_aliases(self) -> dict[str, str]:
         """
@@ -1646,12 +1638,6 @@ def get_global_photos_flag(parsed_file: Tree) -> int:
     if len(tree) > 1:
         warnings.warn("PHOTOS flag re-set! Using flag set in last ...", stacklevel=2)
 
-    end_item = tree[-1]
-
-    try:
-        val = end_item.children[0].data
-        return PhotosEnum.yes if val == "yes" else PhotosEnum.no
-    except Exception as err:
-        raise RuntimeError(
-            "Input parsed file does not seem to have the expected structure."
-        ) from err
+    end_item = tree[-1]  # Use the last one if several are present !
+    val = end_item.children[0].data
+    return PhotosEnum.yes if val == "yes" else PhotosEnum.no

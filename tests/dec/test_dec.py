@@ -25,7 +25,7 @@ from decaylanguage.dec.dec import (
     get_model_name,
     get_model_parameters,
 )
-from decaylanguage.dec.enums import known_decay_models
+from decaylanguage.dec.enums import PhotosEnum, known_decay_models
 
 DIR = Path(__file__).parent.resolve()
 
@@ -47,6 +47,9 @@ def test_constructor_multiple_files():
         DIR / "../data/test_Xicc2XicPiPi.dec", DIR / "../data/test_Bc2BsPi_Bs2KK.dec"
     )
 
+    # The following parse() command issues the warning
+    #   UserWarning: Corresponding 'Decay' statement for 'CDecay' statement(s) of following particle(s) not found: anti-Xi_cc-sig.
+    #   Skipping creation of these charge-conjugate decay trees.
     with pytest.warns(UserWarning) as record:
         p.parse()
     assert len(record) == 1
@@ -70,6 +73,17 @@ Enddecay
     assert p.number_of_decays == 1
 
 
+def test_double_parsing():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+    # The second call to parse() issues the warning
+    #   UserWarning: Input file being re-parsed ...
+    #     warnings.warn("Input file being re-parsed ...")
+    with pytest.warns(UserWarning) as record:
+        p.parse()
+    assert len(record) == 1
+
+
 def test_unknown_decfile():
     with pytest.raises(FileNotFoundError):
         DecFileParser("non-existent.dec")
@@ -88,9 +102,15 @@ def test_non_existent_decay():
         p.list_decay_modes("XYZ")
 
 
+def test_no_grammar_loading_by_default():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    assert not p.grammar_loaded
+
+
 def test_default_grammar_loading():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
-    assert p.grammar is not None
+    assert p.grammar() is not None
+    assert p.grammar_loaded
 
 
 def test_explicit_grammar_loading():
@@ -213,6 +233,46 @@ def test_missing_global_photos_flag():
     p.parse()
 
     assert not p.global_photos_flag()
+
+
+def test_duplicated_global_photos_flag():
+    s = """
+    # Turn on PHOTOS for all decays
+    yesPhotos
+    yesPhotos
+
+    Decay D0
+      1.0   K-      pi+        PHSP;
+    Enddecay
+    """
+    p = DecFileParser.from_string(s)
+    p.parse()
+    # The following call issues the warning
+    # UserWarning: PHOTOS flag re-set! Using flag set in last ...
+    #   warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
+    with pytest.warns(UserWarning) as record:
+        assert p.global_photos_flag() == PhotosEnum.yes
+    assert len(record) == 1
+
+
+def test_duplicated_global_photos_flag_take_last():
+    s = """
+    # Turn on PHOTOS for all decays
+    noPhotos
+    yesPhotos
+
+    Decay D0
+      1.0   K-      pi+        PHSP;
+    Enddecay
+    """
+    p = DecFileParser.from_string(s)
+    p.parse()
+    # The following call issues the warning
+    # UserWarning: PHOTOS flag re-set! Using flag set in last ...
+    #   warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
+    with pytest.warns(UserWarning) as record:
+        assert p.global_photos_flag() == PhotosEnum.yes
+    assert len(record) == 1
 
 
 def test_list_charge_conjugate_decays():
@@ -435,6 +495,9 @@ def test_print_decay_modes_options():
     p1.print_decay_modes("D*+", normalize=True)
     out_normalized = tmp_stdout.getvalue()
 
+    with pytest.raises(RuntimeError):
+        p1.print_decay_modes("D*+", normalize=True, scale=1)
+
     tmp_stdout = io.StringIO()
     sys.stdout = tmp_stdout
     p2.print_decay_modes("B_c+sig", display_photos_keyword=False)
@@ -444,6 +507,13 @@ def test_print_decay_modes_options():
     assert "PHOTOS" not in no_photos
     # This specific dec file happens to have been defined normalized
     assert out_default == out_normalized
+
+    tmp_stdout = io.StringIO()
+    sys.stdout = tmp_stdout
+    p2.print_decay_modes("B_c+sig")
+    photos_included = tmp_stdout.getvalue()
+    assert "PHOTOS " in photos_included
+    tmp_stdout.truncate(0)
 
     # Do not forget to reset sys.stdout and clean up!
     sys.stdout = old_stdout
