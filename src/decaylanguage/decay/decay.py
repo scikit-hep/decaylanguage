@@ -543,6 +543,9 @@ class DecayChain:
         >>> dm3 = DecayMode(0.98823, 'gamma gamma')
         >>> dc = DecayChain('D0', {'D0':dm1, 'K_S0':dm2, 'pi0':dm3})
         """
+        if d.mother not in d.decays.keys():
+            raise RuntimeError("Input decay modes do not include the mother particle!") from None
+
         self.mother = mother
         self.decays = decays
 

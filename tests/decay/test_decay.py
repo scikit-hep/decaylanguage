@@ -258,6 +258,18 @@ def dc2():
     return DecayChain("D*+", {"D*+": dm1, "D0": dm2, "K_S0": dm3, "pi0": dm4})
 
 
+def test_DecayChain_constructor_default():
+    d = DecayChain(mother="a", decays = {"a": DecayMode()})
+    assert d.mother == "a"
+    assert d.ndecays == 1
+    assert d.bf == 0
+
+
+def test_DecayChain_constructor_RuntimeError():
+    with pytest.raises(RuntimeError):
+        _ = DecayChain(mother="a", decays = {"b": DecayMode()})
+
+
 def test_DecayChain_constructor_subdecays(dc):
     assert len(dc.decays) == 3
     assert dc.mother == "D0"
@@ -408,5 +420,6 @@ def test_build_decay_modes_RuntimeError(dc2):
     # For the sake of example remove some part of a valid dict
     bad_dc_of_mother_as_dict = dc2.to_dict()
     del bad_dc_of_mother_as_dict["D*+"][0]["fs"]
+    decay_modes = {}
     with pytest.raises(RuntimeError):
         _ = _build_decay_modes(decay_modes, bad_dc_of_mother_as_dict)
