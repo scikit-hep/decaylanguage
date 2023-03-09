@@ -254,12 +254,12 @@ class DecayChainViewer:
     def _get_edge_defaults(self) -> dict[str, bool | int | float | str]:
         return {"fontcolor": "#4c4c4c", "fontsize": "11"}
 
-    def _repr_mimebundle_(  # pragma: no cover
+    def _repr_mimebundle_(
         self,
         include: bool | None = None,
         exclude: bool | None = None,
         **kwargs: Any,
-    ) -> Any:
+    ) -> Any:  # pragma: no cover
         """
         IPython display helper.
         """
