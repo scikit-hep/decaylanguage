@@ -7,8 +7,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from decaylanguage.modeling.ampgen2goofit import ampgen2goofit
 
 DIR = Path(__file__).parent.resolve()

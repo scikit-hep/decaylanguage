@@ -472,7 +472,7 @@ class GooFitPyChain(AmplitudeChain):
         else:
             raise LineFailure(self, f"{self[0]} has no daughters")
         wave = (
-            "{self[0].spinfactor}wave".format(self=self)
+            f"{self[0].spinfactor}wave"
             if self[0].spinfactor and self[0].spinfactor != "S"
             else ""
         )
@@ -515,7 +515,6 @@ class GooFitPyChain(AmplitudeChain):
     def make_pars(cls):
         headerlist = []
         header = ""
-        
 
         for name, par in cls.pars.iterrows():
             pname = programmatic_name(name)
@@ -550,10 +549,14 @@ class GooFitPyChain(AmplitudeChain):
 
             for spline in splines:
                 header += "\n" + programmatic_name(spline) + "_SplineArr =  [\n"
-                header += strip_pararray(GooFitPyChain.pars, f"{spline}::Spline::Gamma::")
+                header += strip_pararray(
+                    GooFitPyChain.pars, f"{spline}::Spline::Gamma::"
+                )
                 header += "]\n"
 
-        f_scatt = GooFitPyChain.pars.index[GooFitPyChain.pars.index.str.contains("f_scatt")]
+        f_scatt = GooFitPyChain.pars.index[
+            GooFitPyChain.pars.index.str.contains("f_scatt")
+        ]
         if len(f_scatt):
             header += "f_scatt = [\n"
             header += strip_pararray(GooFitPyChain.pars, "f_scatt")
@@ -668,7 +671,6 @@ class GooFitPyChain(AmplitudeChain):
 
     def make_amplitude(self, final_states):
         n = len(self.list_structure(final_states))
-        fix = "true" if self.fix else "false"
         real_coeff = (
             f'Variable("{self!s}_r", {self.amp.real:.6})'
             if self.fix
@@ -687,7 +689,7 @@ class GooFitPyChain(AmplitudeChain):
             "        line_factor_list[-1],\n"
             "        spin_factor_list[-1],\n"
             "        {n}))\n\n".format(
-                self=self, real_coeff=real_coeff, imag_coeff=imag_coeff, fix=fix, n=n
+                self=self, real_coeff=real_coeff, imag_coeff=imag_coeff, n=n
             )
         )
 
