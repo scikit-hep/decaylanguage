@@ -7,7 +7,7 @@ dependencies:
   - jupyterlab>=0.35
   - numpy>=1.12
   - graphviz>=0.12.0
-  - plumbum>=1.6.9
+  - plumbum>=1.7.0
   - lark>=1.0.0
   - RISE
   - hepunits>=2.2.0
