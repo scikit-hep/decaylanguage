@@ -26,7 +26,7 @@ from particle import Particle
 from .. import data
 from .ampgentransform import AmpGenTransformer, get_from_parser
 from .decay import ModelDecay
-from .utils.particleutils import particle_from_string_name
+from ..utils.particleutils import particle_from_string_name
 
 
 class LS(Enum):

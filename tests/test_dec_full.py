@@ -12,6 +12,7 @@ from particle import Particle, ParticleNotFound
 from decaylanguage import data
 from decaylanguage.dec import dec
 from decaylanguage.dec.enums import PhotosEnum
+from decaylanguage.utils.particleutils import particle_from_string_name
 
 
 class TreeToDec(Transformer):
@@ -84,7 +85,7 @@ class TreeToDec2(Transformer):
         if label in self.alias_dict:
             label = self.alias_dict[label]
         try:
-            return Particle.from_string(str(label))
+            return particle_from_string_name(str(label))
         except ParticleNotFound:
             self.missing.add(str(label))
             return str(label)
