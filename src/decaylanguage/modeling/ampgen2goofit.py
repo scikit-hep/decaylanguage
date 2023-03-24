@@ -102,7 +102,7 @@ def ampgen2goofit(filename, ret_output=False):
 
 def ampgen2goofitpy(filename, ret_output=False):
     """
-    Converts an AmpGen options file to GooFit Python script.
+    Converts an AmpGen options file to a GooFit Python script.
 
     Parameters
     ----------

@@ -67,7 +67,7 @@ class DecayStructure(Enum):
 
 class GooFitChain(AmplitudeChain):
     """
-    Class to read AmpGen options file and return GooFit C++ code
+    Class to read an AmpGen options file and return GooFit C++ code.
     """
 
     __slots__ = ()
@@ -174,7 +174,7 @@ class GooFitChain(AmplitudeChain):
     @property
     def spinfactors(self):
         """
-        Check if spin structure is known and return it together with form factor
+        Check if the spin structure is known and return it together with the form factor.
         """
         if self.spindetails() in known_spinfactors:
             spinfactor = list(known_spinfactors[self.spindetails()])
@@ -210,7 +210,7 @@ class GooFitChain(AmplitudeChain):
     @classmethod
     def make_pars(cls):
         """
-        Write out parameters used in ampltidues
+        Write out the parameters used in the amplitudes.
         """
         headerlist = []
         header = ""
@@ -278,7 +278,7 @@ class GooFitChain(AmplitudeChain):
 
     def make_lineshape(self, structure):
         """
-        Write out line shape. Each kind of line shape is treated separately
+        Write out the line shapes. Each kind of line shape is treated separately.
         """
         name = self.name
         par = self.particle.programmatic_name
@@ -341,7 +341,7 @@ class GooFitChain(AmplitudeChain):
 
     def make_spinfactor(self, final_states):
         """
-        Write out spin factor and push it to vector
+        Write out the spin factor and push it to a vector.
         """
         spin_factors = self.spinfactors
 
@@ -367,7 +367,7 @@ class GooFitChain(AmplitudeChain):
 
     def make_linefactor(self, final_states):
         """
-        Write out line shape and push it to vector
+        Write out the line shape and push it to a vector.
         """
         intro = "    line_factor_list.push_back(std::vector<Lineshape*>{\n"
         factor = []
@@ -379,7 +379,7 @@ class GooFitChain(AmplitudeChain):
 
     def make_amplitude(self, final_states):
         """
-        Write out amlitude and push it to vector
+        Write out the amplitude and push it to a vector.
         """
         n = len(self.list_structure(final_states))
         fix = "true" if self.fix else "false"
@@ -398,7 +398,7 @@ class GooFitChain(AmplitudeChain):
 
     def to_goofit(self, final_states):
         """
-        Write the vectors with the spin factors, line shapes and amplitudes
+        Write the vectors with the spin factors, line shapes and amplitudes.
         """
         return (
             "    // "
@@ -414,8 +414,11 @@ class GooFitChain(AmplitudeChain):
     @classmethod
     def read_ampgen(cls, *args, **kargs):
         """
-        Read in AmpGen file
-        :return: array of AmplitudeChains, event type
+        Read in an AmpGen file.
+
+        Returns
+        ---------
+        Array of AmplitudeChains, event type.
         """
         (
             line_arr,
@@ -428,7 +431,7 @@ class GooFitChain(AmplitudeChain):
 
 class GooFitPyChain(AmplitudeChain):
     """
-    Class to read AmpGen options file and return GooFit python script
+    Class to read an AmpGen options file and return a GooFit Python script.
     """
 
     __slots__ = ()
@@ -486,7 +489,7 @@ class GooFitPyChain(AmplitudeChain):
     @property
     def decay_structure(self):
         """
-        Determine if decay proceeds via two resonances or cascade decay.
+        Determine if the decay proceeds via two resonances or a cascade decay.
         """
         if len(self[0]) == 2 and len(self[1]) == 2:
             return DecayStructure.FF_12_34
@@ -495,7 +498,7 @@ class GooFitPyChain(AmplitudeChain):
     @property
     def formfactor(self):
         """
-        Return form factor based on relative angular momentum L.
+        Return the form factor based on relative angular momentum L.
         """
         norm = self.decay_structure == DecayStructure.FF_12_34
         if self.L == 0:
@@ -538,7 +541,7 @@ class GooFitPyChain(AmplitudeChain):
     @property
     def spinfactors(self):
         """
-        Check if spin structure is known and return it together with form factor
+        Check if the spin structure is known and return it together with the form factor.
         """
         if self.spindetails() in known_spinfactors:
             spinfactor = list(known_spinfactors[self.spindetails()])
@@ -574,7 +577,7 @@ class GooFitPyChain(AmplitudeChain):
     @classmethod
     def make_pars(cls):
         """
-        Write out parameters used in ampltidues.
+        Write out the parameters used in the amplitudes.
         """
         headerlist = []
         header = ""
@@ -642,7 +645,7 @@ class GooFitPyChain(AmplitudeChain):
 
     def make_lineshape(self, structure):
         """
-        Write out line shape. Each kind of line shape is treated separately.
+        Write out the line shapes. Each kind of line shape is treated separately.
         """
         name = self.name
         par = self.particle.programmatic_name
@@ -705,7 +708,7 @@ class GooFitPyChain(AmplitudeChain):
 
     def make_spinfactor(self, final_states):
         """
-        Write out spin factor and push it to vector.
+        Write out the spin factor and push it to a vector.
         """
         spin_factors = self.spinfactors
 
@@ -731,7 +734,7 @@ class GooFitPyChain(AmplitudeChain):
 
     def make_linefactor(self, final_states):
         """
-        Write out line shape and push it to vector.
+        Write out the line shape and push it to a vector.
         """
         intro = "line_factor_list.append((\n"
         factor = []
@@ -743,7 +746,7 @@ class GooFitPyChain(AmplitudeChain):
 
     def make_amplitude(self, final_states):
         """
-        Write out amlitude and push it to vector.
+        Write out the amplitude and push it to a vector.
         """
         n = len(self.list_structure(final_states))
         real_coeff = (
@@ -787,8 +790,11 @@ class GooFitPyChain(AmplitudeChain):
     @classmethod
     def read_ampgen(cls, *args, **kargs):
         """
-        Read in AmpGen file
-        :return: array of AmplitudeChains, event type
+        Read in the AmpGen file.
+
+        Returns
+        ---------
+        Array of AmplitudeChains, event type.
         """
         (
             line_arr,
