@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from particle import Particle
+from particle import Particle, ParticleNotFound
 from particle.converters import (
     EvtGen2PDGNameMap,
     EvtGenName2PDGIDBiMap,
@@ -65,3 +65,101 @@ def charge_conjugate_name(name: str, pdg_name: bool = False) -> str:
             return EvtGenName2PDGIDBiMap[-EvtGenName2PDGIDBiMap[name]]
         except Exception:
             return f"ChargeConj({name})"
+
+
+def particle_from_string_name(name: str) -> Particle:
+    """
+    Get a particle from an AmpGen style name.
+
+    Note: the best match is returned.
+    """
+    matches = particle_list_from_string_name(name)
+    if matches:
+        return matches[0]
+    raise ParticleNotFound(f"Particle with AmpGen style name {name!r} not found in particle table")
+
+
+def particle_list_from_string_name(name: str) -> list[Particle]:
+    "Get a list of particles from an AmpGen style name."
+
+    # Forcible override
+    particle = None
+
+    short_name = name
+    if "~" in name:
+        short_name = name.replace("~", "")
+        particle = False
+
+    # Try the simplest searches first
+    list_can = Particle.findall(name=name, particle=particle)
+    if list_can:
+        return list_can
+    list_can = Particle.findall(pdg_name=short_name, particle=particle)
+    if list_can:
+        return list_can
+
+    mat_str = getname.match(short_name)
+
+    if mat_str is None:
+        return []
+
+    mat = mat_str.groupdict()
+
+    if particle is False:
+        mat["bar"] = "bar"
+
+    try:
+        return _from_group_dict_list(mat)
+    except ParticleNotFound:
+        return []
+
+
+def _from_group_dict_list(mat: dict[str, Any]) -> list[Particle]:
+    """
+    Internal helper class for the functions `from_string` and `from_string_list`
+    for fuzzy finding of particle names used by AmpGen.
+    """
+    kw: dict[str, Any] = {
+        "particle": False
+        if mat["bar"] is not None
+        else True
+        if mat["charge"] == "0"
+        else None
+    }
+
+    name = mat["name"]
+
+    if mat["family"]:
+        if "_" in mat["family"]:
+            mat["family"] = mat["family"].strip("_")
+        name += f'({mat["family"]})'
+    if mat["state"]:
+        name += f'({mat["state"]})'
+
+    if "prime" in mat and mat["prime"]:
+        name += "'"
+
+    if mat["star"]:
+        name += "*"
+
+    if mat["state"] is not None:
+        kw["J"] = float(mat["state"])
+
+    maxname = name + f'({mat["mass"]})' if mat["mass"] else name
+    if "charge" in mat and mat["charge"] is not None:
+        kw["three_charge"] = Charge_mapping[mat["charge"]]
+
+    vals = Particle.findall(name=lambda x: maxname in x, **kw)
+    if not vals:
+        vals = Particle.findall(name=lambda x: name in x, **kw)
+
+    if not vals:
+        raise ParticleNotFound(f"Could not find particle {maxname} or {name}")
+
+    if len(vals) > 1 and mat["mass"] is not None:
+        vals = [val for val in vals if mat["mass"] in val.latex_name]
+
+    if len(vals) > 1:
+        return sorted(vals)
+
+    return vals
