@@ -69,6 +69,7 @@ class GooFitChain(AmplitudeChain):
     """
     Class to read AmpGen options file and return GooFit C++ code
     """
+
     __slots__ = ()
 
     pars: pd.DataFrame = None
@@ -429,6 +430,7 @@ class GooFitPyChain(AmplitudeChain):
     """
     Class to read AmpGen options file and return GooFit python script
     """
+
     __slots__ = ()
 
     pars: pd.DataFrame = None
