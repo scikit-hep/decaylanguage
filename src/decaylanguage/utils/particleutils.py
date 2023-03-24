@@ -9,6 +9,8 @@ from __future__ import annotations
 import re
 from functools import lru_cache
 
+from typing import Any
+
 from particle import Particle, ParticleNotFound
 from particle.converters import (
     EvtGen2PDGNameMap,
@@ -16,6 +18,7 @@ from particle.converters import (
     PDG2EvtGenNameMap,
 )
 from particle.exceptions import MatchingIDNotFound
+from particle.particle.enums import Charge_mapping
 
 cacher = lru_cache(maxsize=64)
 

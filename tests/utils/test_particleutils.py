@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import pytest
 
+from particle import ParticleNotFound
+
 from decaylanguage.utils.particleutils import (
     charge_conjugate_name,
     particle_from_string_name,
@@ -44,7 +46,7 @@ def test_particle_from_string_name():
     assert pi.pdgid == 211
 
     with pytest.raises(ParticleNotFound):
-        Particle.from_string("unknown")
+        particle_from_string_name("unknown")
 
 
 def test_fuzzy_string():
