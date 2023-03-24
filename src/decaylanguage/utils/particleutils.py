@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+import re
 
 from particle import Particle, ParticleNotFound
 from particle.converters import (
@@ -100,7 +101,7 @@ def particle_list_from_string_name(name: str) -> list[Particle]:
     if list_can:
         return list_can
 
-    mat_str = getname.match(short_name)
+    mat_str = _getname.match(short_name)
 
     if mat_str is None:
         return []
@@ -165,3 +166,20 @@ def _from_group_dict_list(mat: dict[str, Any]) -> list[Particle]:
         return sorted(vals)
 
     return vals
+
+
+_getname = re.compile(
+    r"""
+^                                           # Beginning of string
+      (?P<name>       \w+?        )         # One or more characters, non-greedy
+(?:\( (?P<family>    [udsctb][\w]*) \) )?   # Optional family like (s)
+(?:\( (?P<state>      \d+         ) \)      # Optional state in ()
+      (?=             \*? \(      )  )?     #   - lookahead for mass
+      (?P<star>       \*          )?        # Optional star
+(?:\( (?P<mass>       \d+         ) \) )?   # Optional mass in ()
+      (?P<bar>        (bar|~)     )?        # Optional bar
+      (?P<charge>     [0\+\-][+-]?)         # Required 0, -, --, or +, ++
+$                                           # End of string
+""",
+    re.VERBOSE,
+)
