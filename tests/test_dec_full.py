@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import pytest
 from lark import Lark, Transformer, Tree
-from particle import Particle, ParticleNotFound
+from particle import ParticleNotFound
 
 from decaylanguage import data
 from decaylanguage.dec import dec
