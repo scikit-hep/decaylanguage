@@ -26,6 +26,7 @@ from particle import Particle
 from .. import data
 from .ampgentransform import AmpGenTransformer, get_from_parser
 from .decay import ModelDecay
+from .utils.particleutils import particle_from_string_name
 
 
 class LS(Enum):
@@ -80,7 +81,7 @@ class AmplitudeChain(ModelDecay):
             Particle.load_table(special_filename, append=True)
 
         try:
-            mat["particle"] = Particle.from_string(mat["name"])
+            mat["particle"] = particle_from_string_name(mat["name"])
         except Exception:
             print(
                 "Failed to find particle",
@@ -240,7 +241,7 @@ class AmplitudeChain(ModelDecay):
         constants = get_from_parser(parsed, "constant")
 
         try:
-            all_states = [Particle.from_string(n) for n in event_type]
+            all_states = [particle_from_string_name(n) for n in event_type]
         except Exception:
             print("Did not find at least one of the state particles from", *event_type)
             raise
