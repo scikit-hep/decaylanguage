@@ -76,7 +76,9 @@ def particle_from_string_name(name: str) -> Particle:
     matches = particle_list_from_string_name(name)
     if matches:
         return matches[0]
-    raise ParticleNotFound(f"Particle with AmpGen style name {name!r} not found in particle table")
+    raise ParticleNotFound(
+        f"Particle with AmpGen style name {name!r} not found in particle table"
+    )
 
 
 def particle_list_from_string_name(name: str) -> list[Particle]:

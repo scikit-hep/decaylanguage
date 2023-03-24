@@ -7,7 +7,10 @@ from __future__ import annotations
 
 import pytest
 
-from decaylanguage.utils.particleutils import charge_conjugate_name, particle_from_string_name
+from decaylanguage.utils.particleutils import (
+    charge_conjugate_name,
+    particle_from_string_name,
+)
 
 matches_evtgen = (
     ("pi0", "pi0"),
