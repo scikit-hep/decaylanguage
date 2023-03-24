@@ -5,8 +5,9 @@
 # or https://github.com/scikit-hep/decaylanguage for details.
 
 """
-This is a function that takes a filename and either prints out or returns
+Function taking a filename of an AmpGen options files and either prints out or returns
 a string output with the converted set of decay chains and variables.
+The output is either C++ code (ampgen2goofit) or a python script (ampgen2goofitpy)
 """
 
 
@@ -23,6 +24,15 @@ from decaylanguage.modeling.goofit import GooFitChain, GooFitPyChain, SF_4Body
 
 
 def ampgen2goofit(filename, ret_output=False):
+    """
+    Converts an AmpGen option file to GooFit C++ code
+    Parameters
+    ----------
+    filename: string
+        Name of AmpGen options file.
+    ret_output: bool
+       If True, return output as string. Otherwise print it to terminal.
+    """
     if ret_output:
         output = StringIO()
         printer = partial(print, file=output)
@@ -90,6 +100,15 @@ def ampgen2goofit(filename, ret_output=False):
 
 
 def ampgen2goofitpy(filename, ret_output=False):
+    """
+    Converts an AmpGen option file to GooFit python script
+    Parameters
+    ----------
+    filename: string
+        Name of AmpGen options file.
+    ret_output: bool
+       If True, return output as string. Otherwise print it to terminal .
+    """
     if ret_output:
         output = StringIO()
         printer = partial(print, file=output)

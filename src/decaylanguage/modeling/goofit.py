@@ -66,6 +66,9 @@ class DecayStructure(Enum):
 
 
 class GooFitChain(AmplitudeChain):
+    """
+    Class to read AmpGen options file and return GooFit C++ code
+    """
     __slots__ = ()
 
     pars: pd.DataFrame = None
@@ -73,6 +76,9 @@ class GooFitChain(AmplitudeChain):
 
     @classmethod
     def make_intro(cls, all_states):
+        """
+        Write out definitions of constant variables and vectors to hold intermediate values.
+        """
         header = f"    // Event type: {all_states[0]} ->  "
         header += "   ".join(f"{b} ({a})" for a, b in enumerate(all_states[1:]))
 
@@ -114,12 +120,18 @@ class GooFitChain(AmplitudeChain):
 
     @property
     def decay_structure(self):
+        """
+        Determine if decay proceeds via two resonances or cascade decay.
+        """
         if len(self[0]) == 2 and len(self[1]) == 2:
             return DecayStructure.FF_12_34
         return DecayStructure.FF_1_2_34
 
     @property
     def formfactor(self):
+        """
+        Return form factor based on relative angular momentum L.
+        """
         norm = self.decay_structure == DecayStructure.FF_12_34
         if self.L == 0:
             return None
@@ -131,6 +143,9 @@ class GooFitChain(AmplitudeChain):
         raise NotImplementedError(f"L = {self.L} is not implemented")
 
     def spindetails(self):
+        """
+        Return string with spin structure.
+        """
         if self.decay_structure == DecayStructure.FF_12_34:
             a = f"{sprint(self[0].particle.spin_type)}1"
             b = f"{sprint(self[1].particle.spin_type)}2"
@@ -157,6 +172,9 @@ class GooFitChain(AmplitudeChain):
 
     @property
     def spinfactors(self):
+        """
+        Check if spin structure is known and return it together with form factor
+        """
         if self.spindetails() in known_spinfactors:
             spinfactor = list(known_spinfactors[self.spindetails()])
             if self.L > 0:
@@ -190,6 +208,9 @@ class GooFitChain(AmplitudeChain):
 
     @classmethod
     def make_pars(cls):
+        """
+        Write out parameters used in ampltidues
+        """
         headerlist = []
         header = ""
 
@@ -255,6 +276,9 @@ class GooFitChain(AmplitudeChain):
         return "\n".join(headerlist) + "\n" + header
 
     def make_lineshape(self, structure):
+        """
+        Write out line shape. Each kind of line shape is treated separately
+        """
         name = self.name
         par = self.particle.programmatic_name
         a = structure[0] + 1
@@ -315,6 +339,9 @@ class GooFitChain(AmplitudeChain):
         raise NotImplementedError(f"Unimplemented GooFit Lineshape {self.ls_enum.name}")
 
     def make_spinfactor(self, final_states):
+        """
+        Write out spin factor and push it to vector
+        """
         spin_factors = self.spinfactors
 
         intro = "    spin_factor_list.push_back(std::vector<SpinFactor*>({\n"
@@ -338,6 +365,9 @@ class GooFitChain(AmplitudeChain):
         return intro + ",\n".join(factor) + exit_
 
     def make_linefactor(self, final_states):
+        """
+        Write out line shape and push it to vector
+        """
         intro = "    line_factor_list.push_back(std::vector<Lineshape*>{\n"
         factor = []
         for structure in self.list_structure(final_states):
@@ -347,6 +377,9 @@ class GooFitChain(AmplitudeChain):
         return intro + ",\n".join(factor) + exit_
 
     def make_amplitude(self, final_states):
+        """
+        Write out amlitude and push it to vector
+        """
         n = len(self.list_structure(final_states))
         fix = "true" if self.fix else "false"
         return (
@@ -363,6 +396,9 @@ class GooFitChain(AmplitudeChain):
         )
 
     def to_goofit(self, final_states):
+        """
+        Write the vectors with the spin factors, line shapes and amplitudes
+        """
         return (
             "    // "
             + str(self)
@@ -376,6 +412,10 @@ class GooFitChain(AmplitudeChain):
 
     @classmethod
     def read_ampgen(cls, *args, **kargs):
+        """
+        Read in AmpGen file
+        :return: array of AmplitudeChains, event type
+        """
         (
             line_arr,
             GooFitChain.pars,
@@ -386,6 +426,9 @@ class GooFitChain(AmplitudeChain):
 
 
 class GooFitPyChain(AmplitudeChain):
+    """
+    Class to read AmpGen options file and return GooFit python script
+    """
     __slots__ = ()
 
     pars: pd.DataFrame = None
@@ -393,6 +436,9 @@ class GooFitPyChain(AmplitudeChain):
 
     @classmethod
     def make_intro(cls, all_states):
+        """
+        Write out definitions of constant variables and lists to hold intermediate values.
+        """
         header = f"#Event type: {all_states[0]} ->  "
         header += "   ".join(f"{b} ({a})" for a, b in enumerate(all_states[1:]))
         header += "\nfrom goofit import *\n"
@@ -437,12 +483,18 @@ class GooFitPyChain(AmplitudeChain):
 
     @property
     def decay_structure(self):
+        """
+        Determine if decay proceeds via two resonances or cascade decay.
+        """
         if len(self[0]) == 2 and len(self[1]) == 2:
             return DecayStructure.FF_12_34
         return DecayStructure.FF_1_2_34
 
     @property
     def formfactor(self):
+        """
+        Return form factor based on relative angular momentum L.
+        """
         norm = self.decay_structure == DecayStructure.FF_12_34
         if self.L == 0:
             return None
@@ -454,6 +506,9 @@ class GooFitPyChain(AmplitudeChain):
         raise NotImplementedError(f"L = {self.L} is not implemented")
 
     def spindetails(self):
+        """
+        Return string with spin structure.
+        """
         if self.decay_structure == DecayStructure.FF_12_34:
             a = f"{sprint(self[0].particle.spin_type)}1"
             b = f"{sprint(self[1].particle.spin_type)}2"
@@ -480,6 +535,9 @@ class GooFitPyChain(AmplitudeChain):
 
     @property
     def spinfactors(self):
+        """
+        Check if spin structure is known and return it together with form factor
+        """
         if self.spindetails() in known_spinfactors:
             spinfactor = list(known_spinfactors[self.spindetails()])
             if self.L > 0:
@@ -513,6 +571,9 @@ class GooFitPyChain(AmplitudeChain):
 
     @classmethod
     def make_pars(cls):
+        """
+        Write out parameters used in ampltidues.
+        """
         headerlist = []
         header = ""
 
@@ -578,6 +639,9 @@ class GooFitPyChain(AmplitudeChain):
         return "\n".join(headerlist) + "\n" + header
 
     def make_lineshape(self, structure):
+        """
+        Write out line shape. Each kind of line shape is treated separately.
+        """
         name = self.name
         par = self.particle.programmatic_name
         a = structure[0] + 1
@@ -638,6 +702,9 @@ class GooFitPyChain(AmplitudeChain):
         raise NotImplementedError(f"Unimplemented GooFit Lineshape {self.ls_enum.name}")
 
     def make_spinfactor(self, final_states):
+        """
+        Write out spin factor and push it to vector.
+        """
         spin_factors = self.spinfactors
 
         intro = "spin_factor_list.append((\n"
@@ -661,6 +728,9 @@ class GooFitPyChain(AmplitudeChain):
         return intro + ",\n".join(factor) + exit_
 
     def make_linefactor(self, final_states):
+        """
+        Write out line shape and push it to vector.
+        """
         intro = "line_factor_list.append((\n"
         factor = []
         for structure in self.list_structure(final_states):
@@ -670,6 +740,9 @@ class GooFitPyChain(AmplitudeChain):
         return intro + ",\n".join(factor) + exit_
 
     def make_amplitude(self, final_states):
+        """
+        Write out amlitude and push it to vector.
+        """
         n = len(self.list_structure(final_states))
         real_coeff = (
             f'Variable("{self!s}_r", {self.amp.real:.6})'
@@ -694,6 +767,9 @@ class GooFitPyChain(AmplitudeChain):
         )
 
     def to_goofit(self, final_states):
+        """
+        Write the lists with the spin factors, line shapes and amplitudes.
+        """
         return (
             "#"
             + str(self)
@@ -708,6 +784,10 @@ class GooFitPyChain(AmplitudeChain):
 
     @classmethod
     def read_ampgen(cls, *args, **kargs):
+        """
+        Read in AmpGen file
+        :return: array of AmplitudeChains, event type
+        """
         (
             line_arr,
             GooFitPyChain.pars,
