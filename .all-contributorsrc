@@ -63,6 +63,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "FlorianReiss",
+      "name": "FlorianReiss",
+      "avatar_url": "https://avatars.githubusercontent.com/u/44642966?v=4",
+      "profile": "https://github.com/FlorianReiss",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
