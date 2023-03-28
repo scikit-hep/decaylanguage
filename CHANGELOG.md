@@ -1,5 +1,16 @@
 # Changelog
 
+## Version 0.15.2 (2023-03-28)
+
+* Universal representation of decay chains:
+  - Better test coverage for dec and decay submodules.
+* Modeling for GooFit/AmpGen:
+  - Major update to AmpGen2GooFit parsing.
+* Miscellaneous:
+  - Moved over to using Ruff.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.15.1 (2023-02-02)
 
 * Universal representation of decay chains:
