@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.15.3 (2023-04-06)
+
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.15.2 (2023-03-28)
 
 * Universal representation of decay chains:
