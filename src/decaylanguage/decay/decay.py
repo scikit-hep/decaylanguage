@@ -602,7 +602,7 @@ class DecayChain:
         """
         return len(self.decays)
 
-    def to_string(self, arrow = "->") -> str:
+    def to_string(self, arrow="->") -> str:
         """
         One-line string representation of the entire decay chain. Sub-decays are
         enclosed in round parentheses.
@@ -610,12 +610,12 @@ class DecayChain:
 
         def _str(
             decay: dict[str, list[dict[str, float | str | list[Any]]]] | str,
-            top = False,
+            top=False,
         ) -> str:
             if isinstance(decay, dict):
                 mother = list(decay.keys())[0]
                 fs = [_str(fsp) for i_decay in decay[mother] for fsp in i_decay["fs"]]
-                descriptor = " ".join([mother, arrow] + fs)
+                descriptor = " ".join([mother, arrow, *fs])
                 if not top:
                     return f"({descriptor})"
                 return descriptor
