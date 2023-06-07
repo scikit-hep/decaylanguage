@@ -602,6 +602,33 @@ class DecayChain:
         """
         return len(self.decays)
 
+    def to_string(self, arrow = "->") -> str:
+        """
+        One-line string representation of the entire decay chain. Sub-decays are
+        enclosed in round parentheses.
+        """
+
+        def _str(
+            decay: dict[str, list[dict[str, float | str | list[Any]]]] | str,
+            top = False,
+        ) -> str:
+            if isinstance(decay, dict):
+                mother = list(decay.keys())[0]
+                fs = [_str(fsp) for i_decay in decay[mother] for fsp in i_decay["fs"]]
+                descriptor = " ".join([mother, arrow] + fs)
+                if not top:
+                    return f"({descriptor})"
+                return descriptor
+
+            elif isinstance(decay, str):
+                return decay
+
+            else:
+                raise TypeError(f"Don't know how to handle {type(decay)}")
+
+        dc_dict = self.to_dict()
+        return _str(dc_dict, True)
+
     def print_as_tree(self) -> None:  # pragma: no cover
         """
         Tree-structure like print of the entire decay chain.
