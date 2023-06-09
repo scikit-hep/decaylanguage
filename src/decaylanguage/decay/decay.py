@@ -602,7 +602,7 @@ class DecayChain:
         """
         return len(self.decays)
 
-    def to_string(self, arrow: str ="->") -> str:
+    def to_string(self, arrow: str = "->") -> str:
         """
         One-line string representation of the entire decay chain. Sub-decays are
         enclosed in round parentheses.
