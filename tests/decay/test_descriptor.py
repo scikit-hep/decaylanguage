@@ -7,7 +7,7 @@ from decaylanguage import DecayChain, DecayMode
 dm1 = DecayMode(0.6770, "D0 pi+")  # D*+
 dm2 = DecayMode(0.0124, "K_S0 pi0")  # D0
 dm3 = DecayMode(0.692, "pi+ pi-")  # K_S0
-dm4 = DecayMode(0.98823, "gamma gamma")  # pi-
+dm4 = DecayMode(0.98823, "gamma gamma")  # pi0
 dm5 = DecayMode(0.0105, "D- tau+ nu_tau")  # B0
 dm6 = DecayMode(0.0938, "K+ pi- pi-")  # D-
 dm7 = DecayMode(0.0931, "pi+ pi+ pi- anti-nu_tau")  # tau+

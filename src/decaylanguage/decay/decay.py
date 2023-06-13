@@ -606,6 +606,16 @@ class DecayChain:
         """
         One-line string representation of the entire decay chain. Sub-decays are
         enclosed in round parentheses.
+
+        Examples
+        --------
+        >>> dm1 = DecayMode(0.6770, "D0 pi+") # D*+
+        >>> dm2 = DecayMode(0.0124, "K_S0 pi0") # D0
+        >>> dm3 = DecayMode(0.692, "pi+ pi-") # K_S0
+        >>> dm4 = DecayMode(0.98823, "gamma gamma") # pi0
+        >>> dc = DecayChain("D*+", {"D*+":dm1, "D0":dm2, "K_S0":dm3, "pi0":dm4})
+        >>> print(dc.to_string())
+        D*+ -> (D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)) pi+
         """
 
         def _str(
