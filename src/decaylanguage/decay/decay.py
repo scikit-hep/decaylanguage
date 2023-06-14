@@ -618,6 +618,12 @@ class DecayChain:
         D*+ -> (D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)) pi+
         """
 
+        def _extract_fs(decay: dict[str, float | str | list[Any]]) -> list[Any]:
+            fs = decay["fs"]
+            if isinstance(fs, list):
+                return fs
+            raise TypeError(f"Expected list, not {type(fs)}")
+
         def _str(
             decay: dict[str, list[dict[str, float | str | list[Any]]]] | str,
             top: bool = False,
@@ -625,7 +631,11 @@ class DecayChain:
             if isinstance(decay, dict):
                 mother = list(decay.keys())[0]
                 fs = DaughtersDict(
-                    [_str(fsp) for i_decay in decay[mother] for fsp in i_decay["fs"]]
+                    [
+                        _str(fsp)
+                        for i_decay in decay[mother]
+                        for fsp in _extract_fs(i_decay)
+                    ]
                 )
                 descriptor = " ".join([mother, arrow, fs.to_string()])
                 if not top:
