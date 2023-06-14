@@ -624,17 +624,18 @@ class DecayChain:
         ) -> str:
             if isinstance(decay, dict):
                 mother = list(decay.keys())[0]
-                fs = [_str(fsp) for i_decay in decay[mother] for fsp in i_decay["fs"]]
-                descriptor = " ".join([mother, arrow, *fs])
+                fs = DaughtersDict(
+                    [_str(fsp) for i_decay in decay[mother] for fsp in i_decay["fs"]]
+                )
+                descriptor = " ".join([mother, arrow, fs.to_string()])
                 if not top:
                     return f"({descriptor})"
                 return descriptor
 
-            elif isinstance(decay, str):
+            if isinstance(decay, str):
                 return decay
 
-            else:
-                raise TypeError(f"Don't know how to handle {type(decay)}")
+            raise TypeError(f"Don't know how to handle {type(decay)}")
 
         dc_dict = self.to_dict()
         return _str(dc_dict, True)

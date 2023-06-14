@@ -29,7 +29,7 @@ dm9b = DecayMode(0.154, "pi+ pi- pi0")  #  phi
         ),
         (
             DecayChain("B0", {"B0": dm5, "D-": dm6, "tau+": dm7}),
-            "B0 -> (D- -> K+ pi- pi-) nu_tau (tau+ -> anti-nu_tau pi+ pi+ pi-)",
+            "B0 -> (D- -> K+ pi- pi-) (tau+ -> anti-nu_tau pi+ pi+ pi-) nu_tau",
         ),
         (
             DecayChain("B_s0", {"B_s0": dm8, "phi": dm9a, "phi'": dm9b}),
