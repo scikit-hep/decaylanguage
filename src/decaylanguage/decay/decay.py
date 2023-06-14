@@ -620,7 +620,7 @@ class DecayChain:
 
         def _str(
             decay: dict[str, list[dict[str, float | str | list[Any]]]] | str,
-            top=False,
+            top: bool = False,
         ) -> str:
             if isinstance(decay, dict):
                 mother = list(decay.keys())[0]
