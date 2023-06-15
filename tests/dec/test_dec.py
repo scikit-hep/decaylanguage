@@ -537,6 +537,48 @@ def test_build_decay_chains():
     assert p.build_decay_chains("D+", stable_particles=["pi0"]) == output
 
 
+def test_expand_decay_chains():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    output = {
+        "D*+": [
+            "D*+ -> (D0 -> K- pi+) pi+",
+            "D*+ -> (D+ -> (pi0 -> gamma gamma) K- pi+ pi+) (pi0 -> gamma gamma)",
+            "D*+ -> (D+ -> (pi0 -> gamma gamma) K- pi+ pi+) (pi0 -> e+ e- gamma)",
+            "D*+ -> (D+ -> (pi0 -> gamma gamma) K- pi+ pi+) (pi0 -> e+ e+ e- e-)",
+            "D*+ -> (D+ -> (pi0 -> gamma gamma) K- pi+ pi+) (pi0 -> e+ e-)",
+            "D*+ -> (D+ -> (pi0 -> e+ e- gamma) K- pi+ pi+) (pi0 -> gamma gamma)",
+            "D*+ -> (D+ -> (pi0 -> e+ e- gamma) K- pi+ pi+) (pi0 -> e+ e- gamma)",
+            "D*+ -> (D+ -> (pi0 -> e+ e- gamma) K- pi+ pi+) (pi0 -> e+ e+ e- e-)",
+            "D*+ -> (D+ -> (pi0 -> e+ e- gamma) K- pi+ pi+) (pi0 -> e+ e-)",
+            "D*+ -> (D+ -> (pi0 -> e+ e+ e- e-) K- pi+ pi+) (pi0 -> gamma gamma)",
+            "D*+ -> (D+ -> (pi0 -> e+ e+ e- e-) K- pi+ pi+) (pi0 -> e+ e- gamma)",
+            "D*+ -> (D+ -> (pi0 -> e+ e+ e- e-) K- pi+ pi+) (pi0 -> e+ e+ e- e-)",
+            "D*+ -> (D+ -> (pi0 -> e+ e+ e- e-) K- pi+ pi+) (pi0 -> e+ e-)",
+            "D*+ -> (D+ -> (pi0 -> e+ e-) K- pi+ pi+) (pi0 -> gamma gamma)",
+            "D*+ -> (D+ -> (pi0 -> e+ e-) K- pi+ pi+) (pi0 -> e+ e- gamma)",
+            "D*+ -> (D+ -> (pi0 -> e+ e-) K- pi+ pi+) (pi0 -> e+ e+ e- e-)",
+            "D*+ -> (D+ -> (pi0 -> e+ e-) K- pi+ pi+) (pi0 -> e+ e-)",
+            "D*+ -> (D+ -> (pi0 -> gamma gamma) K- pi+ pi+) gamma",
+            "D*+ -> (D+ -> (pi0 -> e+ e- gamma) K- pi+ pi+) gamma",
+            "D*+ -> (D+ -> (pi0 -> e+ e+ e- e-) K- pi+ pi+) gamma",
+            "D*+ -> (D+ -> (pi0 -> e+ e-) K- pi+ pi+) gamma",
+        ],
+        "D*-": [  # NB: decays of anti-D0 and D- are not defined in this DecFile
+            "D*- -> anti-D0 pi-",
+            "D*- -> (pi0 -> gamma gamma) D-",
+            "D*- -> (pi0 -> e+ e- gamma) D-",
+            "D*- -> (pi0 -> e+ e+ e- e-) D-",
+            "D*- -> (pi0 -> e+ e-) D-",
+            "D*- -> D- gamma",
+        ],
+    }
+    for particle in output:
+        all_decays = p.expand_decay_modes(particle)
+        assert set(all_decays) == set(output[particle])
+
+
 def test_Lark_ModelNameCleanup_Transformer_no_params():
     t = Tree(
         "decay",
