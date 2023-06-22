@@ -393,7 +393,8 @@ class DecFileParser:
 
     def expand_decay_modes(self, particle: str) -> list[str]:
         """
-        Return a list of expanded decay descriptors for the given particle
+        Return a list of expanded decay descriptors for the given (mother) particle.
+        The set of decay final states is effectively split and returned as a list.
         """
         self._check_parsing()
         decay_chains = self.build_decay_chains(particle)
