@@ -15,7 +15,7 @@ from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
 from particle.exceptions import MatchingIDNotFound
 
-from ..utils import charge_conjugate_name
+from ..utils import DescriptorFormat, charge_conjugate_name
 
 Self_DaughtersDict = TypeVar("Self_DaughtersDict", bound="DaughtersDict")
 
@@ -633,9 +633,7 @@ def _expand_decay_modes(
             # TODO: delegate descriptor-building to another function
             #       allow for different conventions?
             final_state = DaughtersDict(list(expanded_mode)).to_string()
-            descriptor = f"{mother} -> {final_state}"
-            if not top:
-                descriptor = f"({descriptor})"
+            descriptor = DescriptorFormat.format_descriptor(mother, final_state, top)
             expanded_modes += [descriptor]
 
     decay_chain[orig_mother] = expanded_modes  # type: ignore[assignment]
