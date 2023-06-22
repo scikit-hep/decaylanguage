@@ -519,9 +519,7 @@ def _expand_decay_modes(
     Parameters
     ----------
     decay_chain: dict
-
     top: bool, optional, default=True
-
     aliases: dict[str, str], optional, default={}
 
 
