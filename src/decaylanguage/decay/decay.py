@@ -738,8 +738,8 @@ class DecayChain:
 
     def to_string(self) -> str:
         """
-        One-line string representation of the entire decay chain. Sub-decays are
-        enclosed in round parentheses.
+        One-line string representation of the entire decay chain.
+        Sub-decays are enclosed in round parentheses.
 
         Examples
         --------
