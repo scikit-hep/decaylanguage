@@ -63,7 +63,7 @@ def filter_lines(
 
 class DescriptorFormat:
     """
-    Class to help with setting the descriptor format. The format is stored as a
+    Class to help with setting the decay descriptor format. The format is stored as a
     class-level variable: `DescriptorFormat.config`.
 
     Examples
@@ -146,9 +146,9 @@ class DescriptorFormat:
         ----------
 
         mother: str
-            The decaying particle
+            The decaying particle.
         daughters: str
-            The final state particles
+            The final-state particles.
         """
         args = {
             "mother": mother,
