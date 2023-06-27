@@ -37,6 +37,7 @@ known_decay_models = (
     "ETA_FULLDALITZ",
     "ETA_PI0DALITZ",
     "FLATQ2",
+    "FLATSQDALITZ",
     "GENERIC_DALITZ",
     "GOITY_ROBERTS",
     "HELAMP",
