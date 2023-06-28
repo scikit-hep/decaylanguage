@@ -4,15 +4,17 @@
 // or https://github.com/scikit-hep/decaylanguage for details.
 
 start : _NEWLINE* (line _NEWLINE+)+ ("End" _NEWLINE+)?
-?line : define | particle_def | pythia_def | jetset_def | ls_def | model_alias | alias | chargeconj | commands | decay | cdecay | copydecay | setlspw | setlsbw | changemasslimit
+?line : define | particle_def | pythia_def | jetset_def | ls_def | model_alias | alias | chargeconj | commands | decay | cdecay | copydecay | setlspw | setlsbw | changemasslimit | inc_factor
 
 pythia_def : ("PythiaBothParam" | "PythiaAliasParam") LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)
 
 jetset_def : "JetSetPar" LABEL "=" SIGNED_NUMBER
 
-ls_def : ("LSFLAT" | "LSNONRELBW") label
+ls_def : ("LSFLAT" | "LSNONRELBW") label // Choose a lineshape for a particle
 
-setlsbw : "BlattWeisskopf" label value
+inc_factor: ("IncludeBirthFactor" | "IncludeDecayFactor") label ("yes" | "no) // Presence of the birth/decay factor and form-factor
+
+setlsbw : "BlattWeisskopf" label value // Set Blatt-Weisskopf barrier factor for a lineshape
 
 setlspw : "SetLineshapePW" label label label value
 
@@ -20,7 +22,7 @@ cdecay : "CDecay" label
 
 define : "Define" label value
 
-particle_def: "Particle" label value value
+particle_def: "Particle" label value value // Set the mass and width of a paricle (in GeV)
 
 model_alias : "ModelAlias" model_label model
 
@@ -28,7 +30,7 @@ alias : "Alias" label label
 
 chargeconj : "ChargeConj" label label
 
-changemasslimit : ("ChangeMassMin" | "ChangeMassMax") label value
+changemasslimit : ("ChangeMassMin" | "ChangeMassMax") label value // Set upper/lower mass cuts on a lineshape
 
 ?commands : global_photos
 
