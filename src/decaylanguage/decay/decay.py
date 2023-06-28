@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections import Counter
 from copy import deepcopy
 from itertools import product
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, TypeVar, Union
 
 from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
@@ -447,8 +447,8 @@ class DecayMode:
 
 
 Self_DecayChain = TypeVar("Self_DecayChain", bound="DecayChain")
-DecayModeDict = Dict[str, Union[float, str, list[Any]]]
-DecayChainDict = Dict[str, list[DecayModeDict]]
+DecayModeDict = Dict[str, Union[float, str, List[Any]]]
+DecayChainDict = Dict[str, List[DecayModeDict]]
 
 
 def _has_no_subdecay(ds: list[Any]) -> bool:
