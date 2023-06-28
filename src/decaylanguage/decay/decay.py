@@ -884,8 +884,8 @@ class DecayChain:
             'model_params': ''}]}
         """
 
-        # Ideally this would be a recursive type, DecayDict = dict[str, list[str | DecayDict]]
-        DecayDict = dict[str, list[Any]]
+        # Ideally this would be a recursive type, DecayDict = Dict[str, list[str | DecayDict]]
+        DecayDict = Dict[str, list[Any]]
 
         def recursively_replace(mother: str) -> DecayDict:
             dm = self.decays[mother].to_dict()
