@@ -73,6 +73,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "admorris",
+      "name": "Adam Morris",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15155249?v=4",
+      "profile": "https://gitlab.cern.ch/users/admorris",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -80,5 +89,6 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "projectName": "decaylanguage",
-  "projectOwner": "scikit-hep"
+  "projectOwner": "scikit-hep",
+  "commitType": "docs"
 }
