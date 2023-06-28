@@ -4,11 +4,17 @@
 // or https://github.com/scikit-hep/decaylanguage for details.
 
 start : _NEWLINE* (line _NEWLINE+)+ ("End" _NEWLINE+)?
-?line : define | pythia_def | jetset_def | model_alias | alias | chargeconj | commands | decay | cdecay | copydecay | setlspw
+?line : define | particle_def | pythia_def | jetset_def | ls_def | model_alias | alias | chargeconj | commands | decay | cdecay | copydecay | setlspw | setlsbw | changemasslimit | inc_factor
 
-pythia_def : "PythiaBothParam" LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)
+pythia_def : ("PythiaBothParam" | "PythiaAliasParam") LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)
 
 jetset_def : "JetSetPar" LABEL "=" SIGNED_NUMBER
+
+ls_def : ("LSFLAT" | "LSNONRELBW") label // Choose a lineshape for a particle
+
+inc_factor: ("IncludeBirthFactor" | "IncludeDecayFactor") label ("yes" | "no") // Presence of the birth/decay factor and form-factor
+
+setlsbw : "BlattWeisskopf" label value // Set Blatt-Weisskopf barrier factor for a lineshape
 
 setlspw : "SetLineshapePW" label label label value
 
@@ -16,11 +22,15 @@ cdecay : "CDecay" label
 
 define : "Define" label value
 
+particle_def: "Particle" label value value // Set the mass and width of a paricle (in GeV)
+
 model_alias : "ModelAlias" model_label model
 
 alias : "Alias" label label
 
 chargeconj : "ChargeConj" label label
+
+changemasslimit : ("ChangeMassMin" | "ChangeMassMax") label value // Set upper/lower mass cuts on a lineshape
 
 ?commands : global_photos
 
@@ -41,7 +51,7 @@ particle : LABEL // Add full particle parsing here
 model_label : LABEL
 
 model : (model_label _SEMICOLON+ | MODEL_NAME_AND_SC | MODEL_NAME_AND_WS model_options _SEMICOLON+)
-model_options : (value | LABEL | _NEWLINE)+
+model_options : (value | LABEL | _NEWLINE | _COMMA)+
 
 // model : model_generic
 // model_helamp : "HELAMP" (SIGNED_NUMBER SIGNED_NUMBER)+
@@ -55,6 +65,7 @@ model_options : (value | LABEL | _NEWLINE)+
 // Disregard comments, (multiple) newlines and whitespace in parser tree
 _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )
 _SEMICOLON: /;/
+_COMMA: /,/
 _WS: WS_INLINE
 
 // Model names must either be followed by at least one whitespace (when they have model parameters) or a semicolon (without model parameters)
@@ -63,9 +74,9 @@ _WS: WS_INLINE
 MODEL_NAME_AND_WS.2: MODEL_NAME _WS+
 MODEL_NAME_AND_SC.2: MODEL_NAME _WS* _SEMICOLON+
 
-MODEL_NAME : "BaryonPCR"|"BCL"|"BGL"|"BT02PI_CP_ISO"|"BTO3PI_CP"|"BTOSLLALI"|"BTOSLLBALL"|"BTOXSGAMMA"|"BTOXSLL"|"CB3PI-MPP"|"CB3PI-P00"|"D_DALITZ"|"ETAPRIME_DALITZ"|"ETA_DALITZ"|"ETA_FULLDALITZ"|"ETA_PI0DALITZ"|"FLATQ2"|"FLATSQDALITZ"|"GENERIC_DALITZ"|"GOITY_ROBERTS"|"HELAMP"|"HQET3"|"HQET2"|"HQET"|"ISGW2"|"ISGW"|"LbAmpGen"|"LLSW"|"MELIKHOV"|"OMEGA_DALITZ"|"PARTWAVE"|"PHSP"|"PI0_DALITZ"|"PROPSLPOLE"|"PVV_CPLH"|"PYCONT"|"PYTHIA"|"SLBKPOLE"|"SLN"|"SLPOLE"|"SSD_CP"|"SSD_DirectCP"|"SSS_CP"|"SSS_CP_PNG"|"SSS_CPT"|"STS_CP"|"STS"|"SVP_CP"|"SVP_HELAMP"|"SVP"|"SVS_CP_ISO"|"SVS_CPLH"|"SVS_CP"|"SVS_NONCPEIGEN"|"SVS"|"SVV_CPLH"|"SVV_CP"|"SVV_HELAMP"|"SVV_NONCPEIGEN"|"SVVHELCPMIX"|"TAUHADNU"|"TAULNUNU"|"TAUSCALARNU"|"TAUVECTORNU"|"TSS"|"TVP"|"TVS_PWAVE"|"VLL"|"VSP_PWAVE"|"VSS_BMIX"|"VSS_MIX"|"VSS"|"VUB"|"VVPIPI"|"VVP"|"VVS_PWAVE"|"YMSTOYNSPIPICLEO"|"YMSTOYNSPIPICLEOBOOST"
+MODEL_NAME : "BaryonPCR"|"BC_SMN"|"BC_TMN"|"BC_VHAD"|"BC_VMN"|"BCL"|"BGL"|"BLLNUL"|"BNOCB0TO4PICP"|"BNOCBPTO3HPI0"|"BNOCBPTOKSHHH"|"BS_MUMUKK"|"BSTOGLLISRFSR"|"BSTOGLLMNT"|"BT02PI_CP_ISO"|"BTO3PI_CP"|"BTODDALITZCPK"|"BToDiBaryonlnupQCD"|"BTOSLLALI"|"BTOSLLBALL"|"BTOSLLMS"|"BTOSLLMSEXT"|"BTOVLNUBALL"|"BTOXSGAMMA"|"BTOXELNU"|"BTOXSLL"|"BQTOLLLLHYPERCP"|"BQTOLLLL"|"CB3PI-MPP"|"CB3PI-P00"|"D_DALITZ"|"D_hhhh"|"D0GAMMADALITZ"|"doKm"|"DToKpienu"|"ETAPRIME_DALITZ"|"ETA_DALITZ"|"ETA_FULLDALITZ"|"ETA_LLPIPI"|"ETA_PI0DALITZ"|"FLATQ2"|"FLATSQDALITZ"|"FOURBODYPHSP"|"GENERIC_DALITZ"|"GOITY_ROBERTS"|"HELAMP"|"HQET3"|"HQET2"|"HQET"|"imqp"|"ISGW2"|"ISGW"|"KS_PI0MUMU"|"Lb2Baryonlnu"|"Lb2plnuLCSR"|"Lb2plnuLQCD"|"LbAmpGen"|"LLSW"|"LNUGAMMA"|"LQCD"|"MELIKHOV"|"OMEGA_DALITZ"|"PARTWAVE"|"PHI_DALITZ"|"PHSPDECAYTIMECUT"|"PHSPFLATLIFETIME"|"PHSP"|"PI0_DALITZ"|"PROPSLPOLE"|"PTO3P"|"PVV_CPLH"|"PYCONT"|"PYTHIA"|"SLBKPOLE"|"SLL"|"SLN"|"SLPOLE"|"SSD_CP"|"SSD_DirectCP"|"SSS_CP_PNG"|"SSS_CP"|"SSS_CPT"|"STS_CP"|"STS"|"SVP_CP"|"SVP_HELAMP"|"SVP"|"SVS_CP_ISO"|"SVS_CPLH"|"SVS_CP"|"SVS_NONCPEIGEN"|"SVS"|"SVV_CPLH"|"SVV_CP"|"SVV_HELAMP"|"SVV_NONCPEIGEN"|"SVVHELCPMIX"|"TAUHADNU"|"TAULNUNU"|"TAUOLA"|"TAUSCALARNU"|"TAUVECTORNU"|"THREEBODYPHSP"|"TSS"|"TVP"|"TVS_PWAVE"|"VLL"|"VSP_PWAVE"|"VSS_BMIX"|"VSS_MIX"|"VSS"|"VTOSLL"|"VUB"|"VVPIPI"|"VVP"|"VVS_PWAVE"|"XLL"|"YMSTOYNSPIPICLEO"|"YMSTOYNSPIPICLEOBOOST"
 
-LABEL : /[a-zA-Z0-9\/\-+*_()']+/
+LABEL : /[a-zA-Z0-9\/\-+*_()'~]+/
 COMMENT : /[#][^\n]*/
 
 // We should ignore comments

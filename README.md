@@ -275,6 +275,9 @@ We hereby acknowledge the contributors that made this project possible ([emoji k
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sognetic"><img src="https://avatars.githubusercontent.com/u/10749132?v=4?s=100" width="100px;" alt="Moritz Bauer"/><br /><sub><b>Moritz Bauer</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=sognetic" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/FlorianReiss"><img src="https://avatars.githubusercontent.com/u/44642966?v=4?s=100" width="100px;" alt="FlorianReiss"/><br /><sub><b>FlorianReiss</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=FlorianReiss" title="Code">💻</a> <a href="https://github.com/scikit-hep/decaylanguage/commits?author=FlorianReiss" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://gitlab.cern.ch/users/admorris"><img src="https://avatars.githubusercontent.com/u/15155249?v=4?s=100" width="100px;" alt="Adam Morris"/><br /><sub><b>Adam Morris</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=admorris" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
