@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import string
 from copy import copy
-from typing import Any, Iterator, Pattern
+from typing import Any, ClassVar, Iterator, Pattern
 
 
 def iter_flatten(iterable: list[str] | tuple[str, ...]) -> Iterator[str]:
@@ -84,7 +84,7 @@ class DescriptorFormat:
     'D*+ -> (D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)) pi+'
     """
 
-    config = {
+    config: ClassVar[dict[str, str]] = {
         "decay_pattern": "{mother} -> {daughters}",
         "sub_decay_pattern": "({mother} -> {daughters})",
     }
