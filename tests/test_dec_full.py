@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+from typing import ClassVar
+
 import pytest
 from lark import Lark, Transformer, Tree
 from particle import ParticleNotFound
@@ -74,8 +76,8 @@ def setlspw(transformed):
 
 
 class TreeToDec2(Transformer):
-    missing = set()
-    keyerrs = set()
+    missing: ClassVar[str] = set()
+    keyerrs: ClassVar[str] = set()
 
     def __init__(self, alias_dict):
         self.alias_dict = alias_dict

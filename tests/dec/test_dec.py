@@ -341,7 +341,7 @@ def test_decay_model_parsing():
     # Simple decay model without model parameters
     dl = p._parsed_decays[2].children[1]  # 'MySecondD*+' Tree
     assert get_model_name(dl) == "VSS"
-    assert get_model_parameters(dl) == ""  # noqa: PLC1901
+    assert get_model_parameters(dl) == ""
 
     # Decay model with a set of floating-point model parameters
     dl = p._parsed_decays[0].children[1]  # 'B0sig' Tree
@@ -671,7 +671,7 @@ def test_Lark_DecayModelParamValueReplacement_Visitor_no_params():
     # The visitor should do nothing in this case
     tree_decayline = list(t.find_data("decayline"))[0]
     assert get_model_name(tree_decayline) == "PHSP"
-    assert get_model_parameters(tree_decayline) == ""  # noqa: PLC1901
+    assert get_model_parameters(tree_decayline) == ""
 
 
 def test_Lark_DecayModelParamValueReplacement_Visitor_single_value():
