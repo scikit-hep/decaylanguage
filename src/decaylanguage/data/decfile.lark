@@ -12,7 +12,7 @@ jetset_def : "JetSetPar" LABEL "=" SIGNED_NUMBER
 
 ls_def : ("LSFLAT" | "LSNONRELBW") label // Choose a lineshape for a particle
 
-inc_factor: ("IncludeBirthFactor" | "IncludeDecayFactor") label ("yes" | "no) // Presence of the birth/decay factor and form-factor
+inc_factor: ("IncludeBirthFactor" | "IncludeDecayFactor") label ("yes" | "no") // Presence of the birth/decay factor and form-factor
 
 setlsbw : "BlattWeisskopf" label value // Set Blatt-Weisskopf barrier factor for a lineshape
 
