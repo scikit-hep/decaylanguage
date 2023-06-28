@@ -16,6 +16,7 @@ import sys
 from copy import copy
 from enum import Enum
 from itertools import product
+from typing import ClassVar
 
 import attr
 import numpy as np
@@ -55,8 +56,8 @@ class AmplitudeChain(ModelDecay):
     name = attr.ib(None)
 
     # Class members keep track of additions
-    all_particles = set()
-    final_particles = set()
+    all_particles: ClassVar[Particle] = set()
+    final_particles: ClassVar[Particle] = set()
 
     # This is set class-wide, and only used when a line is made
     cartesian = False
