@@ -68,6 +68,7 @@ class DescriptorFormat:
 
     Examples
     --------
+    >>> from decaylanguage import DecayMode, DecayChain
     >>> dm1 = DecayMode(0.6770, "D0 pi+")  # D*+
     >>> dm2 = DecayMode(0.0124, "K_S0 pi0")  # D0
     >>> dm3 = DecayMode(0.692, "pi+ pi-")  # K_S0
