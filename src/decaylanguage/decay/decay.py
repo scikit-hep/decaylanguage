@@ -519,14 +519,18 @@ def _expand_decay_modes(
     Parameters
     ----------
     decay_chain: dict
+        A dict representing decay chains, such as returned by DecayChain.to_dict
+        or DecFileParser.build_decay_chains.
     top: bool, optional, default=True
+        Whether the passed decay chain is the top-level or not (should usually
+        be True: only really set to False when recursing the function).
     aliases: dict[str, str], optional, default={}
-
+        Mapping of names to replace. Useful when dealing with DecFiles that have
+        Alias statements.
 
     Examples
     --------
     A simple example with no sub-decays:
-
     {
         "anti-D0": [
             {
@@ -537,9 +541,7 @@ def _expand_decay_modes(
             }
         ]
     }
-
     becomes the dict
-
     {
         "anti-D0": [
             "anti-D0 -> K+ pi-"
@@ -592,6 +594,26 @@ def _expand_decay_modes(
         "anti-D*0": [
             "anti-D*0 -> (anti-D0 -> K+ pi-) pi0",
             "anti-D*0 -> (anti-D0 -> K+ pi-) gamma",
+        ]
+    }
+
+    and an example alias dict:
+    {"MyAntiD0": "anti-D0"}
+    can be used with
+    {
+        "MyAntiD0": [
+            {
+              "bf": 1.0,
+              "fs": ["K+", "pi-"],
+              "model": "PHSP",
+              "model_params": ""
+            }
+        ]
+    }
+    to result in
+    {
+        'MyAntiD0': [
+            'anti-D0 -> K+ pi-'
         ]
     }
     """
