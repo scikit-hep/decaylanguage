@@ -395,6 +395,7 @@ class DecFileParser:
         """
         Return a list of expanded decay descriptors for the given (mother) particle.
         The set of decay final states is effectively split and returned as a list.
+        NB: this implicitly reverts aliases back to the original (EvtGen) names.
         """
         self._check_parsing()
         decay_chains = self.build_decay_chains(particle)
