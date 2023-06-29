@@ -3,7 +3,7 @@
 // Distributed under the 3-clause BSD license, see accompanying file LICENSE
 // or https://github.com/scikit-hep/decaylanguage for details.
 
-start : _NEWLINE* (line _NEWLINE+)+ ("End" _NEWLINE+)?
+start : _NEWLINE* (line _NEWLINE+)* ("End" _NEWLINE+)?
 ?line : define | particle_def | pythia_def | jetset_def | ls_def | model_alias | alias | chargeconj | commands | decay | cdecay | copydecay | setlspw | setlsbw | changemasslimit | inc_factor
 
 pythia_def : ("PythiaBothParam" | "PythiaAliasParam") LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)

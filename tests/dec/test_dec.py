@@ -89,6 +89,12 @@ def test_unknown_decfile():
         DecFileParser("non-existent.dec")
 
 
+def test_minimalistic_decfile():
+    p = DecFileParser(DIR / "../data/minimalistic.dec")
+    p.parse()
+    assert p.number_of_decays == 0
+
+
 def test_non_parsed_decfile():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     with pytest.raises(DecFileNotParsed):
