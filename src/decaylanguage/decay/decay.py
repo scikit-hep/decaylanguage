@@ -8,13 +8,14 @@ from __future__ import annotations
 
 from collections import Counter
 from copy import deepcopy
+from itertools import product
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, TypeVar, Union
 
 from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
 from particle.exceptions import MatchingIDNotFound
 
-from ..utils import charge_conjugate_name
+from ..utils import DescriptorFormat, charge_conjugate_name
 
 Self_DaughtersDict = TypeVar("Self_DaughtersDict", bound="DaughtersDict")
 
@@ -446,7 +447,8 @@ class DecayMode:
 
 
 Self_DecayChain = TypeVar("Self_DecayChain", bound="DecayChain")
-DecayModeDict = Dict[str, List[Dict[str, Union[float, str, List[Any]]]]]
+DecayModeDict = Dict[str, Union[float, str, List[Any]]]
+DecayChainDict = Dict[str, List[DecayModeDict]]
 
 
 def _has_no_subdecay(ds: list[Any]) -> bool:
@@ -466,7 +468,7 @@ def _has_no_subdecay(ds: list[Any]) -> bool:
 
 
 def _build_decay_modes(
-    decay_modes: dict[str, DecayMode], dc_dict: DecayModeDict
+    decay_modes: dict[str, DecayMode], dc_dict: DecayChainDict
 ) -> None:
     """
     Internal recursive function that identifies and creates all `DecayMode` instances
@@ -503,6 +505,160 @@ def _build_decay_modes(
             # Create the decay mode now that none of its particles
             # has a sub-decay
             decay_modes[mother] = DecayMode.from_dict(d)
+
+
+def _expand_decay_modes(
+    decay_chain: DecayChainDict,
+    *,
+    top: bool = True,
+    aliases: dict[str, str] | None = None,
+) -> list[str]:
+    """Given a dict with 1 key (the mother particle) whose value is a list of
+    decay modes, recursively replace all decay modes with decay descriptors.
+
+    Parameters
+    ----------
+    decay_chain: dict
+        A dict representing decay chains, such as returned by DecayChain.to_dict
+        or DecFileParser.build_decay_chains.
+    top: bool, optional, default=True
+        Whether the passed decay chain is the top-level or not (should usually
+        be True: only really set to False when recursing the function).
+    aliases: dict[str, str], optional, default={}
+        Mapping of names to replace. Useful when dealing with DecFiles that have
+        Alias statements.
+
+    Examples
+    --------
+    A simple example with no sub-decays:
+    {
+        "anti-D0": [
+            {
+              "bf": 1.0,
+              "fs": ["K+", "pi-"],
+              "model": "PHSP",
+              "model_params": ""
+            }
+        ]
+    }
+    becomes the dict
+    {
+        "anti-D0": [
+            "anti-D0 -> K+ pi-"
+        ]
+    }
+
+    A more complicated example with a sub-decay and more than one mode:
+    {
+        "anti-D*0": [
+            {
+                "bf": 0.619,
+                "fs": [
+                    {
+                        "anti-D0": [
+                            {
+                                "bf": 1.0,
+                                "fs": ["K+", "pi-"],
+                                "model": "PHSP",
+                                "model_params": ""
+                            }
+                        ]
+                    },
+                    "pi0"
+                ],
+                "model": "VSS",
+                "model_params": ""
+            },
+            {
+                "bf": 0.381,
+                "fs": [
+                    {
+                        "anti-D0": [
+                            {
+                                "bf": 1.0,
+                                "fs": ["K+", "pi-"],
+                                "model": "PHSP",
+                                "model_params": ""
+                            }
+                        ]
+                    },
+                    "gamma"
+                ],
+                "model": "VSP_PWAVE",
+                "model_params": ""
+            }
+        ]
+    }
+    becomes the dict
+    {
+        "anti-D*0": [
+            "anti-D*0 -> (anti-D0 -> K+ pi-) pi0",
+            "anti-D*0 -> (anti-D0 -> K+ pi-) gamma",
+        ]
+    }
+
+    and an example alias dict:
+    {"MyAntiD0": "anti-D0"}
+    can be used with
+    {
+        "MyAntiD0": [
+            {
+              "bf": 1.0,
+              "fs": ["K+", "pi-"],
+              "model": "PHSP",
+              "model_params": ""
+            }
+        ]
+    }
+    to result in
+    {
+        'MyAntiD0': [
+            'anti-D0 -> K+ pi-'
+        ]
+    }
+    """
+
+    def _get_modes(decay_chain: DecayChainDict) -> list[DecayModeDict]:
+        # The list of decay modes is the first (and only) value of the dict
+        assert len(decay_chain.values()) == 1
+        modes = list(decay_chain.values())
+        return modes[0]
+
+    def _get_fs(decay: DecayModeDict) -> list[Any]:
+        fs = decay["fs"]
+        if isinstance(fs, list):
+            return fs
+        raise TypeError(f"Expected list, not {type(fs)}")
+
+    # The mother particle is the first (and only) key of the dict
+    assert len(decay_chain.keys()) == 1
+    orig_mother = list(decay_chain.keys())[0]
+    mother = aliases.get(orig_mother, orig_mother) if aliases else orig_mother
+
+    for mode in _get_modes(decay_chain):
+        for fsp in _get_fs(mode):
+            if isinstance(fsp, dict):
+                _expand_decay_modes(fsp, top=False, aliases=aliases)
+
+    # Replace dicts with strings (decay descriptors)
+    expanded_modes = []
+    for mode in _get_modes(decay_chain):
+        fsp_options = []
+        for fsp in _get_fs(mode):
+            if isinstance(fsp, dict):
+                fsp_options += [_get_modes(fsp)]
+            elif isinstance(fsp, str):
+                fsp_options += [[fsp]]  # type: ignore[list-item]
+        for expanded_mode in product(*fsp_options):
+            # TODO: delegate descriptor-building to another function
+            #       allow for different conventions?
+            final_state = DaughtersDict(list(expanded_mode)).to_string()
+            descriptor = DescriptorFormat.format_descriptor(mother, final_state, top)
+            expanded_modes += [descriptor]
+
+    decay_chain[orig_mother] = expanded_modes  # type: ignore[assignment]
+
+    return expanded_modes
 
 
 class DecayChain:
@@ -553,7 +709,7 @@ class DecayChain:
 
     @classmethod
     def from_dict(
-        cls: type[Self_DecayChain], decay_chain_dict: DecayModeDict
+        cls: type[Self_DecayChain], decay_chain_dict: DecayChainDict
     ) -> Self_DecayChain:
         """
         Constructor from a decay chain represented as a dictionary.
@@ -601,6 +757,26 @@ class DecayChain:
         Return the number of decay modes including the top-level decay.
         """
         return len(self.decays)
+
+    def to_string(self) -> str:
+        """
+        One-line string representation of the entire decay chain.
+        Sub-decays are enclosed in round parentheses.
+
+        Examples
+        --------
+        >>> dm1 = DecayMode(0.6770, "D0 pi+") # D*+
+        >>> dm2 = DecayMode(0.0124, "K_S0 pi0") # D0
+        >>> dm3 = DecayMode(0.692, "pi+ pi-") # K_S0
+        >>> dm4 = DecayMode(0.98823, "gamma gamma") # pi0
+        >>> dc = DecayChain("D*+", {"D*+":dm1, "D0":dm2, "K_S0":dm3, "pi0":dm4})
+        >>> print(dc.to_string())
+        D*+ -> (D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)) pi+
+        """
+        dc_dict = self.to_dict()
+        descriptors = _expand_decay_modes(dc_dict, top=True)
+        assert len(descriptors) == 1
+        return descriptors[0]
 
     def print_as_tree(self) -> None:  # pragma: no cover
         """
@@ -654,7 +830,7 @@ class DecayChain:
 
         # TODO: simplify logic and perform further checks
         def _print(
-            decay_dict: dict[str, list[dict[str, float | str | list[Any]]]],
+            decay_dict: DecayChainDict,
             depth: int = 0,
             link: bool = False,
             last: bool = False,
@@ -686,7 +862,7 @@ class DecayChain:
         dc_dict = self.to_dict()
         _print(dc_dict)
 
-    def to_dict(self) -> dict[str, list[dict[str, float | str | list[Any]]]]:
+    def to_dict(self) -> DecayChainDict:
         """
         Return the decay chain as a dictionary representation.
         The format is the same as `DecFileParser.build_decay_chains(...)`.
@@ -708,7 +884,7 @@ class DecayChain:
             'model_params': ''}]}
         """
 
-        # Ideally this would be a recursive type, DecayDict = dict[str, list[str | DecayDict]]
+        # Ideally this would be a recursive type, DecayDict = Dict[str, list[str | DecayDict]]
         DecayDict = Dict[str, List[Any]]
 
         def recursively_replace(mother: str) -> DecayDict:

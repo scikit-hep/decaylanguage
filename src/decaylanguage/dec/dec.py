@@ -54,6 +54,7 @@ from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
 
 from .. import data
+from ..decay.decay import _expand_decay_modes
 from ..utils import charge_conjugate_name
 from .enums import PhotosEnum
 
@@ -389,6 +390,17 @@ class DecFileParser:
         """
         self._check_parsing()
         return get_jetset_definitions(self._parsed_dec_file)
+
+    def expand_decay_modes(self, particle: str) -> list[str]:
+        """
+        Return a list of expanded decay descriptors for the given (mother) particle.
+        The set of decay final states is effectively split and returned as a list.
+        NB: this implicitly reverts aliases back to the original (EvtGen) names.
+        """
+        self._check_parsing()
+        decay_chains = self.build_decay_chains(particle)
+        aliases = self.dict_aliases()
+        return _expand_decay_modes(decay_chains, aliases=aliases)
 
     def list_lineshape_definitions(self) -> list[tuple[list[str], int]]:
         """
