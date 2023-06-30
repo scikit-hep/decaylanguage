@@ -471,72 +471,72 @@ def _build_decay_modes(
     decay_modes: dict[str, DecayMode], dc_dict: DecayChainDict
 ) -> None:
     """
-    Internal recursive function that identifies and creates all `DecayMode` instances
-    effectively contained in the dict representation of a `DecayChain`,
-    which is for example the format returned by `DecFileParser.build_decay_chains(...)`,
+     Internal recursive function that identifies and creates all `DecayMode` instances
+     effectively contained in the dict representation of a `DecayChain`,
+     which is for example the format returned by `DecFileParser.build_decay_chains(...)`,
 
-    Given the input dict representation of a `DecayChain`
-    it returns a dict of mother particles and their final states as `DecayMode` instances.
+     Given the input dict representation of a `DecayChain`
+     it returns a dict of mother particles and their final states as `DecayMode` instances.
 
-    Parameters
-    ----------
-    decay_modes: dict
-        A dict to be populated with the decay modes `DecayMode`
-        built from the input decay chain dictionary.
-    dc_dict: dict
-        The input decay chain dictionary.
+     Parameters
+     ----------
+     decay_modes: dict
+         A dict to be populated with the decay modes `DecayMode`
+         built from the input decay chain dictionary.
+     dc_dict: dict
+         The input decay chain dictionary.
 
-    Note
-    ----
-    Only single chains are supported, meaning every decaying particle
-    can only define a single decay mode.
+     Note
+     ----
+     Only single chains are supported, meaning every decaying particle
+     can only define a single decay mode.
 
-   Examples
-   --------
-   The simple example with no sub-decays:
-   >>> dc_dict = {
-       "anti-D0": [
-           {
-             "bf": 1.0,
-             "fs": ["K+", "pi-"],
-             "model": "PHSP",
-             "model_params": ""
-           }
-       ]
-   }
-   >>> # It provides
-   >>> decay_modes = {}
-   >>> _build_decay_modes(decay_modes, dc_dict)
-   >>> decay_modes
-   {'anti-D0': <DecayMode: daughters=K+ pi-, BF=1.0>}
-
-    A more complicated example with a sub-decay and more than one mode:
-    {
-        "anti-D*0": [
+    Examples
+    --------
+    The simple example with no sub-decays:
+    >>> dc_dict = {
+        "anti-D0": [
             {
-                "bf": 0.619,
-                "fs": [
-                    {
-                        "anti-D0": [
-                            {
-                                "bf": 1.0,
-                                "fs": ["K+", "pi-"],
-                                "model": "PHSP",
-                                "model_params": ""
-                            }
-                        ]
-                    },
-                    "pi0"
-                ],
-                "model": "VSS",
-                "model_params": ""
+              "bf": 1.0,
+              "fs": ["K+", "pi-"],
+              "model": "PHSP",
+              "model_params": ""
             }
         ]
     }
-    It provides
+    >>> # It provides
+    >>> decay_modes = {}
+    >>> _build_decay_modes(decay_modes, dc_dict)
     >>> decay_modes
-    {'anti-D0': <DecayMode: daughters=K+ pi-, BF=1.0>,
-     'anti-D*0': <DecayMode: daughters=anti-D0 pi0, BF=0.619>}
+    {'anti-D0': <DecayMode: daughters=K+ pi-, BF=1.0>}
+
+     A more complicated example with a sub-decay and more than one mode:
+     {
+         "anti-D*0": [
+             {
+                 "bf": 0.619,
+                 "fs": [
+                     {
+                         "anti-D0": [
+                             {
+                                 "bf": 1.0,
+                                 "fs": ["K+", "pi-"],
+                                 "model": "PHSP",
+                                 "model_params": ""
+                             }
+                         ]
+                     },
+                     "pi0"
+                 ],
+                 "model": "VSS",
+                 "model_params": ""
+             }
+         ]
+     }
+     It provides
+     >>> decay_modes
+     {'anti-D0': <DecayMode: daughters=K+ pi-, BF=1.0>,
+      'anti-D*0': <DecayMode: daughters=anti-D0 pi0, BF=0.619>}
     """
     mother = list(dc_dict.keys())[0]
     dms = dc_dict[mother]

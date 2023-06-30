@@ -315,14 +315,22 @@ def test_DecayChain_constructor_from_dict():
 
 
 def test_DecayChain_constructor_from_dict_multiple_final_states():
-    dc_dict = {'MyD-': [{'bf': 0.905,
-                         'fs': ['K+', 'pi-', 'pi-'],
-                         'model': 'D_DALITZ',
-                         'model_params': ''},
-                         {'bf': 0.095,
-                          'fs': ['K+', 'K-', 'pi-'],
-                          'model': 'D_DALITZ',
-                          'model_params': ''}]}
+    dc_dict = {
+        "MyD-": [
+            {
+                "bf": 0.905,
+                "fs": ["K+", "pi-", "pi-"],
+                "model": "D_DALITZ",
+                "model_params": "",
+            },
+            {
+                "bf": 0.095,
+                "fs": ["K+", "K-", "pi-"],
+                "model": "D_DALITZ",
+                "model_params": "",
+            },
+        ]
+    }
     with pytest.raises(RuntimeError):
         _ = DecayChain.from_dict(dc_dict)
 
