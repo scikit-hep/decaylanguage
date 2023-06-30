@@ -477,17 +477,82 @@ def _build_decay_modes(
 
     Given the input dict representation of a `DecayChain`
     it returns a dict of mother particles and their final states as `DecayMode` instances.
+
+    Parameters
+    ----------
+    decay_modes: dict
+        A dict to be populated with the decay modes `DecayMode`
+        built from the input decay chain dictionary.
+    dc_dict: dict
+        The input decay chain dictionary.
+
+    Note
+    ----
+    Only single chains are supported, meaning every decaying particle
+    can only define a single decay mode.
+
+   Examples
+   --------
+   The simple example with no sub-decays:
+   >>> dc_dict = {
+       "anti-D0": [
+           {
+             "bf": 1.0,
+             "fs": ["K+", "pi-"],
+             "model": "PHSP",
+             "model_params": ""
+           }
+       ]
+   }
+   >>> # It provides
+   >>> decay_modes = {}
+   >>> _build_decay_modes(decay_modes, dc_dict)
+   >>> decay_modes
+   {'anti-D0': <DecayMode: daughters=K+ pi-, BF=1.0>}
+
+    A more complicated example with a sub-decay and more than one mode:
+    {
+        "anti-D*0": [
+            {
+                "bf": 0.619,
+                "fs": [
+                    {
+                        "anti-D0": [
+                            {
+                                "bf": 1.0,
+                                "fs": ["K+", "pi-"],
+                                "model": "PHSP",
+                                "model_params": ""
+                            }
+                        ]
+                    },
+                    "pi0"
+                ],
+                "model": "VSS",
+                "model_params": ""
+            }
+        ]
+    }
+    It provides
+    >>> decay_modes
+    {'anti-D0': <DecayMode: daughters=K+ pi-, BF=1.0>,
+     'anti-D*0': <DecayMode: daughters=anti-D0 pi0, BF=0.619>}
     """
     mother = list(dc_dict.keys())[0]
     dms = dc_dict[mother]
 
     for dm in dms:
+        # Single decay chains are allowed, which means a particle cannot have 2 decay modes
+        if mother in decay_modes:
+            raise RuntimeError("Input is not a single decay chain!") from None
+
         try:
             fs = dm["fs"]
         except Exception as e:
             raise RuntimeError(
                 "Internal dict representation not in the expected format - no 'fs' key is present!"
             ) from e
+
         assert isinstance(fs, list)
         if _has_no_subdecay(fs):
             decay_modes[mother] = DecayMode.from_dict(dm)
@@ -663,17 +728,19 @@ def _expand_decay_modes(
 
 class DecayChain:
     """
-    Class holding a particle decay chain, which is typically a top-level decay
+    Class holding a particle (single) decay chain, which is typically a top-level decay
     (mother particle, branching fraction and final-state particles)
     and a set of sub-decays for any non-stable particle in the top-level decay.
-    The whole chain can be seen as a mother particle and a list of decay modes.
+    The whole chain can be seen as a mother particle and a list of chained decay modes.
 
     This class is the main building block for the digital representation
     of full decay chains.
 
     Note
     ----
-    This class does not assume any kind of particle names (EvtGen, PDG).
+    1) Only single chains are supported, meaning every decaying particle
+    can only define a single decay mode.
+    2) This class does not assume any kind of particle names (EvtGen, PDG).
     It is nevertheless advised to default use EvtGen names for consistency
     with the defaults used in the related classes `DecayMode` and `DaughtersDict`,
     unless there is a good motivation not to.
