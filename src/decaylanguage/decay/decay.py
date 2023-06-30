@@ -495,22 +495,22 @@ def _build_decay_modes(
     --------
     The simple example with no sub-decays:
     >>> dc_dict = {
-        "anti-D0": [
-            {
-              "bf": 1.0,
-              "fs": ["K+", "pi-"],
-              "model": "PHSP",
-              "model_params": ""
-            }
-        ]
-    }
+    ...     "anti-D0": [
+    ...         {
+    ...           "bf": 1.0,
+    ...           "fs": ["K+", "pi-"],
+    ...           "model": "PHSP",
+    ...           "model_params": ""
+    ...         }
+    ...     ]
+    ... }
     >>> # It provides
     >>> decay_modes = {}
     >>> _build_decay_modes(decay_modes, dc_dict)
     >>> decay_modes
     {'anti-D0': <DecayMode: daughters=K+ pi-, BF=1.0>}
 
-    A more complicated example with a sub-decay and more than one mode:
+    A more complicated example with a sub-decay and more than one mode
     {
         "anti-D*0": [
             {
@@ -533,8 +533,7 @@ def _build_decay_modes(
             }
         ]
     }
-    It provides
-    >>> decay_modes
+    provides
     {'anti-D0': <DecayMode: daughters=K+ pi-, BF=1.0>,
      'anti-D*0': <DecayMode: daughters=anti-D0 pi0, BF=0.619>}
     """
