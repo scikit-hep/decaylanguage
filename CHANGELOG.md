@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 0.15.4 (2023-06-30)
+
+* Parsing of decay files (aka .dec files):
+  - Added support for many new EvtGen models and keywords (mostly for LHCb).
+  - Added first implementation of decay descriptors, decay chains represented as strings.
+  - Added support for empty or minimalistic decay files.
+* Universal representation of decay chains:
+  - Several enhancements,e.g. for handling of decay descriptors.
+  - Improvements to type hints.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.15.3 (2023-04-06)
 
 * CI and tests:
