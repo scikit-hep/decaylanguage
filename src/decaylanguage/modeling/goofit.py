@@ -369,17 +369,19 @@ class GooFitChain(AmplitudeChain):
         """
         intro = "    line_factor_list.push_back(std::vector<Lineshape*>{\n"
         factor = []
-        
+
         for structure in self.list_structure(final_states):
             if self.decay_structure == DecayStructure.FF_12_34:
-                mass1 = f'M_{structure[0]+1}{structure[1]+1}'
-                mass2 = f'M_{structure[2]+1}{structure[3]+1}'
+                mass1 = f"M_{structure[0]+1}{structure[1]+1}"
+                mass2 = f"M_{structure[2]+1}{structure[3]+1}"
             else:
-                mass1 = f'M_{structure[0]+1}{structure[1]+1}_{structure[2]+1}'
-                mass2 = f'M_{structure[0]+1}{structure[1]+1}'
+                mass1 = f"M_{structure[0]+1}{structure[1]+1}_{structure[2]+1}"
+                mass2 = f"M_{structure[0]+1}{structure[1]+1}"
             masses = [mass1, mass2]
             for i_mass, sub in enumerate(self.vertexes):
-                factor.append("        " + sub.make_lineshape(structure, masses[i_mass]))
+                factor.append(
+                    "        " + sub.make_lineshape(structure, masses[i_mass])
+                )
         exit_ = "\n    });\n"
         return intro + ",\n".join(factor) + exit_
 
@@ -744,14 +746,16 @@ class GooFitPyChain(AmplitudeChain):
         factor = []
         for structure in self.list_structure(final_states):
             if self.decay_structure == DecayStructure.FF_12_34:
-                mass1 = f'M_{structure[0]+1}{structure[1]+1}'
-                mass2 = f'M_{structure[2]+1}{structure[3]+1}'
+                mass1 = f"M_{structure[0]+1}{structure[1]+1}"
+                mass2 = f"M_{structure[2]+1}{structure[3]+1}"
             else:
-                mass1 = f'M_{structure[0]+1}{structure[1]+1}_{structure[2]+1}'
-                mass2 = f'M_{structure[0]+1}{structure[1]+1}'
+                mass1 = f"M_{structure[0]+1}{structure[1]+1}_{structure[2]+1}"
+                mass2 = f"M_{structure[0]+1}{structure[1]+1}"
             masses = [mass1, mass2]
             for i_mass, sub in enumerate(self.vertexes):
-                factor.append("        " + sub.make_lineshape(structure, masses[i_mass]))
+                factor.append(
+                    "        " + sub.make_lineshape(structure, masses[i_mass])
+                )
         exit_ = "))\n"
         return intro + ",\n".join(factor) + exit_
 
