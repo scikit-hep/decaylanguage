@@ -282,10 +282,8 @@ class GooFitChain(AmplitudeChain):
         """
         name = self.name
         par = self.particle.programmatic_name
-        #print("structure", structure)
         a = structure[0] + 1
         b = structure[1] + 1
-        #print("factor", self.spindetails())
         # order assignment
         if a > b:
             a, b = b, a
@@ -371,9 +369,7 @@ class GooFitChain(AmplitudeChain):
         """
         intro = "    line_factor_list.push_back(std::vector<Lineshape*>{\n"
         factor = []
-        #print("spindetials", self.spindetails(),self.decay_structure == DecayStructure.FF_12_34 )
         
-        #print("finak states", final_states, self.list_structure(final_states))
         for structure in self.list_structure(final_states):
             if self.decay_structure == DecayStructure.FF_12_34:
                 mass1 = f'M_{structure[0]+1}{structure[1]+1}'
@@ -381,12 +377,8 @@ class GooFitChain(AmplitudeChain):
             else:
                 mass1 = f'M_{structure[0]+1}{structure[1]+1}_{structure[2]+1}'
                 mass2 = f'M_{structure[0]+1}{structure[1]+1}'
-            #print("vertexex", self.vertexes)
-            #exprint("masses", mass1, mass2)
             masses = [mass1, mass2]
             for i_mass, sub in enumerate(self.vertexes):
-                #print("sub", sub)
-                #print("lsit strucytre", structure, sub, len(sub))
                 factor.append("        " + sub.make_lineshape(structure, masses[i_mass]))
         exit_ = "\n    });\n"
         return intro + ",\n".join(factor) + exit_
