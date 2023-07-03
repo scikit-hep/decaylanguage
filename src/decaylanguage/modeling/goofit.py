@@ -276,14 +276,16 @@ class GooFitChain(AmplitudeChain):
 
         return "\n".join(headerlist) + "\n" + header
 
-    def make_lineshape(self, structure):
+    def make_lineshape(self, structure, masses):
         """
         Write out the line shapes. Each kind of line shape is treated separately.
         """
         name = self.name
         par = self.particle.programmatic_name
+        #print("structure", structure)
         a = structure[0] + 1
         b = structure[1] + 1
+        #print("factor", self.spindetails())
         # order assignment
         if a > b:
             a, b = b, a
@@ -291,21 +293,20 @@ class GooFitChain(AmplitudeChain):
         radius = 5.0 if "c" in self.particle.quarks.lower() else 1.5
 
         if self.ls_enum == LS.RBW:
-            return 'new Lineshapes::RBW("{name}", {par}_M, {par}_W, {L}, M_{a}{b}, FF::BL2)'.format(
-                name=name, par=par, L=L, a=a, b=b
+            return 'new Lineshapes::RBW("{name}", {par}_M, {par}_W, {L}, {a}, FF::BL2)'.format(
+                name=name, par=par, L=L, a=masses
             )
         if self.ls_enum == LS.GSpline:
             min_ = self.__class__.consts.loc[f"{self.name}::Spline::Min", "value"]
             max_ = self.__class__.consts.loc[f"{self.name}::Spline::Max", "value"]
             N = self.__class__.consts.loc[f"{self.name}::Spline::N", "value"]
             AdditionalVars = programmatic_name(self.name) + "_SplineArr"
-            return """new Lineshapes::GSpline("{name}", {par}_M, {par}_W, {L}, M_{a}{b}, FF::BL2,
+            return """new Lineshapes::GSpline("{name}", {par}_M, {par}_W, {L}, {a}, FF::BL2,
             {radius}, {AdditionalVars}, Lineshapes::spline_t({min},{max},{N}))""".format(
                 name=name,
                 par=par,
                 L=L,
-                a=a,
-                b=b,
+                a=masses,
                 radius=radius,
                 AdditionalVars=AdditionalVars,
                 min=min_,
@@ -319,14 +320,13 @@ class GooFitChain(AmplitudeChain):
             return """new Lineshapes::kMatrix("{name}", {pterm}, {is_pole},
             sA_0, sA, s0_prod, s0_scatt,
             f_scatt, IS_poles,
-            {par}_M, {par}_W, {L}, M_{a}{b}, FF::BL2, {radius})""".format(
+            {par}_M, {par}_W, {L}, {a}, FF::BL2, {radius})""".format(
                 name=name,
                 pterm=pterm,
                 is_pole=is_pole,
                 par=par,
                 L=L,
-                a=a,
-                b=b,
+                a=masses,
                 radius=radius,
             )
 
@@ -334,8 +334,8 @@ class GooFitChain(AmplitudeChain):
             _, mod = self.lineshape.split(".")
             return (
                 'new Lineshapes::FOCUS("{name}", Lineshapes::FOCUS::Mod::{mod},'
-                " {par}_M, {par}_W, {L}, M_{a}{b}, FF::BL2, {radius})"
-            ).format(name=name, mod=mod, par=par, L=L, a=a, b=b, radius=radius)
+                " {par}_M, {par}_W, {L}, {a}, FF::BL2, {radius})"
+            ).format(name=name, mod=mod, par=par, L=L, a=masses, radius=radius)
 
         raise NotImplementedError(f"Unimplemented GooFit Lineshape {self.ls_enum.name}")
 
@@ -371,9 +371,23 @@ class GooFitChain(AmplitudeChain):
         """
         intro = "    line_factor_list.push_back(std::vector<Lineshape*>{\n"
         factor = []
+        #print("spindetials", self.spindetails(),self.decay_structure == DecayStructure.FF_12_34 )
+        
+        #print("finak states", final_states, self.list_structure(final_states))
         for structure in self.list_structure(final_states):
-            for sub in self.vertexes:
-                factor.append("        " + sub.make_lineshape(structure))
+            if self.decay_structure == DecayStructure.FF_12_34:
+                mass1 = f'M_{structure[0]+1}{structure[1]+1}'
+                mass2 = f'M_{structure[2]+1}{structure[3]+1}'
+            else:
+                mass1 = f'M_{structure[0]+1}{structure[1]+1}_{structure[2]+1}'
+                mass2 = f'M_{structure[0]+1}{structure[1]+1}'
+            #print("vertexex", self.vertexes)
+            #exprint("masses", mass1, mass2)
+            masses = [mass1, mass2]
+            for i_mass, sub in enumerate(self.vertexes):
+                #print("sub", sub)
+                #print("lsit strucytre", structure, sub, len(sub))
+                factor.append("        " + sub.make_lineshape(structure, masses[i_mass]))
         exit_ = "\n    });\n"
         return intro + ",\n".join(factor) + exit_
 
