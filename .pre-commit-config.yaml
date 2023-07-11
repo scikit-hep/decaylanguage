@@ -34,7 +34,7 @@ repos:
   hooks:
   - id: mypy
     files: '^src/decaylanguage/(decay|dec|utils)/'
-    additional_dependencies: [attrs, particle, importlib_resources, numpy, types-deprecated]
+    additional_dependencies: [attrs, particle, importlib_resources, numpy]
 
 - repo: https://github.com/codespell-project/codespell
   rev: v2.2.5
