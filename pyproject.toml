@@ -42,7 +42,6 @@ classifiers = [
 ]
 dependencies = [
     "attrs>=19.2",
-    "deprecated",
     "graphviz>=0.12.0",
     "importlib-resources>=2.0;python_version<\"3.9\"",
     "lark>=1.0.0",
