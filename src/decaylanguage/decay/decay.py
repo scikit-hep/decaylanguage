@@ -141,9 +141,7 @@ class DaughtersDict(CounterStr):
         )
 
     def __repr__(self) -> str:
-        return "<{self.__class__.__name__}: {daughters}>".format(
-            self=self, daughters=self.to_list()
-        )
+        return f"<{self.__class__.__name__}: {self.to_list()}>"
 
     def __str__(self) -> str:
         return repr(self)

@@ -95,9 +95,7 @@ class GooFitChain(AmplitudeChain):
         for particle in final_particles:
             name = particle.programmatic_name.upper()
             header += (
-                "    constexpr fptype {name:8} {{ {particle.mass:<14.8g} }};\n".format(
-                    name=name, particle=particle
-                )
+                f"    constexpr fptype {name:8} {{ {particle.mass:<14.8g} }};\n"
             )
 
         header += "\n"
@@ -184,9 +182,7 @@ class GooFitChain(AmplitudeChain):
 
         raise LineFailure(
             self,
-            "Spinfactors not currently included!: {spindet}".format(
-                spindet=self.spindetails()
-            ),
+            f"Spinfactors not currently included!: {self.spindetails()}",
         )
 
         # if self.decay_structure == DecayStructure.FF_12_34 :
@@ -225,9 +221,7 @@ class GooFitChain(AmplitudeChain):
                 )
             else:
                 headerlist.append(
-                    '    Variable {pname} {{"{name}", {par.value} }};'.format(
-                        pname=pname, name=name, par=par
-                    )
+                    f'    Variable {pname} {{"{name}", {par.value} }};'
                 )
 
         def strip_pararray(pars, begin, convert=lambda x: x):
@@ -467,9 +461,7 @@ class GooFitPyChain(AmplitudeChain):
 
         for particle in final_particles:
             name = particle.programmatic_name.upper()
-            header += "{name:8} = {particle.mass:<14.8g}\n".format(
-                name=name, particle=particle
-            )
+            header += f"{name:8} = {particle.mass:<14.8g}\n"
 
         header += "\n"
 
@@ -559,9 +551,7 @@ class GooFitPyChain(AmplitudeChain):
 
         raise LineFailure(
             self,
-            "Spinfactors not currently included!: {spindet}".format(
-                spindet=self.spindetails()
-            ),
+            f"Spinfactors not currently included!: {self.spindetails()}",
         )
 
         # if self.decay_structure == DecayStructure.FF_12_34 :
@@ -600,9 +590,7 @@ class GooFitPyChain(AmplitudeChain):
                 )
             else:
                 headerlist.append(
-                    '{pname} = Variable("{name}", {par.value})'.format(
-                        pname=pname, name=name, par=par
-                    )
+                    f'{pname} = Variable("{name}", {par.value})'
                 )
 
         def strip_pararray(pars, begin, convert=lambda x: x):

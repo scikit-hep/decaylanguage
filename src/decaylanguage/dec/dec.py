@@ -988,9 +988,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             return "<{self.__class__.__name__}: decfile(s)={decfile}, n_decays={n_decays}>".format(
                 self=self, decfile=self._dec_file_names, n_decays=self.number_of_decays
             )
-        return "<{self.__class__.__name__}: decfile(s)={decfile}>".format(
-            self=self, decfile=self._dec_file_names
-        )
+        return f"<{self.__class__.__name__}: decfile(s)={self._dec_file_names}>"
 
     def __str__(self) -> str:
         return repr(self)
@@ -1525,9 +1523,7 @@ def get_pythia_definitions(parsed_file: Tree) -> dict[str, str | float]:
 
     try:
         return {
-            "{}:{}".format(
-                tree.children[0].value, tree.children[1].value
-            ): str_or_float(tree.children[2].value)
+            f"{tree.children[0].value}:{tree.children[1].value}": str_or_float(tree.children[2].value)
             for tree in parsed_file.find_data("pythia_def")
         }
     except Exception as err:
