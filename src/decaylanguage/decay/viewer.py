@@ -108,11 +108,7 @@ class DecayChainViewer:
             bgcolor: str = "#9abad6",
         ) -> str:
             if add_tags:
-                label = (
-                    '<<TABLE BORDER="0" CELLSPACING="0" BGCOLOR="{bgcolor}">'.format(
-                        bgcolor=bgcolor
-                    )
-                )
+                label = f'<<TABLE BORDER="0" CELLSPACING="0" BGCOLOR="{bgcolor}">'
             else:
                 label = '<<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0" BGCOLOR="{bgcolor}"><TR>'.format(
                     bgcolor=bgcolor
@@ -123,9 +119,7 @@ class DecayChainViewer:
                         tag=i, name=safe_html_name(n)
                     )
                 else:
-                    label += '<TD BORDER="0" CELLPADDING="2">{name}</TD>'.format(
-                        name=safe_html_name(n)
-                    )
+                    label += f'<TD BORDER="0" CELLPADDING="2">{safe_html_name(n)}</TD>'
             label += "{tr}</TABLE>>".format(tr="" if add_tags else "</TR>")
             return label
 
