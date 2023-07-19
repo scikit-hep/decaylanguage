@@ -1523,7 +1523,9 @@ def get_pythia_definitions(parsed_file: Tree) -> dict[str, str | float]:
 
     try:
         return {
-            f"{tree.children[0].value}:{tree.children[1].value}": str_or_float(tree.children[2].value)
+            f"{tree.children[0].value}:{tree.children[1].value}": str_or_float(
+                tree.children[2].value
+            )
             for tree in parsed_file.find_data("pythia_def")
         }
     except Exception as err:

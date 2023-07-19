@@ -94,9 +94,7 @@ class GooFitChain(AmplitudeChain):
 
         for particle in final_particles:
             name = particle.programmatic_name.upper()
-            header += (
-                f"    constexpr fptype {name:8} {{ {particle.mass:<14.8g} }};\n"
-            )
+            header += f"    constexpr fptype {name:8} {{ {particle.mass:<14.8g} }};\n"
 
         header += "\n"
 
@@ -220,9 +218,7 @@ class GooFitChain(AmplitudeChain):
                     )
                 )
             else:
-                headerlist.append(
-                    f'    Variable {pname} {{"{name}", {par.value} }};'
-                )
+                headerlist.append(f'    Variable {pname} {{"{name}", {par.value} }};')
 
         def strip_pararray(pars, begin, convert=lambda x: x):
             mysplines = pars.index[pars.index.str.contains(begin, regex=False)]
@@ -589,9 +585,7 @@ class GooFitPyChain(AmplitudeChain):
                     )
                 )
             else:
-                headerlist.append(
-                    f'{pname} = Variable("{name}", {par.value})'
-                )
+                headerlist.append(f'{pname} = Variable("{name}", {par.value})')
 
         def strip_pararray(pars, begin, convert=lambda x: x):
             mysplines = pars.index[pars.index.str.contains(begin, regex=False)]
