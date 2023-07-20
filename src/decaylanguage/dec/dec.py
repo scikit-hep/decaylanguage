@@ -369,11 +369,12 @@ class DecFileParser:
 
     def dict_pythia_definitions(self) -> dict[str, str | float]:
         """
-        Return a dictionary of all Pythia definitions in the input parsed file,
-        of the form
-        "PythiaBothParam <NAME>=<LABEL>"
+        Return a dictionary of all Pythia definitions, of type
+        <PYTHIA_DEF> = "PythiaBothParam" or "PythiaAliasParam",
+        in the input parsed file, of the form
+        "<PYTHIA_DEF> <NAME>=<LABEL>"
         or
-        "PythiaBothParam <NAME>=<NUMBER>",
+        "<PYTHIA_DEF> <NAME>=<NUMBER>",
         as {'NAME1': 'LABEL1', 'NAME2': VALUE2, ...}.
         """
         self._check_parsing()
@@ -1502,11 +1503,12 @@ def get_charge_conjugate_defs(parsed_file: Tree) -> dict[str, str]:
 
 def get_pythia_definitions(parsed_file: Tree) -> dict[str, str | float]:
     """
-    Return a dictionary of all Pythia definitions in the input parsed file,
-    of the form
-    "PythiaBothParam <NAME>=<LABEL>"
+    Return a dictionary of all Pythia definitions, of type
+    <PYTHIA_DEF> = "PythiaBothParam" or "PythiaAliasParam",
+    in the input parsed file, of the form
+    "<PYTHIA_DEF> <NAME>=<LABEL>"
     or
-    "PythiaBothParam <NAME>=<NUMBER>",
+    "<PYTHIA_DEF> <NAME>=<NUMBER>",
     as {'NAME1': 'LABEL1', 'NAME2': VALUE2, ...}.
 
     Parameters
