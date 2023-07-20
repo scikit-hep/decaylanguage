@@ -16,7 +16,7 @@ inc_factor: ("IncludeBirthFactor" | "IncludeDecayFactor") label ("yes" | "no") /
 
 setlsbw : "BlattWeisskopf" label value // Set Blatt-Weisskopf barrier factor for a lineshape
 
-setlspw : "SetLineshapePW" label label label value
+setlspw : "SetLineshapePW" LABEL LABEL LABEL INT // Redefine Partial Wave for label -> label label
 
 cdecay : "CDecay" label
 
@@ -60,6 +60,7 @@ model_options : (value | LABEL | _NEWLINE | _COMMA)+
 // To use a fast parser, we need to avoid conflicts
 
 %import common.WS_INLINE
+%import common.INT
 %import common.SIGNED_NUMBER
 
 // Disregard comments, (multiple) newlines and whitespace in parser tree

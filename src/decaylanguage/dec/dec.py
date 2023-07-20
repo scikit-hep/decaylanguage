@@ -373,6 +373,11 @@ class DecFileParser:
         in the input parsed file, of the form "Particle <PARTICLE> <MASS> <WIDTH>",
         as {'PARTICLE1': {'mass': MASS1, 'width': WIDTH1},
             'PARTICLE2': {'mass': MASS2, 'width': WIDTH2}, ...}.
+
+        Note
+        ----
+        Particles are often defined via aliases and post-processing may be needed
+        to match the mass and width to the actual particle.
         """
         self._check_parsing()
         return get_particle_property_definitions(self._parsed_dec_file)
@@ -1646,8 +1651,8 @@ def get_lineshape_definitions(
     try:
         d = []
         for tree in parsed_file.find_data("setlspw"):
-            particles = [p.children[0].value for p in tree.children[:-1]]
-            val = int(tree.children[3].children[0].value)
+            particles = [p.value for p in tree.children[:-1]]
+            val = int(tree.children[3].value)
             d.append((particles, val))
         return d
     except Exception as err:
