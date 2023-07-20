@@ -196,6 +196,8 @@ def test_pythia_definitions_parsing():
         "Init:showChangedSettings": "off",
         "Init:showChangedParticleData": "off",
         "Next:numberShowEvent": 0.0,
+        "ParticleDecays:sophisticatedTau": 3,
+        "ParticleDecays:tauPolarization": -1.0,
     }
 
 

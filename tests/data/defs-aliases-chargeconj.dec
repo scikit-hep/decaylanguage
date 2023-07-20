@@ -259,6 +259,9 @@ PythiaBothParam Init:showChangedSettings=off
 PythiaBothParam Init:showChangedParticleData=off
 PythiaBothParam Next:numberShowEvent=0
 
+PythiaAliasParam ParticleDecays:sophisticatedTau=3
+PythiaAliasParam ParticleDecays:tauPolarization=-1.
+
 JetSetPar MSTU(1)=0
 JetSetPar MSTU(2)=0
 JetSetPar PARU(11)=0.001
