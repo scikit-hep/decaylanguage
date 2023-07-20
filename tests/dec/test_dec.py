@@ -155,7 +155,7 @@ def test_aliases_parsing():
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
-    assert len(p.dict_aliases()) == 132
+    assert len(p.dict_aliases()) == 135
 
 
 def test_model_aliases_parsing():
@@ -187,6 +187,16 @@ def test_charge_conjugates_parsing():
     assert len(p.dict_charge_conjugates()) == 77
 
 
+def test_particle_property_definitions():
+    p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
+    p.parse()
+
+    assert p.get_particle_property_definitions() == {
+        "MyK*0": {"mass": 0.892, "width": 0.051},
+        "MyPhi": {"mass": 1.02, "width": 0.004},
+    }
+
+
 def test_pythia_definitions_parsing():
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
@@ -196,6 +206,8 @@ def test_pythia_definitions_parsing():
         "Init:showChangedSettings": "off",
         "Init:showChangedParticleData": "off",
         "Next:numberShowEvent": 0.0,
+        "ParticleDecays:sophisticatedTau": 3,
+        "ParticleDecays:tauPolarization": -1.0,
     }
 
 

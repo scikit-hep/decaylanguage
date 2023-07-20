@@ -251,6 +251,28 @@ Alias      Omega_cc+sig         Omega_cc+
 Alias      anti-Omega_cc-sig    anti-Omega_cc-
 ChargeConj Omega_cc+sig         anti-Omega_cc-sig
 
+# Specifications typically relevant when dealing with lineshapes,
+# and typically using particle name aliases
+#
+Alias MyK*0 K*0
+Particle       MyK*0  0.892  0.051  # To set a particle mass and width
+LSNONRELBW     MyK*0  #  To set the lineshape for a particle
+BlattWeisskopf MyK*0  0.0  # To set the Blatt-Weisskopf barrier factor for a lineshape
+ChangeMassMin  MyK*0  0.5  # To set a lower mass cut on a lineshape
+ChangeMassMax  MyK*0  3.5  # ...   an upper mass ...
+#
+Alias MyPhi phi
+Particle       MyPhi  1.02  0.004
+LSNONRELBW     MyPhi
+BlattWeisskopf MyPhi  0.0
+ChangeMassMin  MyPhi  1.0
+ChangeMassMax  MyPhi  1.04
+#
+Alias MyKS0pipi K_10
+LSFLAT MyKS0pipi
+ChangeMassMin MyKS0pipi 1.1
+ChangeMassMax MyKS0pipi 2.4
+
 #JetSet parameter modifications
 #(Very important that there are no blank spaces in the parameter string!)
 #Turn off B0-B0B mixing in Pythia
@@ -258,6 +280,9 @@ PythiaBothParam ParticleDecays:mixB=off
 PythiaBothParam Init:showChangedSettings=off
 PythiaBothParam Init:showChangedParticleData=off
 PythiaBothParam Next:numberShowEvent=0
+
+PythiaAliasParam ParticleDecays:sophisticatedTau=3
+PythiaAliasParam ParticleDecays:tauPolarization=-1.
 
 JetSetPar MSTU(1)=0
 JetSetPar MSTU(2)=0
