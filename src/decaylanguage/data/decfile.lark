@@ -22,7 +22,7 @@ cdecay : "CDecay" label
 
 define : "Define" label value
 
-particle_def: "Particle" label value value // Set the mass and width of a paricle (in GeV)
+particle_def: "Particle" label value value // Set the mass and width of a particle (in GeV)
 
 model_alias : "ModelAlias" model_label model
 

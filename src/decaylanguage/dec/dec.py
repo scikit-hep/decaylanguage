@@ -367,6 +367,16 @@ class DecFileParser:
         self._check_parsing()
         return get_charge_conjugate_defs(self._parsed_dec_file)
 
+    def get_particle_property_definitions(self) -> dict[str, dict[str, float]]:
+        """
+        Return a dictionary of all particle property definitions
+        in the input parsed file, of the form "Particle <PARTICLE> <MASS> <WIDTH>",
+        as {'PARTICLE1': {'mass': MASS1, 'width': WIDTH1},
+            'PARTICLE2': {'mass': MASS2, 'width': WIDTH2}, ...}.
+        """
+        self._check_parsing()
+        return get_particle_property_definitions(self._parsed_dec_file)
+
     def dict_pythia_definitions(self) -> dict[str, str | float]:
         """
         Return a dictionary of all Pythia definitions, of type
@@ -1501,6 +1511,34 @@ def get_charge_conjugate_defs(parsed_file: Tree) -> dict[str, str]:
         ) from err
 
 
+def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, float]]:
+    """
+    Return a dictionary of all particle property definitions
+    in the input parsed file, of the form "Particle <PARTICLE> <MASS> <WIDTH>",
+    as {'PARTICLE1': {'mass': MASS1, 'width': WIDTH1},
+        'PARTICLE2': {'mass': MASS2, 'width': WIDTH2}, ...}.
+
+    Parameters
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
+    """
+    try:
+        return {
+            tree.children[0]
+            .children[0]
+            .value: {
+                "mass": float(tree.children[1].children[0].value),
+                "width": float(tree.children[2].children[0].value),
+            }
+            for tree in parsed_file.find_data("particle_def")
+        }
+    except Exception as err:
+        raise RuntimeError(
+            "Input parsed file does not seem to have the expected structure."
+        ) from err
+
+
 def get_pythia_definitions(parsed_file: Tree) -> dict[str, str | float]:
     """
     Return a dictionary of all Pythia definitions, of type
@@ -1516,16 +1554,9 @@ def get_pythia_definitions(parsed_file: Tree) -> dict[str, str | float]:
     parsed_file: Lark Tree instance
         Input parsed file.
     """
-
-    def str_or_float(arg: str) -> str | float:
-        try:
-            return float(arg)
-        except Exception:
-            return arg
-
     try:
         return {
-            f"{tree.children[0].value}:{tree.children[1].value}": str_or_float(
+            f"{tree.children[0].value}:{tree.children[1].value}": _str_or_float(
                 tree.children[2].value
             )
             for tree in parsed_file.find_data("pythia_def")
@@ -1653,3 +1684,10 @@ def get_global_photos_flag(parsed_file: Tree) -> int:
     end_item = tree[-1]  # Use the last one if several are present !
     val = end_item.children[0].data
     return PhotosEnum.yes if val == "yes" else PhotosEnum.no
+
+
+def _str_or_float(arg: str) -> str | float:
+    try:
+        return float(arg)
+    except Exception:
+        return arg
