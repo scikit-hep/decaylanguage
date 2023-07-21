@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 0.15.5 (2023-07-21)
+
+* Parsing of decay files (aka .dec files):
+  - Addition of get methods and tests for recently added EvtGen keywords.
+  - Minor clean-up.
+* Modeling for GooFit/AmpGen:
+  - Fix in generating code for mass combinations in cascade decays.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.15.4 (2023-06-30)
 
 * Parsing of decay files (aka .dec files):
