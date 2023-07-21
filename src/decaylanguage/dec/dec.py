@@ -419,7 +419,26 @@ class DecFileParser:
         aliases = self.dict_aliases()
         return _expand_decay_modes(decay_chains, aliases=aliases)
 
-    def list_lineshape_definitions(self) -> list[tuple[list[str], int]]:
+    def dict_lineshape_settings(self) -> dict[str, dict[str, str | float]]:
+        """
+        Return a dictionary of all lineshape settings,
+        with keys corresponding to particle names or aliases, as
+        {PARTICLE1: {'lineshape': 'NAME1',  # E.g. "LSFLAT" or "LSNONRELBW"
+          'BlattWeisskopf': VALUE1,
+          'ChangeMassMin': VALUE12,
+          'ChangeMassMax': VALUE13},
+         PARTICLE2: {'lineshape': 'NAME2',
+          'BlattWeisskopf': VALUE2,
+          'ChangeMassMin': VALUE22,
+          'ChangeMassMax': VALUE23},
+         ...
+        }
+        where not all "sub-dictionaries" may contain all and/or the same keys.
+        """
+        self._check_parsing()
+        return get_lineshape_settings(self._parsed_dec_file)
+
+    def list_lineshapePW_definitions(self) -> list[tuple[list[str], int]]:
         """
         Return a list of all SetLineshapePW definitions in the input parsed file,
         of the form
@@ -430,7 +449,7 @@ class DecFileParser:
         ...]
         """
         self._check_parsing()
-        return get_lineshape_definitions(self._parsed_dec_file)
+        return get_lineshapePW_definitions(self._parsed_dec_file)
 
     def global_photos_flag(self) -> int:
         """
@@ -1559,6 +1578,7 @@ def get_pythia_definitions(parsed_file: Tree) -> dict[str, dict[str, str | float
         Input parsed file.
     """
     d: dict[str, dict[str, str | float]] = {}
+
     try:
         for tree in parsed_file.find_data("pythia_def"):
             if tree.children[0].value in d:
@@ -1641,7 +1661,77 @@ def get_jetset_definitions(
         ) from err
 
 
-def get_lineshape_definitions(
+def get_lineshape_settings(
+    parsed_file: Tree,
+) -> dict[str, dict[str, str | float]]:
+    """
+     Return a dictionary of all lineshape settings,
+     with keys corresponding to particle names or aliases, as
+     {PARTICLE1: {'lineshape': 'NAME1',  # E.g. "LSFLAT" or "LSNONRELBW"
+       'BlattWeisskopf': VALUE1,
+       'ChangeMassMin': VALUE12,
+       'ChangeMassMax': VALUE13},
+      PARTICLE2: {'lineshape': 'NAME2',
+       'BlattWeisskopf': VALUE2,
+       'ChangeMassMin': VALUE22,
+       'ChangeMassMax': VALUE23},
+       ...
+     }
+     where not all "sub-dictionaries" may contain all and/or the same keys.
+
+    Parameters
+     ----------
+     parsed_file: Lark Tree instance
+         Input parsed file.
+    """
+    d: dict[str, dict[str, str | float]] = {}
+    try:
+        # Lineshape definitions
+        for tree in parsed_file.find_data("ls_def"):
+            if tree.children[1].value not in d:
+                d[tree.children[1].value] = {"lineshape": tree.children[0].value}
+            else:
+                raise RuntimeError(
+                    "Input parsed file does not seem to have the expected structure for the lineshape definitions."
+                ) from None
+
+        # Blatt-Weisskopf barrier factor for a lineshape
+        for tree in parsed_file.find_data("setlsbw"):
+            particle_or_alias = tree.children[0].value
+            if particle_or_alias in d:
+                if "BlattWeisskopf" in d[particle_or_alias]:
+                    raise RuntimeError(
+                        f"The Blatt-Weisskopf barrier factor for particle/alias {particle_or_alias} seems to be redefined."
+                    ) from None
+                d[particle_or_alias]["BlattWeisskopf"] = float(tree.children[1].value)
+            else:
+                d[particle_or_alias] = {"BlattWeisskopf": float(tree.children[1].value)}
+
+        # Upper and lower mass cuts on a lineshape
+        for tree in parsed_file.find_data("changemasslimit"):
+            particle_or_alias = tree.children[1].value
+            if particle_or_alias in d:
+                if tree.children[0].value in d[particle_or_alias]:
+                    raise RuntimeError(
+                        f"The upper/lower mass cut on the lineshape for particle/alias {particle_or_alias} seems to be redefined."
+                    ) from None
+                d[particle_or_alias][f"{tree.children[0].value}"] = float(
+                    tree.children[2].value
+                )
+            else:
+                d[particle_or_alias] = {
+                    f"{tree.children[0].value}": float(tree.children[2].value)
+                }
+
+        return d
+
+    except Exception as err:
+        raise RuntimeError(
+            "Input parsed file does not seem to have the expected structure."
+        ) from err
+
+
+def get_lineshapePW_definitions(
     parsed_file: Tree,
 ) -> list[tuple[list[str], int]]:
     """
