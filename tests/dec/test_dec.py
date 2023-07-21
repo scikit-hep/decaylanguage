@@ -910,7 +910,7 @@ def test_master_DECAYdotDEC_file():
     p = DecFileParser(DIR / "../../src/decaylanguage/data/DECAY_LHCB.DEC")
     p.parse()
 
-    assert p.number_of_decays == 506
+    assert p.number_of_decays == 510
 
 
 def test_BELLE2_decfile():
