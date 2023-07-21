@@ -1390,7 +1390,7 @@ def get_charge_conjugate_decays(parsed_file: Tree) -> list[str]:
 
     try:
         return sorted(
-            tree.children[0].children[0].value
+            tree.children[0].value
             for tree in parsed_file.find_data("cdecay")
         )
     except Exception as err:
@@ -1485,7 +1485,7 @@ def get_aliases(parsed_file: Tree) -> dict[str, str]:
     """
     try:
         return {
-            tree.children[0].children[0].value: tree.children[1].children[0].value
+            tree.children[0].value: tree.children[1].value
             for tree in parsed_file.find_data("alias")
         }
     except Exception as err:
