@@ -20,7 +20,7 @@ setlspw : "SetLineshapePW" LABEL LABEL LABEL INT // Redefine Partial Wave for la
 
 cdecay : "CDecay" LABEL
 
-define : "Define" label value
+define : "Define" LABEL SIGNED_NUMBER
 
 particle_def: "Particle" label value value // Set the mass and width of a particle (in GeV)
 

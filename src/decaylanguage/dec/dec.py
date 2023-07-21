@@ -1434,9 +1434,7 @@ def get_definitions(parsed_file: Tree) -> dict[str, float]:
     """
     try:
         return {
-            tree.children[0]
-            .children[0]
-            .value: float(tree.children[1].children[0].value)
+            tree.children[0].value: float(tree.children[1].value)
             for tree in parsed_file.find_data("define")
         }
     except Exception as err:
