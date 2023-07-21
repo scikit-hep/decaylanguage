@@ -382,15 +382,16 @@ class DecFileParser:
         self._check_parsing()
         return get_particle_property_definitions(self._parsed_dec_file)
 
-    def dict_pythia_definitions(self) -> dict[str, str | float]:
+    def dict_pythia_definitions(self) -> dict[str, dict[str, str | float]]:
         """
-        Return a dictionary of all Pythia definitions, of type
-        <PYTHIA_DEF> = "PythiaBothParam" or "PythiaAliasParam",
-        in the input parsed file, of the form
+        Return a dictionary of all Pythia definitions, with keys corresponding to the types
+        <PYTHIA_DEF> = "PythiaBothParam" and/or "PythiaAliasParam",
+        set in the input parsed file with statements of the form
         "<PYTHIA_DEF> <NAME>=<LABEL>"
         or
         "<PYTHIA_DEF> <NAME>=<NUMBER>",
-        as {'NAME1': 'LABEL1', 'NAME2': VALUE2, ...}.
+        as {"PythiaAliasParam": {'NAME1': 'LABEL1', 'NAME2': VALUE2, ...},
+            "PythiaBothParam": {'NAME3': 'LABEL3', 'NAME4': VALUE4, ...}}.
         """
         self._check_parsing()
         return get_pythia_definitions(self._parsed_dec_file)
@@ -1390,8 +1391,7 @@ def get_charge_conjugate_decays(parsed_file: Tree) -> list[str]:
 
     try:
         return sorted(
-            tree.children[0].value
-            for tree in parsed_file.find_data("cdecay")
+            tree.children[0].value for tree in parsed_file.find_data("cdecay")
         )
     except Exception as err:
         raise RuntimeError(
@@ -1542,28 +1542,40 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
         ) from err
 
 
-def get_pythia_definitions(parsed_file: Tree) -> dict[str, str | float]:
+def get_pythia_definitions(parsed_file: Tree) -> dict[str, dict[str, str | float]]:
     """
-    Return a dictionary of all Pythia definitions, of type
-    <PYTHIA_DEF> = "PythiaBothParam" or "PythiaAliasParam",
-    in the input parsed file, of the form
+    Return a dictionary of all Pythia definitions, with keys corresponding to the types
+    <PYTHIA_DEF> = "PythiaBothParam" and/or "PythiaAliasParam",
+    set in the input parsed file with statements of the form
     "<PYTHIA_DEF> <NAME>=<LABEL>"
     or
     "<PYTHIA_DEF> <NAME>=<NUMBER>",
-    as {'NAME1': 'LABEL1', 'NAME2': VALUE2, ...}.
+    as {"PythiaAliasParam": {'NAME1': 'LABEL1', 'NAME2': VALUE2, ...},
+        "PythiaBothParam": {'NAME3': 'LABEL3', 'NAME4': VALUE4, ...}}.
 
     Parameters
     ----------
     parsed_file: Lark Tree instance
         Input parsed file.
     """
+    d: dict[str, dict[str, str | float]] = {}
     try:
-        return {
-            f"{tree.children[0].value}:{tree.children[1].value}": _str_or_float(
-                tree.children[2].value
-            )
-            for tree in parsed_file.find_data("pythia_def")
-        }
+        for tree in parsed_file.find_data("pythia_def"):
+            if tree.children[0].value in d:
+                d[tree.children[0].value].update(
+                    {
+                        f"{tree.children[1].value}:{tree.children[2].value}": _str_or_float(
+                            tree.children[3].value
+                        )
+                    }
+                )
+            else:
+                d[tree.children[0].value] = {
+                    f"{tree.children[1].value}:{tree.children[2].value}": _str_or_float(
+                        tree.children[3].value
+                    )
+                }
+        return d
     except Exception as err:
         raise RuntimeError(
             "Input parsed file does not seem to have the expected structure."
