@@ -14,7 +14,7 @@ jetset_def : "JetSetPar" LABEL "=" SIGNED_NUMBER
 
 ls_def : LABEL_LINESHAPE LABEL // Choose a lineshape for a particle
 
-LABEL_LINESHAPE : "LSFLAT" | "LSNONRELBW"
+LABEL_LINESHAPE : "LSFLAT" | "LSNONRELBW" | "LSMANYDELTAFUNC"
 
 inc_factor: ("IncludeBirthFactor" | "IncludeDecayFactor") label ("yes" | "no") // Presence of the birth/decay factor and form-factor
 
