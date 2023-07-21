@@ -18,7 +18,7 @@ setlsbw : "BlattWeisskopf" label value // Set Blatt-Weisskopf barrier factor for
 
 setlspw : "SetLineshapePW" LABEL LABEL LABEL INT // Redefine Partial Wave for label -> label label
 
-cdecay : "CDecay" label
+cdecay : "CDecay" LABEL
 
 define : "Define" label value
 
@@ -26,11 +26,13 @@ particle_def: "Particle" label value value // Set the mass and width of a partic
 
 model_alias : "ModelAlias" model_label model
 
-alias : "Alias" label label
+alias : "Alias" LABEL LABEL
 
 chargeconj : "ChargeConj" label label
 
-changemasslimit : ("ChangeMassMin" | "ChangeMassMax") label value // Set upper/lower mass cuts on a lineshape
+changemasslimit : LABEL_CHANGE_MASS LABEL SIGNED_NUMBER // Set upper/lower mass cuts on a lineshape
+
+LABEL_CHANGE_MASS : "ChangeMassMin" | "ChangeMassMax"
 
 ?commands : global_photos
 
