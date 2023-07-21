@@ -202,12 +202,16 @@ def test_pythia_definitions_parsing():
     p.parse()
 
     assert p.dict_pythia_definitions() == {
-        "ParticleDecays:mixB": "off",
-        "Init:showChangedSettings": "off",
-        "Init:showChangedParticleData": "off",
-        "Next:numberShowEvent": 0.0,
-        "ParticleDecays:sophisticatedTau": 3,
-        "ParticleDecays:tauPolarization": -1.0,
+        "PythiaAliasParam": {
+            "ParticleDecays:sophisticatedTau": 3.0,
+            "ParticleDecays:tauPolarization": -1.0,
+        },
+        "PythiaBothParam": {
+            "Init:showChangedParticleData": "off",
+            "Init:showChangedSettings": "off",
+            "Next:numberShowEvent": 0.0,
+            "ParticleDecays:mixB": "off",
+        },
     }
 
 
