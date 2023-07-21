@@ -1668,11 +1668,11 @@ def get_lineshape_settings(
      Return a dictionary of all lineshape settings,
      with keys corresponding to particle names or aliases, as
      {PARTICLE1: {'lineshape': 'NAME1',  # E.g. "LSFLAT" or "LSNONRELBW"
-       'BlattWeisskopf': VALUE1,
+       'BlattWeisskopf': VALUE11,
        'ChangeMassMin': VALUE12,
        'ChangeMassMax': VALUE13},
       PARTICLE2: {'lineshape': 'NAME2',
-       'BlattWeisskopf': VALUE2,
+       'BlattWeisskopf': VALUE21,
        'ChangeMassMin': VALUE22,
        'ChangeMassMax': VALUE23},
        ...
