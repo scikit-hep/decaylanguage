@@ -28,7 +28,7 @@ model_alias : "ModelAlias" model_label model
 
 alias : "Alias" LABEL LABEL
 
-chargeconj : "ChargeConj" label label
+chargeconj : "ChargeConj" LABEL LABEL
 
 changemasslimit : LABEL_CHANGE_MASS LABEL SIGNED_NUMBER // Set upper/lower mass cuts on a lineshape
 

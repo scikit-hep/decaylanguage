@@ -1505,7 +1505,7 @@ def get_charge_conjugate_defs(parsed_file: Tree) -> dict[str, str]:
     """
     try:
         return {
-            tree.children[0].children[0].value: tree.children[1].children[0].value
+            tree.children[0].value: tree.children[1].value
             for tree in parsed_file.find_data("chargeconj")
         }
     except Exception as err:
