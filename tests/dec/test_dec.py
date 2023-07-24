@@ -105,7 +105,9 @@ def test_decfile_defining_stable_particle():
     p = DecFileParser(DIR / "../data/test_stable-particle.dec")
     p.parse()
 
-    assert p.number_of_decays == 1  # The decay of K_S0, even if no decay modes are defined
+    assert (
+        p.number_of_decays == 1
+    )  # The decay of K_S0, even if no decay modes are defined
     assert p.list_decay_modes("K_S0") == []
 
 
