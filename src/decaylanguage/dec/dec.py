@@ -1729,10 +1729,12 @@ def get_lineshape_settings(
                     raise RuntimeError(
                         f"The birth/decay momentum factor for particle/alias {particle_or_alias} seems to be redefined."
                     ) from None
-                d[particle_or_alias][f"{tree.children[0].value}"] = _str_to_bool(tree.children[2].value)
+                d[particle_or_alias][f"{tree.children[0].value}"] = _str_to_bool(
+                    tree.children[2].value
+                )
             else:
                 d[particle_or_alias] = {
-                f"{tree.children[0].value}": _str_to_bool(tree.children[2].value)
+                    f"{tree.children[0].value}": _str_to_bool(tree.children[2].value)
                 }
 
         return d
@@ -1813,7 +1815,9 @@ def _str_or_float(arg: str) -> str | float:
 def _str_to_bool(arg: str) -> bool:
     if arg == "yes":
         return True
-    elif arg == "no":
+    if arg == "no":
         return False
-    else:
-        raise(f"String {arg!r} cannot be converted to boolean! Only 'yes/no' accepted.")
+
+    raise ValueError(
+        f"String {arg!r} cannot be converted to boolean! Only 'yes/no' accepted."
+    )

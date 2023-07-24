@@ -265,7 +265,7 @@ def test_dict_lineshape_settings():
             "BlattWeisskopf": 3.0,
             "ChangeMassMax": 0.9,
             "ChangeMassMin": 0.7,
-            "IncludeBirthFactor" : False,
+            "IncludeBirthFactor": False,
             "IncludeDecayFactor": True,
         },
     }
