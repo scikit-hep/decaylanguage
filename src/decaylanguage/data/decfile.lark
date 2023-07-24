@@ -8,7 +8,7 @@ start : _NEWLINE* (line _NEWLINE+)* ("End" _NEWLINE+)?
 
 pythia_def : LABEL_PYTHIA8_COMMANDS LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)  // Pythia 8 commands
 
-LABEL_PYTHIA8_COMMANDS : "PythiaBothParam" | "PythiaAliasParam"
+LABEL_PYTHIA8_COMMANDS : "PythiaAliasParam" | "PythiaBothParam" | "PythiaGenericParam"
 
 jetset_def : "JetSetPar" LABEL "=" SIGNED_NUMBER  // Old Pythia 6 commands
 
