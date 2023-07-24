@@ -272,10 +272,18 @@ Alias MyKS0pipi K_10
 LSFLAT MyKS0pipi
 ChangeMassMin MyKS0pipi 1.1
 ChangeMassMax MyKS0pipi 2.4
+#
+Particle rho0 0.8 0.2
+ChangeMassMin rho0 0.7
+ChangeMassMax rho0 0.9
+LSNONRELBW rho0
+BlattWeisskopf rho0 3.0
+IncludeBirthFactor rho0 no
+IncludeDecayFactor rho0 yes
 
-#JetSet parameter modifications
-#(Very important that there are no blank spaces in the parameter string!)
-#Turn off B0-B0B mixing in Pythia
+# JetSet parameter modifications
+# (Very important that there are no blank spaces in the parameter string!)
+# Turn off B0-B0B mixing in Pythia
 PythiaBothParam ParticleDecays:mixB=off
 PythiaBothParam Init:showChangedSettings=off
 PythiaBothParam Init:showChangedParticleData=off
