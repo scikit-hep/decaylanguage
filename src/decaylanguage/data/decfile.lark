@@ -16,7 +16,7 @@ ls_def : LABEL_LINESHAPE LABEL // Choose a lineshape for a particle
 
 LABEL_LINESHAPE : "LSFLAT" | "LSNONRELBW" | "LSMANYDELTAFUNC"
 
-inc_factor: ("IncludeBirthFactor" | "IncludeDecayFactor") label ("yes" | "no") // Presence of the birth/decay factor and form-factor
+inc_factor: ("IncludeBirthFactor" | "IncludeDecayFactor") label ("yes" | "no") // Presence of the birth/decay momentum factor and form-factor
 
 setlsbw : "BlattWeisskopf" LABEL SIGNED_NUMBER // Set Blatt-Weisskopf barrier factor for a lineshape
 
@@ -45,7 +45,7 @@ global_photos : boolean_photos
 boolean_photos : "yesPhotos" -> yes
                 | "noPhotos"  -> no
 
-decay : "Decay" particle _NEWLINE+ decayline+ "Enddecay"
+decay : "Decay" particle _NEWLINE+ decayline* "Enddecay"
 decayline : value particle* photos? model _NEWLINE+
 value : SIGNED_NUMBER
 photos : "PHOTOS"

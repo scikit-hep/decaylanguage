@@ -1,0 +1,7 @@
+# Example decay chain for testing purposes:
+# An empty list of decay modes makes the particle stable!
+
+Decay K_S0
+Enddecay
+
+End
