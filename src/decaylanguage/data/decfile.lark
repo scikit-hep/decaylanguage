@@ -26,7 +26,7 @@ cdecay : "CDecay" LABEL
 
 define : "Define" LABEL SIGNED_NUMBER
 
-particle_def: "Particle" label value value // Set the mass and width of a particle (in GeV)
+particle_def: "Particle" LABEL SIGNED_NUMBER SIGNED_NUMBER // Set the mass and width of a particle (in GeV)
 
 model_alias : "ModelAlias" model_label model
 
