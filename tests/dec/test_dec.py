@@ -204,6 +204,7 @@ def test_particle_property_definitions():
     assert p.get_particle_property_definitions() == {
         "MyK*0": {"mass": 0.892, "width": 0.051},
         "MyPhi": {"mass": 1.02, "width": 0.004},
+        "rho0": {"mass": 0.8, "width": 0.2},
     }
 
 
@@ -258,6 +259,14 @@ def test_dict_lineshape_settings():
             "lineshape": "LSFLAT",
             "ChangeMassMin": 1.1,
             "ChangeMassMax": 2.4,
+        },
+        "rho0": {
+            "lineshape": "LSNONRELBW",
+            "BlattWeisskopf": 3.0,
+            "ChangeMassMax": 0.9,
+            "ChangeMassMin": 0.7,
+            "IncludeBirthFactor": False,
+            "IncludeDecayFactor": True,
         },
     }
 
