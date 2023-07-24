@@ -1,7 +1,7 @@
 # Example decfile for testing purposes:
 
 # Line with "End" is strictly speaking not necessary
-# Such "empty" files are relevant in LHCb for example when special decays are all defined in PYthon code
+# Such "empty" files are relevant in LHCb for example when special decays are all defined in Python code
 # inserted in commented-out lines
 End
 #
