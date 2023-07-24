@@ -1547,8 +1547,7 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
     """
     try:
         return {
-            tree.children[0]
-            .value: {
+            tree.children[0].value: {
                 "mass": float(tree.children[1].value),
                 "width": float(tree.children[2].value),
             }
@@ -1722,6 +1721,20 @@ def get_lineshape_settings(
                     f"{tree.children[0].value}": float(tree.children[2].value)
                 }
 
+        # Presence of the birth/decay momentum factor and form-factor
+        for tree in parsed_file.find_data("inc_factor"):
+            particle_or_alias = tree.children[1].value
+            if particle_or_alias in d:
+                if tree.children[0].value in d[particle_or_alias]:
+                    raise RuntimeError(
+                        f"The birth/decay momentum factor for particle/alias {particle_or_alias} seems to be redefined."
+                    ) from None
+                d[particle_or_alias][f"{tree.children[0].value}"] = _str_to_bool(tree.children[2].value)
+            else:
+                d[particle_or_alias] = {
+                f"{tree.children[0].value}": _str_to_bool(tree.children[2].value)
+                }
+
         return d
 
     except Exception as err:
@@ -1795,3 +1808,12 @@ def _str_or_float(arg: str) -> str | float:
         return float(arg)
     except Exception:
         return arg
+
+
+def _str_to_bool(arg: str) -> bool:
+    if arg == "yes":
+        return True
+    elif arg == "no":
+        return False
+    else:
+        raise(f"String {arg!r} cannot be converted to boolean! Only 'yes/no' accepted.")
