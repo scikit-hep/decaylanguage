@@ -384,7 +384,7 @@ class DecFileParser:
 
     def dict_pythia_definitions(self) -> dict[str, dict[str, str | float]]:
         """
-        Return a dictionary of all Pythia definitions, with keys corresponding to the types
+        Return a dictionary of all Pythia 8 commands, with keys corresponding to the types
         <PYTHIA_DEF> = "PythiaBothParam" and/or "PythiaAliasParam",
         set in the input parsed file with statements of the form
         "<PYTHIA_DEF> <NAME>=<LABEL>"
@@ -400,9 +400,9 @@ class DecFileParser:
         """
         Return a dictionary of all JETSET definitions in the input parsed file,
         of the form
-        "JetSetPar <PARAM>(<PNUMBER>)=<NUMBER>"
-        as {'PARAM1': {PNUMBER1: VALUE1, PNUMBER2: VALUE2, ...},
-            'PARAM2': {...},
+        "JetSetPar <MODULE>(<PARAMETER>)=<VALUE>"
+        as {'MODULE1': {PARAMETER1: VALUE1, PARAMETER2: VALUE2, ...},
+            'MODULE2': {...},
             ...}.
         """
         self._check_parsing()
@@ -1561,7 +1561,7 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
 
 def get_pythia_definitions(parsed_file: Tree) -> dict[str, dict[str, str | float]]:
     """
-    Return a dictionary of all Pythia definitions, with keys corresponding to the types
+    Return a dictionary of all Pythia 8 commands, with keys corresponding to the types
     <PYTHIA_DEF> = "PythiaBothParam" and/or "PythiaAliasParam",
     set in the input parsed file with statements of the form
     "<PYTHIA_DEF> <NAME>=<LABEL>"
@@ -1606,9 +1606,9 @@ def get_jetset_definitions(
     """
     Return a dictionary of all JETSET definitions in the input parsed file,
     of the form
-    "JetSetPar <PARAM>(<PNUMBER>)=<NUMBER>"
-    as {'PARAM1': {PNUMBER1: VALUE1, PNUMBER2: VALUE2, ...},
-        'PARAM2': {...},
+    "JetSetPar <MODULE>(<PARAMETER>)=<VALUE>"
+    as {'MODULE1': {PARAMETER1: VALUE1, PARAMETER2: VALUE2, ...},
+        'MODULE2': {...},
         ...}.
 
     Parameters

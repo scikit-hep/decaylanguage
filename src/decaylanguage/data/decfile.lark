@@ -6,15 +6,15 @@
 start : _NEWLINE* (line _NEWLINE+)* ("End" _NEWLINE+)?
 ?line : define | particle_def | pythia_def | jetset_def | ls_def | model_alias | alias | chargeconj | commands | decay | cdecay | copydecay | setlspw | setlsbw | changemasslimit | inc_factor
 
-pythia_def : LABEL_PYTHIA_PARAMETERS LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)
+pythia_def : LABEL_PYTHIA8_COMMANDS LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)  // Pythia 8 commands
 
-LABEL_PYTHIA_PARAMETERS : "PythiaBothParam" | "PythiaAliasParam"
+LABEL_PYTHIA8_COMMANDS : "PythiaBothParam" | "PythiaAliasParam"
 
-jetset_def : "JetSetPar" LABEL "=" SIGNED_NUMBER
+jetset_def : "JetSetPar" LABEL "=" SIGNED_NUMBER  // Old Pythia 6 commands
 
 ls_def : LABEL_LINESHAPE LABEL // Choose a lineshape for a particle
 
-LABEL_LINESHAPE : "LSFLAT" | "LSNONRELBW" | "LSMANYDELTAFUNC"
+LABEL_LINESHAPE : "LSFLAT" | "LSNONRELBW" | "LSMANYDELTAFUNC" // Lineshape flat | non-relativistic BW, spikes
 
 inc_factor: LABEL_INCLUDE_FACTOR LABEL BOOLEAN_INCLUDE_FACTOR // Presence of the birth/decay momentum factor and form-factor
 
