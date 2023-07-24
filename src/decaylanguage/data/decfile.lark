@@ -12,7 +12,7 @@ jetset_def : "JetSetPar" LABEL "=" SIGNED_NUMBER
 
 ls_def : ("LSFLAT" | "LSNONRELBW") label // Choose a lineshape for a particle
 
-inc_factor: ("IncludeBirthFactor" | "IncludeDecayFactor") label ("yes" | "no") // Presence of the birth/decay factor and form-factor
+inc_factor: ("IncludeBirthFactor" | "IncludeDecayFactor") label ("yes" | "no") // Presence of the birth/decay momentum factor and form-factor
 
 setlsbw : "BlattWeisskopf" label value // Set Blatt-Weisskopf barrier factor for a lineshape
 
@@ -39,7 +39,7 @@ global_photos : boolean_photos
 boolean_photos : "yesPhotos" -> yes
                 | "noPhotos"  -> no
 
-decay : "Decay" particle _NEWLINE+ decayline+ "Enddecay"
+decay : "Decay" particle _NEWLINE+ decayline* "Enddecay"
 decayline : value particle* photos? model _NEWLINE+
 value : SIGNED_NUMBER
 photos : "PHOTOS"
