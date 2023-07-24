@@ -1547,8 +1547,7 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
     """
     try:
         return {
-            tree.children[0]
-            .value: {
+            tree.children[0].value: {
                 "mass": float(tree.children[1].value),
                 "width": float(tree.children[2].value),
             }
