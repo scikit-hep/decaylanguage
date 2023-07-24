@@ -202,12 +202,16 @@ def test_pythia_definitions_parsing():
     p.parse()
 
     assert p.dict_pythia_definitions() == {
-        "ParticleDecays:mixB": "off",
-        "Init:showChangedSettings": "off",
-        "Init:showChangedParticleData": "off",
-        "Next:numberShowEvent": 0.0,
-        "ParticleDecays:sophisticatedTau": 3,
-        "ParticleDecays:tauPolarization": -1.0,
+        "PythiaAliasParam": {
+            "ParticleDecays:sophisticatedTau": 3.0,
+            "ParticleDecays:tauPolarization": -1.0,
+        },
+        "PythiaBothParam": {
+            "Init:showChangedParticleData": "off",
+            "Init:showChangedSettings": "off",
+            "Next:numberShowEvent": 0.0,
+            "ParticleDecays:mixB": "off",
+        },
     }
 
 
@@ -223,11 +227,36 @@ def test_jetset_definitions_parsing():
     }
 
 
-def test_list_lineshape_definitions():
+def test_dict_lineshape_settings():
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
-    assert p.list_lineshape_definitions() == [
+    assert p.dict_lineshape_settings() == {
+        "MyK*0": {
+            "lineshape": "LSNONRELBW",
+            "BlattWeisskopf": 0.0,
+            "ChangeMassMin": 0.5,
+            "ChangeMassMax": 3.5,
+        },
+        "MyPhi": {
+            "lineshape": "LSNONRELBW",
+            "BlattWeisskopf": 0.0,
+            "ChangeMassMin": 1.0,
+            "ChangeMassMax": 1.04,
+        },
+        "MyKS0pipi": {
+            "lineshape": "LSFLAT",
+            "ChangeMassMin": 1.1,
+            "ChangeMassMax": 2.4,
+        },
+    }
+
+
+def test_list_lineshapePW_definitions():
+    p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
+    p.parse()
+
+    assert p.list_lineshapePW_definitions() == [
         (["D_1+", "D*+", "pi0"], 2),
         (["D_1+", "D*0", "pi+"], 2),
         (["D_1-", "D*-", "pi0"], 2),

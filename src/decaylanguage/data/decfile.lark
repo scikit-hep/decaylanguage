@@ -6,31 +6,37 @@
 start : _NEWLINE* (line _NEWLINE+)* ("End" _NEWLINE+)?
 ?line : define | particle_def | pythia_def | jetset_def | ls_def | model_alias | alias | chargeconj | commands | decay | cdecay | copydecay | setlspw | setlsbw | changemasslimit | inc_factor
 
-pythia_def : ("PythiaBothParam" | "PythiaAliasParam") LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)
+pythia_def : LABEL_PYTHIA_PARAMETERS LABEL ":" LABEL "=" (LABEL | SIGNED_NUMBER)
+
+LABEL_PYTHIA_PARAMETERS : "PythiaBothParam" | "PythiaAliasParam"
 
 jetset_def : "JetSetPar" LABEL "=" SIGNED_NUMBER
 
-ls_def : ("LSFLAT" | "LSNONRELBW") label // Choose a lineshape for a particle
+ls_def : LABEL_LINESHAPE LABEL // Choose a lineshape for a particle
+
+LABEL_LINESHAPE : "LSFLAT" | "LSNONRELBW" | "LSMANYDELTAFUNC"
 
 inc_factor: ("IncludeBirthFactor" | "IncludeDecayFactor") label ("yes" | "no") // Presence of the birth/decay factor and form-factor
 
-setlsbw : "BlattWeisskopf" label value // Set Blatt-Weisskopf barrier factor for a lineshape
+setlsbw : "BlattWeisskopf" LABEL SIGNED_NUMBER // Set Blatt-Weisskopf barrier factor for a lineshape
 
 setlspw : "SetLineshapePW" LABEL LABEL LABEL INT // Redefine Partial Wave for label -> label label
 
-cdecay : "CDecay" label
+cdecay : "CDecay" LABEL
 
-define : "Define" label value
+define : "Define" LABEL SIGNED_NUMBER
 
 particle_def: "Particle" label value value // Set the mass and width of a particle (in GeV)
 
 model_alias : "ModelAlias" model_label model
 
-alias : "Alias" label label
+alias : "Alias" LABEL LABEL
 
-chargeconj : "ChargeConj" label label
+chargeconj : "ChargeConj" LABEL LABEL
 
-changemasslimit : ("ChangeMassMin" | "ChangeMassMax") label value // Set upper/lower mass cuts on a lineshape
+changemasslimit : LABEL_CHANGE_MASS LABEL SIGNED_NUMBER // Set upper/lower mass cuts on a lineshape
+
+LABEL_CHANGE_MASS : "ChangeMassMin" | "ChangeMassMax"
 
 ?commands : global_photos
 
