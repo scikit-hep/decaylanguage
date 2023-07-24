@@ -281,7 +281,7 @@ BlattWeisskopf rho0 3.0
 IncludeBirthFactor rho0 no
 IncludeDecayFactor rho0 yes
 
-# JetSet parameter modifications
+# Pythia 8 parameter modifications
 # (Very important that there are no blank spaces in the parameter string!)
 # Turn off B0-B0B mixing in Pythia
 PythiaBothParam ParticleDecays:mixB=off
@@ -292,6 +292,7 @@ PythiaBothParam Next:numberShowEvent=0
 PythiaAliasParam ParticleDecays:sophisticatedTau=3
 PythiaAliasParam ParticleDecays:tauPolarization=-1.
 
+# Old Pythia 6 parameter modifications
 JetSetPar MSTU(1)=0
 JetSetPar MSTU(2)=0
 JetSetPar PARU(11)=0.001

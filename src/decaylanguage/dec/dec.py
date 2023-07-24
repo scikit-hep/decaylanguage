@@ -384,14 +384,16 @@ class DecFileParser:
 
     def dict_pythia_definitions(self) -> dict[str, dict[str, str | float]]:
         """
-        Return a dictionary of all Pythia 8 commands, with keys corresponding to the types
-        <PYTHIA_DEF> = "PythiaBothParam" and/or "PythiaAliasParam",
-        set in the input parsed file with statements of the form
-        "<PYTHIA_DEF> <NAME>=<LABEL>"
-        or
-        "<PYTHIA_DEF> <NAME>=<NUMBER>",
-        as {"PythiaAliasParam": {'NAME1': 'LABEL1', 'NAME2': VALUE2, ...},
-            "PythiaBothParam": {'NAME3': 'LABEL3', 'NAME4': VALUE4, ...}}.
+        Return a dictionary of all Pythia 8 commands
+        "PythiaGenericParam" and/or "PythiaAliasParam" and/or "PythiaBothParam",
+        with keys corresponding to the 3 types specifying whether the command is for
+        generic decays, alias decays, or both.
+        The commands are set in the input parsed file with statements of the form
+        "Pythia<TYPE>Param <MODULE>:<PARAM>=<LABEL_OR_VALUE>.
+        The dictionary takes the form
+        {"PythiaAliasParam": {'<MODULE1>:<PARAM1>': 'LABEL1', '<MODULE1>:<PARAM2>': VALUE2, ...},
+         "PythiaBothParam": {'<MODULE2>:<PARAM3>': 'LABEL3', '<MODULE3>:<PARAM4>': VALUE4, ...},
+         "PythiaGenericParam": {'<MODULE4>:<PARAM5>': 'LABEL5', '<MODULE5>:<PARAM6>': VALUE6, ...}}.
         """
         self._check_parsing()
         return get_pythia_definitions(self._parsed_dec_file)
@@ -401,9 +403,10 @@ class DecFileParser:
         Return a dictionary of all JETSET definitions in the input parsed file,
         of the form
         "JetSetPar <MODULE>(<PARAMETER>)=<VALUE>"
-        as {'MODULE1': {PARAMETER1: VALUE1, PARAMETER2: VALUE2, ...},
-            'MODULE2': {...},
-            ...}.
+        as
+        {'MODULE1': {PARAMETER1: VALUE1, PARAMETER2: VALUE2, ...},
+         'MODULE2': {...},
+         ...}.
         """
         self._check_parsing()
         return get_jetset_definitions(self._parsed_dec_file)
@@ -430,7 +433,9 @@ class DecFileParser:
          PARTICLE2: {'lineshape': 'NAME2',
           'BlattWeisskopf': VALUE2,
           'ChangeMassMin': VALUE22,
-          'ChangeMassMax': VALUE23},
+          'ChangeMassMax': VALUE23,
+          'IncludeBirthFactor': TRUE_OR_FALSE,
+          'IncludeDecayFactor': TRUE_OR_FALSE},
          ...
         }
         where not all "sub-dictionaries" may contain all and/or the same keys.
@@ -1561,14 +1566,16 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
 
 def get_pythia_definitions(parsed_file: Tree) -> dict[str, dict[str, str | float]]:
     """
-    Return a dictionary of all Pythia 8 commands, with keys corresponding to the types
-    <PYTHIA_DEF> = "PythiaBothParam" and/or "PythiaAliasParam",
-    set in the input parsed file with statements of the form
-    "<PYTHIA_DEF> <NAME>=<LABEL>"
-    or
-    "<PYTHIA_DEF> <NAME>=<NUMBER>",
-    as {"PythiaAliasParam": {'NAME1': 'LABEL1', 'NAME2': VALUE2, ...},
-        "PythiaBothParam": {'NAME3': 'LABEL3', 'NAME4': VALUE4, ...}}.
+    Return a dictionary of all Pythia 8 commands
+    "PythiaGenericParam" and/or "PythiaAliasParam" and/or "PythiaBothParam",
+    with keys corresponding to the 3 types specifying whether the command is for
+    generic decays, alias decays, or both.
+    The commands are set in the input parsed file with statements of the form
+    "Pythia<TYPE>Param <MODULE>:<PARAM>=<LABEL_OR_VALUE>.
+    The dictionary takes the form
+    {"PythiaAliasParam": {'<MODULE1>:<PARAM1>': 'LABEL1', '<MODULE1>:<PARAM2>': VALUE2, ...},
+     "PythiaBothParam": {'<MODULE2>:<PARAM3>': 'LABEL3', '<MODULE3>:<PARAM4>': VALUE4, ...},
+     "PythiaGenericParam": {'<MODULE4>:<PARAM5>': 'LABEL5', '<MODULE5>:<PARAM6>': VALUE6, ...}}.
 
     Parameters
     ----------
@@ -1607,9 +1614,10 @@ def get_jetset_definitions(
     Return a dictionary of all JETSET definitions in the input parsed file,
     of the form
     "JetSetPar <MODULE>(<PARAMETER>)=<VALUE>"
-    as {'MODULE1': {PARAMETER1: VALUE1, PARAMETER2: VALUE2, ...},
-        'MODULE2': {...},
-        ...}.
+    as
+    {'MODULE1': {PARAMETER1: VALUE1, PARAMETER2: VALUE2, ...},
+     'MODULE2': {...},
+     ...}.
 
     Parameters
     ----------
@@ -1672,8 +1680,10 @@ def get_lineshape_settings(
       PARTICLE2: {'lineshape': 'NAME2',
        'BlattWeisskopf': VALUE21,
        'ChangeMassMin': VALUE22,
-       'ChangeMassMax': VALUE23},
-       ...
+       'ChangeMassMax': VALUE23,
+       'IncludeBirthFactor': TRUE_OR_FALSE,
+       'IncludeDecayFactor': TRUE_OR_FALSE},
+      ...
      }
      where not all "sub-dictionaries" may contain all and/or the same keys.
 
