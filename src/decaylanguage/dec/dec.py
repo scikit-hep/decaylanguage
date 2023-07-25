@@ -1049,6 +1049,9 @@ class ModelNameCleanup(Transformer):  # type: ignore[misc]
     def MODEL_NAME_AND_SC(self, t: Token) -> Token:
         return t.update(value=t.strip(";").strip())
 
+    def MODEL_NAME_MULTILINE(self, t: Token) -> Token:
+       return t.update(value=t.strip())
+
 
 class DecayModelAliasReplacement(Transformer):  # type: ignore[misc]
     """

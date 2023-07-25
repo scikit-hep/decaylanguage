@@ -485,6 +485,15 @@ def test_decay_model_parsing_with_model_alias():
     assert get_model_parameters(dl) == [1.0, -0.303]
 
 
+def test_multiline_model():
+    p = DecFileParser(DIR / "../data/test_multiline_model.dec")
+    p.parse()
+
+    dl = p._parsed_decays[0].children[1]
+    assert get_model_name(dl) == "PTO3P"
+    assert len(get_model_parameters(dl)) == 96
+
+
 def test_duplicate_decay_definitions():
     p = DecFileParser(DIR / "../data/duplicate-decays.dec")
 
