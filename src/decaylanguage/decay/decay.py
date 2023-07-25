@@ -535,7 +535,7 @@ def _build_decay_modes(
     {'anti-D0': <DecayMode: daughters=K+ pi-, BF=1.0>,
      'anti-D*0': <DecayMode: daughters=anti-D0 pi0, BF=0.619>}
     """
-    mother = list(dc_dict.keys())[0]
+    mother = next(iter(dc_dict.keys()))
     dms = dc_dict[mother]
 
     for dm in dms:
@@ -561,7 +561,7 @@ def _build_decay_modes(
                 if isinstance(ifs, dict):
                     # Replace the element with the key and
                     # store the present decay mode ignoring sub-decays
-                    fs_local[i] = list(ifs.keys())[0]
+                    fs_local[i] = next(iter(ifs.keys()))
                     # Recursively continue ...
                     _build_decay_modes(decay_modes, fs[i])
             # Create the decay mode now that none of its particles
@@ -694,7 +694,7 @@ def _expand_decay_modes(
 
     # The mother particle is the first (and only) key of the dict
     assert len(decay_chain.keys()) == 1
-    orig_mother = list(decay_chain.keys())[0]
+    orig_mother = next(iter(decay_chain.keys()))
     mother = aliases.get(orig_mother, orig_mother) if aliases else orig_mother
 
     for mode in _get_modes(decay_chain):
@@ -786,7 +786,7 @@ class DecayChain:
             raise RuntimeError("Input not in the expected format!") from e
 
         decay_modes: dict[str, DecayMode] = {}
-        mother = list(decay_chain_dict.keys())[0]
+        mother = next(iter(decay_chain_dict.keys()))
         _build_decay_modes(decay_modes, decay_chain_dict)
 
         return cls(mother, decay_modes)
@@ -899,7 +899,7 @@ class DecayChain:
             link: bool = False,
             last: bool = False,
         ) -> None:
-            mother = list(decay_dict.keys())[0]
+            mother = next(iter(decay_dict.keys()))
             prefix = bar if (link and depth > 1) else ""
             prefix = prefix + " " * indent * (depth - 1)
             for i_decay in decay_dict[mother]:
