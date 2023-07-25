@@ -1,5 +1,16 @@
 # Changelog
 
+## Version 0.16.0 (2023-07-25)
+
+* Parsing of decay files (aka .dec files):
+  - Updated to the latest LHCb master file DECAY.DEC.
+  - Significant enhancements, improvements and simplifications to the parsing Lark grammar.
+  - Allow dec file Decay statements to effectively be able to set a particle as stable.
+    The package can now successfully parse all 8000-ish LHCb decay files.
+  - Test suite enhanced with various new tests.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.15.5 (2023-07-21)
 
 * Parsing of decay files (aka .dec files):
