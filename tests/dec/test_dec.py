@@ -663,7 +663,7 @@ def test_Lark_ModelNameCleanup_Transformer_no_params():
     )
 
     cleaned_tree = ModelNameCleanup().transform(t)
-    tree_decayline = list(cleaned_tree.find_data("decayline"))[0]
+    tree_decayline = next(iter(cleaned_tree.find_data("decayline")))
     assert get_model_name(tree_decayline) == "PHSP"
 
 
@@ -701,7 +701,7 @@ def test_Lark_ModelNameCleanup_Transformer_with_params():
     )
 
     cleaned_tree = ModelNameCleanup().transform(t)
-    tree_decayline = list(cleaned_tree.find_data("decayline"))[0]
+    tree_decayline = next(iter(cleaned_tree.find_data("decayline")))
     assert get_model_name(tree_decayline) == "SVV_HELAMP"
     assert get_model_parameters(tree_decayline) == [
         "0.0",
@@ -752,7 +752,7 @@ def test_Lark_DecayModelAliasReplacement_Transformer():
         model_alias_defs=dict_model_aliases
     ).transform(t)
 
-    tree_decayline = list(unaliased_tree.find_data("decayline"))[0]
+    tree_decayline = next(iter(unaliased_tree.find_data("decayline")))
     assert get_model_name(tree_decayline) == "SLBKPOLE"
     assert get_model_parameters(tree_decayline) == ["1.0", "0.303", "1.0", "2.112"]
 
@@ -777,7 +777,7 @@ def test_Lark_DecayModelParamValueReplacement_Visitor_no_params():
     DecayModelParamValueReplacement().visit(t)
 
     # The visitor should do nothing in this case
-    tree_decayline = list(t.find_data("decayline"))[0]
+    tree_decayline = next(iter(t.find_data("decayline")))
     assert get_model_name(tree_decayline) == "PHSP"
     assert get_model_parameters(tree_decayline) == ""
 
@@ -809,7 +809,7 @@ def test_Lark_DecayModelParamValueReplacement_Visitor_single_value():
 
     # Nothing done since model parameter name has no corresponding
     # 'Define' statement from which the actual value can be inferred
-    tree_decayline = list(t.find_data("decayline"))[0]
+    tree_decayline = next(iter(t.find_data("decayline")))
     assert get_model_name(tree_decayline) == "VSS_BMIX"
     assert get_model_parameters(tree_decayline) == ["dm"]
 
@@ -858,7 +858,7 @@ def test_Lark_DecayModelParamValueReplacement_Visitor_list():
     DecayModelParamValueReplacement().visit(t)
 
     # The visitor should do nothing in this case
-    tree_decayline = list(t.find_data("decayline"))[0]
+    tree_decayline = next(iter(t.find_data("decayline")))
     assert get_model_name(tree_decayline) == "SVV_HELAMP"
     assert get_model_parameters(tree_decayline) == [0.0, 0.0, 0.0, 0.0, 1.0, 0.0]
 

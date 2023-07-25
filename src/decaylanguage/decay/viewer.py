@@ -131,7 +131,7 @@ class DecayChainViewer:
 
         def new_node_with_subchain(list_parts: list[Any]) -> str:
             _list_parts = [
-                list(p.keys())[0] if isinstance(p, dict) else p for p in list_parts
+                next(iter(p.keys())) if isinstance(p, dict) else p for p in list_parts
             ]
             label = html_table_label(_list_parts, add_tags=True)
             r = f"dec{next(counter)}"
@@ -169,13 +169,13 @@ class DecayChainViewer:
                         )
                     for i, _p in enumerate(_list_parts):  # type: ignore[arg-type]
                         if not isinstance(_p, str):
-                            _k = list(_p.keys())[0]
+                            _k = next(iter(_p.keys()))
                             iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
 
         def has_subdecay(ds: list[Any]) -> bool:
             return not all(isinstance(p, str) for p in ds)
 
-        k = list(self._chain.keys())[0]
+        k = next(iter(self._chain.keys()))
         label = html_table_label([k], add_tags=True, bgcolor="#568dba")
         sc = self._chain[k]
 
