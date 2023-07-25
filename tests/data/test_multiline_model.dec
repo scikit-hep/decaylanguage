@@ -1,0 +1,35 @@
+# Example decay chain for testing purposes:
+# Test for rather complex models defined in several lines
+
+Decay B+
+1.000 K+ K- pi+ PTO3P
+        MAXPDF 0.09
+        AMPLITUDE       RESONANCE       BC      K*0
+        ANGULAR         AC
+        TYPE            RBW_ZEMACH
+        DVFF            BLATTWEISSKOPF  4.0
+        COEFFICIENT     POLAR_RAD       1.0     0.0
+        AMPLITUDE       LASS            BC  1.412   0.294   2.07  3.32  1.8
+        COEFFICIENT     POLAR_RAD       32.9    -0.38
+        AMPLITUDE       RESONANCE       AB      phi
+        ANGULAR         CA
+        TYPE            RBW_ZEMACH
+        DVFF            BLATTWEISSKOPF  4.0
+        COEFFICIENT     POLAR_RAD       6.04      2.99
+        AMPLITUDE       RESONANCE       AB      f_0   0.965  0.695
+        ANGULAR         CA
+        TYPE            FLATTE          0.165   0.13957    0.13957
+        COEFFICIENT     POLAR_RAD       5.28   0.48
+        AMPLITUDE       RESONANCE       AB      f_0(1500)  1.539  0.257
+        ANGULAR         CA
+        TYPE            RBW_ZEMACH
+        COEFFICIENT     POLAR_RAD       24.0     1.29
+        AMPLITUDE       RESONANCE       AB      chi_c0
+        ANGULAR         CA
+        TYPE            RBW_ZEMACH
+        DVFF            BLATTWEISSKOPF  4.0
+        COEFFICIENT     POLAR_RAD       0.437   -1.02
+        AMPLITUDE       PHASESPACE
+        COEFFICIENT     POLAR_RAD       6.9     -2.29
+        ;
+Enddecay
