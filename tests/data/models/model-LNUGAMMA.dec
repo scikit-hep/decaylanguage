@@ -1,0 +1,8 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+# Example taken from the example files in the EvtGen repository https://gitlab.cern.ch/evtgen/evtgen.
+
+Decay B+
+1.0  e+  nu_e  gamma  LNUGAMMA  0.35  3.0  5.0  0;
+Enddecay
+
+End
