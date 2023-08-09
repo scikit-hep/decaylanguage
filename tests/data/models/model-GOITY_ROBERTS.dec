@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B0
+  0.0015   D-   pi0   mu+   nu_mu   PHOTOS   GOITY_ROBERTS;
+Enddecay
+
+End

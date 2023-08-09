@@ -169,7 +169,7 @@ def test_model_parsing(decay_model: str, expected_model_parameters: str):
     are parsed with no errors but, most importantly, correctly.
     """
     # TODO: actually test all models - takes time
-    if decay_model not in {"BaryonPCR", "LNUGAMMA", "PHSP", "SSD_CP"}:
+    if decay_model not in {"BaryonPCR", "GOITY_ROBERTS", "LNUGAMMA", "PHSP", "SSD_CP"}:
         pass
     else:
         dfp = DecFileParser(DIR / f"../data/models/model-{decay_model}.dec")
