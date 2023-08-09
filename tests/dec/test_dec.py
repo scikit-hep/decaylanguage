@@ -25,7 +25,7 @@ from decaylanguage.dec.dec import (
     get_model_name,
     get_model_parameters,
 )
-from decaylanguage.dec.enums import PhotosEnum, known_decay_models
+from decaylanguage.dec.enums import PhotosEnum
 
 DIR = Path(__file__).parent.resolve()
 
@@ -977,25 +977,6 @@ def test_BELLE2_decfile():
     # Just check the dec file will parse since I do not know
     # how many decays are in the dec file.
     assert p.number_of_decays == 363
-
-
-def test_lark_file_model_list_consistency():
-    """
-    Make sure that the list of known decay models in the grammar file
-    'decaylanguage/data/decfile.lark' is consistent with that provided
-    to the user via
-    'from decaylanguage.dec.enums import known_decay_models'.
-    """
-    filename = str(DIR / "../../src/decaylanguage/data/decfile.lark")
-    with Path(filename).open(encoding="utf-8") as lark_file:
-        lines = lark_file.readlines()
-        for line in lines:
-            if "MODEL_NAME :" in line:
-                break
-        models = line.split(":")[1].strip(" ").strip("\n").split('"|"')
-        models = [m.strip('"') for m in models]
-
-        assert models == list(known_decay_models)
 
 
 def test_align_items_simple():

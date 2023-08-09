@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay X
+  1.  A  B PHOTOS PHSP;
+Enddecay
+
+End

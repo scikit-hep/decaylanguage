@@ -1,0 +1,10 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define dm 0.507e12
+Define minusTwoBeta -0.78
+
+Decay B0
+0.000436500  J/psi  K_S0  SSD_CP dm 0.0 1.0 minusTwoBeta 1.0 0.0 -1.0 0.0;
+Enddecay
+
+End
