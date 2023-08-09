@@ -3,3 +3,5 @@
 Decay Lambda_b0
   1.  Lambda_c+  mu-  anti-nu_mu  BaryonPCR  1 1 1 1;
 Enddecay
+
+End
