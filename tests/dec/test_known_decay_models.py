@@ -153,8 +153,8 @@ parsed_models = (
     ("VVP", ""),
     ("VVS_PWAVE", ""),
     ("XLL", ""),
-    ("YMSTOYNSPIPICLEO", ""),
-    ("YMSTOYNSPIPICLEOBOOST", ""),
+    ("YMSTOYNSPIPICLEO", [-0.753, 0.0]),
+    ("YMSTOYNSPIPICLEOBOOST", [-0.753, 0.0]),
 )
 
 
@@ -180,6 +180,8 @@ def test_model_parsing(decay_model: str, expected_model_parameters: str):
         "PHSP",
         "SSD_CP",
         "TSS",
+        "YMSTOYNSPIPICLEO",
+        "YMSTOYNSPIPICLEOBOOST",
     }:
         pass
     else:
