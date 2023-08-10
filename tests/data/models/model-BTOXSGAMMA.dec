@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B+
+0.0003118  Xsu  gamma  BTOXSGAMMA  2;
+Enddecay
+
+End
