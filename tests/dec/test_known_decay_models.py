@@ -75,7 +75,7 @@ parsed_models = (
     ("ETA_DALITZ", ""),
     ("ETA_FULLDALITZ", ""),
     ("ETA_LLPIPI", ""),
-    ("ETA_PI0DALITZ", ""),
+    ("ETA_PI0DALITZ", [-0.0135]),
     ("FLATQ2", ""),
     ("FLATSQDALITZ", ""),
     ("FOURBODYPHSP", ""),
@@ -173,10 +173,13 @@ def test_model_parsing(decay_model: str, expected_model_parameters: str):
         "BaryonPCR",
         "BTOXSGAMMA",
         "BTOXSLL",
+        "ETA_PI0DALITZ",
         "GOITY_ROBERTS",
         "LNUGAMMA",
+        "OMEGA_DALITZ",
         "PHSP",
         "SSD_CP",
+        "TSS",
     }:
         pass
     else:
