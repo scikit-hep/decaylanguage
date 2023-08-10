@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B+
+  0.0000025  Xsu  mu+  mu-  PHOTOS  BTOXSLL  4.8  0.2  0.0  0.41;
+Enddecay
+
+End

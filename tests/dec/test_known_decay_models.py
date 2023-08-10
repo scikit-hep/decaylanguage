@@ -37,13 +37,13 @@ def test_lark_file_model_list_consistency():
 # TODO: actually test all models - takes time
 parsed_models = (
     ("BaryonPCR", [1.0, 1.0, 1.0, 1.0]),
-    ("BC_SMN", ""),
-    ("BC_TMN", ""),
-    ("BC_VHAD", ""),
-    ("BC_VMN", ""),
-    ("BCL", ""),
-    ("BGL", ""),
-    ("BLLNUL", ""),
+    ("BC_SMN", ""),  # No dec file found in EvtGen repository
+    ("BC_TMN", ""),  # No dec file found in EvtGen repository
+    ("BC_VHAD", ""),  # No dec file found in EvtGen repository
+    ("BC_VMN", ""),  # No dec file found in EvtGen repository
+    ("BCL", ""),  # No dec file found in EvtGen repository
+    ("BGL", ""),  # No dec file found in EvtGen repository
+    ("BLLNUL", ""),  # No dec file found in EvtGen repository
     ("BNOCB0TO4PICP", ""),
     ("BNOCBPTO3HPI0", ""),
     ("BNOCBPTOKSHHH", ""),
@@ -59,9 +59,9 @@ parsed_models = (
     ("BTOSLLMS", ""),
     ("BTOSLLMSEXT", ""),
     ("BTOVLNUBALL", ""),
-    ("BTOXSGAMMA", ""),
+    ("BTOXSGAMMA", [2.0]),
     ("BTOXELNU", ""),
-    ("BTOXSLL", ""),
+    ("BTOXSLL", [4.8, 0.2, 0.0, 0.41]),
     ("BQTOLLLLHYPERCP", ""),
     ("BQTOLLLL", ""),
     ("CB3PI-MPP", ""),
@@ -75,7 +75,7 @@ parsed_models = (
     ("ETA_DALITZ", ""),
     ("ETA_FULLDALITZ", ""),
     ("ETA_LLPIPI", ""),
-    ("ETA_PI0DALITZ", ""),
+    ("ETA_PI0DALITZ", [-0.0135]),
     ("FLATQ2", ""),
     ("FLATSQDALITZ", ""),
     ("FOURBODYPHSP", ""),
@@ -153,8 +153,8 @@ parsed_models = (
     ("VVP", ""),
     ("VVS_PWAVE", ""),
     ("XLL", ""),
-    ("YMSTOYNSPIPICLEO", ""),
-    ("YMSTOYNSPIPICLEOBOOST", ""),
+    ("YMSTOYNSPIPICLEO", [-0.753, 0.0]),
+    ("YMSTOYNSPIPICLEOBOOST", [-0.753, 0.0]),
 )
 
 
@@ -169,7 +169,20 @@ def test_model_parsing(decay_model: str, expected_model_parameters: str):
     are parsed with no errors but, most importantly, correctly.
     """
     # TODO: actually test all models - takes time
-    if decay_model not in {"BaryonPCR", "GOITY_ROBERTS", "LNUGAMMA", "PHSP", "SSD_CP"}:
+    if decay_model not in {
+        "BaryonPCR",
+        "BTOXSGAMMA",
+        "BTOXSLL",
+        "ETA_PI0DALITZ",
+        "GOITY_ROBERTS",
+        "LNUGAMMA",
+        "OMEGA_DALITZ",
+        "PHSP",
+        "SSD_CP",
+        "TSS",
+        "YMSTOYNSPIPICLEO",
+        "YMSTOYNSPIPICLEOBOOST",
+    }:
         pass
     else:
         dfp = DecFileParser(DIR / f"../data/models/model-{decay_model}.dec")
