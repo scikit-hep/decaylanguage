@@ -37,7 +37,7 @@ def test_lark_file_model_list_consistency():
 # TODO: actually test all models - takes time
 parsed_models = (
     ("BaryonPCR", [1.0, 1.0, 1.0, 1.0]),
-    ("BC_SMN", ""),  # No dec file found in EvtGen repository
+    ("BC_SMN", [2.0]),
     ("BC_TMN", ""),  # No dec file found in EvtGen repository
     ("BC_VHAD", ""),  # No dec file found in EvtGen repository
     ("BC_VMN", ""),  # No dec file found in EvtGen repository
@@ -71,9 +71,9 @@ parsed_models = (
     ("D0GAMMADALITZ", ""),
     ("doKm", ""),
     ("DToKpienu", ""),
-    ("ETAPRIME_DALITZ", ""),
+    ("ETAPRIME_DALITZ", [-0.047, -0.069, 0.0, 0.073]),
     ("ETA_DALITZ", ""),
-    ("ETA_FULLDALITZ", ""),
+    ("ETA_FULLDALITZ", [-1.128, 0.153, 0.0, 0.085, 0.0, 0.173]),
     ("ETA_LLPIPI", ""),
     ("ETA_PI0DALITZ", [-0.0135]),
     ("FLATQ2", ""),
@@ -93,7 +93,7 @@ parsed_models = (
     ("Lb2plnuLCSR", ""),
     ("Lb2plnuLQCD", ""),
     ("LbAmpGen", ""),
-    ("LLSW", ""),
+    ("LLSW", [0.71, -1.6, -0.5, 2.9]),
     ("LNUGAMMA", [0.35, 3.0, 5.0, 0.0]),
     ("LQCD", ""),
     ("MELIKHOV", ""),
@@ -171,12 +171,18 @@ def test_model_parsing(decay_model: str, expected_model_parameters: str):
     # TODO: actually test all models - takes time
     if decay_model not in {
         "BaryonPCR",
+        "BC_SMN",
         "BTOXSGAMMA",
         "BTOXSLL",
+        "ETAPRIME_DALITZ",
+        "ETA_DALITZ",
+        "ETA_FULLDALITZ",
         "ETA_PI0DALITZ",
         "GOITY_ROBERTS",
+        "LLSW",
         "LNUGAMMA",
         "OMEGA_DALITZ",
+        "PI0_DALITZ",
         "PHSP",
         "PYTHIA",
         "SSD_CP",

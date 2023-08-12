@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay anti-B0
+0.007040000   D_1+   e-   anti-nu_e   LLSW   0.71 -1.6 -0.5 2.9;
+Enddecay
+
+End

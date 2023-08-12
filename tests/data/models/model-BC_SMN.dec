@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B_c+
+   1.000   D0   mu+   nu_mu   BC_SMN   2;
+Enddecay
+
+End
