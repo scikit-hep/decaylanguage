@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay eta
+0.227400000   pi-   pi+   pi0   ETA_FULLDALITZ   -1.128  0.153  0.0  0.085  0.0  0.173;
+Enddecay
+
+End
