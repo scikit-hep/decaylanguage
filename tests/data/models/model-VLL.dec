@@ -1,0 +1,8 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+
+Decay J/psi
+0.059300000   mu+   mu-   PHOTOS   VLL;
+Enddecay
+
+End

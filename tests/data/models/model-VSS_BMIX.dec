@@ -1,0 +1,9 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define dm 0.507e12
+
+Decay Upsilon(4S)
+0.483122645   B0   anti-B0   VSS_BMIX   dm;
+Enddecay
+
+End
