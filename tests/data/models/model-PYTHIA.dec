@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay tau-
+0.046100000   nu_tau   pi-   pi+   pi-   pi0   PYTHIA   21;
+Enddecay
+
+End
