@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay tau-
+0.154002925   e-   anti-nu_e   nu_tau   PHOTOS   TAULNUNU;
+Enddecay
+
+End

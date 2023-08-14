@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay D*+
+0.0160   D+   gamma   VSP_PWAVE;
+Enddecay
+
+End
