@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B+
+   1.0   pi+   K-   K+   pi0   BNOCBPTO3HPI0 0.0 2.0 0.0 2.0;
+Enddecay
+
+End

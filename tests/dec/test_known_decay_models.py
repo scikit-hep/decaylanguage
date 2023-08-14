@@ -40,12 +40,12 @@ parsed_models = (
     ("BC_SMN", [2.0]),
     ("BC_TMN", [3.0]),
     ("BC_VHAD", [1.0]),
-    # ("BC_VMN", ""),  # No dec file found in EvtGen repository
-    # ("BCL", ""),  # No dec file found in EvtGen repository
-    # ("BGL", ""),  # No dec file found in EvtGen repository
-    # ("BLLNUL", ""),  # No dec file found in EvtGen repository
-    # ("BNOCB0TO4PICP", ""),
-    # ("BNOCBPTO3HPI0", ""),
+    ("BC_VMN", [2.0]),
+    # ("BCL", ""),
+    # ("BGL", ""),
+    # ("BLLNUL", ""),
+    ("BNOCB0TO4PICP", [-1.507964474, 0.5065e12, 0.0, 1.1, 0.0, 1.86965]),
+    ("BNOCBPTO3HPI0", [0.0, 2.0, 0.0, 2.0]),
     # ("BNOCBPTOKSHHH", ""),
     # ("BS_MUMUKK", ""),
     # ("BSTOGLLISRFSR", ""),
@@ -160,7 +160,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 90
+        len(parsed_models) == len(known_decay_models) - 87
     )  # subtract for now the number of models not yet tested
 
 
