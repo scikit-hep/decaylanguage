@@ -165,7 +165,7 @@ class GooFitChain(AmplitudeChain):
             if self[0].spinfactor and self[0].spinfactor != "S"
             else ""
         )
-        return "Dto{a}P1_{a}to{b}P2{wave}_{b}toP3P4".format(a=a, b=b, wave=wave)
+        return f"Dto{a}P1_{a}to{b}P2{wave}_{b}toP3P4"
 
     @property
     def spinfactors(self):
@@ -213,9 +213,7 @@ class GooFitChain(AmplitudeChain):
             pname = programmatic_name(name)
             if not par.fix:
                 headerlist.append(
-                    '    Variable {pname} {{"{name}", {par.value}, {par.error} }};'.format(
-                        pname=pname, name=name, par=par
-                    )
+                    f'    Variable {pname} {{"{name}", {par.value}, {par.error} }};'
                 )
             else:
                 headerlist.append(f'    Variable {pname} {{"{name}", {par.value} }};')
@@ -305,25 +303,17 @@ class GooFitChain(AmplitudeChain):
         if self.ls_enum == LS.kMatrix:
             _, poleprod, pterm = self.lineshape.split(".")
             is_pole = "true" if poleprod == "pole" else "false"
-            return """new Lineshapes::kMatrix("{name}", {pterm}, {is_pole},
+            return f"""new Lineshapes::kMatrix("{name}", {pterm}, {is_pole},
             sA_0, sA, s0_prod, s0_scatt,
             f_scatt, IS_poles,
-            {par}_M, {par}_W, {L}, {masses}, FF::BL2, {radius})""".format(
-                name=name,
-                pterm=pterm,
-                is_pole=is_pole,
-                par=par,
-                L=L,
-                masses=masses,
-                radius=radius,
-            )
+            {par}_M, {par}_W, {L}, {masses}, FF::BL2, {radius})"""
 
         if self.ls_enum == LS.FOCUS:
             _, mod = self.lineshape.split(".")
             return (
-                'new Lineshapes::FOCUS("{name}", Lineshapes::FOCUS::Mod::{mod},'
-                " {par}_M, {par}_W, {L}, {masses}, FF::BL2, {radius})"
-            ).format(name=name, mod=mod, par=par, L=L, masses=masses, radius=radius)
+                f'new Lineshapes::FOCUS("{name}", Lineshapes::FOCUS::Mod::{mod},'
+                f" {par}_M, {par}_W, {L}, {masses}, FF::BL2, {radius})"
+            )
 
         raise NotImplementedError(f"Unimplemented GooFit Lineshape {self.ls_enum.name}")
 
@@ -532,7 +522,7 @@ class GooFitPyChain(AmplitudeChain):
             if self[0].spinfactor and self[0].spinfactor != "S"
             else ""
         )
-        return "Dto{a}P1_{a}to{b}P2{wave}_{b}toP3P4".format(a=a, b=b, wave=wave)
+        return f"Dto{a}P1_{a}to{b}P2{wave}_{b}toP3P4"
 
     @property
     def spinfactors(self):
@@ -580,9 +570,7 @@ class GooFitPyChain(AmplitudeChain):
             pname = programmatic_name(name)
             if not par.fix:
                 headerlist.append(
-                    '{pname} = Variable("{name}", {par.value}, {par.error} )'.format(
-                        pname=pname, name=name, par=par
-                    )
+                    f'{pname} = Variable("{name}", {par.value}, {par.error} )'
                 )
             else:
                 headerlist.append(f'{pname} = Variable("{name}", {par.value})')
@@ -648,9 +636,7 @@ class GooFitPyChain(AmplitudeChain):
         radius = 5.0 if "c" in self.particle.quarks.lower() else 1.5
 
         if self.ls_enum == LS.RBW:
-            return 'Lineshapes.RBW("{name}", {par}_M, {par}_W, {L}, {masses}, FF.BL2)'.format(
-                name=name, par=par, L=L, masses=masses
-            )
+            return f'Lineshapes.RBW("{name}", {par}_M, {par}_W, {L}, {masses}, FF.BL2)'
         if self.ls_enum == LS.GSpline:
             min_ = self.__class__.consts.loc[f"{self.name}::Spline::Min", "value"]
             max_ = self.__class__.consts.loc[f"{self.name}::Spline::Max", "value"]
@@ -672,25 +658,17 @@ class GooFitPyChain(AmplitudeChain):
         if self.ls_enum == LS.kMatrix:
             _, poleprod, pterm = self.lineshape.split(".")
             is_pole = "True" if poleprod == "pole" else "False"
-            return """Lineshapes.kMatrix("{name}", {pterm}, {is_pole},
+            return f"""Lineshapes.kMatrix("{name}", {pterm}, {is_pole},
             sA_0, sA, s0_prod, s0_scatt,
             f_scatt, IS_poles,
-            {par}_M, {par}_W, {L}, {masses}, FF.BL2, {radius})""".format(
-                name=name,
-                pterm=pterm,
-                is_pole=is_pole,
-                par=par,
-                L=L,
-                masses=masses,
-                radius=radius,
-            )
+            {par}_M, {par}_W, {L}, {masses}, FF.BL2, {radius})"""
 
         if self.ls_enum == LS.FOCUS:
             _, mod = self.lineshape.split(".")
             return (
-                'Lineshapes.FOCUS("{name}", Lineshapes.FocusMod.{mod},'
-                " {par}_M, {par}_W, {L}, {masses}, FF.BL2, {radius})"
-            ).format(name=name, mod=mod, par=par, L=L, masses=masses, radius=radius)
+                f'Lineshapes.FOCUS("{name}", Lineshapes.FocusMod.{mod},'
+                f" {par}_M, {par}_W, {L}, {masses}, FF.BL2, {radius})"
+            )
 
         raise NotImplementedError(f"Unimplemented GooFit Lineshape {self.ls_enum.name}")
 
@@ -758,14 +736,12 @@ class GooFitPyChain(AmplitudeChain):
         )
         return (
             "amplitudes_list.append(Amplitude(\n"
-            '        "{self!s}",\n'
-            "        {real_coeff},\n"
-            "        {imag_coeff},\n"
+            f'        "{self!s}",\n'
+            f"        {real_coeff},\n"
+            f"        {imag_coeff},\n"
             "        line_factor_list[-1],\n"
             "        spin_factor_list[-1],\n"
-            "        {n}))\n\n".format(
-                self=self, real_coeff=real_coeff, imag_coeff=imag_coeff, n=n
-            )
+            f"        {n}))\n\n"
         )
 
     def to_goofit(self, final_states):
