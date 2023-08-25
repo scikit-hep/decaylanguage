@@ -81,6 +81,8 @@ exclude = "src/decaylanguage/(data|modeling)"
 python_version = "3.9"
 warn_unused_configs = true
 warn_unused_ignores = true
+show_error_codes = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 strict = true
 
 [[tool.mypy.overrides]]
@@ -107,6 +109,7 @@ log_cli_level = "DEBUG"
 filterwarnings = [
     "error",
 ]
+xfail_strict = true
 
 
 [tool.pylint]
