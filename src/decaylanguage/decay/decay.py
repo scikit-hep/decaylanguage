@@ -249,7 +249,7 @@ class DecayMode:
         self.bf = bf
         self.daughters = DaughtersDict(daughters)
 
-        self.metadata = {"model": "", "model_params": ""}
+        self.metadata: dict[str, str | None] = {"model": "", "model_params": ""}
         self.metadata.update(**info)
 
     @classmethod
