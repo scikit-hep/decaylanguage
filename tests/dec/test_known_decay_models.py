@@ -56,7 +56,7 @@ parsed_models = (
     # ("BToDiBaryonlnupQCD", ""),
     # ("BTOSLLALI", ""),
     # ("BTOSLLBALL", ""),
-    # ("BTOSLLMS", ""),
+    ("BTOSLLMS", [5.0, 5.0, 0.0, 1.0, 0.88, 0.227, 0.22, 0.34]),
     # ("BTOSLLMSEXT", ""),
     # ("BTOVLNUBALL", ""),
     ("BTOXSGAMMA", [2.0]),
@@ -66,7 +66,7 @@ parsed_models = (
     # ("BQTOLLLL", ""),
     # ("CB3PI-MPP", ""),
     # ("CB3PI-P00", ""),
-    # ("D_DALITZ", ""),
+    ("D_DALITZ", ""),
     # ("D_hhhh", ""),
     # ("D0GAMMADALITZ", ""),
     # ("doKm", ""),
@@ -99,7 +99,7 @@ parsed_models = (
     # ("MELIKHOV", ""),
     ("OMEGA_DALITZ", ""),
     # ("PARTWAVE", ""),
-    # ("PHI_DALITZ", ""),
+    ("PHI_DALITZ", ""),
     # ("PHSPDECAYTIMECUT", ""),
     # ("PHSPFLATLIFETIME", ""),
     ("PHSP", ""),
@@ -138,7 +138,7 @@ parsed_models = (
     # ("TAUOLA", ""),
     ("TAUSCALARNU", ""),
     ("TAUVECTORNU", ""),
-    # ("THREEBODYPHSP", ""),
+    ("THREEBODYPHSP", [14.00, 16.40]),
     ("TSS", ""),
     # ("TVP", ""),
     # ("TVS_PWAVE", ""),
@@ -160,7 +160,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 87
+        len(parsed_models) == len(known_decay_models) - 83
     )  # subtract for now the number of models not yet tested
 
 
