@@ -53,7 +53,7 @@ known_decay_models = (
     "D_DALITZ",
     "D_hhhh",
     "D0GAMMADALITZ",
-    "doKm",
+    "D0MIXDALITZ",
     "DToKpienu",
     "ETAPRIME_DALITZ",
     "ETA_DALITZ",
