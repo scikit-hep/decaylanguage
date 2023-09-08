@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B0
+   1.0   D-   mu+   nu_mu   PHOTOS   HQET2 1.18 1.074;
+Enddecay
+
+End

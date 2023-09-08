@@ -77,13 +77,13 @@ parsed_models = (
     # ("ETA_LLPIPI", ""),
     ("ETA_PI0DALITZ", [-0.0135]),
     # ("FLATQ2", ""),
-    # ("FLATSQDALITZ", ""),
+    ("FLATSQDALITZ", ""),
     # ("FOURBODYPHSP", ""),
-    # ("GENERIC_DALITZ", ""),
+    # ("GENERIC_DALITZ", ""),  # no dec file currently available for a test
     ("GOITY_ROBERTS", ""),
     # ("HELAMP", ""),
-    # ("HQET3", ""),
-    # ("HQET2", ""),
+    ("HQET3", [0.920, 1.205, 1.21, 1.404, 0.854]),
+    ("HQET2", [1.18, 1.074]),
     # ("HQET", ""),
     # ("imqp", ""),
     # ("ISGW2", ""),
@@ -98,7 +98,7 @@ parsed_models = (
     # ("LQCD", ""),
     # ("MELIKHOV", ""),
     ("OMEGA_DALITZ", ""),
-    # ("PARTWAVE", ""),
+    ("PARTWAVE", [0.0, 0.0, 1.0, 0.0, 0.0, 0.0]),
     ("PHI_DALITZ", ""),
     # ("PHSPDECAYTIMECUT", ""),
     # ("PHSPFLATLIFETIME", ""),
@@ -160,7 +160,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 83
+        len(parsed_models) == len(known_decay_models) - 79
     )  # subtract for now the number of models not yet tested
 
 

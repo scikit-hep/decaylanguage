@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B+
+   0.01325   anti-D*0   tau+   nu_tau   PHOTOS   HQET3 0.920 1.205 1.21 1.404 0.854;
+Enddecay
+
+End
