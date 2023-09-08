@@ -1,0 +1,14 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+# Mixing and CPV in mixing parameters.
+Define x    0.00
+Define y    0.00
+Define reqp 1.00
+Define imqp 0.00
+Define doKm 0
+
+Decay my-D0
+1.0   my-K_S0   pi+   pi-   D0MIXDALITZ   x y reqp imqp doKm;
+Enddecay
+
+End
