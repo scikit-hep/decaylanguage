@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B+
+1.000   J/psi   omega   K+   THREEBODYPHSP   14.00   16.40;
+Enddecay
+
+End

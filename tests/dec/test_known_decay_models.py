@@ -56,7 +56,7 @@ parsed_models = (
     # ("BToDiBaryonlnupQCD", ""),
     # ("BTOSLLALI", ""),
     # ("BTOSLLBALL", ""),
-    # ("BTOSLLMS", ""),
+    ("BTOSLLMS", [5.0, 5.0, 0.0, 1.0, 0.88, 0.227, 0.22, 0.34]),
     # ("BTOSLLMSEXT", ""),
     # ("BTOVLNUBALL", ""),
     ("BTOXSGAMMA", [2.0]),
@@ -66,24 +66,24 @@ parsed_models = (
     # ("BQTOLLLL", ""),
     # ("CB3PI-MPP", ""),
     # ("CB3PI-P00", ""),
-    # ("D_DALITZ", ""),
-    # ("D_hhhh", ""),
-    # ("D0GAMMADALITZ", ""),
+    ("D_DALITZ", ""),
+    ("D_hhhh", [11.0]),
+    ("D0GAMMADALITZ", ""),
     # ("doKm", ""),
-    # ("DToKpienu", ""),
+    ("DToKpienu", ""),
     ("ETAPRIME_DALITZ", [-0.047, -0.069, 0.0, 0.073]),
     ("ETA_DALITZ", ""),
     ("ETA_FULLDALITZ", [-1.128, 0.153, 0.0, 0.085, 0.0, 0.173]),
     # ("ETA_LLPIPI", ""),
     ("ETA_PI0DALITZ", [-0.0135]),
     # ("FLATQ2", ""),
-    # ("FLATSQDALITZ", ""),
+    ("FLATSQDALITZ", ""),
     # ("FOURBODYPHSP", ""),
-    # ("GENERIC_DALITZ", ""),
+    # ("GENERIC_DALITZ", ""),  # no dec file currently available for a test
     ("GOITY_ROBERTS", ""),
     # ("HELAMP", ""),
-    # ("HQET3", ""),
-    # ("HQET2", ""),
+    ("HQET3", [0.920, 1.205, 1.21, 1.404, 0.854]),
+    ("HQET2", [1.18, 1.074]),
     # ("HQET", ""),
     # ("imqp", ""),
     # ("ISGW2", ""),
@@ -98,8 +98,8 @@ parsed_models = (
     # ("LQCD", ""),
     # ("MELIKHOV", ""),
     ("OMEGA_DALITZ", ""),
-    # ("PARTWAVE", ""),
-    # ("PHI_DALITZ", ""),
+    ("PARTWAVE", [0.0, 0.0, 1.0, 0.0, 0.0, 0.0]),
+    ("PHI_DALITZ", ""),
     # ("PHSPDECAYTIMECUT", ""),
     # ("PHSPFLATLIFETIME", ""),
     ("PHSP", ""),
@@ -138,7 +138,7 @@ parsed_models = (
     # ("TAUOLA", ""),
     ("TAUSCALARNU", ""),
     ("TAUVECTORNU", ""),
-    # ("THREEBODYPHSP", ""),
+    ("THREEBODYPHSP", [14.00, 16.40]),
     ("TSS", ""),
     # ("TVP", ""),
     # ("TVS_PWAVE", ""),
@@ -160,7 +160,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 87
+        len(parsed_models) == len(known_decay_models) - 76
     )  # subtract for now the number of models not yet tested
 
 

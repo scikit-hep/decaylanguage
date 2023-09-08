@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay   Mypsi(2S)
+0.0013   MyJpsi   pi0   PARTWAVE   0  0  1  0  0  0.0;
+Enddecay
+
+End

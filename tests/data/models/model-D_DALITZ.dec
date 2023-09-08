@@ -1,0 +1,12 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Alias   My_D_s-   D_s-
+Alias   My_D_s+   D_s+
+ChargeConj   My_D_s-   My_D_s+
+
+Decay My_D_s+
+   1.0   K+   K-   pi+   D_DALITZ;
+Enddecay
+CDecay My_D_s-
+
+End
