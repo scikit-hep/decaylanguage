@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay D+sig
+1.0	  K-   pi+   mu+   nu_mu   PHOTOS   DToKpienu;  # LHCb model
+Enddecay
+
+End

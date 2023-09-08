@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay My_D0
+1.0   K+   K-   pi+   pi-   D_hhhh   11;  # model in LHCb for MINT program
+Enddecay
+
+End

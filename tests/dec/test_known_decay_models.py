@@ -67,10 +67,10 @@ parsed_models = (
     # ("CB3PI-MPP", ""),
     # ("CB3PI-P00", ""),
     ("D_DALITZ", ""),
-    # ("D_hhhh", ""),
-    # ("D0GAMMADALITZ", ""),
+    ("D_hhhh", [11.0]),
+    ("D0GAMMADALITZ", ""),
     # ("doKm", ""),
-    # ("DToKpienu", ""),
+    ("DToKpienu", ""),
     ("ETAPRIME_DALITZ", [-0.047, -0.069, 0.0, 0.073]),
     ("ETA_DALITZ", ""),
     ("ETA_FULLDALITZ", [-1.128, 0.153, 0.0, 0.085, 0.0, 0.173]),
@@ -160,7 +160,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 79
+        len(parsed_models) == len(known_decay_models) - 76
     )  # subtract for now the number of models not yet tested
 
 
