@@ -69,7 +69,7 @@ parsed_models = (
     ("D_DALITZ", ""),
     ("D_hhhh", [11.0]),
     ("D0GAMMADALITZ", ""),
-    # ("doKm", ""),
+    ("D0MIXDALITZ", [0.0, 0.0, 1.0, 0.0, 0.0]),
     ("DToKpienu", ""),
     ("ETAPRIME_DALITZ", [-0.047, -0.069, 0.0, 0.073]),
     ("ETA_DALITZ", ""),
@@ -160,7 +160,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 76
+        len(parsed_models) == len(known_decay_models) - 75
     )  # subtract for now the number of models not yet tested
 
 
