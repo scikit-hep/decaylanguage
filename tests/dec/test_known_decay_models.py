@@ -41,19 +41,51 @@ parsed_models = (
     ("BC_TMN", [3.0]),
     ("BC_VHAD", [1.0]),
     ("BC_VMN", [2.0]),
-    # ("BCL", ""),
-    # ("BGL", ""),
-    # ("BLLNUL", ""),
+    ("BCL", [0.419, -0.495, -0.43, 0.22, 0.51, -1.70, 1.53, 4.52]),
+    ("BGL", [0.02596, -0.06049, 0.01311, 0.01713, 0.00753, -0.09346]),
+    ("BLLNUL", [0.026, 0.01, 2.9]),
     ("BNOCB0TO4PICP", [-1.507964474, 0.5065e12, 0.0, 1.1, 0.0, 1.86965]),
     ("BNOCBPTO3HPI0", [0.0, 2.0, 0.0, 2.0]),
-    # ("BNOCBPTOKSHHH", ""),
-    # ("BS_MUMUKK", ""),
-    # ("BSTOGLLISRFSR", ""),
-    # ("BSTOGLLMNT", ""),
-    # ("BT02PI_CP_ISO", ""),
-    # ("BTO3PI_CP", ""),
-    # ("BTODDALITZCPK", ""),
-    # ("BToDiBaryonlnupQCD", ""),
+    ("BNOCBPTOKSHHH", ""),
+    (
+        "BS_MUMUKK",
+        [
+            0.0,
+            0.0,
+            -0.03,
+            1.0,
+            0.11,
+            3.315,
+            -0.03,
+            1.0,
+            0.5241,
+            0.0,
+            -0.03,
+            1.0,
+            0.2504,
+            0.06159,
+            -0.03,
+            1.0,
+            -3.26,
+            -0.03,
+            1.0,
+            0.6603,
+            0.0805,
+            17.7,
+            0.9499,
+            1.2,
+            1,
+        ],
+    ),
+    (
+        "BSTOGLLISRFSR",
+        [5.0, 5, 0, 0, 1, 0.000001, 0.8250, 0.22509, 0.1598, 0.3499, 4.5],
+    ),
+    ("BSTOGLLMNT", [5.0, 5, 1, 1, 0.02, 0.88, 0.227, 0.22, 0.34]),
+    # ("BT02PI_CP_ISO", ""),  # No dec file available from LHCb or Belle-II
+    ("BTO3PI_CP", [0.507e12, 1.365]),
+    ("BTODDALITZCPK", [1.22, 2.27, 0.10]),
+    ("BToDiBaryonlnupQCD", [67.7, -280.0, -38.3, -840.0, -10.1, -157.0, 800000]),
     # ("BTOSLLALI", ""),
     # ("BTOSLLBALL", ""),
     ("BTOSLLMS", [5.0, 5.0, 0.0, 1.0, 0.88, 0.227, 0.22, 0.34]),
@@ -160,7 +192,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 75
+        len(parsed_models) == len(known_decay_models) - 65
     )  # subtract for now the number of models not yet tested
 
 
