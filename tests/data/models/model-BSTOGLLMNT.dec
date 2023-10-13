@@ -1,0 +1,17 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define mu 5.0
+Define Nf 5
+Define res_swch 1
+Define ias 1
+Define Egamma 0.02
+Define A 0.88
+Define lambda 0.227
+Define barrho 0.22
+Define bareta 0.34
+
+Decay B_s0
+   1.000   gamma   e+   e-   BSTOGLLMNT mu Nf res_swch ias Egamma A lambda barrho bareta;
+Enddecay
+
+End

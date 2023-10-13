@@ -1,0 +1,12 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+# CPV parameters.
+Define gamma 1.22 # 70 degrees
+Define delta 2.27 # 130 degrees
+Define rB    0.10
+
+Decay B+sig
+1.000   my-anti-D0   K+   BTODDALITZCPK   gamma delta rB;
+Enddecay
+
+End

@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay anti-B0sig
+0.051100000   D*+sig   mu-   anti-nu_mu   BGL 0.02596 -0.06049 0.01311 0.01713 0.00753 -0.09346;
+Enddecay
+
+End

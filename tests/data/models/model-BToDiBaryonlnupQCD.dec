@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B-
+   1.0   p+   anti-p-   tau-   anti-nu_tau   PHOTOS   BToDiBaryonlnupQCD 67.7 -280.0 -38.3 -840.0 -10.1 -157.0 800000;
+Enddecay
+
+End
