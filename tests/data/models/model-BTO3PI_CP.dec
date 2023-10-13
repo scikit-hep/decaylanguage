@@ -1,0 +1,10 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define dm 0.507e12
+Define alpha 1.365
+
+Decay B0sig
+1.0   pi+   pi-   pi0   BTO3PI_CP   dm   alpha;
+Enddecay
+
+End

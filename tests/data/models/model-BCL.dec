@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B+sig
+0.000078   pi0   e+   nu_e   PHOTOS   BCL   0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52;
+Enddecay
+
+End

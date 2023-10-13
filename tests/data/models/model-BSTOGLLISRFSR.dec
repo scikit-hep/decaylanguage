@@ -1,0 +1,31 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+
+# Documentation:
+#     ISR contribution only
+#     Input parameters mu         - the scale parameter (in GeV's)
+#                      Nf         - number of "effective" flavors (for b-quark Nf=5)
+#                      sr         - state radiation type
+#                      res_swch   - resonant switching parameter
+#                      ias        - switching parameter for \alpha_s(M_Z) value
+#                      Wolfenstein parameterization for CKM matrix
+#                      Egamma     - minimum energy of the photon (in GeV)
+#                      mumumass_min - minimum invariant mass of the two muons (in GeV)
+# EndDocumentation
+Define mu 5.0
+Define Nf 5
+Define sr 0
+Define res_swch 0
+Define ias 1
+Define Egamma 0.000001
+Define A 0.8250
+Define lambda 0.22509
+Define barrho 0.1598
+Define bareta 0.3499
+Define mumumass_min 4.5
+
+Decay B0
+   1.000   gamma   mu+   mu-   BSTOGLLISRFSR mu Nf sr res_swch ias Egamma A lambda barrho bareta mumumass_min;
+Enddecay
+
+End
