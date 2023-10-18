@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.17.0 (2023-10-18)
+
+* Parsing of decay files (aka .dec files):
+  - Introduced at test suite to verify that all EvtGen models are parsed correctly (half work done).
+  - Fixed an LHCb decay model name.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.16.0 (2023-07-25)
 
 * Parsing of decay files (aka .dec files):
