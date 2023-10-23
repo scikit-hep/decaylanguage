@@ -110,9 +110,7 @@ class DecayChainViewer:
             if add_tags:
                 label = f'<<TABLE BORDER="0" CELLSPACING="0" BGCOLOR="{bgcolor}">'
             else:
-                label = '<<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0" BGCOLOR="{bgcolor}"><TR>'.format(
-                    bgcolor=bgcolor
-                )
+                label = f'<<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0" BGCOLOR="{bgcolor}"><TR>'
             for i, n in enumerate(names):
                 if add_tags:
                     label += '<TR><TD BORDER="1" CELLPADDING="5" PORT="p{tag}">{name}</TD></TR>'.format(

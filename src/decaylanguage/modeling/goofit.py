@@ -279,9 +279,7 @@ class GooFitChain(AmplitudeChain):
         radius = 5.0 if "c" in self.particle.quarks.lower() else 1.5
 
         if self.ls_enum == LS.RBW:
-            return 'new Lineshapes::RBW("{name}", {par}_M, {par}_W, {L}, {masses}, FF::BL2)'.format(
-                name=name, par=par, L=L, masses=masses
-            )
+            return f'new Lineshapes::RBW("{name}", {par}_M, {par}_W, {L}, {masses}, FF::BL2)'
         if self.ls_enum == LS.GSpline:
             min_ = self.__class__.consts.loc[f"{self.name}::Spline::Min", "value"]
             max_ = self.__class__.consts.loc[f"{self.name}::Spline::Max", "value"]
@@ -336,9 +334,7 @@ class GooFitChain(AmplitudeChain):
                 for spin_factor in spin_factors:
                     structure_list = ", ".join(map(str, structure))
                     factor.append(
-                        '        new SpinFactor("SF", SF_4Body::{spin_factor.name:37}, {structure_list})'.format(
-                            spin_factor=spin_factor, structure_list=structure_list
-                        )
+                        f'        new SpinFactor("SF", SF_4Body::{spin_factor.name:37}, {structure_list})'
                     )
         exit_ = "\n    }));\n"
         return intro + ",\n".join(factor) + exit_
@@ -691,9 +687,7 @@ class GooFitPyChain(AmplitudeChain):
                 for spin_factor in spin_factors:
                     structure_list = ", ".join(map(str, structure))
                     factor.append(
-                        '        SpinFactor("SF", SF_4Body.{spin_factor.name:37}, {structure_list})'.format(
-                            spin_factor=spin_factor, structure_list=structure_list
-                        )
+                        f'        SpinFactor("SF", SF_4Body.{spin_factor.name:37}, {structure_list})'
                     )
         exit_ = "))\n"
         return intro + ",\n".join(factor) + exit_
