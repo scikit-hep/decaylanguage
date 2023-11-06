@@ -19,7 +19,7 @@ from ..utils import DescriptorFormat, charge_conjugate_name
 
 Self_DaughtersDict = TypeVar("Self_DaughtersDict", bound="DaughtersDict")
 
-if TYPE_CHECKING:  # noqa: SIM108
+if TYPE_CHECKING:
     CounterStr = Counter[str]  # pragma: no cover
 else:
     CounterStr = Counter
