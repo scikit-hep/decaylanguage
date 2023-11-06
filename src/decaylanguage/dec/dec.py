@@ -199,9 +199,6 @@ class DecFileParser:
         )
         self._parsed_dec_file = parser.parse(self._dec_file)
 
-        # Strip whitespace and semicolons (necessary for LALR(1) grammar) from model names
-        self._parsed_dec_file = ModelNameCleanup().transform(self._parsed_dec_file)
-
         # At last, find all particle decays defined in the .dec decay file ...
         self._find_parsed_decays()
         # Replace model aliases with the actual models and model parameters. Deepcopy to avoid modification of dict by
@@ -1033,24 +1030,6 @@ All but the first occurrence will be discarded/removed ...""".format(
 
     def __str__(self) -> str:
         return repr(self)
-
-
-class ModelNameCleanup(Transformer):  # type: ignore[misc]
-    """
-    Lark Transformer removing whitespace and semicolons from decay model parameter terminals
-    (MODEL_NAME_AND_WS and MODEL_NAME_AND_SC). These exist to distinguish model names from
-    strings containing them as substrings and have to be terminals to allow LALR(1) parsing.
-
-    """
-
-    def MODEL_NAME_AND_WS(self, t: Token) -> Token:
-        return t.update(value=t.strip())
-
-    def MODEL_NAME_AND_SC(self, t: Token) -> Token:
-        return t.update(value=t.strip(";").strip())
-
-    def MODEL_NAME_MULTILINE(self, t: Token) -> Token:
-        return t.update(value=t.strip())
 
 
 class DecayModelAliasReplacement(Transformer):  # type: ignore[misc]

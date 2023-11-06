@@ -26,9 +26,11 @@ def test_lark_file_model_list_consistency():
     with Path(filename).open(encoding="utf-8") as lark_file:
         lines = lark_file.readlines()
         for line in lines:
-            if "MODEL_NAME :" in line:
+            if "MODEL_NAME.2 :" in line:
                 break
-        models = line.split(":")[1].strip(" ").strip("\n").split('"|"')
+        models = (
+            line.split(":")[1][: -len(r"//\b/")].strip(" ()").strip("\n").split('"|"')
+        )
         models = [m.strip('"') for m in models]
 
         assert models == list(known_decay_models)
