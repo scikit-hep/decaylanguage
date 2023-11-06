@@ -15,27 +15,6 @@ from decaylanguage.dec.enums import known_decay_models
 DIR = Path(__file__).parent.resolve()
 
 
-def test_lark_file_model_list_consistency():
-    """
-    Make sure that the list of known decay models in the grammar file
-    'decaylanguage/data/decfile.lark' is consistent with that provided
-    to the user via
-    'from decaylanguage.dec.enums import known_decay_models'.
-    """
-    filename = str(DIR / "../../src/decaylanguage/data/decfile.lark")
-    with Path(filename).open(encoding="utf-8") as lark_file:
-        lines = lark_file.readlines()
-        for line in lines:
-            if "MODEL_NAME.2 :" in line:
-                break
-        models = (
-            line.split(":")[1][: -len(r"//\b/")].strip(" ()").strip("\n").split('"|"')
-        )
-        models = [m.strip('"') for m in models]
-
-        assert models == list(known_decay_models)
-
-
 # TODO: actually test all models - takes time
 parsed_models = (
     ("BaryonPCR", [1.0, 1.0, 1.0, 1.0]),

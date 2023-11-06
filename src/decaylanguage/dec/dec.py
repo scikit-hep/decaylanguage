@@ -50,13 +50,14 @@ from pathlib import Path
 from typing import Any, TypeVar
 
 from lark import Lark, Token, Transformer, Tree, Visitor
+from lark.lexer import TerminalDef
 from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
 
 from .. import data
 from ..decay.decay import _expand_decay_modes
 from ..utils import charge_conjugate_name
-from .enums import PhotosEnum
+from .enums import PhotosEnum, known_decay_models
 
 
 class DecFileNotParsed(RuntimeError):
@@ -195,7 +196,11 @@ class DecFileParser:
 
         # Instantiate the Lark parser according to chosen settings
         parser = Lark(
-            self.grammar(), parser=opts["parser"], lexer=opts["lexer"], **extraopts
+            self.grammar(),
+            parser=opts["parser"],
+            lexer=opts["lexer"],
+            edit_terminals=_edit_model_name_terminals,
+            **extraopts,
         )
         self._parsed_dec_file = parser.parse(self._dec_file)
 
@@ -1813,3 +1818,13 @@ def _str_to_bool(arg: str) -> bool:
     raise ValueError(
         f"String {arg!r} cannot be converted to boolean! Only 'yes/no' accepted."
     )
+
+
+def _edit_model_name_terminals(t: TerminalDef) -> None:
+    """
+    Edits the terminals of the grammar to replace the model name placeholder with the actual names of the models.
+    """
+
+    modelstr = rf"(?:{'|'.join(re.escape(kdm) for kdm in sorted(known_decay_models, key=len, reverse=True))})"
+    if t.name == "MODEL_NAME":
+        t.pattern.value = t.pattern.value.replace("MODEL_NAME_PLACEHOLDER", modelstr)
