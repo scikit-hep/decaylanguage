@@ -1,19 +1,19 @@
 # File for testing purposes. Contains a single decay mode with a specific model.
 
-# Documentation: the B_d0 -> mu^+ mu^- mu^+ mu^- decay based on MNT-model for
+# Documentation: the B_d0 -> mu^+ mu^- mu^+ mu^- decay based on MNT-model for 
 #                    B_d0 -> mu^+ mu^- gamma decay
 #                mu        - the scale parameter (in GeV's);
 #                Nf        - number of "effective" flavors (for b-quark Nf=5);
 #                res_swch  - resonant switching parametr:
-#                              = 0 the resonant contribution switched OFF,
+#                              = 0 the resonant contribution switched OFF, 
 #                              = 1 the resonant contribution switched ON;
 #                ias       - switching parametr for \alpha_s(M_Z) value:
-#                              = 0 PDG 1sigma minimal alpha_s(M_Z),
-#                              = 1 PDG average value  alpha_s(M_Z),
+#                              = 0 PDG 1sigma minimal alpha_s(M_Z), 
+#                              = 1 PDG average value  alpha_s(M_Z), 
 #                              = 2 PDG 1sigma maximal alpha_s(M_Z).
 #                Wolfenstein parameterization for CKM matrix:
-#                  A
-#                  lambda
+#                  A 
+#                  lambda 
 #                  barrho
 #                  bareta
 # EndDocumentation
