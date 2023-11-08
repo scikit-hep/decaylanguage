@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B+sig
+1.0   pi+   e+   e-   PHOTOS   BTOSLLBALL 6;
+Enddecay
+
+End

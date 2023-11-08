@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay eta
+   1.0   mu+   mu-   pi+   pi-   ETA_LLPIPI;
+Enddecay
+
+End
