@@ -1,0 +1,41 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+# Documentation: the B_d^0 -> rho^0 ell^+ ell^- decay with the transition form factors
+#                from the paper D.Melikhov, B.Stech, PRD62, 014006 (2000).
+#                 mu        - the scale parameter (in GeV's);
+#                 Nf        - number of "effective" flavors (for b-quark Nf=5);
+#                 res_swch  - resonant switching parameter:
+#                              = 0 the resonant contribution switched OFF,
+#                              = 1 the resonant contribution switched ON;
+#                 ias       - switching parameter for \alpha_s(M_Z) value:
+#                              = 0 PDG 1sigma minimal alpha_s(M_Z),
+#                              = 1 PDG average value  alpha_s(M_Z),
+#                              = 2 PDG 1sigma maximal alpha_s(M_Z).
+#                 Wolfenstein parameterization for CKM matrix:
+#                   A
+#                   lambda
+#                   barrho
+#                   bareta
+#                 Multiplication coefficients
+#                   A7  = ReA7  + i*ImA7
+#                   A10 = ReA10 + i*ImA10
+# EndDocumentation
+
+Define mu 5.0
+Define Nf 5
+Define res_swch 0
+Define ias 1
+Define A 0.88
+Define lambda 0.227
+Define barrho 0.22
+Define bareta 0.34
+Define ReA7    1.0
+Define ImA7    0.0
+Define ReA10  -1.0
+Define ImA10   0.0
+
+Decay B0sig
+   1.0   MyRho0   mu+   mu-   BTOSLLMSEXT mu Nf res_swch ias A lambda barrho bareta ReA7 ImA7 ReA10 ImA10;
+Enddecay
+
+End

@@ -69,7 +69,6 @@ known_decay_models = (
     "HQET3",
     "HQET2",
     "HQET",
-    "imqp",
     "ISGW2",
     "ISGW",
     "KS_PI0MUMU",

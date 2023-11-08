@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay h_b(2P)
+   0.22   gamma   eta_b   HELAMP 1.0 0.0 1.0 0.0;
+Enddecay
+
+End
