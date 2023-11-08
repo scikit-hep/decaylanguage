@@ -135,7 +135,6 @@ parsed_models = (
     ("HQET3", [0.920, 1.205, 1.21, 1.404, 0.854]),
     ("HQET2", [1.18, 1.074]),
     # ("HQET", ""),
-    # ("imqp", ""),
     # ("ISGW2", ""),
     # ("ISGW", ""),
     # ("KS_PI0MUMU", ""),
@@ -310,7 +309,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 52
+        len(parsed_models) == len(known_decay_models) - 51
     )  # subtract for now the number of models not yet tested
 
 
