@@ -1,0 +1,12 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+# Documentation: Decay file for [B+ -> (phi(1020) -> K+ K-) mu+ nu_mu]cc,
+# using the BToVlnuBall model (for Bs -> phi, lacking an alternative), see https://arxiv.org/pdf/hep-ph/0412079.pdf
+# order is r2_A1  mfit2_A1  r1_A2  r2_A2  mfit2_A2  r1_V  r2_V  mfit2_V
+# EndDocumentation
+
+Decay B+sig
+   1.0   MyPhi   mu+   nu_mu   PHOTOS   BTOVLNUBALL 0.308  36.54 -0.054 0.288 48.94 1.484 -1.049 39.52;
+Enddecay
+
+End

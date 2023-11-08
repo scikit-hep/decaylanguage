@@ -1,0 +1,22 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define mS     2.5
+Define mP     0.214
+Define gammaS 0.0001
+Define gammaP 0.0001
+Define mLiiLR 1.0
+Define Fc     1.0
+Define mD23LL 450.0
+Define mD23RR 0.0
+Define mD32LL 450.0
+Define mD32RR 0.0
+Define mD13LL 380.0
+Define mD13RR 0.0
+Define mD31LL 380.0
+Define mD31RR 0.0
+
+Decay B0sig
+   1.000   mu+   mu-   mu+   mu-   BQTOLLLLHYPERCP   mS mP gammaS gammaP mLiiLR Fc mD23LL mD23RR mD32LL mD32RR mD13LL mD13RR mD31LL mD31RR;
+Enddecay
+
+End

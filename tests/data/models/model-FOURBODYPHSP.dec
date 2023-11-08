@@ -1,0 +1,13 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+# Flat phase space in the analysis region of B0 -> D0 D0b.
+Define m12_min 1.3   # The model will take at least m1+m2
+Define m12_max 2.5   # Must be in GeV/c^2
+Define m34_min 1.3   # The model will take at least m1+m2
+Define m34_max 2.5   # Must be in GeV/c^2
+
+Decay B0
+   1.0   K+   K-   K-   pi+   FOURBODYPHSP m12_min m12_max m34_min m34_max;
+Enddecay
+
+End
