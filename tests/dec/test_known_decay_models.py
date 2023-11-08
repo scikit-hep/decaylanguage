@@ -309,7 +309,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 52
+        len(parsed_models) == len(known_decay_models) - 51
     )  # subtract for now the number of models not yet tested
 
 
