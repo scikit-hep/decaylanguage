@@ -70,7 +70,6 @@ MODEL_NAME.2 : ("BaryonPCR"|"BC_SMN"|"BC_TMN"|"BC_VHAD"|"BC_VMN"|"BCL"|"BGL"|"BL
 // To use a fast parser, we need to avoid conflicts
 
 %import common.WS_INLINE
-%import common.NEWLINE
 %import common.INT
 %import common.SIGNED_NUMBER
 
