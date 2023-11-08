@@ -82,22 +82,22 @@ parsed_models = (
         [5.0, 5, 0, 0, 1, 0.000001, 0.8250, 0.22509, 0.1598, 0.3499, 4.5],
     ),
     ("BSTOGLLMNT", [5.0, 5, 1, 1, 0.02, 0.88, 0.227, 0.22, 0.34]),
-    # ("BT02PI_CP_ISO", ""),  # No dec file available from LHCb or Belle-II
+    # ("BT02PI_CP_ISO", ""),  # No dec file available for testing from LHCb or Belle-II
     ("BTO3PI_CP", [0.507e12, 1.365]),
     ("BTODDALITZCPK", [1.22, 2.27, 0.10]),
     ("BToDiBaryonlnupQCD", [67.7, -280.0, -38.3, -840.0, -10.1, -157.0, 800000]),
-    # ("BTOSLLALI", ""),
-    # ("BTOSLLBALL", ""),
+    ("BTOSLLALI", ""),
+    ("BTOSLLBALL", [6.0]),
     ("BTOSLLMS", [5.0, 5.0, 0.0, 1.0, 0.88, 0.227, 0.22, 0.34]),
-    # ("BTOSLLMSEXT", ""),
-    # ("BTOVLNUBALL", ""),
+    ("BTOSLLMSEXT", [5.0, 5.0, 0.0, 1.0, 0.88, 0.227, 0.22, 0.34, 1.0, 0.0, -1.0, 0.0]),
+    ("BTOVLNUBALL", [0.308, 36.54, -0.054, 0.288, 48.94, 1.484, -1.049, 39.52]),
     ("BTOXSGAMMA", [2.0]),
     # ("BTOXELNU", ""),
     ("BTOXSLL", [4.8, 0.2, 0.0, 0.41]),
-    # ("BQTOLLLLHYPERCP", ""),
-    # ("BQTOLLLL", ""),
-    # ("CB3PI-MPP", ""),
-    # ("CB3PI-P00", ""),
+    ("BQTOLLLLHYPERCP", [2.5, 0.214, 0.0001, 0.0001, 1.0, 1.0, 450.0, 0.0, 450.0, 0.0, 380.0, 0.0, 380.0, 0.0]),
+    ("BQTOLLLL", [5.0, 5.0, 0.0, 1.0, 0.88, 0.227, 0.22, 0.34]),
+    ("CB3PI-MPP", [1.365]),
+    ("CB3PI-P00", [1.365]),
     ("D_DALITZ", ""),
     ("D_hhhh", [11.0]),
     ("D0GAMMADALITZ", ""),
@@ -106,14 +106,14 @@ parsed_models = (
     ("ETAPRIME_DALITZ", [-0.047, -0.069, 0.0, 0.073]),
     ("ETA_DALITZ", ""),
     ("ETA_FULLDALITZ", [-1.128, 0.153, 0.0, 0.085, 0.0, 0.173]),
-    # ("ETA_LLPIPI", ""),
+    ("ETA_LLPIPI", ""),
     ("ETA_PI0DALITZ", [-0.0135]),
-    # ("FLATQ2", ""),
+    ("FLATQ2", [1.0]),
     ("FLATSQDALITZ", ""),
-    # ("FOURBODYPHSP", ""),
-    # ("GENERIC_DALITZ", ""),  # no dec file currently available for a test
+    ("FOURBODYPHSP", [1.3, 2.5, 1.3, 2.5]),
+    # ("GENERIC_DALITZ", ""),  # No dec file available for testing from LHCb or Belle-II
     ("GOITY_ROBERTS", ""),
-    # ("HELAMP", ""),
+    ("HELAMP", [1.0, 0.0, 1.0, 0.0]),
     ("HQET3", [0.920, 1.205, 1.21, 1.404, 0.854]),
     ("HQET2", [1.18, 1.074]),
     # ("HQET", ""),
@@ -192,7 +192,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 65
+        len(parsed_models) == len(known_decay_models) - 53
     )  # subtract for now the number of models not yet tested
 
 
