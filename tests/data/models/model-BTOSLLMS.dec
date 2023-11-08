@@ -1,5 +1,13 @@
 # File for testing purposes. Contains a single decay mode with a specific model.
 
+# Documentation: the B -> phi mu^+ mu^- decay with the transition form factors
+# from the paper  D.Melikhov, B.Stech, PRD62, 014006 (2000).
+# Input parameters - mu        - the scale parameter (in GeV's);
+#                    res_swch  - resonant switching parametr:
+#                    ias       - switching parametr for \alpha_s(M_Z) value:
+#                    Wolfenstein parameterization for CKM matrix:
+# EndDocumentation
+
 Define mu 5.0
 Define Nf 5
 Define res_swch 0
