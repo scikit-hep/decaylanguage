@@ -139,11 +139,11 @@ parsed_models = (
     # ("HQET", ""),
     # ("ISGW2", ""),
     # ("ISGW", ""),
-    # ("KS_PI0MUMU", ""),
-    # ("Lb2Baryonlnu", ""),
-    # ("Lb2plnuLCSR", ""),
-    # ("Lb2plnuLQCD", ""),
-    # ("LbAmpGen", ""),
+    ("KS_PI0MUMU", [1.2, 0.49, -3.9, 0.2, 2.5]),
+    ("Lb2Baryonlnu", [1.0, 1.0, 1.0, 1.0]),
+    ("Lb2plnuLCSR", [1.0, 1.0, 1.0, 1.0]),
+    ("Lb2plnuLQCD", [1.0, 1.0, 1.0, 1.0]),
+    ("LbAmpGen", ["DtoKpipipi"]),
     ("LLSW", [0.71, -1.6, -0.5, 2.9]),
     ("LNUGAMMA", [0.35, 3.0, 5.0, 0.0]),
     # ("LQCD", ""),
@@ -151,8 +151,8 @@ parsed_models = (
     ("OMEGA_DALITZ", ""),
     ("PARTWAVE", [0.0, 0.0, 1.0, 0.0, 0.0, 0.0]),
     ("PHI_DALITZ", ""),
-    # ("PHSPDECAYTIMECUT", ""),
-    # ("PHSPFLATLIFETIME", ""),
+    ("PHSPDECAYTIMECUT", [0.29]),
+    ("PHSPFLATLIFETIME", [12]),
     ("PHSP", ""),
     ("PI0_DALITZ", ""),
     # ("PROPSLPOLE", ""),
@@ -311,7 +311,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 51
+        len(parsed_models) == len(known_decay_models) - 44
     )  # subtract for now the number of models not yet tested
 
 
