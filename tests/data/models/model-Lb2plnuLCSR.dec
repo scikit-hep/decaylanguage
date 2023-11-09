@@ -1,0 +1,9 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+# With Lb -> p form factor predictions from Light Cone Sum Rules
+
+Decay Lambda_b0
+   1.0   p+   mu-   anti-nu_mu   PHOTOS   Lb2plnuLCSR  1 1 1 1;
+Enddecay
+
+End

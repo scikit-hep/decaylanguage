@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay Xi_c+sig
+  1.000 p+ K- pi+ PHSPDECAYTIMECUT 0.29;
+Enddecay
+
+End
