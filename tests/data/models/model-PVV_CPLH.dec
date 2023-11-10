@@ -1,0 +1,14 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define Hp 0.49
+Define Hz 0.775
+Define Hm 0.4
+Define pHp 2.50
+Define pHz 0.0
+Define pHm -0.17
+
+Decay B_s0
+   1.0   psi(2S)   phi   PVV_CPLH 0.02 1 Hp pHp Hz pHz Hm pHm;
+Enddecay
+
+End

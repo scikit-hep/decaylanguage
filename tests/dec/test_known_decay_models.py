@@ -147,7 +147,7 @@ parsed_models = (
     ("LLSW", [0.71, -1.6, -0.5, 2.9]),
     ("LNUGAMMA", [0.35, 3.0, 5.0, 0.0]),
     # ("LQCD", ""),
-    # ("MELIKHOV", ""),
+    # ("MELIKHOV", ""),  # No dec file available for testing from LHCb or Belle-II
     ("OMEGA_DALITZ", ""),
     ("PARTWAVE", [0.0, 0.0, 1.0, 0.0, 0.0, 0.0]),
     ("PHI_DALITZ", ""),
@@ -155,7 +155,7 @@ parsed_models = (
     ("PHSPFLATLIFETIME", [12]),
     ("PHSP", ""),
     ("PI0_DALITZ", ""),
-    # ("PROPSLPOLE", ""),
+    # ("PROPSLPOLE", ""),  # No dec file available for testing from LHCb or Belle-II
     (
         "PTO3P",
         [
@@ -257,8 +257,8 @@ parsed_models = (
             -2.29,
         ],
     ),
-    # ("PVV_CPLH", ""),
-    # ("PYCONT", ""),
+    ("PVV_CPLH", [0.02, 1.0, 0.49, 2.50, 0.775, 0.0, 0.4, -0.17]),
+    ("PYCONT", ""),
     ("PYTHIA", [21]),
     # ("SLBKPOLE", ""),
     # ("SLL", ""),
@@ -311,7 +311,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 44
+        len(parsed_models) == len(known_decay_models) - 42
     )  # subtract for now the number of models not yet tested
 
 
