@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay chi_b0
+0.5   gamma   Upsilon(2S)   SVP;
+Enddecay
+
+End

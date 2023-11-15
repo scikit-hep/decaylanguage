@@ -136,8 +136,8 @@ parsed_models = (
     ("HELAMP", [1.0, 0.0, 1.0, 0.0]),
     ("HQET3", [0.920, 1.205, 1.21, 1.404, 0.854]),
     ("HQET2", [1.18, 1.074]),
-    # ("HQET", ""),
-    # ("ISGW2", ""),
+    ("HQET", [0.77, 1.33, 0.92]),
+    ("ISGW2", ""),
     # ("ISGW", ""),
     ("KS_PI0MUMU", [1.2, 0.49, -3.9, 0.2, 2.5]),
     ("Lb2Baryonlnu", [1.0, 1.0, 1.0, 1.0]),
@@ -261,19 +261,19 @@ parsed_models = (
     ("PYCONT", ""),
     ("PYTHIA", [21]),
     # ("SLBKPOLE", ""),
-    # ("SLL", ""),
-    # ("SLN", ""),
+    ("SLL", ""),
+    ("SLN", ""),
     # ("SLPOLE", ""),
     ("SSD_CP", [507000000000.0, 0.0, 1.0, -0.78, 1.0, 0.0, -1.0, 0.0]),
-    # ("SSD_DirectCP", ""),
-    # ("SSS_CP_PNG", ""),
-    # ("SSS_CP", ""),
-    # ("SSS_CPT", ""),
-    # ("STS_CP", ""),
-    # ("STS", ""),
-    # ("SVP_CP", ""),
-    # ("SVP_HELAMP", ""),
-    # ("SVP", ""),
+    ("SSD_DirectCP", [0.39]),
+    # ("SSS_CP_PNG", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("SSS_CP", [0.0, 0.507e12, -1.0, 1.0, 0.0, 1.0, 0.0]),
+    # ("SSS_CPT", ""),  # No dec file available for testing from LHCb or Belle-II
+    # ("STS_CP", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("STS", ""),
+    # ("SVP_CP", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("SVP_HELAMP", [1.0, 0.0, 1.0, 0.0]),
+    ("SVP", ""),
     # ("SVS_CP_ISO", ""),
     # ("SVS_CPLH", ""),
     # ("SVS_CP", ""),
@@ -311,8 +311,8 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 42
-    )  # subtract for now the number of models not yet tested
+        len(parsed_models) == len(known_decay_models) - 33
+    )  # subtract for now the number of models not yet tested + the number of models presently with no test available
 
 
 @pytest.mark.parametrize(("decay_model", "expected_model_parameters"), parsed_models)
