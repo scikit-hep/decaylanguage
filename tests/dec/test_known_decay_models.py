@@ -276,7 +276,18 @@ parsed_models = (
     ("SVP", ""),
     # ("SVS_CP_ISO", ""),  # No dec file available for testing from LHCb or Belle-II
     # ("SVS_CPLH", ""),  # No dec file available for testing from LHCb or Belle-II
-    ("SVS_CP", [0.3814, 0.507e12, 1, 1, 0, 1, 0,]),
+    (
+        "SVS_CP",
+        [
+            0.3814,
+            0.507e12,
+            1,
+            1,
+            0,
+            1,
+            0,
+        ],
+    ),
     ("SVS_NONCPEIGEN", [1.365, 0.507e12, 1.0, 3.0, 0.0, 1.0, 0.0, 1.0, 0.0, 3.0, 0.0]),
     ("SVS", ""),
     # ("SVV_CPLH", ""),  # No dec file available for testing from LHCb or Belle-II
@@ -301,7 +312,7 @@ parsed_models = (
     ("VTOSLL", ""),
     ("VUB", [4.691, 1.869, 0.22, 1.0, 0.28, 1.0]),
     ("VVPIPI", ""),
-     ("VVP", [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+    ("VVP", [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
     ("VVS_PWAVE", [0.9788, 0.0, 0.0, 0.0, 0.0212, 0.0]),
     ("XLL", [1]),
     ("YMSTOYNSPIPICLEO", [-0.753, 0.0]),
