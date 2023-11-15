@@ -291,19 +291,19 @@ parsed_models = (
     ("TAUVECTORNU", ""),
     ("THREEBODYPHSP", [14.00, 16.40]),
     ("TSS", ""),
-    # ("TVP", ""),
-    # ("TVS_PWAVE", ""),
+    ("TVP", ""),
+    ("TVS_PWAVE", [0, 0, 1, 0, 0, 0.0]),
     ("VLL", ""),
     ("VSP_PWAVE", ""),
     ("VSS_BMIX", [507000000000.0]),
-    # ("VSS_MIX", ""),
+    # ("VSS_MIX", ""),  # No dec file available for testing from LHCb or Belle-II
     ("VSS", ""),
-    # ("VTOSLL", ""),
-    # ("VUB", ""),
-    # ("VVPIPI", ""),
-    # ("VVP", ""),
-    # ("VVS_PWAVE", ""),
-    # ("XLL", ""),
+    ("VTOSLL", ""),
+    ("VUB", [4.691, 1.869, 0.22, 1.0, 0.28, 1.0]),
+    ("VVPIPI", ""),
+     ("VVP", [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+    ("VVS_PWAVE", [0.9788, 0.0, 0.0, 0.0, 0.0212, 0.0]),
+    ("XLL", [1]),
     ("YMSTOYNSPIPICLEO", [-0.753, 0.0]),
     ("YMSTOYNSPIPICLEOBOOST", [-0.753, 0.0]),
 )
@@ -311,7 +311,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 27
+        len(parsed_models) == len(known_decay_models) - 19
     )  # subtract for now the number of models not yet tested + the number of models presently with no test available
 
 

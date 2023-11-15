@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B+
+   0.002   anti-D_10   D_s*+   SVV_HELAMP 0.48 0.0 0.734 0.0 0.48 0.0;
+Enddecay
+
+End
