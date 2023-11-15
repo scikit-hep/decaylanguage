@@ -274,19 +274,19 @@ parsed_models = (
     # ("SVP_CP", ""),  # No dec file available for testing from LHCb or Belle-II
     ("SVP_HELAMP", [1.0, 0.0, 1.0, 0.0]),
     ("SVP", ""),
-    # ("SVS_CP_ISO", ""),
-    # ("SVS_CPLH", ""),
-    # ("SVS_CP", ""),
-    # ("SVS_NONCPEIGEN", ""),
-    # ("SVS", ""),
-    # ("SVV_CPLH", ""),
-    # ("SVV_CP", ""),
-    # ("SVV_HELAMP", ""),
-    # ("SVV_NONCPEIGEN", ""),
-    # ("SVVHELCPMIX", ""),
+    # ("SVS_CP_ISO", ""),  # No dec file available for testing from LHCb or Belle-II
+    # ("SVS_CPLH", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("SVS_CP", [0.3814, 0.507e12, 1, 1, 0, 1, 0,]),
+    ("SVS_NONCPEIGEN", [1.365, 0.507e12, 1.0, 3.0, 0.0, 1.0, 0.0, 1.0, 0.0, 3.0, 0.0]),
+    ("SVS", ""),
+    # ("SVV_CPLH", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("SVV_CP", [0.39, 0.507e12, 1, 0.490, 2.5, 1.10, 0.0, 0.4, -0.17]),
+    ("SVV_HELAMP", [0.48, 0.0, 0.734, 0.0, 0.48, 0.0]),
+    # ("SVV_NONCPEIGEN", ""),  # No dec file available for testing from LHCb or Belle-II
+    # ("SVVHELCPMIX", ""),  # No dec file available for testing from LHCb or Belle-II
     ("TAUHADNU", [-0.108, 0.775, 0.149, 1.364, 0.400]),
     ("TAULNUNU", ""),
-    # ("TAUOLA", ""),
+    ("TAUOLA", [5]),
     ("TAUSCALARNU", ""),
     ("TAUVECTORNU", ""),
     ("THREEBODYPHSP", [14.00, 16.40]),
@@ -311,7 +311,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 33
+        len(parsed_models) == len(known_decay_models) - 27
     )  # subtract for now the number of models not yet tested + the number of models presently with no test available
 
 
