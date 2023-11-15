@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B+
+   0.002206   Xu0   e+   nu_e   PHOTOS   VUB 4.691 1.869 0.22 1 0.28 1;
+Enddecay
+
+End

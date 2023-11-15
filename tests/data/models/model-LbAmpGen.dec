@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay D0
+   0.667   K-   pi+   pi+   pi-   LbAmpGen DtoKpipipi ;
+Enddecay
+
+End

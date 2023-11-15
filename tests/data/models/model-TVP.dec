@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay   chi_c2
+   1.00   J/psi   gamma   TVP;
+Enddecay
+
+End

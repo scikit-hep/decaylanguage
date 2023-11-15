@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay D_s-
+   0.00556   mu-   anti-nu_mu   PHOTOS   SLN;
+Enddecay
+
+End
