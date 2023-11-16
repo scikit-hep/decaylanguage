@@ -1,0 +1,11 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define dm 0.507e12
+Define beta 0.39
+Define gamma 1.387
+
+Decay B0
+1.0   pi+   pi-   SSS_CP_PNG   beta gamma 0.1 dm 1.0 1.0 0.2;
+Enddecay
+
+End

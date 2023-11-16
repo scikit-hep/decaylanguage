@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B_s0
+1.0   J/psi   phi   SVV_CPLH   0.2 2.0e12 1 1.0 0.0 1.0 0.0 1.0 0.0;
+Enddecay
+
+End

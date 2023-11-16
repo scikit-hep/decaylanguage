@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay anti-B0
+   1.0   D*+   e-   anti-nu_e   MELIKHOV 1;
+Enddecay
+
+End
