@@ -84,7 +84,7 @@ parsed_models = (
         [5.0, 5, 0, 0, 1, 0.000001, 0.8250, 0.22509, 0.1598, 0.3499, 4.5],
     ),
     ("BSTOGLLMNT", [5.0, 5, 1, 1, 0.02, 0.88, 0.227, 0.22, 0.34]),
-    # ("BT02PI_CP_ISO", [0.39, 0.507e12, 1.0, 1.387, 1.0, -1.387, 1.0, 1.387, 1.0, -1.387]),
+    ("BT02PI_CP_ISO", [0.39, 0.507e12, 1.0, 1.387, 1.0, -1.387, 1.0, 1.387, 1.0, -1.387]),
     ("BTO3PI_CP", [0.507e12, 1.365]),
     ("BTODDALITZCPK", [1.22, 2.27, 0.10]),
     ("BToDiBaryonlnupQCD", [67.7, -280.0, -38.3, -840.0, -10.1, -157.0, 800000]),
@@ -384,7 +384,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 5
+        len(parsed_models) == len(known_decay_models) - 4
     )  # subtract for now the number of models not yet tested + the number of models presently with no test available
 
 
