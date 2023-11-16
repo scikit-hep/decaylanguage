@@ -131,7 +131,7 @@ parsed_models = (
     ("FLATQ2", [1.0]),
     ("FLATSQDALITZ", ""),
     ("FOURBODYPHSP", [1.3, 2.5, 1.3, 2.5]),
-    # ("GENERIC_DALITZ", ["MyDir/MyDalitzParameters.xml"]),
+    ("GENERIC_DALITZ", ["MyDir/MyDalitzParameters.xml"]),
     ("GOITY_ROBERTS", ""),
     ("HELAMP", [1.0, 0.0, 1.0, 0.0]),
     ("HQET3", [0.920, 1.205, 1.21, 1.404, 0.854]),
@@ -384,7 +384,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 4
+        len(parsed_models) == len(known_decay_models) - 3
     )  # subtract for now the number of models not yet tested + the number of models presently with no test available
 
 
