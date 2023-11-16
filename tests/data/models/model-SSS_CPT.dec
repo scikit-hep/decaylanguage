@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B0
+   1.0   pi+   pi-   SSS_CPT   0.0 0.51e12 1.0 0.0 1.0 0.0 0.1 -0.4;
+Enddecay
+
+End

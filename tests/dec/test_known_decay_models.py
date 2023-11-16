@@ -155,7 +155,27 @@ parsed_models = (
     ("PHSPFLATLIFETIME", [12]),
     ("PHSP", ""),
     ("PI0_DALITZ", ""),
-    # ("PROPSLPOLE", ""),  # No dec file available for testing from LHCb or Belle-II
+    (
+        "PROPSLPOLE",
+        [
+            1.0,
+            -0.558,
+            0.0,
+            1.0,
+            0.85,
+            -0.558,
+            0.0,
+            1.0,
+            1.50,
+            -0.790,
+            0.0,
+            1.0,
+            0.00,
+            -0.558,
+            0.0,
+            1.0,
+        ],
+    ),
     (
         "PTO3P",
         [
@@ -260,16 +280,36 @@ parsed_models = (
     ("PVV_CPLH", [0.02, 1.0, 0.49, 2.50, 0.775, 0.0, 0.4, -0.17]),
     ("PYCONT", ""),
     ("PYTHIA", [21]),
-    # ("SLBKPOLE", ""),
+    ("SLBKPOLE", [1.0, 0.25, 1.0]),
     ("SLL", ""),
     ("SLN", ""),
-    # ("SLPOLE", ""),
+    (
+        "SLPOLE",
+        [
+            0.27,
+            -0.11,
+            -0.75,
+            1.0,
+            0.23,
+            -0.77,
+            -0.40,
+            1.0,
+            0.34,
+            -1.32,
+            0.19,
+            1.0,
+            0.37,
+            -1.42,
+            0.50,
+            1.0,
+        ],
+    ),
     ("SSD_CP", [507000000000.0, 0.0, 1.0, -0.78, 1.0, 0.0, -1.0, 0.0]),
     ("SSD_DirectCP", [0.39]),
     ("SSS_CP_PNG", [0.39, 1.387, 0.1, 0.507e12, 1.0, 1.0, 0.2]),
     ("SSS_CP", [0.0, 0.507e12, -1.0, 1.0, 0.0, 1.0, 0.0]),
-    # ("SSS_CPT", ""),  # No dec file available for testing from LHCb or Belle-II
-    # ("STS_CP", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("SSS_CPT", [0.0, 0.51e12, 1.0, 0.0, 1.0, 0.0, 0.1, -0.4]),
+    ("STS_CP", [1.365, 0.507e12, 1, 1.0, 0.0, 1.0, 0.0]),
     ("STS", ""),
     ("SVP_CP", [0.39, 0.507e12, 1, 0.03, 0.0, 0.999, 0.0]),
     ("SVP_HELAMP", [1.0, 0.0, 1.0, 0.0]),
@@ -344,7 +384,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 10
+        len(parsed_models) == len(known_decay_models) - 5
     )  # subtract for now the number of models not yet tested + the number of models presently with no test available
 
 
