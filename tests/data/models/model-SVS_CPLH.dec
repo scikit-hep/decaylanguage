@@ -1,0 +1,12 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define dm 0.472e12
+Define dGamma 0.1
+Define magqop 1.0
+Define argqop 0.7
+
+Decay B0
+   1.0   J/psi   K_S0   SVS_CPLH dm dGamma magqop argqop 1.0 0.0 1.0 0.0;
+Enddecay
+
+End

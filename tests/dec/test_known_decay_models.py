@@ -84,7 +84,7 @@ parsed_models = (
         [5.0, 5, 0, 0, 1, 0.000001, 0.8250, 0.22509, 0.1598, 0.3499, 4.5],
     ),
     ("BSTOGLLMNT", [5.0, 5, 1, 1, 0.02, 0.88, 0.227, 0.22, 0.34]),
-    # ("BT02PI_CP_ISO", ""),  # No dec file available for testing from LHCb or Belle-II
+    # ("BT02PI_CP_ISO", [0.39, 0.507e12, 1.0, 1.387, 1.0, -1.387, 1.0, 1.387, 1.0, -1.387]),
     ("BTO3PI_CP", [0.507e12, 1.365]),
     ("BTODDALITZCPK", [1.22, 2.27, 0.10]),
     ("BToDiBaryonlnupQCD", [67.7, -280.0, -38.3, -840.0, -10.1, -157.0, 800000]),
@@ -131,14 +131,14 @@ parsed_models = (
     ("FLATQ2", [1.0]),
     ("FLATSQDALITZ", ""),
     ("FOURBODYPHSP", [1.3, 2.5, 1.3, 2.5]),
-    # ("GENERIC_DALITZ", ""),  # No dec file available for testing from LHCb or Belle-II
+    # ("GENERIC_DALITZ", ["MyDir/MyDalitzParameters.xml"]),
     ("GOITY_ROBERTS", ""),
     ("HELAMP", [1.0, 0.0, 1.0, 0.0]),
     ("HQET3", [0.920, 1.205, 1.21, 1.404, 0.854]),
     ("HQET2", [1.18, 1.074]),
     ("HQET", [0.77, 1.33, 0.92]),
     ("ISGW2", ""),
-    # ("ISGW", ""),
+    ("ISGW", ""),
     ("KS_PI0MUMU", [1.2, 0.49, -3.9, 0.2, 2.5]),
     ("Lb2Baryonlnu", [1.0, 1.0, 1.0, 1.0]),
     ("Lb2plnuLCSR", [1.0, 1.0, 1.0, 1.0]),
@@ -147,7 +147,7 @@ parsed_models = (
     ("LLSW", [0.71, -1.6, -0.5, 2.9]),
     ("LNUGAMMA", [0.35, 3.0, 5.0, 0.0]),
     # ("LQCD", ""),
-    # ("MELIKHOV", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("MELIKHOV", [1]),
     ("OMEGA_DALITZ", ""),
     ("PARTWAVE", [0.0, 0.0, 1.0, 0.0, 0.0, 0.0]),
     ("PHI_DALITZ", ""),
@@ -155,7 +155,27 @@ parsed_models = (
     ("PHSPFLATLIFETIME", [12]),
     ("PHSP", ""),
     ("PI0_DALITZ", ""),
-    # ("PROPSLPOLE", ""),  # No dec file available for testing from LHCb or Belle-II
+    (
+        "PROPSLPOLE",
+        [
+            1.0,
+            -0.558,
+            0.0,
+            1.0,
+            0.85,
+            -0.558,
+            0.0,
+            1.0,
+            1.50,
+            -0.790,
+            0.0,
+            1.0,
+            0.00,
+            -0.558,
+            0.0,
+            1.0,
+        ],
+    ),
     (
         "PTO3P",
         [
@@ -260,22 +280,42 @@ parsed_models = (
     ("PVV_CPLH", [0.02, 1.0, 0.49, 2.50, 0.775, 0.0, 0.4, -0.17]),
     ("PYCONT", ""),
     ("PYTHIA", [21]),
-    # ("SLBKPOLE", ""),
+    ("SLBKPOLE", [1.0, 0.25, 1.0]),
     ("SLL", ""),
     ("SLN", ""),
-    # ("SLPOLE", ""),
+    (
+        "SLPOLE",
+        [
+            0.27,
+            -0.11,
+            -0.75,
+            1.0,
+            0.23,
+            -0.77,
+            -0.40,
+            1.0,
+            0.34,
+            -1.32,
+            0.19,
+            1.0,
+            0.37,
+            -1.42,
+            0.50,
+            1.0,
+        ],
+    ),
     ("SSD_CP", [507000000000.0, 0.0, 1.0, -0.78, 1.0, 0.0, -1.0, 0.0]),
     ("SSD_DirectCP", [0.39]),
-    # ("SSS_CP_PNG", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("SSS_CP_PNG", [0.39, 1.387, 0.1, 0.507e12, 1.0, 1.0, 0.2]),
     ("SSS_CP", [0.0, 0.507e12, -1.0, 1.0, 0.0, 1.0, 0.0]),
-    # ("SSS_CPT", ""),  # No dec file available for testing from LHCb or Belle-II
-    # ("STS_CP", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("SSS_CPT", [0.0, 0.51e12, 1.0, 0.0, 1.0, 0.0, 0.1, -0.4]),
+    ("STS_CP", [1.365, 0.507e12, 1, 1.0, 0.0, 1.0, 0.0]),
     ("STS", ""),
-    # ("SVP_CP", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("SVP_CP", [0.39, 0.507e12, 1, 0.03, 0.0, 0.999, 0.0]),
     ("SVP_HELAMP", [1.0, 0.0, 1.0, 0.0]),
     ("SVP", ""),
     # ("SVS_CP_ISO", ""),  # No dec file available for testing from LHCb or Belle-II
-    # ("SVS_CPLH", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("SVS_CPLH", [0.472e12, 0.1, 1.0, 0.7, 1.0, 0.0, 1.0, 0.0]),
     (
         "SVS_CP",
         [
@@ -290,11 +330,33 @@ parsed_models = (
     ),
     ("SVS_NONCPEIGEN", [1.365, 0.507e12, 1.0, 3.0, 0.0, 1.0, 0.0, 1.0, 0.0, 3.0, 0.0]),
     ("SVS", ""),
-    # ("SVV_CPLH", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("SVV_CPLH", [0.2, 2.0e12, 1, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0]),
     ("SVV_CP", [0.39, 0.507e12, 1, 0.490, 2.5, 1.10, 0.0, 0.4, -0.17]),
     ("SVV_HELAMP", [0.48, 0.0, 0.734, 0.0, 0.48, 0.0]),
-    # ("SVV_NONCPEIGEN", ""),  # No dec file available for testing from LHCb or Belle-II
-    # ("SVVHELCPMIX", ""),  # No dec file available for testing from LHCb or Belle-II
+    (
+        "SVV_NONCPEIGEN",
+        [
+            0.507e12,
+            0.39,
+            1.387,
+            0.322,
+            0.31,
+            0.941,
+            0,
+            0.107,
+            1.42,
+            0.02,
+            0,
+            0.02,
+            0,
+            0.02,
+            0,
+        ],
+    ),
+    (
+        "SVVHELCPMIX",
+        [1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 8.15e24, 17.8e12, 65.78e10, 8.42e10, 0.0, 0.025],
+    ),
     ("TAUHADNU", [-0.108, 0.775, 0.149, 1.364, 0.400]),
     ("TAULNUNU", ""),
     ("TAUOLA", [5]),
@@ -307,7 +369,7 @@ parsed_models = (
     ("VLL", ""),
     ("VSP_PWAVE", ""),
     ("VSS_BMIX", [507000000000.0]),
-    # ("VSS_MIX", ""),  # No dec file available for testing from LHCb or Belle-II
+    ("VSS_MIX", [507000000000.0]),
     ("VSS", ""),
     ("VTOSLL", ""),
     ("VUB", [4.691, 1.869, 0.22, 1.0, 0.28, 1.0]),
@@ -322,7 +384,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 19
+        len(parsed_models) == len(known_decay_models) - 5
     )  # subtract for now the number of models not yet tested + the number of models presently with no test available
 
 

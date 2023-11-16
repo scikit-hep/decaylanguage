@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay D+
+0.0013   eta   mu+   nu_mu   SLBKPOLE 1.0 0.25 1.0;
+Enddecay
+
+End
