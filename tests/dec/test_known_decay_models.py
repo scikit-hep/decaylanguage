@@ -97,7 +97,7 @@ parsed_models = (
     ("BTOSLLMSEXT", [5.0, 5.0, 0.0, 1.0, 0.88, 0.227, 0.22, 0.34, 1.0, 0.0, -1.0, 0.0]),
     ("BTOVLNUBALL", [0.308, 36.54, -0.054, 0.288, 48.94, 1.484, -1.049, 39.52]),
     ("BTOXSGAMMA", [2.0]),
-    # ("BTOXELNU", ""),
+    ("BTOXELNU", ["BCL", -0.861, 1.444, 0.266, 0.378, 0.165, 0.291, 0.718, 0.384, 0.331, -0.876, 1.907]),
     ("BTOXSLL", [4.8, 0.2, 0.0, 0.41]),
     (
         "BQTOLLLLHYPERCP",
@@ -413,9 +413,7 @@ parsed_models = (
 
 
 def test_parsing_of_all_known_models_are_tested():
-    assert (
-        len(parsed_models) == len(known_decay_models) - 1
-    )  # subtract for now the number of models not yet tested + the number of models presently with no test available
+    assert len(parsed_models) == len(known_decay_models)
 
 
 @pytest.mark.parametrize(("decay_model", "expected_model_parameters"), parsed_models)
