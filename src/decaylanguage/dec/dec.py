@@ -47,13 +47,14 @@ import warnings
 from io import StringIO
 from itertools import zip_longest
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any
 
 from lark import Lark, Token, Transformer, Tree, Visitor
 from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
 
 from .. import data
+from .._compat.typing import Self
 from ..decay.decay import _expand_decay_modes
 from ..utils import charge_conjugate_name
 from .enums import PhotosEnum
@@ -65,9 +66,6 @@ class DecFileNotParsed(RuntimeError):
 
 class DecayNotFound(RuntimeError):
     pass
-
-
-Self_DecFileParser = TypeVar("Self_DecFileParser", bound="DecFileParser")
 
 
 class DecFileParser:
@@ -142,9 +140,7 @@ class DecFileParser:
         self._include_ccdecays = True
 
     @classmethod
-    def from_string(
-        cls: type[Self_DecFileParser], filecontent: str
-    ) -> Self_DecFileParser:
+    def from_string(cls, filecontent: str) -> Self:
         """
         Constructor from a .dec decay file provided as a multi-line string.
 
