@@ -20,6 +20,8 @@ class PhotosEnum(IntEnum):
 # This list should match the list specified in the decay file parser file
 # 'decaylanguage/data/decfile.lark'!
 known_decay_models = (
+    "B_TO_2BARYON_SCALAR",
+    "B_TO_LAMBDA_PBAR_GAMMA",
     "BaryonPCR",
     "BC_SMN",
     "BC_TMN",

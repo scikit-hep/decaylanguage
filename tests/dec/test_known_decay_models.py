@@ -38,6 +38,8 @@ def test_lark_file_model_list_consistency():
 
 # TODO: actually test all models - takes time
 parsed_models = (
+    ("B_TO_2BARYON_SCALAR", ""),
+    ("B_TO_LAMBDA_PBAR_GAMMA", ""),
     ("BaryonPCR", [1.0, 1.0, 1.0, 1.0]),
     ("BC_SMN", [2.0]),
     ("BC_TMN", [3.0]),
