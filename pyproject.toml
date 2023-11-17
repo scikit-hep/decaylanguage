@@ -81,7 +81,6 @@ exclude = "src/decaylanguage/(data|modeling)"
 python_version = "3.9"
 warn_unused_configs = true
 warn_unused_ignores = true
-show_error_codes = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 strict = true
 
@@ -144,11 +143,12 @@ messages_control.disable = [
     "unused-argument",  # covered by Ruff
 ]
 
-
 [tool.ruff]
-select = [
-  "E", "F", "W", # flake8
-  "B", "B904",   # flake8-bugbear
+src = ["src"]
+
+[tool.ruff.lint]
+extend-select = [
+  "B",           # flake8-bugbear
   "I",           # isort
   "ARG",         # flake8-unused-arguments
   "C4",          # flake8-comprehensions
@@ -166,20 +166,14 @@ select = [
   "UP",          # pyupgrade
   "YTT",         # flake8-2020
 ]
-extend-ignore = [
-  "PLR",    # Design related pylint codes
-  "E501",   # Line too long
-  "PT013",  # Incorrect import of pytest
+ignore = [
+  "PT013",   # Incorrect import of pytest
+  "PLR2004", # Magic value used in comparison
+  "PLR09",   # Too many X
 ]
-src = ["src"]
-unfixable = [
-  "T20",  # Removes print statements
-  "F841", # Removes unused variables
-]
-exclude = []
 flake8-unused-arguments.ignore-variadic-names = true
 isort.required-imports = ["from __future__ import annotations"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/**" = ["T20"]
 "src/decaylanguage/modeling/*.py" = ["ARG002", "PTH", "T201"]  # Should be fixed later
