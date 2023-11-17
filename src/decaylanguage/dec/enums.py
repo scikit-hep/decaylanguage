@@ -78,7 +78,6 @@ known_decay_models = (
     "LbAmpGen",
     "LLSW",
     "LNUGAMMA",
-    "LQCD",
     "MELIKHOV",
     "OMEGA_DALITZ",
     "PARTWAVE",

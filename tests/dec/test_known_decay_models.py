@@ -149,7 +149,6 @@ parsed_models = (
     ("LbAmpGen", ["DtoKpipipi"]),
     ("LLSW", [0.71, -1.6, -0.5, 2.9]),
     ("LNUGAMMA", [0.35, 3.0, 5.0, 0.0]),
-    # ("LQCD", ""),
     ("MELIKHOV", [1]),
     ("OMEGA_DALITZ", ""),
     ("PARTWAVE", [0.0, 0.0, 1.0, 0.0, 0.0, 0.0]),
@@ -415,7 +414,7 @@ parsed_models = (
 
 def test_parsing_of_all_known_models_are_tested():
     assert (
-        len(parsed_models) == len(known_decay_models) - 2
+        len(parsed_models) == len(known_decay_models) - 1
     )  # subtract for now the number of models not yet tested + the number of models presently with no test available
 
 
