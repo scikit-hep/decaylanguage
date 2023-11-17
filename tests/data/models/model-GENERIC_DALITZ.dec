@@ -1,0 +1,8 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+# Generic Dalitz model that uses XML files to configure the resonance amplitude parameters
+Decay D+
+   1.0   K-   pi+   pi+   GENERIC_DALITZ   MyDir/MyDalitzParameters.xml;
+Enddecay
+
+End

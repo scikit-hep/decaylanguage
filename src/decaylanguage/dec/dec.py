@@ -1116,8 +1116,16 @@ class DecayModelParamValueReplacement(Visitor):  # type: ignore[misc]
         try:
             t.children[0].value = float(t.children[0].value)
         except AttributeError:
-            if t.value in self.define_defs:
-                t.value = self.define_defs[t.value]
+            negative_param = (
+                t.value[0] == "-"
+            )  # account for uncommon cases such as "MODEL_NAME ... -DEFINE_NAME"
+            value = t.value if not negative_param else t.value[1:]
+            if value in self.define_defs:
+                t.value = (
+                    self.define_defs[value]
+                    if not negative_param
+                    else -self.define_defs[value]
+                )
 
     def model_options(self, tree: Tree) -> None:
         """

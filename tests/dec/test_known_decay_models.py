@@ -84,7 +84,10 @@ parsed_models = (
         [5.0, 5, 0, 0, 1, 0.000001, 0.8250, 0.22509, 0.1598, 0.3499, 4.5],
     ),
     ("BSTOGLLMNT", [5.0, 5, 1, 1, 0.02, 0.88, 0.227, 0.22, 0.34]),
-    # ("BT02PI_CP_ISO", [0.39, 0.507e12, 1.0, 1.387, 1.0, -1.387, 1.0, 1.387, 1.0, -1.387]),
+    (
+        "BT02PI_CP_ISO",
+        [0.39, 0.507e12, 1.0, 1.387, 1.0, -1.387, 1.0, 1.387, 1.0, -1.387],
+    ),
     ("BTO3PI_CP", [0.507e12, 1.365]),
     ("BTODDALITZCPK", [1.22, 2.27, 0.10]),
     ("BToDiBaryonlnupQCD", [67.7, -280.0, -38.3, -840.0, -10.1, -157.0, 800000]),
@@ -94,7 +97,23 @@ parsed_models = (
     ("BTOSLLMSEXT", [5.0, 5.0, 0.0, 1.0, 0.88, 0.227, 0.22, 0.34, 1.0, 0.0, -1.0, 0.0]),
     ("BTOVLNUBALL", [0.308, 36.54, -0.054, 0.288, 48.94, 1.484, -1.049, 39.52]),
     ("BTOXSGAMMA", [2.0]),
-    # ("BTOXELNU", ""),
+    (
+        "BTOXELNU",
+        [
+            "BCL",
+            -0.861,
+            1.444,
+            0.266,
+            0.378,
+            0.165,
+            0.291,
+            0.718,
+            0.384,
+            0.331,
+            -0.876,
+            1.907,
+        ],
+    ),
     ("BTOXSLL", [4.8, 0.2, 0.0, 0.41]),
     (
         "BQTOLLLLHYPERCP",
@@ -131,7 +150,7 @@ parsed_models = (
     ("FLATQ2", [1.0]),
     ("FLATSQDALITZ", ""),
     ("FOURBODYPHSP", [1.3, 2.5, 1.3, 2.5]),
-    # ("GENERIC_DALITZ", ["MyDir/MyDalitzParameters.xml"]),
+    ("GENERIC_DALITZ", ["MyDir/MyDalitzParameters.xml"]),
     ("GOITY_ROBERTS", ""),
     ("HELAMP", [1.0, 0.0, 1.0, 0.0]),
     ("HQET3", [0.920, 1.205, 1.21, 1.404, 0.854]),
@@ -146,7 +165,6 @@ parsed_models = (
     ("LbAmpGen", ["DtoKpipipi"]),
     ("LLSW", [0.71, -1.6, -0.5, 2.9]),
     ("LNUGAMMA", [0.35, 3.0, 5.0, 0.0]),
-    # ("LQCD", ""),
     ("MELIKHOV", [1]),
     ("OMEGA_DALITZ", ""),
     ("PARTWAVE", [0.0, 0.0, 1.0, 0.0, 0.0, 0.0]),
@@ -280,6 +298,7 @@ parsed_models = (
     ("PVV_CPLH", [0.02, 1.0, 0.49, 2.50, 0.775, 0.0, 0.4, -0.17]),
     ("PYCONT", ""),
     ("PYTHIA", [21]),
+    ("RareLbToLll", ["LQCD"]),
     ("SLBKPOLE", [1.0, 0.25, 1.0]),
     ("SLL", ""),
     ("SLN", ""),
@@ -314,7 +333,34 @@ parsed_models = (
     ("SVP_CP", [0.39, 0.507e12, 1, 0.03, 0.0, 0.999, 0.0]),
     ("SVP_HELAMP", [1.0, 0.0, 1.0, 0.0]),
     ("SVP", ""),
-    # ("SVS_CP_ISO", ""),  # No dec file available for testing from LHCb or Belle-II
+    (
+        "SVS_CP_ISO",
+        [
+            0.39,
+            0.507e12,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            1.387,
+            3.0,
+            -1.387,
+            3.0,
+            1.387,
+            1.0,
+            -1.387,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ],
+    ),
     ("SVS_CPLH", [0.472e12, 0.1, 1.0, 0.7, 1.0, 0.0, 1.0, 0.0]),
     (
         "SVS_CP",
@@ -383,9 +429,7 @@ parsed_models = (
 
 
 def test_parsing_of_all_known_models_are_tested():
-    assert (
-        len(parsed_models) == len(known_decay_models) - 5
-    )  # subtract for now the number of models not yet tested + the number of models presently with no test available
+    assert len(parsed_models) == len(known_decay_models)
 
 
 @pytest.mark.parametrize(("decay_model", "expected_model_parameters"), parsed_models)
