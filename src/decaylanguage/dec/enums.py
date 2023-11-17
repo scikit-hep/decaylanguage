@@ -92,6 +92,7 @@ known_decay_models = (
     "PVV_CPLH",
     "PYCONT",
     "PYTHIA",
+    "RareLbToLll",
     "SLBKPOLE",
     "SLL",
     "SLN",
