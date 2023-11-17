@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B-
+   1.0   Lambda0   anti-p-   gamma   B_TO_LAMBDA_PBAR_GAMMA;
+Enddecay
+
+End
