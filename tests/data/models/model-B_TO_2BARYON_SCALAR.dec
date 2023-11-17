@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B-
+1.0   Lambda0   anti-p-   pi0   B_TO_2BARYON_SCALAR;
+Enddecay
+
+End
