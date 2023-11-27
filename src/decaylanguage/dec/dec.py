@@ -999,7 +999,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             list_dm_details = self._decay_mode_details(dm, display_photos_keyword=False)
             d = dict(zip(keys, list_dm_details))
 
-            for i, fs in enumerate(d["fs"]):  # type: ignore[arg-type, var-annotated]
+            for i, fs in enumerate(d["fs"]):
                 if fs in stable_particles:
                     continue
 
@@ -1009,13 +1009,13 @@ All but the first occurrence will be discarded/removed ...""".format(
                     # _n_dms = len(self._find_decay_modes(fs))
 
                     _info = self.build_decay_chains(fs, stable_particles)
-                    d["fs"][i] = _info  # type: ignore[index]
+                    d["fs"][i] = _info
                 except DecayNotFound:
                     pass
 
             info.append(d)
 
-        return {mother: info}  # type: ignore[dict-item]
+        return {mother: info}
 
     def __repr__(self) -> str:
         if self._parsed_dec_file is not None:
