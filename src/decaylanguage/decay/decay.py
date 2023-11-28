@@ -257,7 +257,7 @@ class DecayMode:
         """
         self.bf = bf
         if daughters is None and "fs" in info:
-            self.daughters = DaughtersDict(info.pop("fs"))
+            daughters = info.pop("fs")
         self.daughters = DaughtersDict(daughters)
 
         self.metadata: dict[str, str | None] = {"model": "", "model_params": ""}
