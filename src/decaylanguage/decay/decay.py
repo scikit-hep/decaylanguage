@@ -7,21 +7,32 @@
 from __future__ import annotations
 
 from collections import Counter
+from collections.abc import Sequence
 from copy import deepcopy
 from itertools import product
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List
 
 from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
 from particle.exceptions import MatchingIDNotFound
 
-from .._compat.typing import Self
+from .._compat.typing import Self, TypedDict
 from ..utils import DescriptorFormat, charge_conjugate_name
 
 if TYPE_CHECKING:
     CounterStr = Counter[str]  # pragma: no cover
 else:
     CounterStr = Counter
+
+
+class DecayModeDict(TypedDict):
+    bf: float
+    fs: Sequence[str | DecayChainDict]
+    model: str
+    model_params: str | Sequence[str | Any]
+
+
+DecayChainDict = Dict[str, List[DecayModeDict]]
 
 
 class DaughtersDict(CounterStr):
@@ -187,8 +198,12 @@ class DecayMode:
     def __init__(
         self,
         bf: float = 0,
-        daughters: None
-        | (DaughtersDict | dict[str, int] | list[str] | tuple[str] | str) = None,
+        daughters: DaughtersDict
+        | dict[str, int]
+        | list[str]
+        | tuple[str]
+        | str
+        | None = None,
         **info: Any,
     ) -> None:
         """
@@ -241,6 +256,8 @@ class DecayMode:
         True
         """
         self.bf = bf
+        if daughters is None and "fs" in info:
+            daughters = info.pop("fs")
         self.daughters = DaughtersDict(daughters)
 
         self.metadata: dict[str, str | None] = {"model": "", "model_params": ""}
@@ -249,7 +266,7 @@ class DecayMode:
     @classmethod
     def from_dict(
         cls,
-        decay_mode_dict: dict[str, int | float | str | list[str]],
+        decay_mode_dict: DecayModeDict,
     ) -> Self:
         """
         Constructor from a dictionary of the form
@@ -285,13 +302,10 @@ class DecayMode:
         dm = deepcopy(decay_mode_dict)
 
         # Ensure the input dict has the 2 required keys 'bf' and 'fs'
-        try:
-            bf = dm.pop("bf")
-            daughters = dm.pop("fs")
-        except KeyError as e:
-            raise RuntimeError("Input not in the expected format!") from e
+        if not dm.keys() >= {"bf", "fs"}:
+            raise RuntimeError("Input not in the expected format! Needs 'bf' and 'fs'")
 
-        return cls(bf=bf, daughters=daughters, **dm)  # type: ignore[arg-type]
+        return cls(**dm)
 
     @classmethod
     def from_pdgids(
@@ -434,10 +448,6 @@ class DecayMode:
 
     def __str__(self) -> str:
         return repr(self)
-
-
-DecayModeDict = Dict[str, Union[float, str, List[Any]]]
-DecayChainDict = Dict[str, List[DecayModeDict]]
 
 
 def _has_no_subdecay(ds: list[Any]) -> bool:
@@ -894,9 +904,9 @@ class DecayChain:
             for i_decay in decay_dict[mother]:
                 print(prefix, arrow if depth > 0 else "", mother, sep="")  # noqa: T201
                 fsps = i_decay["fs"]
-                n = len(list(fsps))  # type: ignore[arg-type]
+                n = len(list(fsps))
                 depth += 1
-                for j, fsp in enumerate(fsps):  # type: ignore[arg-type]
+                for j, fsp in enumerate(fsps):
                     prefix = bar if (link and depth > 1) else ""
                     if last:
                         prefix = prefix + " " * indent * (depth - 1) + " "
