@@ -1,0 +1,47 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+# Wilson coefficients for New Physics contributions
+# Each Wilson coefficient is calculated by
+# CXX = MagCXX * exp( ArgCXX * i )
+# Negative value of MagCXX is allowed.
+# all CXX = 0 --> Standard Model
+Define MagCV1		0
+Define ArgCV1		0
+Define MagCV2		0
+Define ArgCV2		0
+Define MagCS1		0
+Define ArgCS1		0
+Define MagCS2		0
+Define ArgCS2		0
+Define MagCT		0
+Define ArgCT		0
+
+# quark masses at the m_b scale
+# taken from PRD77, 113016 (2008)
+# m_b = 4.20+/-0.07 GeV/c^2
+# m_c = 0.901+0.111-0.113 GeV/c^2
+Define m_b	4.20
+Define m_c	0.901
+
+# HQET Form Factor parameters from B->D(*)lnu data
+# taken from HFAG End Of Year 2011
+# rho_1^2 = 1.186 +/- 0.036 +/- 0.041
+# rho_A1^2 = 1.207 +/- 0.015 +/- 0.021
+# R_1(1) = 1.403 +/- 0.033
+# R_2(1) = 0.854 +/- 0.020
+Define rho12 	1.186
+Define rhoA12	1.207
+Define R11	1.403
+Define R21	0.854
+
+# Parameters related to the O(1/m_q) correction in the scalar form factors
+# The authors of PRD87,034028 use 1 +/- 1 for these values to take into account the theoretical error.
+Define aS1 	1.0
+Define aR3	1.0
+
+Decay B-
+0.5   D*0   tau-   anti-nu_tau   BSTD   rhoA12 R11 R21 aR3 m_b m_c MagCV1 ArgCV1 MagCV2 ArgCV2 MagCS1 ArgCS1 MagCS2 ArgCS2 MagCT ArgCT;
+#0.5 D0   tau-   anti-nu_tau   BSTD   rho12 aS1 m_b m_c MagCV1 ArgCV1 MagCV2 ArgCV2 MagCS1 ArgCS1 MagCS2 ArgCS2 MagCT ArgCT;
+Enddecay
+
+End
