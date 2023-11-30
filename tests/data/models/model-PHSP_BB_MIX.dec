@@ -1,0 +1,9 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define dm_B0 0.5065e12
+
+Decay Upsilon(5S)
+   0.20219   B0heavy   anti-B0heavy   PHSP_BB_MIX   dm_B0   -1;
+Enddecay
+
+End

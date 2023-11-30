@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay vpho
+   1.0   Upsilon(4S)   gamma   VECTORISR -1 1;
+Enddecay
+
+End
