@@ -1,0 +1,34 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+# HQET Form Factor parameters from B->D(*)lnu data
+# taken from HFAG End Of Year 2011
+# rho_1^2 = 1.186 +/- 0.036 +/- 0.041
+# rho_A1^2 = 1.207 +/- 0.015 +/- 0.021
+# R_1(1) = 1.403 +/- 0.033
+# R_2(1) = 0.854 +/- 0.020
+Define rho12 	1.186
+Define rhoA12	1.207
+Define R11	1.403
+Define R21	0.854
+
+# Parameters related to the O(1/m_q) correction in the scalar form factors
+# The authors of PRD87,034028 use 1 +/- 1 for these values to take into account the theoretical error.
+Define aS1 	1.0
+Define aR3	1.0
+
+# quark masses at the m_b scale
+# taken from PRD77, 113016 (2008)
+# m_b = 4.20+/-0.07 GeV/c^2
+# m_c = 0.901+0.111-0.113 GeV/c^2
+Define m_b	4.20
+Define m_c	0.901
+
+# (GeV/c^2)^-1
+Define tanBeta/m_H+	0.5
+
+Decay B0
+0.5   D*-   tau+   nu_tau   BSTD_2HDMTYPE2   rhoA12 R11 R21 aR3 m_b m_c tanBeta/m_H+;
+#0.5   D-   tau+   nu_tau   BSTD_2HDMTYPE2   rho12 aS1 m_b m_c tanBeta/m_H+;
+Enddecay
+
+End
