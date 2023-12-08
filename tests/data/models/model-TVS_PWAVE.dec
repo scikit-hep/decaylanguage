@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay K_2*-
+0.019050771   anti-K*0   pi-   TVS_PWAVE   0   0   1   0   0   0.0;
+Enddecay
+
+End

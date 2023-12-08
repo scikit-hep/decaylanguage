@@ -287,10 +287,31 @@ def test_list_lineshapePW_definitions():
 
 
 def test_global_photos_flag():
+    """
+    Check that PHOTOS is on for all decays.
+    """
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
     assert p.global_photos_flag()
+
+
+def test_global_photos_off():
+    """
+    Check that PHOTOS is off for all decays.
+    """
+    s = """
+    # Turn off PHOTOS for all decays
+    noPhotos
+
+    Decay D0
+      1.0   K-      pi+        PHSP;
+    Enddecay
+    """
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+    assert p.global_photos_flag() == PhotosEnum.no
 
 
 def test_missing_global_photos_flag():
@@ -312,6 +333,7 @@ def test_duplicated_global_photos_flag():
     """
     p = DecFileParser.from_string(s)
     p.parse()
+
     # The following call issues the warning
     # UserWarning: PHOTOS flag re-set! Using flag set in last ...
     #   warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
@@ -391,7 +413,12 @@ def test_decay_mode_details():
     p.parse()
 
     tree_Dp = p._find_decay_modes("D+")[0]
-    output = (1.0, ["K-", "pi+", "pi+", "pi0"], "PHSP", "")
+    output = {
+        "bf": 1.0,
+        "fs": ["K-", "pi+", "pi+", "pi0"],
+        "model": "PHSP",
+        "model_params": "",
+    }
     assert p._decay_mode_details(tree_Dp, display_photos_keyword=False) == output
 
 

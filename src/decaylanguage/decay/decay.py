@@ -7,22 +7,32 @@
 from __future__ import annotations
 
 from collections import Counter
+from collections.abc import Sequence
 from copy import deepcopy
 from itertools import product
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List
 
 from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
 from particle.exceptions import MatchingIDNotFound
 
+from .._compat.typing import Self, TypedDict
 from ..utils import DescriptorFormat, charge_conjugate_name
-
-Self_DaughtersDict = TypeVar("Self_DaughtersDict", bound="DaughtersDict")
 
 if TYPE_CHECKING:
     CounterStr = Counter[str]  # pragma: no cover
 else:
     CounterStr = Counter
+
+
+class DecayModeDict(TypedDict):
+    bf: float
+    fs: Sequence[str | DecayChainDict]
+    model: str
+    model_params: str | Sequence[str | Any]
+
+
+DecayChainDict = Dict[str, List[DecayModeDict]]
 
 
 class DaughtersDict(CounterStr):
@@ -107,9 +117,7 @@ class DaughtersDict(CounterStr):
         """
         return sorted(self.elements())
 
-    def charge_conjugate(
-        self: Self_DaughtersDict, pdg_name: bool = False
-    ) -> Self_DaughtersDict:
+    def charge_conjugate(self, pdg_name: bool = False) -> Self:
         """
         Return the charge-conjugate final state.
 
@@ -156,7 +164,7 @@ class DaughtersDict(CounterStr):
         """
         return sum(self.values())
 
-    def __add__(self: Self_DaughtersDict, other: Self_DaughtersDict) -> Self_DaughtersDict:  # type: ignore[override]
+    def __add__(self, other: Self) -> Self:  # type: ignore[override]
         """
         Add two final states, particle-type-wise.
         """
@@ -165,9 +173,6 @@ class DaughtersDict(CounterStr):
 
     def __iter__(self) -> Iterator[str]:
         return self.elements()
-
-
-Self_DecayMode = TypeVar("Self_DecayMode", bound="DecayMode")
 
 
 class DecayMode:
@@ -193,8 +198,12 @@ class DecayMode:
     def __init__(
         self,
         bf: float = 0,
-        daughters: None
-        | (DaughtersDict | dict[str, int] | list[str] | tuple[str] | str) = None,
+        daughters: DaughtersDict
+        | dict[str, int]
+        | list[str]
+        | tuple[str]
+        | str
+        | None = None,
         **info: Any,
     ) -> None:
         """
@@ -247,6 +256,8 @@ class DecayMode:
         True
         """
         self.bf = bf
+        if daughters is None and "fs" in info:
+            daughters = info.pop("fs")
         self.daughters = DaughtersDict(daughters)
 
         self.metadata: dict[str, str | None] = {"model": "", "model_params": ""}
@@ -254,9 +265,9 @@ class DecayMode:
 
     @classmethod
     def from_dict(
-        cls: type[Self_DecayMode],
-        decay_mode_dict: dict[str, int | float | str | list[str]],
-    ) -> Self_DecayMode:
+        cls,
+        decay_mode_dict: DecayModeDict,
+    ) -> Self:
         """
         Constructor from a dictionary of the form
         {'bf': <float>, 'fs': [...], ...}.
@@ -291,21 +302,18 @@ class DecayMode:
         dm = deepcopy(decay_mode_dict)
 
         # Ensure the input dict has the 2 required keys 'bf' and 'fs'
-        try:
-            bf = dm.pop("bf")
-            daughters = dm.pop("fs")
-        except KeyError as e:
-            raise RuntimeError("Input not in the expected format!") from e
+        if not dm.keys() >= {"bf", "fs"}:
+            raise RuntimeError("Input not in the expected format! Needs 'bf' and 'fs'")
 
-        return cls(bf=bf, daughters=daughters, **dm)  # type: ignore[arg-type]
+        return cls(**dm)
 
     @classmethod
     def from_pdgids(
-        cls: type[Self_DecayMode],
+        cls,
         bf: float = 0,
         daughters: list[int] | tuple[int] | None = None,
         **info: Any,
-    ) -> Self_DecayMode:
+    ) -> Self:
         """
         Constructor for a final state given as a list of particle PDG IDs.
 
@@ -397,9 +405,7 @@ class DecayMode:
             d["model_params"] = ""
         return d  # type: ignore[return-value]
 
-    def charge_conjugate(
-        self: Self_DecayMode, pdg_name: bool = False
-    ) -> Self_DecayMode:
+    def charge_conjugate(self, pdg_name: bool = False) -> Self:
         """
         Return the charge-conjugate decay mode.
 
@@ -442,11 +448,6 @@ class DecayMode:
 
     def __str__(self) -> str:
         return repr(self)
-
-
-Self_DecayChain = TypeVar("Self_DecayChain", bound="DecayChain")
-DecayModeDict = Dict[str, Union[float, str, List[Any]]]
-DecayChainDict = Dict[str, List[DecayModeDict]]
 
 
 def _has_no_subdecay(ds: list[Any]) -> bool:
@@ -772,9 +773,7 @@ class DecayChain:
         self.decays = decays
 
     @classmethod
-    def from_dict(
-        cls: type[Self_DecayChain], decay_chain_dict: DecayChainDict
-    ) -> Self_DecayChain:
+    def from_dict(cls, decay_chain_dict: DecayChainDict) -> Self:
         """
         Constructor from a decay chain represented as a dictionary.
         The format is the same as that returned by
@@ -905,9 +904,9 @@ class DecayChain:
             for i_decay in decay_dict[mother]:
                 print(prefix, arrow if depth > 0 else "", mother, sep="")  # noqa: T201
                 fsps = i_decay["fs"]
-                n = len(list(fsps))  # type: ignore[arg-type]
+                n = len(list(fsps))
                 depth += 1
-                for j, fsp in enumerate(fsps):  # type: ignore[arg-type]
+                for j, fsp in enumerate(fsps):
                     prefix = bar if (link and depth > 1) else ""
                     if last:
                         prefix = prefix + " " * indent * (depth - 1) + " "
@@ -966,9 +965,9 @@ class DecayChain:
         return recursively_replace(self.mother)
 
     def flatten(
-        self: Self_DecayChain,
+        self,
         stable_particles: Iterable[dict[str, int] | list[str] | str] = (),
-    ) -> Self_DecayChain:
+    ) -> Self:
         """
         Flatten the decay chain replacing all intermediate, decaying particles,
         with their final states.

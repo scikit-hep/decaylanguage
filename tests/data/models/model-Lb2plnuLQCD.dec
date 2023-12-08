@@ -1,0 +1,9 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+# Lb -> p mu nu using LQCD form factor predicitions
+
+Decay Lambda_b0
+   1.0   p+   mu-   anti-nu_mu   PHOTOS   Lb2plnuLQCD   1 1 1 1;
+Enddecay
+
+End

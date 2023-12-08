@@ -47,7 +47,7 @@ import warnings
 from io import StringIO
 from itertools import zip_longest
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any
 
 from lark import Lark, Token, Transformer, Tree, Visitor
 from lark.lexer import TerminalDef
@@ -55,7 +55,8 @@ from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
 
 from .. import data
-from ..decay.decay import _expand_decay_modes
+from .._compat.typing import Self
+from ..decay.decay import DecayModeDict, _expand_decay_modes
 from ..utils import charge_conjugate_name
 from .enums import PhotosEnum, known_decay_models
 
@@ -66,9 +67,6 @@ class DecFileNotParsed(RuntimeError):
 
 class DecayNotFound(RuntimeError):
     pass
-
-
-Self_DecFileParser = TypeVar("Self_DecFileParser", bound="DecFileParser")
 
 
 class DecFileParser:
@@ -143,9 +141,7 @@ class DecFileParser:
         self._include_ccdecays = True
 
     @classmethod
-    def from_string(
-        cls: type[Self_DecFileParser], filecontent: str
-    ) -> Self_DecFileParser:
+    def from_string(cls, filecontent: str) -> Self:
         """
         Constructor from a .dec decay file provided as a multi-line string.
 
@@ -756,7 +752,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
     def _decay_mode_details(
         self, decay_mode: Tree, display_photos_keyword: bool = True
-    ) -> tuple[float, list[str], str, str | list[str | Any]]:
+    ) -> DecayModeDict:
         """
         Parse a decay mode (Tree instance)
         and return the relevant bits of information in it.
@@ -777,7 +773,9 @@ All but the first occurrence will be discarded/removed ...""".format(
         if display_photos_keyword and list(decay_mode.find_data("photos")):
             model = "PHOTOS " + model
 
-        return (bf, fsp_names, model, model_params)
+        return DecayModeDict(
+            bf=bf, fs=fsp_names, model=model, model_params=model_params
+        )
 
     def print_decay_modes(
         self,
@@ -873,11 +871,13 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         ls_dict = {}
         for dm in dms:
-            bf, fsp_names, model, model_params = self._decay_mode_details(
-                dm, display_photos_keyword
+            dmdict = self._decay_mode_details(dm, display_photos_keyword)
+            model_params = [str(i) for i in dmdict["model_params"]]
+            ls_dict[dmdict["bf"]] = (
+                dmdict["fs"],
+                dmdict["model"],
+                model_params,
             )
-            model_params = [str(i) for i in model_params]
-            ls_dict[bf] = (fsp_names, model, model_params)
 
         dec_details = list(ls_dict.values())
         ls_attrs_aligned = list(
@@ -946,7 +946,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         self,
         mother: str,
         stable_particles: list[str] | set[str] | tuple[str] | tuple[()] = (),
-    ) -> dict[str, list[dict[str, float | str | list[Any]]]]:
+    ) -> dict[str, list[DecayModeDict]]:
         """
         Iteratively build the entire decay chains of a given mother particle,
         optionally considering, on the fly, certain particles as stable.
@@ -1001,14 +1001,12 @@ All but the first occurrence will be discarded/removed ...""".format(
         >>> p.build_decay_chains('D+', stable_particles=['pi0'])    # doctest: +SKIP
         {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'model': 'PHSP', 'model_params': ''}]}
         """
-        keys = ("bf", "fs", "model", "model_params")
 
         info = []
         for dm in self._find_decay_modes(mother):
-            list_dm_details = self._decay_mode_details(dm, display_photos_keyword=False)
-            d = dict(zip(keys, list_dm_details))
+            d = self._decay_mode_details(dm, display_photos_keyword=False)
 
-            for i, fs in enumerate(d["fs"]):  # type: ignore[arg-type, var-annotated]
+            for i, fs in enumerate(d["fs"]):
                 if fs in stable_particles:
                     continue
 
@@ -1017,6 +1015,7 @@ All but the first occurrence will be discarded/removed ...""".format(
                     # if fs does not have decays defined in the parsed file
                     # _n_dms = len(self._find_decay_modes(fs))
 
+                    assert isinstance(fs, str)
                     _info = self.build_decay_chains(fs, stable_particles)
                     d["fs"][i] = _info  # type: ignore[index]
                 except DecayNotFound:
@@ -1024,7 +1023,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
             info.append(d)
 
-        return {mother: info}  # type: ignore[dict-item]
+        return {mother: info}
 
     def __repr__(self) -> str:
         if self._parsed_dec_file is not None:
@@ -1121,8 +1120,16 @@ class DecayModelParamValueReplacement(Visitor):  # type: ignore[misc]
         try:
             t.children[0].value = float(t.children[0].value)
         except AttributeError:
-            if t.value in self.define_defs:
-                t.value = self.define_defs[t.value]
+            negative_param = (
+                t.value[0] == "-"
+            )  # account for uncommon cases such as "MODEL_NAME ... -DEFINE_NAME"
+            value = t.value if not negative_param else t.value[1:]
+            if value in self.define_defs:
+                t.value = (
+                    self.define_defs[value]
+                    if not negative_param
+                    else -self.define_defs[value]
+                )
 
     def model_options(self, tree: Tree) -> None:
         """

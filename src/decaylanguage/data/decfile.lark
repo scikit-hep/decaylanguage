@@ -78,7 +78,7 @@ _SEMICOLON: /;/
 _COMMA: /,/
 _WS: WS_INLINE
 
-LABEL : /[a-zA-Z0-9\/\-+*_()'~]+/
+LABEL : /[a-zA-Z0-9\/\-+*_().'~]+/
 COMMENT : /[#][^\n]*/
 
 // We should ignore comments

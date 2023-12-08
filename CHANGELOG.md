@@ -1,5 +1,19 @@
 # Changelog
 
+## Version 0.18.0 (2023-12-01)
+
+* Parsing of decay files (aka .dec files):
+  - Major update of test suite to verify all EvtGen models are parsed correctly.
+  - Hence full support for all known Belle-II and LHCb EvtGen models.
+  - Lark parser grammar for decay files parsing refactored and simplified.
+  - Minor fixes to decay model parsing.
+  - Better type hints in decay file parsing classes.
+  - General test suite enhanced.
+* Miscellaneous:
+  - Modernisation of Ruff configuration in `pyproject.toml`.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.17.0 (2023-10-18)
 
 * Parsing of decay files (aka .dec files):

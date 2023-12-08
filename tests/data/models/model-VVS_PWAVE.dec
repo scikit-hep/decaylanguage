@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay a_1+
+   1.0   rho0   pi+   VVS_PWAVE 0.9788 0.0 0.0 0.0 0.0212 0.0;
+Enddecay
+
+End

@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay tau+
+1.0	  TAUOLA   5;
+Enddecay
+
+End

@@ -1,0 +1,11 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define dm 0.507e12
+Define beta  0.39
+Define gamma 1.387
+
+Decay B0
+1.0   rho+   D*-   SVV_NONCPEIGEN dm beta gamma 0.322 0.31 0.941 0 0.107 1.42 0.02 0 0.02 0 0.02 0 ;
+Enddecay
+
+End

@@ -1,0 +1,10 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define alpha 1.365
+Define dm 0.507e12
+
+Decay B0
+0.5   a_1+   pi-   PHOTOS   SVS_NONCPEIGEN alpha dm 1.0 3.0 0.0 1.0 0.0 1.0 0.0 3.0 0.0;
+Enddecay
+
+End

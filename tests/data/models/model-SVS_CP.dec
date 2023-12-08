@@ -1,0 +1,10 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define beta 0.3814
+Define dm 0.507e12
+
+Decay B0
+1.0   J/psi   eta   SVS_CP beta dm  1 1 0 1 0;
+Enddecay
+
+End

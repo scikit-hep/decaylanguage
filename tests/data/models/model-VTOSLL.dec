@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay D*0
+   1.0   D0   e+   e-   VTOSLL;
+Enddecay
+
+End

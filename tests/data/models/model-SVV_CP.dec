@@ -1,0 +1,18 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define beta 0.39
+Define dm 0.507e12
+
+Define Aplus  0.490
+Define Azero  1.10
+Define Aminus 0.4
+
+Define phAplus  2.5
+Define phAzero  0.0
+Define phAminus -0.17
+
+Decay B0
+0.00186  J/psi   omega   SVV_CP   beta dm 1 Aplus phAplus Azero phAzero Aminus phAminus;
+Enddecay
+
+End

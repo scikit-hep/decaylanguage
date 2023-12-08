@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B+
+   1.0   rho0   mu+   nu_mu   PHOTOS   BTOXELNU   BCL -0.861 1.444 0.266 0.378 0.165 0.291 0.718 0.384 0.331 -0.876 1.907;
+Enddecay
+
+End

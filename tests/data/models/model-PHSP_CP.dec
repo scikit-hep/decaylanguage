@@ -1,0 +1,10 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define minusTwoBeta -0.78
+Define dm 0.507e12
+
+Decay B0
+1.0   K_S0   K_S0   K_S0   PHSP_CP   minusTwoBeta dm 1 1.0 0.0 1.0 0.0;
+Enddecay
+
+End
