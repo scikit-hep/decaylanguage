@@ -128,11 +128,12 @@ def test_default_grammar_loading():
     assert p.grammar_loaded
 
 
-def test_explicit_grammar_loading():
-    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
-    p.load_grammar(DIR / "../../src/decaylanguage/data/decfile.lark")
+def test_custom_model_name():
+    p = DecFileParser(DIR / "../data/test_custom_decay_model.dec")
+    p.load_additional_decay_models("CUSTOM_MODEL1", "CUSTOM_MODEL2")
 
-    assert p.grammar_loaded is True
+    assert p.grammar() is not None
+    assert p.grammar_loaded
 
 
 def test_string_representation():
