@@ -325,6 +325,8 @@ class DecFileParser:
 
         Parameters
         ----------
+        filename: str, optional, default='decfile.lark'
+            The Lark grammar file name.
         parser: str, optional, default='lalr'
             The Lark parser engine name.
         lexer: str, optional, default='auto'
