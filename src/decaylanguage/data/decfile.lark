@@ -62,8 +62,6 @@ model_options : (value | LABEL | _NEWLINE | _COMMA)+
 // This is supposed to be empty and will be filled via the `edit_terminals` functionality with a list of models
 MODEL_NAME.2 : "MODEL_NAME_PLACEHOLDER"/\b/
 
-// model : model_generic
-// model_helamp : "HELAMP" (SIGNED_NUMBER SIGNED_NUMBER)+
 
 // Terminal definitions
 // To use a fast parser, we need to avoid conflicts

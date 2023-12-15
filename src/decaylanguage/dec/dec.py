@@ -137,6 +137,7 @@ class DecFileParser:
         self._parsed_decays: None | (
             Any
         ) = None  # Particle decays found in the decay file
+
         self._additional_decay_models: None | Iterable[
             str
         ] = None  # Additional decay models not (yet) known to decaylanguage
@@ -169,7 +170,7 @@ class DecFileParser:
         and specified options.
 
         Use the method `load_additional_decay_models` before `parse` to load decay models
-        that might not yet be available in 'decaylanguage'.
+        that might not yet be available in DecayLanguage.
 
         Parameters
         ----------
