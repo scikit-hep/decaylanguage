@@ -128,14 +128,6 @@ def test_default_grammar_loading():
     assert p.grammar_loaded
 
 
-def test_custom_model_name():
-    p = DecFileParser(DIR / "../data/test_custom_decay_model.dec")
-    p.load_additional_decay_models("CUSTOM_MODEL1", "CUSTOM_MODEL2")
-
-    assert p.grammar() is not None
-    assert p.grammar_loaded
-
-
 def test_string_representation():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
 
@@ -519,6 +511,26 @@ def test_multiline_model():
     dl = p._parsed_decays[0].children[1]
     assert get_model_name(dl) == "PTO3P"
     assert len(get_model_parameters(dl)) == 96
+
+
+def test_custom_model_name():
+    p = DecFileParser("./tests/data/test_custom_decay_model.dec")
+    p.load_additional_decay_models("CUSTOM_MODEL1", "CUSTOM_MODEL2")
+
+    assert p.grammar() is not None
+    assert p.grammar_loaded
+
+    p.parse()
+
+    # Simple decay model without model parameters
+    dl = p._parsed_decays[0].children[1]  # 'D*+' Tree
+    assert get_model_name(dl) == "CUSTOM_MODEL1"
+    assert get_model_parameters(dl) == ""
+
+    # Simple decay model with model parameters
+    dl = p._parsed_decays[0].children[2]  # 'D*+' Tree
+    assert get_model_name(dl) == "CUSTOM_MODEL2"
+    assert get_model_parameters(dl) == [1.0, 2.0, 3.0, 4.0]
 
 
 def test_duplicate_decay_definitions():

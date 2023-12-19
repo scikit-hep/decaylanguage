@@ -307,8 +307,18 @@ class DecFileParser:
         self._load_grammar(filename, parser, lexer, **options)
 
     def load_additional_decay_models(self, *models: str) -> None:
+        """
+        Add one or more EvtGen decay models in addition to the ones already provided via
+        `decaylanguage.dec.enums.known_decay_models`.
+
+        Parameters
+        ----------
+        *models: str
+            names of the additional decay models to be considered.
+        """
+
         if self._additional_decay_models is None:
-            self._additional_decay_models = known_decay_models
+            self._additional_decay_models = models
         else:
             self._additional_decay_models = chain.from_iterable(
                 (self._additional_decay_models, models)
@@ -348,6 +358,11 @@ class DecFileParser:
         )
 
     def _generate_edit_terminals_callback(self) -> Callable[[TerminalDef], None]:
+        """
+        This closure creates the callback used by Lark to modify the grammar terminals
+        and inject the names of the EvtGen models.
+        """
+
         if self._additional_decay_models is None:
             decay_models = known_decay_models  # type: tuple[str, ...]
         else:
@@ -357,7 +372,9 @@ class DecFileParser:
 
         def edit_model_name_terminals(t: TerminalDef) -> None:
             """
-            Edits the terminals of the grammar to replace the model name placeholder with the actual names of the models.
+            Edits the terminals of the grammar to replace the model name placeholder with the actual names of the models,
+            see `Model_NAME_PLACEHOLDER` in the default grammar file `decaylanguage/data/decfile.lark`.
+            The decay models are sorted by length and escaped to match the default Lark behavior.
             """
 
             modelstr = rf"(?:{'|'.join(re.escape(dm) for dm in sorted(decay_models, key=len, reverse=True))})"
@@ -1130,7 +1147,8 @@ class DecayModelAliasReplacement(Transformer):  # type: ignore[misc]
     def _replacement(self, t: Token) -> Token:
         if t.value not in self.define_defs:
             raise ValueError(
-                f"ModelAlias {t.value} is not defined. Please define this ModelAlias in the decayfile."
+                f"Decay model or ModelAlias {t.value} is not defined. Please load the decay model with "
+                "`load_additional_decay_models` or define a ModelAlias in the decayfile."
             )
         return self.define_defs[t.value]
 
