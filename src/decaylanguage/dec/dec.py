@@ -140,7 +140,7 @@ class DecFileParser:
 
         self._additional_decay_models: None | Iterable[
             str
-        ] = None  # Additional decay models not (yet) known to decaylanguage
+        ] = None  # Additional decay models not (yet) known to DecayLanguage
 
         # By default, consider charge-conjugate decays when parsing
         self._include_ccdecays = True
@@ -313,7 +313,7 @@ class DecFileParser:
 
         Parameters
         ----------
-        *models: str
+        models: str
             names of the additional decay models to be considered.
         """
 

@@ -134,7 +134,7 @@ from decaylanguage.dec import known_decay_models
 ```
 
 Say you have to deal with a decay file containing a new model not yet on the list above.
-Running the parser as usual will result in an error in the `ModelAlias` parsing.
+Running the parser as usual will result in an error in the model parsing.
 It is nevertheless easy to deal with this issue; no need to wait for a new release:
 Just call `load_additional_decay_models` with the models you'd like to add as arguments
 before parsing the file:

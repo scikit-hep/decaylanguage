@@ -1,4 +1,5 @@
-# Simple decay with a custom model name
+# Example decfile for testing purposes:
+# Simple decay with custom models
 
 Decay D*+
   0.5               D+ pi0       CUSTOM_MODEL1;
