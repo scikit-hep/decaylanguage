@@ -45,11 +45,12 @@ import os
 import re
 import warnings
 from io import StringIO
-from itertools import zip_longest
+from itertools import chain, zip_longest
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable, Iterable
 
 from lark import Lark, Token, Transformer, Tree, Visitor
+from lark.lexer import TerminalDef
 from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
 
@@ -57,7 +58,7 @@ from .. import data
 from .._compat.typing import Self
 from ..decay.decay import DecayModeDict, _expand_decay_modes
 from ..utils import charge_conjugate_name
-from .enums import PhotosEnum
+from .enums import PhotosEnum, known_decay_models
 
 
 class DecFileNotParsed(RuntimeError):
@@ -86,6 +87,7 @@ class DecFileParser:
         "_parsed_dec_file",
         "_parsed_decays",
         "_include_ccdecays",
+        "_additional_decay_models",
     )
 
     def __init__(self, *filenames: str | os.PathLike[str]) -> None:
@@ -136,6 +138,10 @@ class DecFileParser:
             Any
         ) = None  # Particle decays found in the decay file
 
+        self._additional_decay_models: None | Iterable[
+            str
+        ] = None  # Additional decay models not (yet) known to DecayLanguage
+
         # By default, consider charge-conjugate decays when parsing
         self._include_ccdecays = True
 
@@ -163,9 +169,8 @@ class DecFileParser:
         Parse the given .dec decay file(s) according to the default Lark parser
         and specified options.
 
-        See method 'load_grammar' for how to explicitly define the grammar
-        and set the Lark parsing options. This method needs to be called
-        before 'parse' to override the parser and its options.
+        Use the method `load_additional_decay_models` before `parse` to load decay models
+        that might not yet be available in DecayLanguage.
 
         Parameters
         ----------
@@ -186,12 +191,18 @@ class DecFileParser:
         # effectively loading it
         opts = self.grammar_info()
         extraopts = {
-            k: v for k, v in opts.items() if k not in ("lark_file", "parser", "lexer")
+            k: v
+            for k, v in opts.items()
+            if k not in ("lark_file", "parser", "lexer", "edit_terminals")
         }
 
         # Instantiate the Lark parser according to chosen settings
         parser = Lark(
-            self.grammar(), parser=opts["parser"], lexer=opts["lexer"], **extraopts
+            self.grammar(),
+            parser=opts["parser"],
+            lexer=opts["lexer"],
+            edit_terminals=opts["edit_terminals"],
+            **extraopts,
         )
         self._parsed_dec_file = parser.parse(self._dec_file)
 
@@ -234,7 +245,7 @@ class DecFileParser:
             The Lark grammar definition file.
         """
         if not self.grammar_loaded:
-            self.load_grammar()
+            self._load_grammar()
 
         return self._grammar  # type: ignore[return-value]
 
@@ -250,7 +261,7 @@ class DecFileParser:
             The Lark grammar definition file name and parser options.
         """
         if not self.grammar_loaded:
-            self.load_grammar()
+            self._load_grammar()
         assert self._grammar_info is not None
 
         return self._grammar_info
@@ -263,6 +274,8 @@ class DecFileParser:
         **options: Any,
     ) -> None:
         """
+        DEPRECATED, please use "`load_additional_decay_models`" instead.
+
         Load a Lark grammar definition file, either the default one,
         or a user-specified one, optionally setting Lark parsing options.
 
@@ -281,17 +294,96 @@ class DecFileParser:
         for parser, lexer and options.
         """
 
+        warnings.warn(
+            "This method is deprecated, please add unknown decay models by passing them to "
+            "`load_additional_decay_models` instead before parsing the decayfile.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
         if filename is None:
             filename = "decfile.lark"
-            with data.basepath.joinpath(filename).open() as f1:
-                self._grammar = f1.read()
+
+        self._load_grammar(filename, parser, lexer, **options)
+
+    def load_additional_decay_models(self, *models: str) -> None:
+        """
+        Add one or more EvtGen decay models in addition to the ones already provided via
+        `decaylanguage.dec.enums.known_decay_models`.
+
+        Parameters
+        ----------
+        models: str
+            names of the additional decay models to be considered.
+        """
+
+        if self._additional_decay_models is None:
+            self._additional_decay_models = models
         else:
-            with Path(filename).open(encoding="utf_8") as f2:
-                self._grammar = f2.read()
+            self._additional_decay_models = chain.from_iterable(
+                (self._additional_decay_models, models)
+            )
+
+    def _load_grammar(
+        self,
+        filename: str = "decfile.lark",
+        parser: str = "lalr",
+        lexer: str = "auto",
+        **options: Any,
+    ) -> None:
+        """
+        Load the default Lark grammar definition file with default parser and lexer.
+
+        Parameters
+        ----------
+        filename: str, optional, default='decfile.lark'
+            The Lark grammar file name.
+        parser: str, optional, default='lalr'
+            The Lark parser engine name.
+        lexer: str, optional, default='auto'
+            The Lark parser lexer mode to use.
+        options: keyword arguments, optional
+            Extra options to pass on to the parsing algorithm.
+        """
+
+        with data.basepath.joinpath(filename).open() as f1:
+            self._grammar = f1.read()
 
         self._grammar_info = dict(
-            lark_file=filename, parser=parser, lexer=lexer, **options
+            lark_file=filename,
+            parser=parser,
+            lexer=lexer,
+            edit_terminals=self._generate_edit_terminals_callback(),
+            **options,
         )
+
+    def _generate_edit_terminals_callback(self) -> Callable[[TerminalDef], None]:
+        """
+        This closure creates the callback used by Lark to modify the grammar terminals
+        and inject the names of the EvtGen models.
+        """
+
+        if self._additional_decay_models is None:
+            decay_models = known_decay_models  # type: tuple[str, ...]
+        else:
+            decay_models = tuple(
+                chain.from_iterable([known_decay_models, self._additional_decay_models])
+            )
+
+        def edit_model_name_terminals(t: TerminalDef) -> None:
+            """
+            Edits the terminals of the grammar to replace the model name placeholder with the actual names of the models,
+            see `Model_NAME_PLACEHOLDER` in the default grammar file `decaylanguage/data/decfile.lark`.
+            The decay models are sorted by length and escaped to match the default Lark behavior.
+            """
+
+            modelstr = rf"(?:{'|'.join(re.escape(dm) for dm in sorted(decay_models, key=len, reverse=True))})"
+            if t.name == "MODEL_NAME":
+                t.pattern.value = t.pattern.value.replace(
+                    "MODEL_NAME_PLACEHOLDER", modelstr
+                )
+
+        return edit_model_name_terminals
 
     @property
     def grammar_loaded(self) -> bool:
@@ -1055,7 +1147,8 @@ class DecayModelAliasReplacement(Transformer):  # type: ignore[misc]
     def _replacement(self, t: Token) -> Token:
         if t.value not in self.define_defs:
             raise ValueError(
-                f"ModelAlias {t.value} is not defined. Please define this ModelAlias in the decayfile."
+                f"Decay model or ModelAlias {t.value} is not defined. Please load the decay model with "
+                "`load_additional_decay_models` or define a ModelAlias in the decayfile."
             )
         return self.define_defs[t.value]
 

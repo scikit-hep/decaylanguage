@@ -134,17 +134,14 @@ from decaylanguage.dec import known_decay_models
 ```
 
 Say you have to deal with a decay file containing a new model not yet on the list above.
-Running the parser as usual will result in a `UnexpectedToken` exception.
-It is nevertheless easy to deal with this issue; no need to wait for a new release.
-It is just a matter of adding the model name to the list in `decaylanguage/data/decfile.lark`
-(or your private copy), see the line
-`MODEL_NAME.2 : "BaryonPCR"|"BTO3PI_CP"|"BTOSLLALI"|...`,
-and then proceed as usual apart from adding an extra line to call to `load_grammar`
-to specify the Lark grammar to use:
+Running the parser as usual will result in an error in the model parsing.
+It is nevertheless easy to deal with this issue; no need to wait for a new release:
+Just call `load_additional_decay_models` with the models you'd like to add as arguments
+before parsing the file:
 
 ```python
 dfp = DecFileParser('my_decfile.dec')
-dfp.load_grammar('path/to/my_updated_decfile.lark')
+dfp.load_additional_decay_models("MyModel1", "MyModel2")
 dfp.parse()
 ...
 ```

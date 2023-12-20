@@ -1,0 +1,7 @@
+# Example decfile for testing purposes:
+# Simple decay with custom models
+
+Decay D*+
+  0.5               D+ pi0       CUSTOM_MODEL1;
+  0.5               D+ gamma     CUSTOM_MODEL2 1 2 3 4;
+Enddecay
