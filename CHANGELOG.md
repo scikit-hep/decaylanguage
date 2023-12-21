@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 0.18.1 (2023-12-21)
+
+* Parsing of decay files (aka .dec files):
+  - Dynamically supply a list of decay models to the parsing grammar.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.18.0 (2023-12-01)
 
 * Parsing of decay files (aka .dec files):
