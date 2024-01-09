@@ -1290,7 +1290,7 @@ def find_charge_conjugate_match(
     from "ChargeConj" statements in a decay file.
 
     The name `ChargeConj(pname)` is returned if all matching "routes" fail,
-    see `charge_conjugate_name(...) function.`
+    see `charge_conjugate_name(...)` function.
     """
     # Check the list of particle-antiparticle matches provided ;-)
     if dict_cc_names:
@@ -1646,19 +1646,19 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
     # Get particle aliases since "Particle" statements often use name aliases
     aliases = get_aliases(parsed_file)
 
-    def get_set_width_or_default(children):
+    def get_set_width_or_default(children: list[Tree]) -> float:
         if len(children) > 2:
             return float(children[2].value)
-        else:
-            # Get the particle name or the alias
-            token_name = children[0].value
-            try:
-                pname = aliases.get(token_name, token_name) if aliases else token_name
-                return Particle.from_evtgen_name(pname).width
-            except Exception as err:
-                raise RuntimeError(
-                    f"Particle name/alias {token_name!r} not found! Check your dec file(s)!"
-                ) from err
+
+        # Get the particle name or the alias
+        token_name: str = children[0].value
+        try:
+            pname: str = aliases.get(token_name, token_name) if aliases else token_name
+            return Particle.from_evtgen_name(pname).width  # type: ignore[return-value]
+        except Exception as err:
+            raise RuntimeError(
+                f"Particle name/alias {token_name!r} not found! Check your dec file(s)!"
+            ) from err
 
     try:
         return {
