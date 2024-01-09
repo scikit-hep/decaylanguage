@@ -50,7 +50,7 @@ def charge_conjugate_name(name: str, pdg_name: bool = False) -> str:
     -------
     out: str
         Either the EvtGen or PDG charge-conjugate particle name
-        depending on the value of parameter `pdg_name`.
+        depending on the value of parameter ``pdg_name``.
     """
     if pdg_name:
         try:
@@ -121,7 +121,7 @@ def particle_list_from_string_name(name: str) -> list[Particle]:
 
 def _from_group_dict_list(mat: dict[str, Any]) -> list[Particle]:
     """
-    Internal helper class for the functions `from_string` and `from_string_list`
+    Internal helper class for the functions ``from_string`` and ``from_string_list``
     for fuzzy finding of particle names used by AmpGen.
     """
     kw: dict[str, Any] = {

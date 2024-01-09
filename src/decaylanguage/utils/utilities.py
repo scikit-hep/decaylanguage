@@ -64,7 +64,7 @@ def filter_lines(
 class DescriptorFormat:
     """
     Class to help with setting the decay descriptor format. The format is stored as a
-    class-level variable: `DescriptorFormat.config`.
+    class-level variable: ``DescriptorFormat.config``.
 
     Examples
     --------
@@ -140,7 +140,7 @@ class DescriptorFormat:
     def format_descriptor(mother: str, daughters: str, top: bool = True) -> str:
         """
         Apply the format to one "layer" of the decay. Does not handle nested
-        decays itself. It is assumed that the `daughters` string already contains
+        decays itself. It is assumed that the ``daughters`` string already contains
         any sub-decays.
 
         Parameters

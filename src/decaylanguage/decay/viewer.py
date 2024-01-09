@@ -6,7 +6,7 @@
 """
 Submodule with classes and utilities to visualize decay chains.
 Decay chains are typically provided by the parser of .dec decay files,
-see the `DecFileParser` class.
+see the ``DecFileParser`` class.
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ class DecayChainViewer:
     >>> dcv    # doctest: +SKIP
 
     When not in notebooks the graph can easily be visualized with the
-    `graphviz.Digraph.render` or `graphviz.Digraph.view` functions, e.g.:
+    ``graphviz.Digraph.render`` or ``graphviz.Digraph.view`` functions, e.g.:
     >>> dcv.graph.render(filename="test", format="pdf", view=True, cleanup=True)    # doctest: +SKIP
     """
 
@@ -59,10 +59,10 @@ class DecayChainViewer:
         Parameters
         ----------
         decaychain: dict
-            Input decay chain in dict format, typically created from `decaylanguage.DecFileParser.build_decay_chains`
-            after parsing a .dec decay file, or from building a decay chain representation with `decaylanguage.DecayChain.to_dict`.
+            Input decay chain in dict format, typically created from ``decaylanguage.DecFileParser.build_decay_chains``
+            after parsing a .dec decay file, or from building a decay chain representation with ``decaylanguage.DecayChain.to_dict``.
         attrs: optional
-            User input `graphviz.Digraph` class attributes.
+            User input ``graphviz.Digraph`` class attributes.
 
         See also
         --------
@@ -91,7 +91,7 @@ class DecayChainViewer:
             Note
             ----
             The match is done using a conversion map rather than via
-            `Particle.from_evtgen_name(name).html_name` for 2 reasons:
+            ``Particle.from_evtgen_name(name).html_name`` for 2 reasons:
             - Some decay-file-specific "particle" names (e.g. cs_0)
               are not in the PDG table.
             - No need to load all particle information if all that's needed
@@ -183,7 +183,7 @@ class DecayChainViewer:
     @property
     def graph(self) -> graphviz.Digraph:
         """
-        Get the actual `graphviz.Digraph` object.
+        Get the actual ``graphviz.Digraph`` object.
         The user now has full control ...
         """
         return self._graph
@@ -191,7 +191,7 @@ class DecayChainViewer:
     def to_string(self) -> str:
         """
         Return a string representation of the built graph in the DOT language.
-        The function is a trivial shortcut for ``graphviz.Digraph.source`.
+        The function is a trivial shortcut for ``graphviz.Digraph.source``.
         """
         return self.graph.source  # type: ignore[no-any-return]
 
@@ -199,7 +199,7 @@ class DecayChainViewer:
         self, **attrs: dict[str, bool | int | float | str]
     ) -> graphviz.Digraph:
         """
-        Return a ``graphviz.Digraph` class instance using the default attributes
+        Return a ``graphviz.Digraph`` class instance using the default attributes
         specified in this class:
         - Default graph attributes are overridden by input by the user.
         - Class and node and edge defaults.
@@ -226,7 +226,7 @@ class DecayChainViewer:
 
     def _get_default_arguments(self) -> dict[str, bool | int | float | str]:
         """
-        `graphviz.Digraph` default arguments.
+        ``graphviz.Digraph`` default arguments.
         """
         return {
             "name": "DecayChainGraph",

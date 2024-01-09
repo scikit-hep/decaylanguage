@@ -169,7 +169,7 @@ class DecFileParser:
         Parse the given .dec decay file(s) according to the default Lark parser
         and specified options.
 
-        Use the method `load_additional_decay_models` before `parse` to load decay models
+        Use the method ``load_additional_decay_models`` before ``parse`` to load decay models
         that might not yet be available in DecayLanguage.
 
         Parameters
@@ -274,7 +274,7 @@ class DecFileParser:
         **options: Any,
     ) -> None:
         """
-        DEPRECATED, please use "`load_additional_decay_models`" instead.
+        DEPRECATED, please use "``load_additional_decay_models``" instead.
 
         Load a Lark grammar definition file, either the default one,
         or a user-specified one, optionally setting Lark parsing options.
@@ -296,7 +296,7 @@ class DecFileParser:
 
         warnings.warn(
             "This method is deprecated, please add unknown decay models by passing them to "
-            "`load_additional_decay_models` instead before parsing the decayfile.",
+            "``load_additional_decay_models`` instead before parsing the decayfile.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -309,7 +309,7 @@ class DecFileParser:
     def load_additional_decay_models(self, *models: str) -> None:
         """
         Add one or more EvtGen decay models in addition to the ones already provided via
-        `decaylanguage.dec.enums.known_decay_models`.
+        ``decaylanguage.dec.enums.known_decay_models``.
 
         Parameters
         ----------
@@ -373,7 +373,7 @@ class DecFileParser:
         def edit_model_name_terminals(t: TerminalDef) -> None:
             """
             Edits the terminals of the grammar to replace the model name placeholder with the actual names of the models,
-            see `Model_NAME_PLACEHOLDER` in the default grammar file `decaylanguage/data/decfile.lark`.
+            see ``Model_NAME_PLACEHOLDER`` in the default grammar file ``decaylanguage/data/decfile.lark``.
             The decay models are sorted by length and escaped to match the default Lark behavior.
             """
 
@@ -1151,7 +1151,7 @@ class DecayModelAliasReplacement(Transformer):  # type: ignore[misc]
         if t.value not in self.define_defs:
             raise ValueError(
                 f"Decay model or ModelAlias {t.value} is not defined. Please load the decay model with "
-                "`load_additional_decay_models` or define a ModelAlias in the decayfile."
+                "``load_additional_decay_models`` or define a ModelAlias in the decayfile."
             )
         return self.define_defs[t.value]
 
@@ -1289,8 +1289,8 @@ def find_charge_conjugate_match(
     Find the charge-conjugate particle name making use of user information
     from "ChargeConj" statements in a decay file.
 
-    The name `ChargeConj(pname)` is returned if all matching "routes" fail,
-    see `charge_conjugate_name(...)` function.
+    The name ``ChargeConj(pname)`` is returned if all matching "routes" fail,
+    see ``charge_conjugate_name(...)`` function.
     """
     # Check the list of particle-antiparticle matches provided ;-)
     if dict_cc_names:

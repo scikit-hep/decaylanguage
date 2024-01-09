@@ -43,7 +43,7 @@ class DaughtersDict(CounterStr):
     Note
     ----
     This class assumes EvtGen particle names, though this assumption is only relevant
-    for the `charge_conjugate` method.
+    for the ``charge_conjugate`` method.
     Otherwise, all other class methods smoothly deal with
     any kind of particle names (basically an iterable of strings).
 
@@ -64,7 +64,7 @@ class DaughtersDict(CounterStr):
         Note
         ----
         This class assumes EvtGen particle names, though this assumption is only relevant
-        for the `charge_conjugate` method (refer to its documentation).
+        for the ``charge_conjugate`` method (refer to its documentation).
         Otherwise, all other class methods smoothly deal with
         any kind of particle names (basically an iterable of strings).
 
@@ -188,7 +188,7 @@ class DecayMode:
     Note
     ----
     This class assumes EvtGen particle names, though this assumption is only
-    relevant for the `charge_conjugate` method.
+    relevant for the ``charge_conjugate`` method.
     Otherwise, all other class methods smoothly deal
     with any kind of particle names (basically an iterable of strings).
     """
@@ -224,7 +224,7 @@ class DecayMode:
         Note
         ----
         This class assumes EvtGen particle names, though this assumption is only
-        relevant for the `charge_conjugate` method.
+        relevant for the ``charge_conjugate`` method.
         Otherwise, all other class methods smoothly deal
         with any kind of particle names (basically an iterable of strings).
 
@@ -277,7 +277,7 @@ class DecayMode:
         Note
         ----
         This class assumes EvtGen particle names, though this assumption is only
-        relevant for the `charge_conjugate` method.
+        relevant for the ``charge_conjugate`` method.
         Otherwise, all other class methods smoothly deal
         with any kind of particle names (basically an iterable of strings).
 
@@ -386,7 +386,7 @@ class DecayMode:
     def to_dict(self) -> dict[str, int | float | str | list[str]]:
         """
         Return the decay mode as a dictionary in the format understood
-        by the `DecayChainViewer` class.
+        by the ``DecayChainViewer`` class.
 
         Examples
         --------
@@ -470,17 +470,17 @@ def _build_decay_modes(
     decay_modes: dict[str, DecayMode], dc_dict: DecayChainDict
 ) -> None:
     """
-    Internal recursive function that identifies and creates all `DecayMode` instances
-    effectively contained in the dict representation of a `DecayChain`,
-    which is for example the format returned by `DecFileParser.build_decay_chains(...)`,
+    Internal recursive function that identifies and creates all ``DecayMode`` instances
+    effectively contained in the dict representation of a ``DecayChain``,
+    which is for example the format returned by ``DecFileParser.build_decay_chains(...)``,
 
-    Given the input dict representation of a `DecayChain`
-    it returns a dict of mother particles and their final states as `DecayMode` instances.
+    Given the input dict representation of a ``DecayChain``
+    it returns a dict of mother particles and their final states as ``DecayMode`` instances.
 
     Parameters
     ----------
     decay_modes: dict
-        A dict to be populated with the decay modes `DecayMode`
+        A dict to be populated with the decay modes ``DecayMode``
         built from the input decay chain dictionary.
     dc_dict: dict
         The input decay chain dictionary.
@@ -740,7 +740,7 @@ class DecayChain:
     can only define a single decay mode.
     2) This class does not assume any kind of particle names (EvtGen, PDG).
     It is nevertheless advised to default use EvtGen names for consistency
-    with the defaults used in the related classes `DecayMode` and `DaughtersDict`,
+    with the defaults used in the related classes ``DecayMode`` and ``DaughtersDict``,
     unless there is a good motivation not to.
     """
 
@@ -777,7 +777,7 @@ class DecayChain:
         """
         Constructor from a decay chain represented as a dictionary.
         The format is the same as that returned by
-        `DecFileParser.build_decay_chains(...)`.
+        ``DecFileParser.build_decay_chains(...)``.
         """
         try:
             assert len(decay_chain_dict.keys()) == 1
@@ -792,7 +792,7 @@ class DecayChain:
 
     def top_level_decay(self) -> DecayMode:
         """
-        Return the top-level decay as a `DecayMode` instance.
+        Return the top-level decay as a ``DecayMode`` instance.
         """
         return self.decays[self.mother]
 
@@ -928,7 +928,7 @@ class DecayChain:
     def to_dict(self) -> DecayChainDict:
         """
         Return the decay chain as a dictionary representation.
-        The format is the same as `DecFileParser.build_decay_chains(...)`.
+        The format is the same as ``DecFileParser.build_decay_chains(...)``.
 
         Examples
         --------
@@ -980,7 +980,7 @@ class DecayChain:
 
         Note
         ----
-        After flattening the only `DecayMode` metadata kept is that of the top-level decay,
+        After flattening the only ``DecayMode`` metadata kept is that of the top-level decay,
         i.e. that of the mother particle (nothing else would make sense).
 
         Examples
