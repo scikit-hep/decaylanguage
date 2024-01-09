@@ -455,14 +455,17 @@ class DecFileParser:
     def get_particle_property_definitions(self) -> dict[str, dict[str, float]]:
         """
         Return a dictionary of all particle property definitions
-        in the input parsed file, of the form "Particle <PARTICLE> <MASS> <WIDTH>",
+        in the input parsed file, of the form "Particle <PARTICLE> <MASS> <WIDTH>"
+        or "Particle <PARTICLE> <MASS>",
         as {'PARTICLE1': {'mass': MASS1, 'width': WIDTH1},
             'PARTICLE2': {'mass': MASS2, 'width': WIDTH2}, ...}.
 
         Note
         ----
-        Particles are often defined via aliases and post-processing may be needed
-        to match the mass and width to the actual particle.
+        1) Particles are often defined via aliases and post-processing may be needed
+           to match the mass and width to the actual particle.
+        2) The mass (width) parameter is compulsory (optional).
+           When not specified, the width is taken from the particle or alias.
         """
         self._check_parsing()
         return get_particle_property_definitions(self._parsed_dec_file)
@@ -1623,20 +1626,45 @@ def get_charge_conjugate_defs(parsed_file: Tree) -> dict[str, str]:
 def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, float]]:
     """
     Return a dictionary of all particle property definitions
-    in the input parsed file, of the form "Particle <PARTICLE> <MASS> <WIDTH>",
+    in the input parsed file, of the form "Particle <PARTICLE> <MASS> <WIDTH>"
+    or "Particle <PARTICLE> <MASS>",
     as {'PARTICLE1': {'mass': MASS1, 'width': WIDTH1},
         'PARTICLE2': {'mass': MASS2, 'width': WIDTH2}, ...}.
+
+    Note
+    ----
+    1) Particles are often defined via aliases and post-processing may be needed
+       to match the mass and width to the actual particle.
+    2) The mass (width) parameter is compulsory (optional).
+       When not specified, the width is taken from the particle or alias.
 
     Parameters
     ----------
     parsed_file: Lark Tree instance
         Input parsed file.
     """
+    # Get particle aliases since "Particle" statements often use name aliases
+    aliases = get_aliases(parsed_file)
+
+    def get_set_width_or_default(children):
+        if len(children) > 2:
+            return float(children[2].value)
+        else:
+            # Get the particle name or the alias
+            token_name = children[0].value
+            try:
+                pname = aliases.get(token_name, token_name) if aliases else token_name
+                return Particle.from_evtgen_name(pname).width
+            except Exception as err:
+                raise RuntimeError(
+                    f"Particle name/alias {token_name!r} not found! Check your dec file(s)!"
+                ) from err
+
     try:
         return {
             tree.children[0].value: {
                 "mass": float(tree.children[1].value),
-                "width": float(tree.children[2].value),
+                "width": get_set_width_or_default(tree.children),
             }
             for tree in parsed_file.find_data("particle_def")
         }
