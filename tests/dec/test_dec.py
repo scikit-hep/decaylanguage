@@ -157,7 +157,7 @@ def test_aliases_parsing():
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
-    assert len(p.dict_aliases()) == 135
+    assert len(p.dict_aliases()) == 136
 
 
 def test_model_aliases_parsing():
@@ -197,6 +197,7 @@ def test_particle_property_definitions():
         "MyK*0": {"mass": 0.892, "width": 0.051},
         "MyPhi": {"mass": 1.02, "width": 0.004},
         "rho0": {"mass": 0.8, "width": 0.2},
+        "MyRho0": {"mass": 0.8, "width": 149.1},
     }
 
 
