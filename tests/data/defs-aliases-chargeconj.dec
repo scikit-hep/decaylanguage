@@ -280,6 +280,9 @@ LSNONRELBW rho0
 BlattWeisskopf rho0 3.0
 IncludeBirthFactor rho0 no
 IncludeDecayFactor rho0 yes
+# Redefined particles only need to specify the mass, and the width is optional
+Alias MyRho0 rho0
+Particle MyRho0 0.8
 
 # Pythia 8 parameter modifications
 # (Very important that there are no blank spaces in the parameter string!)
