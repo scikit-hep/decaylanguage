@@ -107,6 +107,7 @@ addopts = [
 log_cli_level = "DEBUG"
 filterwarnings = [
     "error",
+    '''ignore:\s*Pyarrow will become a required dependency of pandas:DeprecationWarning''',
 ]
 xfail_strict = true
 
