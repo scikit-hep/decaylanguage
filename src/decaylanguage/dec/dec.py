@@ -100,9 +100,9 @@ class DecFileParser:
             Input .dec decay file name(s).
         """
         self._grammar: str | None = None  # Loaded Lark grammar definition file
-        self._grammar_info: None | (
-            dict[str, Any]
-        ) = None  # Name of Lark grammar definition file
+        self._grammar_info: None | (dict[str, Any]) = (
+            None  # Name of Lark grammar definition file
+        )
 
         # Name(s) of the input decay file(s)
         if filenames:
@@ -134,13 +134,13 @@ class DecFileParser:
             self._dec_file = None  # type: ignore[assignment]
 
         self._parsed_dec_file: Tree | None = None  # Parsed decay file
-        self._parsed_decays: None | (
-            Any
-        ) = None  # Particle decays found in the decay file
+        self._parsed_decays: None | (Any) = (
+            None  # Particle decays found in the decay file
+        )
 
-        self._additional_decay_models: None | Iterable[
-            str
-        ] = None  # Additional decay models not (yet) known to DecayLanguage
+        self._additional_decay_models: None | Iterable[str] = (
+            None  # Additional decay models not (yet) known to DecayLanguage
+        )
 
         # By default, consider charge-conjugate decays when parsing
         self._include_ccdecays = True

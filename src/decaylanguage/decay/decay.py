@@ -198,12 +198,9 @@ class DecayMode:
     def __init__(
         self,
         bf: float = 0,
-        daughters: DaughtersDict
-        | dict[str, int]
-        | list[str]
-        | tuple[str]
-        | str
-        | None = None,
+        daughters: (
+            DaughtersDict | dict[str, int] | list[str] | tuple[str] | str | None
+        ) = None,
         **info: Any,
     ) -> None:
         """
@@ -370,9 +367,11 @@ class DecayMode:
             daughters=" ".join(self.daughters),
             bf=self.bf,
             model=self.metadata["model"],
-            model_params=self.metadata["model_params"]
-            if self.metadata["model_params"] is not None
-            else "",
+            model_params=(
+                self.metadata["model_params"]
+                if self.metadata["model_params"] is not None
+                else ""
+            ),
         )
 
         keys = [k for k in self.metadata if k not in ("model", "model_params")]

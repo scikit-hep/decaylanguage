@@ -125,11 +125,9 @@ def _from_group_dict_list(mat: dict[str, Any]) -> list[Particle]:
     for fuzzy finding of particle names used by AmpGen.
     """
     kw: dict[str, Any] = {
-        "particle": False
-        if mat["bar"] is not None
-        else True
-        if mat["charge"] == "0"
-        else None
+        "particle": (
+            False if mat["bar"] is not None else True if mat["charge"] == "0" else None
+        )
     }
 
     name = mat["name"]
