@@ -139,7 +139,7 @@ def _from_group_dict_list(mat: dict[str, Any]) -> list[Particle]:
     if mat["state"]:
         name += f'({mat["state"]})'
 
-    if "prime" in mat and mat["prime"]:
+    if mat.get("prime"):
         name += "'"
 
     if mat["star"]:
