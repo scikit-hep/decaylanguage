@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 0.18.2 (2024-02-08)
+
+* Parsing of decay files (aka .dec files):
+  - EvtGen "Particle" statement understands optional widths.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.18.1 (2023-12-21)
 
 * Parsing of decay files (aka .dec files):
