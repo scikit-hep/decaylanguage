@@ -285,18 +285,8 @@ class GooFitChain(AmplitudeChain):
             max_ = self.__class__.consts.loc[f"{self.name}::Spline::Max", "value"]
             N = self.__class__.consts.loc[f"{self.name}::Spline::N", "value"]
             AdditionalVars = programmatic_name(self.name) + "_SplineArr"
-            return """new Lineshapes::GSpline("{name}", {par}_M, {par}_W, {L}, {masses}, FF::BL2,
-            {radius}, {AdditionalVars}, Lineshapes::spline_t({min},{max},{N}))""".format(
-                name=name,
-                par=par,
-                L=L,
-                masses=masses,
-                radius=radius,
-                AdditionalVars=AdditionalVars,
-                min=min_,
-                max=max_,
-                N=int(N),
-            )
+            return f"""new Lineshapes::GSpline("{name}", {par}_M, {par}_W, {L}, {masses}, FF::BL2,
+            {radius}, {AdditionalVars}, Lineshapes::spline_t({min_},{max_},{int(N)}))"""
 
         if self.ls_enum == LS.kMatrix:
             _, poleprod, pterm = self.lineshape.split(".")
@@ -326,9 +316,7 @@ class GooFitChain(AmplitudeChain):
         for structure in self.list_structure(final_states):
             if not spin_factors:
                 factor.append(
-                    "        // TODO: Spin factor not implemented yet for {spindet}".format(
-                        spindet=self.spindetails()
-                    )
+                    f"        // TODO: Spin factor not implemented yet for {self.spindetails()}"
                 )
             else:
                 for spin_factor in spin_factors:
@@ -368,16 +356,14 @@ class GooFitChain(AmplitudeChain):
         n = len(self.list_structure(final_states))
         fix = "true" if self.fix else "false"
         return (
-            "    amplitudes_list.push_back(new Amplitude{{\n"
-            '        "{self!s}",\n'
-            '        mkvar("{self!s}_r", {fix}, {self.amp.real:.6}, {self.err.real:.6}),\n'
-            '        mkvar("{self!s}_i", {fix}, {self.amp.imag:.6}, {self.err.imag:.6}),\n'
+            "    amplitudes_list.push_back(new Amplitude{\n"
+            f'        "{self!s}",\n'
+            f'        mkvar("{self!s}_r", {fix}, {self.amp.real:.6}, {self.err.real:.6}),\n'
+            f'        mkvar("{self!s}_i", {fix}, {self.amp.imag:.6}, {self.err.imag:.6}),\n'
             "        line_factor_list.back(),\n"
             "        spin_factor_list.back(),\n"
-            "        {n}}});\n\n"
-            "    DK3P_DI.amplitudes_B.push_back(amplitudes_list.back());".format(
-                self=self, fix=fix, n=n
-            )
+            f"        {n}}});\n\n"
+            "    DK3P_DI.amplitudes_B.push_back(amplitudes_list.back());"
         )
 
     def to_goofit(self, final_states):
@@ -638,18 +624,8 @@ class GooFitPyChain(AmplitudeChain):
             max_ = self.__class__.consts.loc[f"{self.name}::Spline::Max", "value"]
             N = self.__class__.consts.loc[f"{self.name}::Spline::N", "value"]
             AdditionalVars = programmatic_name(self.name) + "_SplineArr"
-            return """Lineshapes.GSpline("{name}", {par}_M, {par}_W, {L}, {masses}, FF.BL2,
-            {radius}, {AdditionalVars}, ({min},{max},{N}))""".format(
-                name=name,
-                par=par,
-                L=L,
-                masses=masses,
-                radius=radius,
-                AdditionalVars=AdditionalVars,
-                min=min_,
-                max=max_,
-                N=int(N),
-            )
+            return f"""Lineshapes.GSpline("{name}", {par}_M, {par}_W, {L}, {masses}, FF.BL2,
+            {radius}, {AdditionalVars}, ({min_},{max_},{int(N)}))"""
 
         if self.ls_enum == LS.kMatrix:
             _, poleprod, pterm = self.lineshape.split(".")
@@ -679,9 +655,7 @@ class GooFitPyChain(AmplitudeChain):
         for structure in self.list_structure(final_states):
             if not spin_factors:
                 factor.append(
-                    "        // TODO: Spin factor not implemented yet for {spindet}".format(
-                        spindet=self.spindetails()
-                    )
+                    f"        // TODO: Spin factor not implemented yet for {self.spindetails()}"
                 )
             else:
                 for spin_factor in spin_factors:

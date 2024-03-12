@@ -723,10 +723,8 @@ Skipping creation of these charge-conjugate decay trees.""".format(
             try:
                 mname = t.children[0].children[0].value
                 if Particle.from_evtgen_name(mname).is_self_conjugate:
-                    msg = """Found 'CDecay' statement for self-conjugate particle {}. This is a bug!
-Skipping creation of charge-conjugate decay Tree.""".format(
-                        mname
-                    )
+                    msg = f"""Found 'CDecay' statement for self-conjugate particle {mname}. This is a bug!
+Skipping creation of charge-conjugate decay Tree."""
                     warnings.warn(msg, stacklevel=2)
                     return False
                 return True
@@ -1117,9 +1115,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
     def __repr__(self) -> str:
         if self._parsed_dec_file is not None:
-            return "<{self.__class__.__name__}: decfile(s)={decfile}, n_decays={n_decays}>".format(
-                self=self, decfile=self._dec_file_names, n_decays=self.number_of_decays
-            )
+            return f"<{self.__class__.__name__}: decfile(s)={self._dec_file_names}, n_decays={self.number_of_decays}>"
         return f"<{self.__class__.__name__}: decfile(s)={self._dec_file_names}>"
 
     def __str__(self) -> str:
