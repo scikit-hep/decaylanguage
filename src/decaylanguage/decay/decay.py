@@ -1027,13 +1027,7 @@ class DecayChain:
         )
 
     def __repr__(self) -> str:
-        return "<{self.__class__.__name__}: {mother} -> {tldecay} ({n} sub-decays), BF={bf}>".format(
-            self=self,
-            mother=self.mother,
-            tldecay=self.top_level_decay().daughters.to_string(),
-            n=len(self.decays) - 1,
-            bf=self.bf,
-        )
+        return f"<{self.__class__.__name__}: {self.mother} -> {self.top_level_decay().daughters.to_string()} ({len(self.decays) - 1} sub-decays), BF={self.bf}>"
 
     def __str__(self) -> str:
         return repr(self)
