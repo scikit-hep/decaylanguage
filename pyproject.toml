@@ -178,3 +178,4 @@ isort.required-imports = ["from __future__ import annotations"]
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["T20"]
 "src/decaylanguage/modeling/*.py" = ["ARG002", "PTH", "T201"]  # Should be fixed later
+"**.ipynb" = ["T20", "PTH123", "E741"]
