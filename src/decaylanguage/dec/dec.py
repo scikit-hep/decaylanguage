@@ -36,7 +36,6 @@ Basic assumptions
    with another 'CopyDecay' statement.
 """
 
-
 from __future__ import annotations
 
 import copy
@@ -134,9 +133,9 @@ class DecFileParser:
             self._dec_file = None  # type: ignore[assignment]
 
         self._parsed_dec_file: Tree | None = None  # Parsed decay file
-        self._parsed_decays: None | (Any) = (
-            None  # Particle decays found in the decay file
-        )
+        self._parsed_decays: None | (
+            Any
+        ) = None  # Particle decays found in the decay file
 
         self._additional_decay_models: None | Iterable[str] = (
             None  # Additional decay models not (yet) known to DecayLanguage
@@ -626,9 +625,7 @@ class DecFileParser:
                 misses.append(decay2copy)
         if misses:
             msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{}.
-Skipping creation of these copied decay trees.""".format(
-                "\n".join(misses)
-            )
+Skipping creation of these copied decay trees.""".format("\n".join(misses))
 
             warnings.warn(msg, stacklevel=2)
 
@@ -665,7 +662,8 @@ Skipping creation of these copied decay trees.""".format(
         # Cross-check - make sure charge conjugate decays are not defined
         # with both 'Decay' and 'CDecay' statements!
         mother_names_decays = [
-            get_decay_mother_name(tree) for tree in self._parsed_decays  # type: ignore[union-attr]
+            get_decay_mother_name(tree)
+            for tree in self._parsed_decays  # type: ignore[union-attr]
         ]
 
         duplicates = [n for n in mother_names_ccdecays if n in mother_names_decays]

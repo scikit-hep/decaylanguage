@@ -7,7 +7,6 @@
 A class representing a set of decays. Can be subclassed to provide custom converters.
 """
 
-
 from __future__ import annotations
 
 import os
@@ -32,6 +31,7 @@ from .decay import ModelDecay
 
 class LS(Enum):
     "Line shapes supported (currently)"
+
     RBW = 0
     GSpline = 1
     kMatrix = 2
