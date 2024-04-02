@@ -35,7 +35,7 @@ pip install decaylanguage
 
 You can use a virtual environment through pipenv or with `--user` if you know
 what those are. [Python
-3.8+](http://docs.python-guide.org/en/latest/starting/installation) suppogvrted
+3.8+](http://docs.python-guide.org/en/latest/starting/installation) supported
 (see version 0.12 for Python 2 & 3.5 support, 0.14 for Python 3.6 support, 0.18 for Python 3.7 support).
 
 <details><summary>Dependencies: (click to expand)</summary><p>
