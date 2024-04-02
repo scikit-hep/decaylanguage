@@ -11,7 +11,6 @@
 [![GitHub Actions Status: CI](https://github.com/scikit-hep/decaylanguage/workflows/CI/badge.svg)](https://github.com/scikit-hep/decaylanguage/actions)
 [![Code Coverage](https://codecov.io/gh/scikit-hep/decaylanguage/graph/badge.svg?branch=master)](https://codecov.io/gh/scikit-hep/decaylanguage?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/decaylanguage/badge/?style=flat)](https://decaylanguage.readthedocs.io)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 [![Binder demo](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scikit-hep/decaylanguage/master?urlpath=lab/tree/notebooks/DecayLanguageDemo.ipynb)
 

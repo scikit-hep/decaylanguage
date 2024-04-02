@@ -10,7 +10,6 @@ a string output with the converted set of decay chains and variables.
 The output is either C++ code (ampgen2goofit) or a Python script (ampgen2goofitpy)
 """
 
-
 from __future__ import annotations
 
 import datetime

@@ -7,7 +7,6 @@
 A general base class representing decays.
 """
 
-
 from __future__ import annotations
 
 import warnings
