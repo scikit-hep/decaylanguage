@@ -38,7 +38,7 @@ jobs:
         os: [ubuntu-latest]
         python-version: ['3.8', '3.10', '3.12']
         include:
-          - {os: macos-latest, python-version: '3.9'}
+          - {os: macos-13, python-version: '3.9'}
           - {os: windows-latest, python-version: '3.8'}
           - {os: windows-latest, python-version: '3.11'}
     name: Check ${{ matrix.os }} Python ${{ matrix.python-version }}
