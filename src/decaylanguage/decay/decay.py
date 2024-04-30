@@ -6,8 +6,9 @@
 
 from __future__ import annotations
 
+import typing
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Collection, Sequence
 from copy import deepcopy
 from itertools import product
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, TypedDict
@@ -55,7 +56,7 @@ class DaughtersDict(CounterStr):
 
     def __init__(
         self,
-        iterable: dict[str, int] | list[str] | tuple[str] | str | None = None,
+        iterable: dict[str, int] | Collection[str] | str | None = None,
         **kwds: Any,
     ) -> None:
         """
@@ -569,6 +570,23 @@ def _build_decay_modes(
             decay_modes[mother] = DecayMode.from_dict(d)
 
 
+T = typing.TypeVar("T")
+
+
+def _get_modes(decay_chain: dict[str, T]) -> T:
+    # The list of decay modes is the first (and only) value of the dict
+    assert len(decay_chain.values()) == 1
+    modes = list(decay_chain.values())
+    return modes[0]
+
+
+def _get_fs(decay: DecayModeDict) -> list[Any]:
+    fs = decay["fs"]
+    if isinstance(fs, list):
+        return fs
+    raise TypeError(f"Expected list, not {type(fs)}")
+
+
 def _expand_decay_modes(
     decay_chain: DecayChainDict,
     *,
@@ -680,18 +698,6 @@ def _expand_decay_modes(
     }
     """
 
-    def _get_modes(decay_chain: DecayChainDict) -> list[DecayModeDict]:
-        # The list of decay modes is the first (and only) value of the dict
-        assert len(decay_chain.values()) == 1
-        modes = list(decay_chain.values())
-        return modes[0]
-
-    def _get_fs(decay: DecayModeDict) -> list[Any]:
-        fs = decay["fs"]
-        if isinstance(fs, list):
-            return fs
-        raise TypeError(f"Expected list, not {type(fs)}")
-
     # The mother particle is the first (and only) key of the dict
     assert len(decay_chain.keys()) == 1
     orig_mother = next(iter(decay_chain.keys()))
@@ -705,16 +711,16 @@ def _expand_decay_modes(
     # Replace dicts with strings (decay descriptors)
     expanded_modes = []
     for mode in _get_modes(decay_chain):
-        fsp_options = []
+        fsp_options: list[list[str]] = []
         for fsp in _get_fs(mode):
             if isinstance(fsp, dict):
-                fsp_options += [_get_modes(fsp)]
+                fsp_options.append(_get_modes(fsp))
             elif isinstance(fsp, str):
-                fsp_options += [[fsp]]  # type: ignore[list-item]
+                fsp_options.append([fsp])
         for expanded_mode in product(*fsp_options):
             # TODO: delegate descriptor-building to another function
             #       allow for different conventions?
-            final_state = DaughtersDict(list(expanded_mode)).to_string()
+            final_state = DaughtersDict(expanded_mode).to_string()
             descriptor = DescriptorFormat.format_descriptor(mother, final_state, top)
             expanded_modes += [descriptor]
 
