@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-  
+
       - uses: hynek/build-and-inspect-python-package@v2
 
   publish:
@@ -31,5 +31,5 @@ jobs:
         with:
           name: Packages
           path: dist
-  
+
       - uses: pypa/gh-action-pypi-publish@release/v1
