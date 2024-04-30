@@ -806,7 +806,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             if get_decay_mother_name(decay_Tree) == mother:
                 return tuple(decay_Tree.find_data("decayline"))
 
-        raise DecayNotFound("Decays of particle '%s' not found in .dec file!" % mother)
+        raise DecayNotFound(f"Decays of particle '{mother}' not found in .dec file!")
 
     def list_decay_modes(self, mother: str, pdg_name: bool = False) -> list[list[str]]:
         """
