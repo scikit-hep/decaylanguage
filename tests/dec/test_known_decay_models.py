@@ -15,7 +15,6 @@ from decaylanguage.dec.enums import known_decay_models
 DIR = Path(__file__).parent.resolve()
 
 
-# TODO: actually test all models - takes time
 parsed_models = (
     ("B_TO_2BARYON_SCALAR", ""),
     ("B_TO_LAMBDA_PBAR_GAMMA", ""),
@@ -140,6 +139,7 @@ parsed_models = (
     ("HQET3", [0.920, 1.205, 1.21, 1.404, 0.854]),
     ("HQET2", [1.18, 1.074]),
     ("HQET", [0.77, 1.33, 0.92]),
+    ("HypNonLepton", [0.748, -6.5]),
     ("ISGW2", ""),
     ("ISGW", ""),
     ("KNUNU", ""),
@@ -419,10 +419,6 @@ parsed_models = (
 )
 
 
-def test_parsing_of_all_known_models_are_tested():
-    assert len(parsed_models) == len(known_decay_models)
-
-
 @pytest.mark.parametrize(("decay_model", "expected_model_parameters"), parsed_models)
 def test_model_parsing(decay_model: str, expected_model_parameters: str):
     """
@@ -437,3 +433,7 @@ def test_model_parsing(decay_model: str, expected_model_parameters: str):
 
     assert get_model_name(parsed_Tree) == decay_model
     assert get_model_parameters(parsed_Tree) == expected_model_parameters
+
+
+def test_parsing_of_all_known_models_are_tested():
+    assert len(parsed_models) == len(known_decay_models)
