@@ -290,6 +290,7 @@ parsed_models = (
     ("PYCONT", ""),
     ("PYTHIA", [21]),
     ("RareLbToLll", ["LQCD"]),
+    ("SHD", ""),
     ("SLBKPOLE", [1.0, 0.25, 1.0]),
     ("SLL", ""),
     ("SLN", ""),
