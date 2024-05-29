@@ -74,6 +74,7 @@ known_decay_models = (
     "HQET3",
     "HQET2",
     "HQET",
+    "HypNonLepton",
     "ISGW2",
     "ISGW",
     "KNUNU",
