@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay Lambda0sig
+   1.0   p+   pi-   HypNonLepton   0.748   -6.5;
+Enddecay
+
+End
