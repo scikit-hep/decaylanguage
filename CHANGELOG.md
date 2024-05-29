@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 0.18.3 (2024-05-29)
+
+* Parsing of decay files (aka .dec files):
+  - Added new EvtGen models for full support for all known Belle-II and LHCb models.
+* Dependencies:
+  - Support for Python 3.12 added and support for Python 3.7 removed.
+* Miscellaneous:
+  - Moved to PyPI Trusted Publishers.
+  - Use Ruff format instead of Black.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.18.2 (2024-02-08)
 
 * Parsing of decay files (aka .dec files):
