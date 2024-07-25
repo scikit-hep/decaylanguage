@@ -39,7 +39,6 @@ Basic assumptions
 from __future__ import annotations
 
 import copy
-import operator
 import os
 import re
 import warnings
@@ -955,39 +954,36 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         dms = self._find_decay_modes(mother)
 
-        ls_dict = {}
+        maxLength = 0
+        ls = []
         for dm in dms:
             dmdict = self._decay_mode_details(dm, display_photos_keyword)
-            model_params = [str(i) for i in dmdict["model_params"]]
-            ls_dict[dmdict["bf"]] = (
-                dmdict["fs"],
-                dmdict["model"],
-                model_params,
-            )
+            modelParsList = [str(i) for i in dmdict["model_params"]]
+            model_params = "" if modelParsList == [] else " ".join(modelParsList)
+            decayChain = " ".join(dmdict["fs"])
+            if len(decayChain) > maxLength:
+                maxLength = len(decayChain)
+            ls.append((dmdict["bf"], decayChain, dmdict["model"], model_params))
 
-        dec_details = list(ls_dict.values())
-        ls_attrs_aligned = list(
-            zip_longest(
-                *[self._align_items(i) for i in zip(*dec_details)], fillvalue=""
-            )
-        )
-
-        ls = [(bf, ls_attrs_aligned[idx]) for idx, bf in enumerate(ls_dict)]
-        ls.sort(key=operator.itemgetter(0), reverse=(not ascending))
+        # Sort decays by decreasing BF
+        ls = sorted(ls, key=lambda x: -x[0])
 
         norm = 1.0
         if normalize:
-            norm = sum(bf for bf, _ in ls)
+            norm = sum(bf for bf, _, _, _ in ls)
         elif scale is not None:
             # Get the largest branching fraction
             i = -1 if ascending else 0
             norm = ls[i][0] / scale
 
-        for bf, info in ls:
+        maxLstr = str(maxLength + 2)
+        for bf, fs, model, modelPars in ls:
             if print_model:
-                line = "  {:<15.10g}   {}     {}  {}".format(bf / norm, *info)
+                line = "  {:<10.5f}   {:<{maxL}}     {}  {}".format(
+                    bf / norm, fs, model, modelPars, maxL=maxLstr
+                )
             else:
-                line = f"  {bf / norm:<15.10g}   {info[0]}"
+                line = f"  {bf / norm:<10.7f}   {fs}"
             print(line.rstrip() + ";")  # noqa: T201
 
     @staticmethod
