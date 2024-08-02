@@ -960,7 +960,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             dmdict = self._decay_mode_details(dm, display_photos_keyword)
             modelParsList = [str(i) for i in dmdict["model_params"]]
             model_params = "" if modelParsList == [] else " ".join(modelParsList)
-            decayChain = " ".join(dmdict["fs"])
+            decayChain = " ".join(list(dmdict["fs"]))
             if len(decayChain) > maxLength:
                 maxLength = len(decayChain)
             ls.append((dmdict["bf"], decayChain, dmdict["model"], model_params))
