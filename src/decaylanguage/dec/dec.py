@@ -1658,7 +1658,7 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
         try:
             pname: str = aliases.get(token_name, token_name) if aliases else token_name
             # Convert the width to GeV !
-            return Particle.from_evtgen_name(pname).width / GeV  # type: ignore[return-value]
+            return Particle.from_evtgen_name(pname).width / GeV  # type: ignore[operator]
         except Exception as err:
             raise RuntimeError(
                 f"Particle name/alias {token_name!r} not found! Check your dec file(s)!"
