@@ -463,7 +463,7 @@ class DecFileParser:
         ----
         1) Masses and widths are in GeV in EvtGen, hence the "Particle <PARTICLE> <MASS>" statement
            needs to use GeV! A conversion to MeV may be done on the fly when information is required
-           fom the Particle package, which uses MeV, the (standard) HEP System of Units.
+           from the Particle package, which uses MeV, the (standard) HEP System of Units.
         2) Particles are often defined via aliases and post-processing may be needed
            to match the mass and width to the actual particle.
         3) The mass (width) parameter is compulsory (optional).
@@ -1635,7 +1635,7 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
     ----
     1) Masses and widths are in GeV in EvtGen, hence the "Particle <PARTICLE> <MASS>" statement
        needs to use GeV! A conversion to MeV may be done on the fly when information is required
-       fom the Particle package, which uses MeV, the (standard) HEP System of Units.
+       from the Particle package, which uses MeV, the (standard) HEP System of Units.
     2) Particles are often defined via aliases and post-processing may be needed
        to match the mass and width to the actual particle.
     3) The mass (width) parameter is compulsory (optional).
