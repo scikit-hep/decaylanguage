@@ -877,6 +877,10 @@ All but the first occurrence will be discarded/removed ...""".format(
         optionally with decay model information and/or normalisation or scaling
         of the branching fractions.
 
+        Note
+        ----
+        Branching fractions are truncated to 7 significant digits for readability.
+
         Parameters
         ----------
         mother: str
@@ -914,17 +918,17 @@ All but the first occurrence will be discarded/removed ...""".format(
         >>>
         >>> # Simply print what has been parsed
         >>> p.print_decay_modes("MyD_0*+")
-          0.533             MyD0  pi+         PHSP;
-          0.08              MyD*0 pi+ pi0     PHSP;
-          0.0542            MyD*+ pi+ pi-     PHSP;
-          0.0271            MyD*+ pi0 pi0     PHSP;
+          0.533        MyD0 pi+            PHSP;
+          0.08         MyD*0 pi+ pi0       PHSP;
+          0.0542       MyD*+ pi+ pi-       PHSP;
+          0.0271       MyD*+ pi0 pi0       PHSP;
         >>>
         >>> # Print normalizing the sum of all mode BFs to unity
         >>> p.print_decay_modes("MyD_0*+", normalize=True)
-          0.7676796774      MyD0  pi+         PHSP;
-          0.1152239666      MyD*0 pi+ pi0     PHSP;
-          0.07806423736     MyD*+ pi+ pi-     PHSP;
-          0.03903211868     MyD*+ pi0 pi0     PHSP;
+          0.7676797    MyD0 pi+            PHSP;
+          0.115224     MyD*0 pi+ pi0       PHSP;
+          0.07806424   MyD*+ pi+ pi-       PHSP;
+          0.03903212   MyD*+ pi0 pi0       PHSP;
         >>>
         >>> # Print scaling all BFs relative to the BF of the highest-BF mode in the list,
         >>> # the latter being set to the value of "scale".
@@ -932,10 +936,10 @@ All but the first occurrence will be discarded/removed ...""".format(
         >>> # that about 35% of the total decay width is not accounted for in the list of modes,
         >>> # since the sum of probabilities, interpreted as BFs, sum to about 65%.
         >>> p.print_decay_modes("MyD_0*+", scale=0.5)
-          0.5               MyD0  pi+         PHSP;
-          0.07504690432     MyD*0 pi+ pi0     PHSP;
-          0.05084427767     MyD*+ pi+ pi-     PHSP;
-          0.02542213884     MyD*+ pi0 pi0     PHSP;
+          0.5          MyD0 pi+            PHSP;
+          0.0750469    MyD*0 pi+ pi0       PHSP;
+          0.05084428   MyD*+ pi+ pi-       PHSP;
+          0.02542214   MyD*+ pi0 pi0       PHSP;
         """
 
         if scale is not None:
@@ -981,11 +985,11 @@ All but the first occurrence will be discarded/removed ...""".format(
         max_length_string = str(max_length + 2)
         for bf, fs, model, model_params in ls:
             if print_model:
-                line = "  {:<10.5f}   {:<{max_length}}     {}  {}".format(
+                line = "  {:<10.7g}   {:<{max_length}}     {}  {}".format(
                     bf / norm, fs, model, model_params, max_length=max_length_string
                 )
             else:
-                line = f"  {bf / norm:<10.7f}   {fs}"
+                line = f"  {bf / norm:<10.7g}   {fs}"
             print(line.rstrip() + ";")  # noqa: T201
 
     @staticmethod
