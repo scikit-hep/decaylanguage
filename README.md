@@ -274,6 +274,7 @@ We hereby acknowledge the contributors that made this project possible ([emoji k
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://gitlab.cern.ch/users/admorris"><img src="https://avatars.githubusercontent.com/u/15155249?v=4?s=100" width="100px;" alt="Adam Morris"/><br /><sub><b>Adam Morris</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=admorris" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ch2ohch2oh"><img src="https://avatars.githubusercontent.com/u/7986711?v=4?s=100" width="100px;" alt="Dazhi Wang"/><br /><sub><b>Dazhi Wang</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=ch2ohch2oh" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/manuelfs"><img src="https://avatars.githubusercontent.com/u/4977423?v=4?s=100" width="100px;" alt="Manuel Franco Sevilla"/><br /><sub><b>Manuel Franco Sevilla</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=manuelfs" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
