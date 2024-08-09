@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 0.18.4 (2024-08-09)
+
+* Parsing of decay files (aka .dec files):
+  - Fixes for a couple of bugs.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.18.3 (2024-05-29)
 
 * Parsing of decay files (aka .dec files):
