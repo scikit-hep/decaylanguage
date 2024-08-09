@@ -47,11 +47,11 @@ from itertools import chain, zip_longest
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
+from hepunits import GeV
 from lark import Lark, Token, Transformer, Tree, Visitor
 from lark.lexer import TerminalDef
 from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
-from hepunits import GeV
 
 from .. import data
 from .._compat.typing import Self

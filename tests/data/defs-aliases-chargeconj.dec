@@ -288,7 +288,7 @@ IncludeDecayFactor rho0 yes
 Alias MyRho0 rho0
 Particle MyRho0 0.77
 #
-# Redefine one of the mass or width of a particle (not an alias, as in the cases above) 
+# Redefine one of the mass or width of a particle (not an alias, as in the cases above)
 # Unlike above, the width is taken from the particle since no alias is present
 Particle chi_c0 3.42
 
