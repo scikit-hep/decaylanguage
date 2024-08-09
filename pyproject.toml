@@ -48,6 +48,7 @@ dependencies = [
     "numpy>=1.12",
     "pandas>=0.22",
     "particle>=0.22.0",
+    "hepunits>=2.0.0",
     "plumbum>=1.7.0",
 ]
 dynamic = ["version"]
