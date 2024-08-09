@@ -253,6 +253,7 @@ ChargeConj Omega_cc+sig         anti-Omega_cc-sig
 
 # Specifications typically relevant when dealing with lineshapes,
 # and typically using particle name aliases
+# Important note on values below: masses and widths are in GeV in EvtGen!
 #
 Alias MyK*0 K*0
 Particle       MyK*0  0.892  0.051  # To set a particle mass and width
@@ -280,9 +281,16 @@ LSNONRELBW rho0
 BlattWeisskopf rho0 3.0
 IncludeBirthFactor rho0 no
 IncludeDecayFactor rho0 yes
-# Redefined particles only need to specify the mass, and the width is optional
+#
+# Redefined particles only need to specify the mass, and the width is optional,
+# in which case the value is taken from the alias
+# and will correspond to the nominal mass as provided by the Particle package
 Alias MyRho0 rho0
-Particle MyRho0 0.8
+Particle MyRho0 0.77
+#
+# Redefine one of the mass or width of a particle (not an alias, as in the cases above)
+# Unlike above, the width is taken from the particle since no alias is present
+Particle chi_c0 3.42
 
 # Pythia 8 parameter modifications
 # (Very important that there are no blank spaces in the parameter string!)

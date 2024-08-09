@@ -197,7 +197,8 @@ def test_particle_property_definitions():
         "MyK*0": {"mass": 0.892, "width": 0.051},
         "MyPhi": {"mass": 1.02, "width": 0.004},
         "rho0": {"mass": 0.8, "width": 0.2},
-        "MyRho0": {"mass": 0.8, "width": 147.4},
+        "MyRho0": {"mass": 0.77, "width": 0.1474},
+        "chi_c0": {"mass": 3.42, "width": 0.0107},
     }
 
 
