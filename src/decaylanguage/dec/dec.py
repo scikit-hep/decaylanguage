@@ -954,21 +954,23 @@ All but the first occurrence will be discarded/removed ...""".format(
 
         dms = self._find_decay_modes(mother)
 
-        maxLength = 0
+        max_length: int = 0
         ls = []
         for dm in dms:
-            dmdict = self._decay_mode_details(dm, display_photos_keyword)
-            modelParsList = [str(i) for i in dmdict["model_params"]]
-            model_params = "" if modelParsList == [] else " ".join(modelParsList)
-            decayChain = " ".join(list(dmdict["fs"]))
-            if len(decayChain) > maxLength:
-                maxLength = len(decayChain)
-            ls.append((dmdict["bf"], decayChain, dmdict["model"], model_params))
+            dmdict: DecayModeDict = self._decay_mode_details(dm, display_photos_keyword)
+            model_params_list: list[str] = [str(i) for i in dmdict["model_params"]]
+            model_params: str = (
+                "" if model_params_list == [] else " ".join(model_params_list)
+            )
+            decay_chain: str = " ".join(list(dmdict["fs"]))  # type: ignore[arg-type]
+            if len(decay_chain) > max_length:
+                max_length = len(decay_chain)
+            ls.append((dmdict["bf"], decay_chain, dmdict["model"], model_params))
 
         # Sort decays by decreasing BF
         ls = sorted(ls, key=lambda x: -x[0])
 
-        norm = 1.0
+        norm: float = 1.0
         if normalize:
             norm = sum(bf for bf, _, _, _ in ls)
         elif scale is not None:
@@ -976,11 +978,11 @@ All but the first occurrence will be discarded/removed ...""".format(
             i = -1 if ascending else 0
             norm = ls[i][0] / scale
 
-        maxLstr = str(maxLength + 2)
-        for bf, fs, model, modelPars in ls:
+        max_length_string = str(max_length + 2)
+        for bf, fs, model, model_params in ls:
             if print_model:
-                line = "  {:<10.5f}   {:<{maxL}}     {}  {}".format(
-                    bf / norm, fs, model, modelPars, maxL=maxLstr
+                line = "  {:<10.5f}   {:<{max_length}}     {}  {}".format(
+                    bf / norm, fs, model, model_params, max_length=max_length_string
                 )
             else:
                 line = f"  {bf / norm:<10.7f}   {fs}"
