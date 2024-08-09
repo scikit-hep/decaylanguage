@@ -9,3 +9,4 @@ ignore:
   - "src/decaylanguage/modeling/*"
   - "src/decaylanguage/utils/errors.py"
   - "src/decaylanguage/utils/utilities.py"
+  - "src/decaylanguage/_compat/*"

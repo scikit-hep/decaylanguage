@@ -265,46 +265,6 @@ class DecFileParser:
 
         return self._grammar_info
 
-    def load_grammar(
-        self,
-        filename: str | None = None,
-        parser: str = "lalr",
-        lexer: str = "auto",
-        **options: Any,
-    ) -> None:
-        """
-        DEPRECATED, please use "``load_additional_decay_models``" instead.
-
-        Load a Lark grammar definition file, either the default one,
-        or a user-specified one, optionally setting Lark parsing options.
-
-        Parameters
-        ----------
-        filename: str, optional, default=None
-            Input .dec decay file name. By default 'data/decfile.lark' is loaded.
-        parser: str, optional, default='lalr'
-            The Lark parser engine name.
-        lexer: str, optional, default='auto'
-            The Lark parser lexer mode to use.
-        options: keyword arguments, optional
-            Extra options to pass on to the parsing algorithm.
-
-        See Lark's Lark class for a description of available options
-        for parser, lexer and options.
-        """
-
-        warnings.warn(
-            "This method is deprecated, please add unknown decay models by passing them to "
-            "``load_additional_decay_models`` instead before parsing the decayfile.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
-        if filename is None:
-            filename = "decfile.lark"
-
-        self._load_grammar(filename, parser, lexer, **options)
-
     def load_additional_decay_models(self, *models: str) -> None:
         """
         Add one or more EvtGen decay models in addition to the ones already provided via
@@ -343,6 +303,9 @@ class DecFileParser:
             The Lark parser lexer mode to use.
         options: keyword arguments, optional
             Extra options to pass on to the parsing algorithm.
+
+        See Lark's Lark class for a description of available options
+        for parser, lexer and options.
         """
 
         with data.basepath.joinpath(filename).open() as f1:
