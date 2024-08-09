@@ -197,7 +197,7 @@ def test_particle_property_definitions():
         "MyK*0": {"mass": 0.892, "width": 0.051},
         "MyPhi": {"mass": 1.02, "width": 0.004},
         "rho0": {"mass": 0.8, "width": 0.2},
-        "MyRho0": {"mass": 0.8, "width": 149.1},
+        "MyRho0": {"mass": 0.8, "width": 147.4},
     }
 
 
@@ -515,7 +515,7 @@ def test_multiline_model():
 
 
 def test_custom_model_name():
-    p = DecFileParser("../data/test_custom_decay_model.dec")
+    p = DecFileParser(DIR / "../data/test_custom_decay_model.dec")
     p.load_additional_decay_models("CUSTOM_MODEL1", "CUSTOM_MODEL2")
 
     assert p.grammar() is not None
