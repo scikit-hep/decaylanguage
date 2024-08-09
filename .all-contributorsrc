@@ -91,6 +91,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "manuelfs",
+      "name": "Manuel Franco Sevilla",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4977423?v=4",
+      "profile": "https://github.com/manuelfs",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
