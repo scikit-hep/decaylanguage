@@ -51,6 +51,7 @@ from lark import Lark, Token, Transformer, Tree, Visitor
 from lark.lexer import TerminalDef
 from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
+from hepunits import GeV
 
 from .. import data
 from .._compat.typing import Self
@@ -460,9 +461,12 @@ class DecFileParser:
 
         Note
         ----
-        1) Particles are often defined via aliases and post-processing may be needed
+        1) Masses and widths are in GeV in EvtGen, hence the "Particle <PARTICLE> <MASS>" statement
+           needs to use GeV! A conversion to MeV may be done on the fly when information is required
+           fom the Particle package, which uses MeV, the (standard) HEP System of Units.
+        2) Particles are often defined via aliases and post-processing may be needed
            to match the mass and width to the actual particle.
-        2) The mass (width) parameter is compulsory (optional).
+        3) The mass (width) parameter is compulsory (optional).
            When not specified, the width is taken from the particle or alias.
         """
         self._check_parsing()
@@ -1629,9 +1633,12 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
 
     Note
     ----
-    1) Particles are often defined via aliases and post-processing may be needed
+    1) Masses and widths are in GeV in EvtGen, hence the "Particle <PARTICLE> <MASS>" statement
+       needs to use GeV! A conversion to MeV may be done on the fly when information is required
+       fom the Particle package, which uses MeV, the (standard) HEP System of Units.
+    2) Particles are often defined via aliases and post-processing may be needed
        to match the mass and width to the actual particle.
-    2) The mass (width) parameter is compulsory (optional).
+    3) The mass (width) parameter is compulsory (optional).
        When not specified, the width is taken from the particle or alias.
 
     Parameters
@@ -1650,7 +1657,8 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
         token_name: str = children[0].value
         try:
             pname: str = aliases.get(token_name, token_name) if aliases else token_name
-            return Particle.from_evtgen_name(pname).width  # type: ignore[return-value]
+            # Convert the width to GeV !
+            return Particle.from_evtgen_name(pname).width / GeV  # type: ignore[return-value]
         except Exception as err:
             raise RuntimeError(
                 f"Particle name/alias {token_name!r} not found! Check your dec file(s)!"
