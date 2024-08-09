@@ -162,7 +162,7 @@ ONE
     Variable K_1_1270_minus_M { "K_1_1270_minus_M"   , 1253       };
     Variable K_1_1270_minus_W { "K_1_1270_minus_W"   , 90         };
     Variable rho_770_0_M     { "rho_770_0_M"        , 775.26     };
-    Variable rho_770_0_W     { "rho_770_0_W"        , 149.1      };
+    Variable rho_770_0_W     { "rho_770_0_W"        , 147.4      };
     Variable a_1_1260_plus_M { "a_1_1260_plus_M"    , 1230       };
     Variable a_1_1260_plus_W { "a_1_1260_plus_W"    , 420        };
     Variable PiPi2_M         { "PiPi2_M"            , 9990       };
