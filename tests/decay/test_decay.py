@@ -245,7 +245,7 @@ def test_DecayMode_number_of_final_states():
     assert len(dm) == 4
 
 
-@pytest.fixture()
+@pytest.fixture
 def dc():
     dm1 = DecayMode(0.0124, "K_S0 pi0", model="PHSP")
     dm2 = DecayMode(0.692, "pi+ pi-")
@@ -253,7 +253,7 @@ def dc():
     return DecayChain("D0", {"D0": dm1, "K_S0": dm2, "pi0": dm3})
 
 
-@pytest.fixture()
+@pytest.fixture
 def dc2():
     dm1 = DecayMode(0.6770, "D0 pi+")
     dm2 = DecayMode(0.0124, "K_S0 pi0")

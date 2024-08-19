@@ -934,8 +934,7 @@ All but the first occurrence will be discarded/removed ...""".format(
                 "" if model_params_list == [] else " ".join(model_params_list)
             )
             decay_chain: str = " ".join(list(dmdict["fs"]))  # type: ignore[arg-type]
-            if len(decay_chain) > max_length:
-                max_length = len(decay_chain)
+            max_length = max(len(decay_chain), max_length)
             ls.append((dmdict["bf"], decay_chain, dmdict["model"], model_params))
 
         # Sort decays by decreasing BF
