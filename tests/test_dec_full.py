@@ -96,7 +96,7 @@ class TreeToDec2(Transformer):
             return str(label)
 
 
-@pytest.mark.skip()
+@pytest.mark.skip
 def test_dec_full():
     txt = data.basepath.joinpath("DECAY_LHCB.DEC").read_text()
     grammar = data.basepath.joinpath("decfile.lark").read_text()
