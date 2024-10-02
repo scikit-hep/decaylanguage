@@ -135,6 +135,7 @@ messages_control.disable = [
     "too-many-public-methods",
     "too-many-return-statements",
     "too-many-statements",
+    "too-many-positional-arguments",
     "wrong-import-position",
     "invalid-name",
     "consider-using-f-string",  # TODO
