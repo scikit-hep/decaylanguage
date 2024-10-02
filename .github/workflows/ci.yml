@@ -20,18 +20,17 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: "3.x"
+    - uses: astral-sh/setup-uv@v3
     - uses: pre-commit/action@v3.0.1
       with:
         extra_args: --all-files --hook-stage manual
     - name: PyLint
-      run: |
-        echo "::add-matcher::$GITHUB_WORKSPACE/.github/matchers/pylint.json"
-        pipx run nox -s pylint
+      run: uvx nox -s pylint -- --output-format=github
 
 
   checks:
+    name: Check ${{ matrix.os }} Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
-
     strategy:
       fail-fast: false
       matrix:
@@ -41,7 +40,6 @@ jobs:
           - {os: macos-13, python-version: '3.9'}
           - {os: windows-latest, python-version: '3.8'}
           - {os: windows-latest, python-version: '3.11'}
-    name: Check ${{ matrix.os }} Python ${{ matrix.python-version }}
 
     steps:
     - uses: actions/checkout@v4
@@ -51,8 +49,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - uses: astral-sh/setup-uv@v3
+
     - name: Install package
-      run: python -m pip install -e .[test]
+      run: uv pip install --system -e .[test]
 
     - name: Pytest
       if: runner.os == 'Linux'
@@ -82,17 +82,16 @@ jobs:
       with:
         python-version: "3.x"
 
-    - name: Install package
-      run: python -m pip install -e .[test]
-
-    - name: Install notebook requirements
-      run: python -m pip install nbconvert jupyter_client ipykernel
+    - uses: astral-sh/setup-uv@v3
 
     - name: Install dot
       run: sudo apt-get install graphviz
 
-    - name: Install pydot
-      run: python -m pip install pydot
+    - name: Install package
+      run: uv pip install --system -e .[test]
+
+    - name: Install notebook requirements
+      run: uv pip install --system nbconvert jupyter_client ipykernel pydot
 
     - name: Run the notebooks inplace
       run: jupyter nbconvert --execute --inplace notebooks/DecayLanguageDemo.ipynb notebooks/ExampleDecFileParsingWithLark.ipynb
