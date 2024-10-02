@@ -6,8 +6,10 @@ import nox
 
 nox.options.sessions = ["lint", "pylint", "tests"]
 
-PYTHON_VERSIONS = ["3.7", "3.8", "3.9", "3.10", "3.11"]
+PYTHON_VERSIONS = ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
 
+nox.needs_version = ">=2024.4.15"
+nox.options.default_venv_backend = "uv|virtualenv"
 
 @nox.session
 def lint(session):
@@ -21,14 +23,14 @@ def pylint(session: nox.Session) -> None:
     Run pylint.
     """
 
-    session.install("pylint~=2.15.0")
-    session.install("-e", ".[dev]")
+    session.install("pylint")
+    session.install("-e.[dev]")
     session.run("pylint", "src", *session.posargs)
 
 
 @nox.session(python=PYTHON_VERSIONS)
 def tests(session):
-    session.install(".[test]")
+    session.install("-y.[test]")
     session.run("pytest", *session.posargs)
 
 
@@ -38,7 +40,6 @@ def build(session):
     Build an SDist and wheel.
     """
 
-    session.install("build", "twine")
     session.install("build", "twine", "check-wheel-contents")
     session.run("python", "-m", "build")
     session.run("twine", "check", "--strict", "dist/*")
