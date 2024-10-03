@@ -311,13 +311,13 @@ class DecFileParser:
         with data.basepath.joinpath(filename).open() as f1:
             self._grammar = f1.read()
 
-        self._grammar_info = dict(
-            lark_file=filename,
-            parser=parser,
-            lexer=lexer,
-            edit_terminals=self._generate_edit_terminals_callback(),
+        self._grammar_info = {
+            "lark_file": filename,
+            "parser": parser,
+            "lexer": lexer,
+            "edit_terminals": self._generate_edit_terminals_callback(),
             **options,
-        )
+        }
 
     def _generate_edit_terminals_callback(self) -> Callable[[TerminalDef], None]:
         """

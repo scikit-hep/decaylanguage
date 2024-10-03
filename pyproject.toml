@@ -135,6 +135,7 @@ messages_control.disable = [
     "too-many-public-methods",
     "too-many-return-statements",
     "too-many-statements",
+    "too-many-positional-arguments",
     "wrong-import-position",
     "invalid-name",
     "consider-using-f-string",  # TODO
@@ -143,9 +144,6 @@ messages_control.disable = [
     "no-member",  # TODO
     "unused-argument",  # covered by Ruff
 ]
-
-[tool.ruff]
-src = ["src"]
 
 [tool.ruff.lint]
 extend-select = [
