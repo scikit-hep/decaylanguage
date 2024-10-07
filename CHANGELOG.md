@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 0.18.5 (2024-10-07)
+
+* Parsing of decay files (aka .dec files):
+  - Remove deprecated method DecFileParser.load_grammar.
+* Miscellaneous:
+  - Added support for Python 3.13.
+  - Added attestations.
+* CI and tests:
+  - Codecov back working again - required tokens.
+  - Faster CI with `uv`.
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.18.4 (2024-08-09)
 
 * Parsing of decay files (aka .dec files):
