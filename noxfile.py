@@ -4,12 +4,14 @@ from pathlib import Path
 
 import nox
 
-nox.options.sessions = ["lint", "pylint", "tests"]
-
-PYTHON_VERSIONS = ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-
 nox.needs_version = ">=2024.4.15"
 nox.options.default_venv_backend = "uv|virtualenv"
+
+ALL_PYTHONS = [
+    c.split()[-1]
+    for c in nox.project.load_toml("pyproject.toml")["project"]["classifiers"]
+    if c.startswith("Programming Language :: Python :: 3.")
+]
 
 
 @nox.session
@@ -29,13 +31,13 @@ def pylint(session: nox.Session) -> None:
     session.run("pylint", "src", *session.posargs)
 
 
-@nox.session(python=PYTHON_VERSIONS)
+@nox.session(python=ALL_PYTHONS)
 def tests(session):
     session.install("-y.[test]")
     session.run("pytest", *session.posargs)
 
 
-@nox.session
+@nox.session(default=False)
 def build(session):
     """
     Build an SDist and wheel.
