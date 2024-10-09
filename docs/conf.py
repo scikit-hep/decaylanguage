@@ -19,7 +19,7 @@ if os.getenv("SPELLCHECK"):
     spelling_lang = "en_US"
 
 source_suffix = ".rst"
-master_doc = "index"
+main_doc = "index"
 project = "decaylanguage"
 year = "2018"
 author = "Henry Fredrick Schreiner III"

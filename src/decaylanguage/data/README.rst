@@ -8,7 +8,7 @@ to access data reliably regardless of how you have installed or are running the 
 ``DECAY_LHCB.DEC``
 ------------------
 
-Copy of the LHCb experiment master decay file for EvtGen, which describes
+Copy of the LHCb experiment main decay file for EvtGen, which describes
 all generic particle decays.
 
 
@@ -23,7 +23,7 @@ Lark parser grammar definition file for parsing .dec decay files.
 An extended PDG data file, prepared by this package's maintainers,
 for the definitions of special particles used by the Mint program.
 It is similar to the extended PDG data file ``mass_width_2008.fwf``, see
-https://github.com/scikit-hep/particle/blob/master/particle/data/README.rst.
+https://github.com/scikit-hep/particle/blob/main/particle/data/README.rst.
 
 
 ``MintDalitzSpecialParticlesLatex.csv``

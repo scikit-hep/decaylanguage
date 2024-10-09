@@ -1,4 +1,4 @@
-<img alt="DecayLanguage logo" src="https://raw.githubusercontent.com/scikit-hep/decaylanguage/master/images/DecayLanguage.png"/>
+<img alt="DecayLanguage logo" src="https://raw.githubusercontent.com/scikit-hep/decaylanguage/main/images/DecayLanguage.png"/>
 
 # DecayLanguage: describe, manipulate and convert particle decays
 
@@ -9,10 +9,10 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3257423.svg)](https://doi.org/10.5281/zenodo.3257423)
 
 [![GitHub Actions Status: CI](https://github.com/scikit-hep/decaylanguage/workflows/CI/badge.svg)](https://github.com/scikit-hep/decaylanguage/actions)
-[![Code Coverage](https://codecov.io/gh/scikit-hep/decaylanguage/graph/badge.svg?branch=master)](https://codecov.io/gh/scikit-hep/decaylanguage?branch=master)
+[![Code Coverage](https://codecov.io/gh/scikit-hep/decaylanguage/graph/badge.svg?branch=main)](https://codecov.io/gh/scikit-hep/decaylanguage?branch=main)
 [![Documentation Status](https://readthedocs.org/projects/decaylanguage/badge/?style=flat)](https://decaylanguage.readthedocs.io)
 
-[![Binder demo](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scikit-hep/decaylanguage/master?urlpath=lab/tree/notebooks/DecayLanguageDemo.ipynb)
+[![Binder demo](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scikit-hep/decaylanguage/main?urlpath=lab/tree/notebooks/DecayLanguageDemo.ipynb)
 
 
 DecayLanguage implements a language to describe and convert particle decays
@@ -59,7 +59,7 @@ Required and compatibility dependencies will be automatically installed by pip.
 
 ## Getting started
 
-The [Binder demo](https://mybinder.org/v2/gh/scikit-hep/decaylanguage/master?urlpath=lab/tree/notebooks/DecayLanguageDemo.ipynb)
+The [Binder demo](https://mybinder.org/v2/gh/scikit-hep/decaylanguage/main?urlpath=lab/tree/notebooks/DecayLanguageDemo.ipynb)
 is an excellent way to get started with `DecayLanguage`.
 
 This is a quick user guide. For a full API docs, go [here](https://decaylanguage.readthedocs.io)
@@ -100,8 +100,8 @@ parser.list_decay_mother_names()
 # Print decay modes, etc. ...
 ```
 
-A copy of the master DECAY.DEC file used by the LHCb experiment is provided
-[here](https://github.com/scikit-hep/decaylanguage/tree/master/src/decaylanguage/data)
+A copy of the main DECAY.DEC file used by the LHCb experiment is provided
+[here](https://github.com/scikit-hep/decaylanguage/tree/main/src/decaylanguage/data)
 for convenience.
 
 The `DecFileParser` class implements a series of methods giving access to all
@@ -161,7 +161,7 @@ d = dfp.build_decay_chains('D*+', stable_particles=('D+', 'D0'))
 DecayChainViewer(d)  # works in a notebook
 ```
 
-![DecayChain D*](https://raw.githubusercontent.com/scikit-hep/decaylanguage/master/images/DecayChain_Dst_stable-D0-and-D+.png)
+![DecayChain D*](https://raw.githubusercontent.com/scikit-hep/decaylanguage/main/images/DecayChain_Dst_stable-D0-and-D+.png)
 
 The actual graph is available as
 

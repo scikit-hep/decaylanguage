@@ -70,7 +70,7 @@
 ## Version 0.16.0 (2023-07-25)
 
 * Parsing of decay files (aka .dec files):
-  - Updated to the latest LHCb master file DECAY.DEC.
+  - Updated to the latest LHCb main file DECAY.DEC.
   - Significant enhancements, improvements and simplifications to the parsing Lark grammar.
   - Allow dec file Decay statements to effectively be able to set a particle as stable.
     The package can now successfully parse all 8000-ish LHCb decay files.
@@ -131,7 +131,7 @@
   - Adapted to Python 3 only Lark 1.x series.
   - Support for Python 3.11 added and support for Python 3.6 removed.
 * Parsing of decay files (aka .dec files):
-  - Updated to the latest Belle II master file DECAY.DEC.
+  - Updated to the latest Belle II main file DECAY.DEC.
   - Added support for ModelAlias keyword used in Belle II decay files.
 * Miscellaneous:
   - Added a CITATION.cff file.

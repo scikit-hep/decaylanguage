@@ -99,7 +99,7 @@ class AmplitudeChain(ModelDecay):
         if mat["daughters"]:
             mat["daughters"] = [cls.from_matched_line(d) for d in mat["daughters"]]
 
-        # if master line only
+        # if main line only
         if "amp" in mat and not cls.cartesian:
             A = mat["amp"].real
             dA = mat["err"].real
