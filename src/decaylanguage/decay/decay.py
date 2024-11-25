@@ -749,7 +749,7 @@ class DecayChain:
     unless there is a good motivation not to.
     """
 
-    __slots__ = ("mother", "decays")
+    __slots__ = ("decays", "mother")
 
     def __init__(self, mother: str, decays: dict[str, DecayMode]) -> None:
         """

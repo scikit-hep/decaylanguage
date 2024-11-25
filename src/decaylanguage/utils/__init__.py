@@ -17,10 +17,10 @@ from .utilities import (
 __all__ = (
     "DescriptorFormat",
     "LineFailure",
+    "charge_conjugate_name",
+    "filter_lines",
     "iter_flatten",
     "split",
-    "filter_lines",
-    "charge_conjugate_name",
 )
 
 

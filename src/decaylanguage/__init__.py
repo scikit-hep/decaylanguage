@@ -15,12 +15,12 @@ from .dec import DecFileParser
 from .decay import DaughtersDict, DecayChain, DecayChainViewer, DecayMode
 
 __all__ = (
-    "__version__",
-    "DecFileParser",
-    "DecayChainViewer",
     "DaughtersDict",
-    "DecayMode",
+    "DecFileParser",
     "DecayChain",
+    "DecayChainViewer",
+    "DecayMode",
+    "__version__",
 )
 
 
