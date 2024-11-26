@@ -707,9 +707,9 @@ def test_expand_decay_chains():
             "D*- -> D- gamma",
         ],
     }
-    for particle in output:
+    for particle, descriptors in output.items():
         all_decays = p.expand_decay_modes(particle)
-        assert set(all_decays) == set(output[particle])
+        assert set(all_decays) == set(descriptors)
 
 
 def test_Lark_DecayModelAliasReplacement_Transformer():

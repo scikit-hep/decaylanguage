@@ -79,14 +79,14 @@ class DecFileParser:
     """
 
     __slots__ = (
+        "_additional_decay_models",
+        "_dec_file",
+        "_dec_file_names",
         "_grammar",
         "_grammar_info",
-        "_dec_file_names",
-        "_dec_file",
+        "_include_ccdecays",
         "_parsed_dec_file",
         "_parsed_decays",
-        "_include_ccdecays",
-        "_additional_decay_models",
     )
 
     def __init__(self, *filenames: str | os.PathLike[str]) -> None:

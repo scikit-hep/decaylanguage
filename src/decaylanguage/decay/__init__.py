@@ -8,7 +8,7 @@ from __future__ import annotations
 from .decay import DaughtersDict, DecayChain, DecayMode
 from .viewer import DecayChainViewer
 
-__all__ = ("DaughtersDict", "DecayMode", "DecayChain", "DecayChainViewer")
+__all__ = ("DaughtersDict", "DecayChain", "DecayChainViewer", "DecayMode")
 
 
 def __dir__() -> tuple[str, ...]:
