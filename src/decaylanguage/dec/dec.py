@@ -214,7 +214,7 @@ class DecFileParser:
             DecayModelAliasReplacement(model_alias_defs=dict_model_aliases).transform(
                 tree
             )
-            for tree in self._parsed_decays
+            for tree in self._parsed_decays  # type: ignore[union-attr]
         ]
 
         # Check whether certain decay model parameters are defined via
