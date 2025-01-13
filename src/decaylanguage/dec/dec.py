@@ -1124,9 +1124,9 @@ class DecayModelAliasReplacement(Transformer):  # type: ignore[misc]
         Doesn't do anything if no model_label is found.
         """
         if isinstance(treelist[0], Tree):
-            assert (
-                treelist[0].data == "model_label"
-            ), f"Instead of a subtree of type 'model_label' one of type {treelist[0].data} has been passed."
+            assert treelist[0].data == "model_label", (
+                f"Instead of a subtree of type 'model_label' one of type {treelist[0].data} has been passed."
+            )
             return Tree("model", self._replacement(treelist[0].children[0]))
 
         return Tree("model", treelist)

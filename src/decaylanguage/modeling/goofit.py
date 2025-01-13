@@ -335,11 +335,11 @@ class GooFitChain(AmplitudeChain):
 
         for structure in self.list_structure(final_states):
             if self.decay_structure == DecayStructure.FF_12_34:
-                mass1 = f"M_{structure[0]+1}{structure[1]+1}"
-                mass2 = f"M_{structure[2]+1}{structure[3]+1}"
+                mass1 = f"M_{structure[0] + 1}{structure[1] + 1}"
+                mass2 = f"M_{structure[2] + 1}{structure[3] + 1}"
             else:
-                mass1 = f"M_{structure[0]+1}{structure[1]+1}_{structure[2]+1}"
-                mass2 = f"M_{structure[0]+1}{structure[1]+1}"
+                mass1 = f"M_{structure[0] + 1}{structure[1] + 1}_{structure[2] + 1}"
+                mass2 = f"M_{structure[0] + 1}{structure[1] + 1}"
             masses = [mass1, mass2]
             for i_mass, sub in enumerate(self.vertexes):
                 factor.append(
@@ -419,9 +419,7 @@ class GooFitPyChain(AmplitudeChain):
         header += "\nDK3P_DI = DecayInfo4()\n"
 
         header += (
-            "\nline_factor_list = []"
-            "\nspin_factor_list = []"
-            "\namplitudes_list = []\n"
+            "\nline_factor_list = []\nspin_factor_list = []\namplitudes_list = []\n"
         )
 
         final_particles = set(all_states)
@@ -673,11 +671,11 @@ class GooFitPyChain(AmplitudeChain):
         factor = []
         for structure in self.list_structure(final_states):
             if self.decay_structure == DecayStructure.FF_12_34:
-                mass1 = f"M_{structure[0]+1}{structure[1]+1}"
-                mass2 = f"M_{structure[2]+1}{structure[3]+1}"
+                mass1 = f"M_{structure[0] + 1}{structure[1] + 1}"
+                mass2 = f"M_{structure[2] + 1}{structure[3] + 1}"
             else:
-                mass1 = f"M_{structure[0]+1}{structure[1]+1}_{structure[2]+1}"
-                mass2 = f"M_{structure[0]+1}{structure[1]+1}"
+                mass1 = f"M_{structure[0] + 1}{structure[1] + 1}_{structure[2] + 1}"
+                mass2 = f"M_{structure[0] + 1}{structure[1] + 1}"
             masses = [mass1, mass2]
             for i_mass, sub in enumerate(self.vertexes):
                 factor.append(
