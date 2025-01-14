@@ -135,9 +135,9 @@ def _from_group_dict_list(mat: dict[str, Any]) -> list[Particle]:
     if mat["family"]:
         if "_" in mat["family"]:
             mat["family"] = mat["family"].strip("_")
-        name += f'({mat["family"]})'
+        name += f"({mat['family']})"
     if mat["state"]:
-        name += f'({mat["state"]})'
+        name += f"({mat['state']})"
 
     if mat.get("prime"):
         name += "'"
@@ -148,7 +148,7 @@ def _from_group_dict_list(mat: dict[str, Any]) -> list[Particle]:
     if mat["state"] is not None:
         kw["J"] = float(mat["state"])
 
-    maxname = name + f'({mat["mass"]})' if mat["mass"] else name
+    maxname = name + f"({mat['mass']})" if mat["mass"] else name
     if "charge" in mat and mat["charge"] is not None:
         kw["three_charge"] = Charge_mapping[mat["charge"]]
 
