@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.18.6 (2025-01-17)
+
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.18.5 (2024-10-07)
 
 * Parsing of decay files (aka .dec files):
