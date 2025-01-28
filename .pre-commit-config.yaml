@@ -36,7 +36,7 @@ repos:
   rev: v2.4.0
   hooks:
   - id: codespell
-    args: ["-L", "vertexes,unkown,te"]
+    args: ["-L", "vertexes,unkown,te,HEP"]
     exclude: '^(.*\.DEC|notebooks/ExampleDecFileParsingWithLark\.ipynb)$'
 
 - repo: local
