@@ -178,7 +178,7 @@ class AmplitudeChain(ModelDecay):
     @property
     def L(self):
         if self.spinfactor:
-            return "S P D F".split().index(self.spinfactor)
+            return ["S", "P", "D", "F"].index(self.spinfactor)
         min_L, _ = self.L_range()
         return min_L  # Ground state unless specified
 
@@ -269,12 +269,10 @@ class AmplitudeChain(ModelDecay):
 
         # Make the partial lines and constants as dataframes
         parameters = pd.DataFrame(
-            variables, columns="name fix value error".split()
+            variables, columns=["name", "fix", "value", "error"]
         ).set_index("name")
 
-        constants = pd.DataFrame(constants, columns="name value".split()).set_index(
-            "name"
-        )
+        constants = pd.DataFrame(constants, columns=["name", "value"]).set_index("name")
 
         # Convert the matches into AmplitudeChains
         line_arr = [cls.from_matched_line(c) for c in cplx_decay_lines]
