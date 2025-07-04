@@ -8,10 +8,10 @@ from __future__ import annotations
 
 import typing
 from collections import Counter
-from collections.abc import Collection, Sequence
+from collections.abc import Collection, Iterable, Iterator, Sequence
 from copy import deepcopy
 from itertools import product
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, TypedDict
+from typing import TYPE_CHECKING, Any, TypedDict
 
 from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
@@ -33,7 +33,7 @@ class DecayModeDict(TypedDict):
     model_params: str | Sequence[str | Any]
 
 
-DecayChainDict = Dict[str, List[DecayModeDict]]
+DecayChainDict = dict[str, list[DecayModeDict]]
 
 
 class DaughtersDict(CounterStr):
@@ -952,8 +952,8 @@ class DecayChain:
             'model_params': ''}]}
         """
 
-        # Ideally this would be a recursive type, DecayDict = Dict[str, list[str | DecayDict]]
-        DecayDict = Dict[str, List[Any]]
+        # Ideally this would be a recursive type, DecayDict = dict[str, list[str | DecayDict]]
+        DecayDict = dict[str, list[Any]]
 
         def recursively_replace(mother: str) -> DecayDict:
             dm = self.decays[mother].to_dict()

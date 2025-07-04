@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.19.0 (2025-07-04)
+
+* Dependencies:
+  - Package dependent on ``Particle`` >= 0.25.4 and `hepunits` >= 2.3.5 to adapt to change in `Particle`.
+  - Removed support for Python 3.8.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.18.6 (2025-01-17)
 
 * CI and tests:

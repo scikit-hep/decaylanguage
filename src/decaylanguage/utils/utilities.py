@@ -6,8 +6,10 @@
 from __future__ import annotations
 
 import string
+from collections.abc import Iterator
 from copy import copy
-from typing import Any, ClassVar, Iterator, Pattern
+from re import Pattern
+from typing import Any, ClassVar
 
 
 def iter_flatten(iterable: list[str] | tuple[str, ...]) -> Iterator[str]:
