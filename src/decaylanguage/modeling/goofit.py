@@ -209,7 +209,7 @@ class GooFitChain(AmplitudeChain):
         header = ""
 
         for name, par in cls.pars.iterrows():
-            pname = programmatic_name(name)
+            pname = programmatic_name(name, is_nucleus=False)
             if not par.fix:
                 headerlist.append(
                     f'    Variable {pname} {{"{name}", {par.value}, {par.error} }};'
@@ -221,7 +221,11 @@ class GooFitChain(AmplitudeChain):
             mysplines = pars.index[pars.index.str.contains(begin, regex=False)]
             vals = convert(mysplines.str.slice(len(begin))).astype(int)
             series = pd.Series(mysplines, vals).sort_index()
-            return ",\n".join(series.map(lambda x: "        " + programmatic_name(x)))
+            return ",\n".join(
+                series.map(
+                    lambda x: "        " + programmatic_name(x, is_nucleus=False)
+                )
+            )
 
         if not GooFitChain.consts.empty:
             splines = GooFitChain.consts.index[
@@ -236,7 +240,7 @@ class GooFitChain(AmplitudeChain):
             for spline in splines:
                 header += (
                     "\n    std::vector<Variable> "
-                    + programmatic_name(spline)
+                    + programmatic_name(spline, is_nucleus=False)
                     + "_SplineArr {{\n"
                 )
                 header += strip_pararray(GooFitChain.pars, f"{spline}::Spline::Gamma::")
@@ -283,7 +287,9 @@ class GooFitChain(AmplitudeChain):
             min_ = self.__class__.consts.loc[f"{self.name}::Spline::Min", "value"]
             max_ = self.__class__.consts.loc[f"{self.name}::Spline::Max", "value"]
             N = self.__class__.consts.loc[f"{self.name}::Spline::N", "value"]
-            AdditionalVars = programmatic_name(self.name) + "_SplineArr"
+            AdditionalVars = (
+                programmatic_name(self.name, is_nucleus=False) + "_SplineArr"
+            )
             return f"""new Lineshapes::GSpline("{name}", {par}_M, {par}_W, {L}, {masses}, FF::BL2,
             {radius}, {AdditionalVars}, Lineshapes::spline_t({min_},{max_},{int(N)}))"""
 
@@ -546,7 +552,7 @@ class GooFitPyChain(AmplitudeChain):
         header = ""
 
         for name, par in cls.pars.iterrows():
-            pname = programmatic_name(name)
+            pname = programmatic_name(name, is_nucleus=False)
             if not par.fix:
                 headerlist.append(
                     f'{pname} = Variable("{name}", {par.value}, {par.error} )'
@@ -558,7 +564,11 @@ class GooFitPyChain(AmplitudeChain):
             mysplines = pars.index[pars.index.str.contains(begin, regex=False)]
             vals = convert(mysplines.str.slice(len(begin))).astype(int)
             series = pd.Series(mysplines, vals).sort_index()
-            return ",\n".join(series.map(lambda x: "        " + programmatic_name(x)))
+            return ",\n".join(
+                series.map(
+                    lambda x: "        " + programmatic_name(x, is_nucleus=False)
+                )
+            )
 
         if not GooFitPyChain.consts.empty:
             splines = GooFitPyChain.consts.index[
@@ -571,7 +581,11 @@ class GooFitPyChain(AmplitudeChain):
             )
 
             for spline in splines:
-                header += "\n" + programmatic_name(spline) + "_SplineArr =  [\n"
+                header += (
+                    "\n"
+                    + programmatic_name(spline, is_nucleus=False)
+                    + "_SplineArr =  [\n"
+                )
                 header += strip_pararray(
                     GooFitPyChain.pars, f"{spline}::Spline::Gamma::"
                 )
@@ -620,7 +634,9 @@ class GooFitPyChain(AmplitudeChain):
             min_ = self.__class__.consts.loc[f"{self.name}::Spline::Min", "value"]
             max_ = self.__class__.consts.loc[f"{self.name}::Spline::Max", "value"]
             N = self.__class__.consts.loc[f"{self.name}::Spline::N", "value"]
-            AdditionalVars = programmatic_name(self.name) + "_SplineArr"
+            AdditionalVars = (
+                programmatic_name(self.name, is_nucleus=False) + "_SplineArr"
+            )
             return f"""Lineshapes.GSpline("{name}", {par}_M, {par}_W, {L}, {masses}, FF.BL2,
             {radius}, {AdditionalVars}, ({min_},{max_},{int(N)}))"""
 
