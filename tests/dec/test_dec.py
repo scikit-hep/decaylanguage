@@ -49,7 +49,9 @@ def test_constructor_multiple_files():
     # The following parse() command issues the warning
     #   UserWarning: Corresponding 'Decay' statement for 'CDecay' statement(s) of following particle(s) not found: anti-Xi_cc-sig.
     #   Skipping creation of these charge-conjugate decay trees.
-    with pytest.warns(UserWarning) as record:
+    with pytest.warns(
+        UserWarning, match="Missing Decay statement related to CDecay"
+    ) as record:
         p.parse()
     assert len(record) == 1
 
@@ -78,7 +80,7 @@ def test_double_parsing():
     # The second call to parse() issues the warning
     #   UserWarning: Input file being re-parsed ...
     #     warnings.warn("Input file being re-parsed ...")
-    with pytest.warns(UserWarning) as record:
+    with pytest.warns(UserWarning, match="Re-parsing") as record:
         p.parse()
     assert len(record) == 1
 
@@ -332,7 +334,7 @@ def test_duplicated_global_photos_flag():
     # The following call issues the warning
     # UserWarning: PHOTOS flag re-set! Using flag set in last ...
     #   warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
-    with pytest.warns(UserWarning) as record:
+    with pytest.warns(UserWarning, match="PHOTOS flag re-set") as record:
         assert p.global_photos_flag() == PhotosEnum.yes
     assert len(record) == 1
 
@@ -352,7 +354,7 @@ def test_duplicated_global_photos_flag_take_last():
     # The following call issues the warning
     # UserWarning: PHOTOS flag re-set! Using flag set in last ...
     #   warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
-    with pytest.warns(UserWarning) as record:
+    with pytest.warns(UserWarning, match="PHOTOS flag re-set") as record:
         assert p.global_photos_flag() == PhotosEnum.yes
     assert len(record) == 1
 
@@ -391,7 +393,9 @@ def test_with_missing_info():
     ``
     """
     p = DecFileParser(DIR / "../data/test_Xicc2XicPiPi.dec")
-    with pytest.warns(UserWarning) as record:
+    with pytest.warns(
+        UserWarning, match="Missing Decay statement related to CDecay"
+    ) as record:
         p.parse()
     assert len(record) == 1
 
@@ -538,7 +542,7 @@ def test_custom_model_name():
 def test_duplicate_decay_definitions():
     p = DecFileParser(DIR / "../data/duplicate-decays.dec")
 
-    with pytest.warns(UserWarning) as w:
+    with pytest.warns(UserWarning, match="Duplicates") as w:
         p.parse()
 
     assert len(w) == 2
@@ -570,7 +574,7 @@ def test_list_decay_modes_on_the_fly():
     on the fly from the non-CC. decay.
     """
     p = DecFileParser(DIR / "../data/test_Xicc2XicPiPi.dec")
-    with pytest.warns(UserWarning) as record:
+    with pytest.warns(UserWarning, match="CC modes created on the fly") as record:
         p.parse()
     assert len(record) == 1
 
