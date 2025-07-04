@@ -9,7 +9,7 @@ build-backend = "hatchling.build"
 name = "decaylanguage"
 description = "A language to describe, manipulate and convert particle decays"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [
     { name = "Eduardo Rodrigues", email = "eduardo.rodrigues@cern.ch" },
     { name = "Henry Schreiner", email = "henryfs@princeton.edu" },
@@ -33,7 +33,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -48,8 +47,8 @@ dependencies = [
     "lark>=1.0.0",
     "numpy>=1.12",
     "pandas>=0.22",
-    "particle>=0.22.0",
-    "hepunits>=2.0.0",
+    "particle>=0.25.4",
+    "hepunits>=2.3.5",
     "plumbum>=1.7.0",
 ]
 dynamic = ["version"]
