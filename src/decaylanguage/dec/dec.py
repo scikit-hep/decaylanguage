@@ -42,10 +42,11 @@ import copy
 import os
 import re
 import warnings
+from collections.abc import Iterable
 from io import StringIO
 from itertools import chain, zip_longest
 from pathlib import Path
-from typing import Any, Callable, Iterable
+from typing import Any, Callable
 
 from hepunits import GeV
 from lark import Lark, Token, Transformer, Tree, Visitor
