@@ -542,7 +542,7 @@ def test_custom_model_name():
 def test_duplicate_decay_definitions():
     p = DecFileParser(DIR / "../data/duplicate-decays.dec")
 
-    with pytest.warns(UserWarning, match="redefined") as w:
+    with pytest.warns(UserWarning, match="(1775)") as w:
         p.parse()
 
     assert len(w) == 2
