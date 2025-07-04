@@ -43,7 +43,6 @@ classifiers = [
 dependencies = [
     "attrs>=19.2",
     "graphviz>=0.12.0",
-    "importlib-resources>=2.0;python_version<\"3.9\"",
     "lark>=1.0.0",
     "numpy>=1.12",
     "pandas>=0.22",
