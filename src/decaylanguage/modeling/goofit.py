@@ -12,11 +12,18 @@ from __future__ import annotations
 from enum import Enum
 
 import pandas as pd
-from particle import SpinType
-from particle.particle.utilities import programmatic_name
+from particle import Particle, ParticleNotFound, SpinType
 
 from ..utils import LineFailure
 from .amplitudechain import LS, AmplitudeChain
+
+
+def programmatic_name(name):
+    try:
+        pname = Particle.from_name(name).programmatic_name
+    except ParticleNotFound:
+        pname = name
+    return pname
 
 
 class SF_4Body(Enum):
@@ -209,7 +216,10 @@ class GooFitChain(AmplitudeChain):
         header = ""
 
         for name, par in cls.pars.iterrows():
-            pname = programmatic_name(name)
+            try:
+                pname = programmatic_name(name)
+            except ParticleNotFound:
+                pname = name
             if not par.fix:
                 headerlist.append(
                     f'    Variable {pname} {{"{name}", {par.value}, {par.error} }};'
@@ -221,7 +231,11 @@ class GooFitChain(AmplitudeChain):
             mysplines = pars.index[pars.index.str.contains(begin, regex=False)]
             vals = convert(mysplines.str.slice(len(begin))).astype(int)
             series = pd.Series(mysplines, vals).sort_index()
-            return ",\n".join(series.map(lambda x: "        " + programmatic_name(x)))
+            return ",\n".join(
+                series.map(
+                    lambda x: "        " + programmatic_name(x)
+                )
+            )
 
         if not GooFitChain.consts.empty:
             splines = GooFitChain.consts.index[
