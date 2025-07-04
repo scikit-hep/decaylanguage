@@ -283,7 +283,7 @@ class GooFitChain(AmplitudeChain):
             min_ = self.__class__.consts.loc[f"{self.name}::Spline::Min", "value"]
             max_ = self.__class__.consts.loc[f"{self.name}::Spline::Max", "value"]
             N = self.__class__.consts.loc[f"{self.name}::Spline::N", "value"]
-            AdditionalVars = programmatic_name(self.name) + "_SplineArr"
+            AdditionalVars = f"{par}_SplineArr"
             return f"""new Lineshapes::GSpline("{name}", {par}_M, {par}_W, {L}, {masses}, FF::BL2,
             {radius}, {AdditionalVars}, Lineshapes::spline_t({min_},{max_},{int(N)}))"""
 
@@ -620,7 +620,7 @@ class GooFitPyChain(AmplitudeChain):
             min_ = self.__class__.consts.loc[f"{self.name}::Spline::Min", "value"]
             max_ = self.__class__.consts.loc[f"{self.name}::Spline::Max", "value"]
             N = self.__class__.consts.loc[f"{self.name}::Spline::N", "value"]
-            AdditionalVars = programmatic_name(self.name) + "_SplineArr"
+            AdditionalVars = f"{par}_SplineArr"
             return f"""Lineshapes.GSpline("{name}", {par}_M, {par}_W, {L}, {masses}, FF.BL2,
             {radius}, {AdditionalVars}, ({min_},{max_},{int(N)}))"""
 
