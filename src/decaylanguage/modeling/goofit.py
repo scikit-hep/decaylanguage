@@ -231,11 +231,7 @@ class GooFitChain(AmplitudeChain):
             mysplines = pars.index[pars.index.str.contains(begin, regex=False)]
             vals = convert(mysplines.str.slice(len(begin))).astype(int)
             series = pd.Series(mysplines, vals).sort_index()
-            return ",\n".join(
-                series.map(
-                    lambda x: "        " + programmatic_name(x)
-                )
-            )
+            return ",\n".join(series.map(lambda x: "        " + programmatic_name(x)))
 
         if not GooFitChain.consts.empty:
             splines = GooFitChain.consts.index[
