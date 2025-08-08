@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 0.19.1
+
+* Parsing of decay files (aka .dec files):
+  - Updated to the latest Belle II's main DECAY.DEC file.
+* Miscellaneous:
+  - Remove invalid `-y` argument to `uv pip install` in the nox script.
+
 ## Version 0.19.0 (2025-07-04)
 
 * Dependencies:

@@ -33,7 +33,7 @@ def pylint(session: nox.Session) -> None:
 
 @nox.session(python=ALL_PYTHONS)
 def tests(session):
-    session.install("-y.[test]")
+    session.install(".[test]")
     session.run("pytest", *session.posargs)
 
 
