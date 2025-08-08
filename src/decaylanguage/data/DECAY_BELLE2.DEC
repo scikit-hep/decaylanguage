@@ -7,7 +7,7 @@
 #   Light meson decays (rho, eta, phi, f'_0...) updated to PDG 2015
 #   New Dalitz modes for eta and eta'
 #
-# Updates listed below are tabulated on https://confluence.desy.de/display/BI/EvtGen+Generator+Task-Force
+# Updates listed below are tabulated on https://xwiki.desy.de/xwiki/rest/p/4d75f
 # See individual pull requests for details.
 #
 # December 2017, B. Oberhof (benjamin.oberhof@lnf.infn.it)
@@ -25,7 +25,7 @@
 # March 2018, R. Godang (godang@southalabama.edu)
 #   Updated the BRs of the semitauonic decays: B0, anti-B0, B-, B+ decays including pi+ tau- anti-nu_tau
 #   https://stash.desy.de/projects/B2/repos/software/pull-requests/1769/overview
-#   https://stash.desy.de/projects/B2/repos/software/commits/eb4481dfe852e60cde1fe9a79ea05828c8e87eac#generators/evtgen/decayfiles/DECAY_BELLE2.DEC
+#   https://github.com/belle2/basf2/blob/629dc58140ef04e18106dc7a7df9fff27974c98c/generators/evtgen/decayfiles/DECAY_BELLE2.DEC
 #
 # March 2018, T. Lueck (lueck@pi.infn.it)
 #   Updated B -> X_c l nu BR to PDG2018 values
@@ -70,7 +70,7 @@
 #   Added decay table for sigma_0 particle (f_0(500) in the PDG)
 #
 # Sept.-Dec. 2020, P. Goldenzweig (pablo.goldenzweig@kit.edu)
-#   Updated hundreds of B0 and B+ BFs and some FFs as described in https://agira.desy.de/browse/BII-7249.
+#   Updated hundreds of B0 and B+ BFs and some FFs as described in https://gitlab.desy.de/belle2/software/basf2/-/issues/7124.
 #   Further updates and corrections applied in https://stash.desy.de/projects/B2/repos/software/pull-requests/7501/overview.
 #   Added the remaining rare decays from the Belle mixedrare.dec and chargedrare.dec files.
 #   Pythia hadron contributions rescaled by S. Duell (https://stash.desy.de/projects/B2/repos/software/pull-requests/6690/overview)
@@ -84,13 +84,18 @@
 #   Automated conversion of all PYTHIA decay ids to Pythia 8 using conversion defined in evtgen/src/EvtGenExternal/EvtPythiaEngine.cpp
 #
 # December 2021, V. Bertacchi (bertacchi@cppm.in2p3.fr)
-#   fixed a_1+ and a_10 BR decay table to restore isospin simmetry and reimplement the resonant contribution (KK*)
+#   fixed a_1+ and a_10 BR decay table to restore isospin symmetry and reimplement the resonant contribution (KK*)
 #   rescaled B->DKK* BR to take into account of resonant contribution B->D(a1->KK*), preserving the BR(NR+Res)= Belle measurement (https://doi.org/10.1016/S0370-2693(02)02373-0)
-#   https://stash.desy.de/projects/B2/repos/basf2/pull-requests/581/overview
+#   https://gitlab.desy.de/belle2/software/basf2/-/merge_requests/581
 #
 # March 2022, H. Svidras (henrikas.svidras@desy.de)
 #   Corrected the BTOXSGAMMA model branching fraction to the correct inclusive B->Xs gamma decay branching fraction in the PDG
 
+# June 2023, Niharika Rout (niharika.rout@ts.infn.it)
+# Updated the B -> D(**)npi BFs according to latest PDG/paper measurements.
+
+# June 2023, Meihong Liu (liumh19@fudan.edu.cn)
+# Updated the B0 -> D+(**)npi BFs according to latest PDG/paper measurements.
 
 Define qoverp_incohMix_B_s0 1.0
 Define dm_incohMix_B_s0 17.8e12
@@ -398,7 +403,7 @@ Decay B0
 0.000210000   D-  pi+  pi-  mu+  nu_mu                     PHSP;
 0.000140000   anti-D0  pi-  pi0  mu+  nu_mu                PHSP;
 0.000140000   D-  pi0  pi0  mu+  nu_mu                     PHSP;
-# B->D*pipilnu ; modes with pi0 are infered asuming isospin symmetry
+# B->D*pipilnu ; modes with pi0 are inferred assuming isospin symmetry
 0.001050000   D*-  pi+  pi-  mu+  nu_mu                    PHSP;
 0.000700000   anti-D*0  pi-  pi0  mu+  nu_mu               PHSP;
 0.000700000   D*-  pi0  pi0  mu+  nu_mu                    PHSP;
@@ -679,45 +684,69 @@ Decay B0
 
 # 2-pi
 0.007574640   rho+  D-                                     SVS;  #[BF update - PG 09/2020]
-0.000500000   D-  pi+  pi0                                 PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
+0.000000000   D-  pi+  pi0                                 PHSP; #Put NR BF to be zero to avoid PYTHIA, dominated by Drho component. [BF updata - LMH 06/2023]
 
 0.006798790   rho+  D*-                                    SVV_HELAMP  0.317 0.19 0.936 0.0 0.152 1.47; #Parameters taken from ICHEP 98-852. Gamma_51 PDGLive. #[BF update - PG 09/2020]
-0.008358920   D*-  pi+  pi0                                PHSP; #Gamma_50 PDGLive => 0.015157710 includes rho+ D*-. Subtract resonant component: BF(D*- pi+ pi0) = 0.015157710 - 0.006798790. #[BF update - PG 09/2020]
+0.000000000   D*-  pi+  pi0                                PHSP; #Put NR BF to be zero to avoid PYTHIA, dominated by Drho component. [BF updata - LMH 06/2023]
 
 0.000880260   anti-D0  pi-  pi+                            PHSP; #[BF update - PG 09/2020]
 0.000620000   anti-D*0  pi-  pi+                           PHSP;
 0.000500000   anti-D*0  pi0  pi0                           PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
 
 # 3-pi
-0.006000000   a_1+  D-                                     SVS;
-0.001100000   D-  rho0  pi+                                PHSP; #Gamma_48 PDGLive => Exclusive BF.   #[BF update - PG 09/2020]
-0.003900000   D-  pi-  pi+  pi+                            PHSP; #Gamma_47 PDGLive => Nonresonant BF. #[BF update - PG 09/2020]
+0.010714290   a_1+  D-                                     SVS;  #Interpreting D3pi BF as fully (D- a1(->3pi)) decay #[BF update - LMH 06/2023]
+0.000000000   D-  rho0  pi+                                PHSP; #Put to zero to avoid PYTHIA; dominated by (Da1) decay#[BF update - LMH 06/2023]
+0.000000000   D-  pi-  pi+  pi+                            PHSP; #Put to zero to avoid PYTHIA; dominated by (Da1) decay#[BF update - LMH 06/2023]
 
-0.001100000   D-  rho+  pi0                                PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-0.001000000   D-  pi0  pi+  pi0                            PHSP; #No PDGLive value. Keep original value in .DEC. Do not appear in data (FEI studies); BF too high here? #[Comment - PG 09/2020]
+# Freeze to 0 to avoid PYTHIA, already accounted by a1+ decays [BF update - LMH 06/2023]
+0.000000000   D-  rho+  pi0                                PHSP;
+0.000000000   D-  pi0  pi+  pi0                            PHSP;
+
+0.000000000   b_1+  D-                                     SVS; #Put BF to be zero to avoid PYTHIA [BF update - LMH 06/2023]
 
 0.001000000   anti-D0  pi-  pi+  pi0                       PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
 0.000100000   anti-D0  pi0  pi0  pi0                       PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
 
-0.012994160   D*-  a_1+                                    SVV_HELAMP 0.458 0.0 0.866 0.0 0.458 0.0; #Parameters taken from factorization http://babar-hn.slac.stanford.edu:5090/HyperNews/get/event_gen/168.html, updated Ref.[B1]. #[BF update - PG 09/2020]
-0.005726240   D*-  rho0  pi+                               PHSP; #Gamma_59 PDGLive => Exclusive BF. #[BF update - PG 09/2020]
+0.012875000   D*-  a_1+                                    SVV_HELAMP 0.458 0.0 0.866 0.0 0.458 0.0; # Interpreting D*03pi BF as fully (D*0 a1(->3pi)) decay [BF update - LMH 06/2023]
+0.000000000   D*-  rho0  pi+                               PHSP; #Put NR BF to be zero to avoid PYTHIA, dominated by D*rho component [BF update - LMH 06/2023]
 0.000000000   D*-  pi-  pi+  pi+                           PHSP; #Gamma_58 PDGLive => Nonresonant BF = 0. Use 0 or estimate? #[BF update - PG 09/2020]
 
-0.001000000   D*-  rho+  pi0                               PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-0.001000000   D*-  pi0  pi+  pi0                           PHSP; #No PDGLive value. Keep original value in .DEC. Do not appear in data (FEI studies); BF too high here? #[Comment - PG 09/2020]
+# Freeze to 0 to avoid PYTHIA, already accounted by a1+ decays #[BF update - LMH 06/2023]
+0.000000000   D*-  rho+  pi0                               PHSP;
+0.000000000   D*-  pi0  pi+  pi0                           PHSP;
+
+0.000000000   D*-  b_1+                                    SVV_HELAMP 0.336 0.0 0.88 0.0 0.336 0.0; #Put BF to be zero to avoid PYTHIA [BF update - LMH 06/2023]
 
 0.001000000   anti-D*0  pi-  pi+  pi0                      PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
 0.000100000   anti-D*0  pi0  pi0  pi0                      PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
 
+# 3pi pi0
 
-# B->D** pi and D** rho, recommendation http://babar-hn.slac.stanford.edu:5090/HyperNews/get/event_gen/151.html
-0.000100000   D_1-  pi+                                    SVS;
-0.000100000   D'_1-  pi+                                   SVS;
-0.000060000   D_0*-  pi+                                   PHSP;
-0.000215000   D_2*-  pi+                                   STS;
-0.000400000   D_1-  rho+                                   PHSP;
-0.001300000   D'_1-  rho+                                  PHSP;
-0.002200000   D_2*-  rho+                                  PHSP;
+0.000000000   D-  pi+  pi+  pi-  pi0                       PHSP; #Put NR BF to be zero to avoid PYTHIA [BF update - LMH 06/2023]
+0.000000000   D*-  pi+  pi+  pi-  pi0                      PHSP; #Put NR BF to be zero to avoid PYTHIA [BF update - LMH 06/2023]
+
+0.000000000   D-  rho0 rho+                                PHSP; # Freeze to 0 to avoid PYTHIA #[BF update - LMH 06/2023]
+0.000000000   D*-  rho0 rho+                               PHSP; # Freeze to 0 to avoid PYTHIA #[BF update - LMH 06/2023]
+0.002800000   D-  omega  pi+                               PHSP;
+0.002460560   D*-  omega  pi+                              PHSP; #[BF update - PG 09/2020]
+0.000256000   D-  eta  pi+                                 PHSP; #Limit provided to invalidate eta as a candidate for SL gap (to be measured)  [BF update - LMH 06/2023]
+0.000256000   D*-  eta  pi+                                PHSP; #Limit provided to invalidate eta as a candidate for SL gap (to be measured)  [BF update - LMH 06/2023]
+
+#Take the half BR of the B+ corresponding decays [BF update - LMH 06/2023]
+0.000930000   D_1-  pi+                                    SVS;
+0.000310000   D'_1-  pi+                                   SVS;
+0.000420000   D_0*-  pi+                                   PHSP;
+0.000430000   D_2*-  pi+                                   STS;
+0.001860000   D_1-  rho+                                   PHSP;
+0.000620000   D'_1-  rho+                                  PHSP;
+0.000830000   D_0*-  rho+                                  PHSP;
+0.000850000   D_2*-  rho+                                  PHSP;
+
+# Freeze to 0 to avoid PYTHIA #accounted by rho+ decays already [BF update - LMH 06/2023]
+0.000000000   D_1-  pi+ pi0                                PHSP;
+0.000000000   D'_1- pi+ pi0                                PHSP;
+0.000000000   D_0*- pi+ pi0                                PHSP;
+0.000000000   D_2*- pi+ pi0                                PHSP;
 
 # B->DK, recommendation http://babar-hn.slac.stanford.edu:5090/HyperNews/get/event_gen/151.html, update: Ref. [B1]:
 0.000212130   D*-  K+                                      SVS;  #[BF update - PG 09/2020]
@@ -769,9 +798,6 @@ Decay B0
 0.000300000   D*+  K0  pi-                                 PHSP;
 0.000490000   D-  K0  pi+                                  PHSP;
 
-0.002800000   D-  omega  pi+                               PHSP;
-0.002460560   D*-  omega  pi+                              PHSP; #[BF update - PG 09/2020]
-
 0.000430000   D'_s1+  D-                                   PHSP;
 0.000830000   D'_s1+  D*-                                  PHSP;
 
@@ -791,7 +817,6 @@ Decay B0
 0.000120000   anti-Sigma_c*--  p+  pi+                     PHSP;
 0.000010000   anti-Sigma_c0  p+  pi-                       PHSP; #Gamma_506 PDGLive => UL<0.31e-4. Set BF e-5. #[BF update - PG 09/2020]
 0.000102000   anti-Sigma_c--  p+  pi+                      PHSP; #Gamma_505 PDGLive => Inclusive BF.           #[BF update - PG 09/2020]
-0.017598480   D*-  pi+  pi+  pi-  pi0                      PHSP; #Gamma_63  PDGLive => Inclusive BF.           #[BF update - PG 09/2020]
 0.004700000   D*-  pi+  pi+  pi+  pi-  pi-                 PHSP; #Gamma_64  PDGLive => Inclusive BF.           #[Comment - PG 09/2020]
 
 
@@ -801,9 +826,9 @@ Decay B0
 
 # b -> u l nu
 #
-# pi: FF values from HFLAV 2016.
-0.000145000   pi-  e+  nu_e                                BCL 0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52;
-0.000145000   pi-  mu+  nu_mu                              BCL 0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52;
+# pi: FF values from HFLAV 2023. [BF update PDG2023]
+0.000150000   pi-  e+  nu_e                                BCL 0.424 -0.484 -0.658 0 0.561 -1.393 0.763 0; #[BCL update - AN 07/2025]
+0.000150000   pi-  mu+  nu_mu                              BCL 0.424 -0.484 -0.658 0 0.561 -1.393 0.763 0; #[BCL update - AN 07/2025]
 
 # rho, omega: FF values from a combined fit on LCSR prediction (1203.1359) and measurements from Belle (1306.2781) and BaBar (1005.3288).
 # fit results for BCL expansion coefficients from (2104.05739) #[BCL model update - KMA 06/2022]
@@ -817,8 +842,8 @@ Decay B0
 0.001701000   Xu-  e+  nu_e                                VUB 4.8 1.29 0.22 20 0.30 0.55 1.20 0.61 1.26 0.85 1.34 1.08 1.41 1.21 1.48 1.30 1.55 1.30 1.61 1.33 1.67 1.36 1.73 1.39 1.79 1.33 1.84 1.42 1.90 1.39 1.95 1.39 2.00 1.37 2.50 1.30  3.00 0.74 3.50 0.99 4.00 1.09 4.50 1.00; #[PDG2017]
 0.001701000   Xu-  mu+  nu_mu                              VUB 4.8 1.29 0.22 20 0.30 0.55 1.20 0.61 1.26 0.85 1.34 1.08 1.41 1.21 1.48 1.30 1.55 1.30 1.61 1.33 1.67 1.36 1.73 1.39 1.79 1.33 1.84 1.42 1.90 1.39 1.95 1.39 2.00 1.37 2.50 1.30 3.00 0.74 3.50 0.99 4.00 1.09 4.50 1.00; #[PDG2017]
 
-0.000094227   pi-  tau+  nu_tau                            BCL 0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52; #Assuming R_pi  = 0.641 (arXiv:1509.06938). #[BF update - PG 09/2020] #[BCL model update - KMA 06/2022]
-0.000156755   rho-  tau+  nu_tau                           BCL -0.86 1.43 0.26 0.38 0.16 0.29 0.72 0.37 0.33 -0.87 1.88; #Assuming R_rho = 0.535 (priv. comm. M. Prim). #[BF update - PG 09/2020] #[BCL model update - KMA 06/2022]
+0.000096150   pi-  tau+  nu_tau                            BCL 0.424 -0.484 -0.658 0 0.561 -1.393 0.763 0; #Assuming R_pi  = 0.641 (arXiv:1509.06938). #[BF update - AN 11/2023] #[BCL update - AN 07/2025]
+0.000157290   rho-  tau+  nu_tau                           BCL -0.86 1.43 0.26 0.38 0.16 0.29 0.72 0.37 0.33 -0.87 1.88; #Assuming R_rho = 0.535 (arXiv:2104.05739). #[BF update - AN 11/2023]
 0.000090000   a_1-  tau+  nu_tau                           ISGW2;
 0.000008000   b_1-  tau+  nu_tau                           ISGW2;
 0.000008000   a_0-  tau+  nu_tau                           ISGW2;
@@ -1629,17 +1654,17 @@ Decay B0
 
 # VP
 #
-0.000003650   K_2*+  pi-                                   STS;	 #[BF update - PG 09/2020]
+0.000003650   K_2*+  pi-                                   STS;  #[BF update - PG 09/2020]
 0.000003150   K_2*0  pi0                                   STS;
 0.000086000   K'*+  pi-                                    PHSP; #UL
 0.000019300   K'*0  pi0                                    PHSP; #[K0 pi0]/[K0 pi+]*[K'*0 pi+]
 0.000008200   f'_0  K0                                     PHSP; #[K0 pi0]/[K+ pi0]*[f'_0 K+]
 0.000003400   f_0(1500)  K0                                PHSP; #[K0 pi0]/[K+ pi0]*[f_0(1500) K+]
 0.000009000   rho(3S)0  K0                                 SVS;
-0.000002400   rho(2S)-  K+                                 SVS;	 #[BF update - PG 09/2020]
-0.000000600   rho(3S)-  K+                                 SVS;	 #[BF update - PG 09/2020]
-0.000025200   K_1+  pi-                                    SVS;	 #UL
-0.000021800   K'_1+  pi-                                   SVS;	 #UL
+0.000002400   rho(2S)-  K+                                 SVS;  #[BF update - PG 09/2020]
+0.000000600   rho(3S)-  K+                                 SVS;  #[BF update - PG 09/2020]
+0.000025200   K_1+  pi-                                    SVS;  #UL
+0.000021800   K'_1+  pi-                                   SVS;  #UL
 
 # PPP
 #
@@ -2106,31 +2131,31 @@ Decay B0
 # Pythia contributions rescaled after each update such that the total B meson BF is compatible with 1 (decfiles/tools/b2dec-correct-pythiaBFs).
 
 # Lam_c X  / Sigma_c X   4.0 %
-0.00992629    anti-cd_0  ud_0                              PYTHIA 63;
-0.01985270    anti-cd_1  ud_1                              PYTHIA 63;
+0.01068453    anti-cd_0  ud_0                              PYTHIA 63;
+0.02136920    anti-cd_1  ud_1                              PYTHIA 63;
 
 # Xi_c X      2.5%
-0.00270702    anti-cs_0  ud_0                              PYTHIA 63;
-0.00541400    anti-cs_1  ud_1                              PYTHIA 63;
+0.00291380    anti-cs_0  ud_0                              PYTHIA 63;
+0.00582756    anti-cs_1  ud_1                              PYTHIA 63;
 
-0.24349378    u  anti-d  anti-c  d                         PYTHIA 23;
-0.04150720    u  anti-d  anti-c  d                         PYTHIA 43;
-0.01894896    u  anti-s  anti-c  d                         PYTHIA 43;
-0.01624197    u  anti-c  anti-d  d                         PYTHIA 23;
-0.00081209    u  anti-c  anti-s  d                         PYTHIA 23;
+0.26209372    u  anti-d  anti-c  d                         PYTHIA 23;
+0.04467784    u  anti-d  anti-c  d                         PYTHIA 43;
+0.02039642    u  anti-s  anti-c  d                         PYTHIA 43;
+0.01748266    u  anti-c  anti-d  d                         PYTHIA 23;
+0.00087413    u  anti-c  anti-s  d                         PYTHIA 23;
 # Try to crank up the psi production (Lange).
-0.06677709    c  anti-s  anti-c  d                         PYTHIA 43;
-0.00541438    c  anti-d  anti-c  d                         PYTHIA 43;
-0.00270721    u  anti-d  anti-u  d                         PYTHIA 23;
-0.00360960    c  anti-s  anti-u  d                         PYTHIA 23;
+0.07187804    c  anti-s  anti-c  d                         PYTHIA 43;
+0.00582797    c  anti-d  anti-c  d                         PYTHIA 43;
+0.00291400    u  anti-d  anti-u  d                         PYTHIA 23;
+0.00388533    c  anti-s  anti-u  d                         PYTHIA 23;
 # This and similar a few lines above have been divided by two to solve a double-counting problem for this channel (JGS 11/5/02).
-0.00184987    u  anti-u  anti-d  d                         PYTHIA 23;
-0.00006317    d  anti-d  anti-d  d                         PYTHIA 23;
-0.00008121    s  anti-s  anti-d  d                         PYTHIA 23;
-0.00198523    u  anti-u  anti-s  d                         PYTHIA 23;
-0.00162428    d  anti-d  anti-s  d                         PYTHIA 23;
-0.00135359    s  anti-s  anti-s  d                         PYTHIA 23;
-0.00451198    anti-s  d                                    PYTHIA 91;
+0.00199118    u  anti-u  anti-d  d                         PYTHIA 23;
+0.00006800    d  anti-d  anti-d  d                         PYTHIA 23;
+0.00008742    s  anti-s  anti-d  d                         PYTHIA 23;
+0.00213687    u  anti-u  anti-s  d                         PYTHIA 23;
+0.00174835    d  anti-d  anti-s  d                         PYTHIA 23;
+0.00145699    s  anti-s  anti-s  d                         PYTHIA 23;
+0.00485664    anti-s  d                                    PYTHIA 91;
 
 Enddecay
 
@@ -2188,7 +2213,7 @@ Decay anti-B0
 0.000210000   D+  pi+  pi-  mu-  anti-nu_mu                PHSP;
 0.000140000   D0  pi+  pi0  mu-  anti-nu_mu                PHSP;
 0.000140000   D+  pi0  pi0  mu-  anti-nu_mu                PHSP;
-# B->D*pipilnu ; modes with pi0 are infered asuming isospin symmetry.
+# B->D*pipilnu ; modes with pi0 are inferred assuming isospin symmetry.
 0.001050000   D*+  pi+  pi-  mu-  anti-nu_mu               PHSP;
 0.000700000   D*0  pi+  pi0  mu-  anti-nu_mu               PHSP;
 0.000700000   D*+  pi0  pi0  mu-  anti-nu_mu               PHSP;
@@ -2469,45 +2494,69 @@ Decay anti-B0
 
 # 2-pi
 0.007574640   rho-  D+                                     SVS;  #[BF update - PG 09/2020]
-0.000500000   D+  pi-  pi0                                 PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
+0.000000000   D+  pi-  pi0                                 PHSP;  #Put NR BF to be zero to avoid PYTHIA, dominated by Drho component. [BF updata - LMH 06/2023]
 
 0.006798790   rho-  D*+                                    SVV_HELAMP 0.152 1.47 0.936 0 0.317 0.19; #Parameters taken from ICHEP 98-852. #[BF update - PG 09/2020]
-0.008358920   D*+  pi-  pi0                                PHSP; #Gamma_50 PDGLive => 0.015157710 includes rho- D*+. Subtract resonant component: BF(D*- pi+ pi0) = 0.015157710 - 0.006798790. #[BF update - PG 09/2020]
+0.000000000   D*+  pi-  pi0                                PHSP; #Put NR BF to be zero to avoid PYTHIA, dominated by Drho component. [BF updata - LMH 06/2023]
 
 0.000880260   D0  pi+  pi-                                 PHSP; #[BF update - PG 09/2020]
 0.000620000   D*0  pi+  pi-                                PHSP;
 0.000500000   D*0  pi0  pi0                                PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
 
 # 3-pi
-0.006000000   a_1-  D+                                     SVS;
-0.001100000   D+  rho0  pi-                                PHSP; #Gamma_48 PDGLive => Exclusive BF.   #[BF update - PG 09/2020]
-0.003900000   D+  pi+  pi-  pi-                            PHSP; #Gamma_47 PDGLive => Nonresonant BF. #[BF update - PG 09/2020]
+0.010714290   a_1-  D+                                     SVS; #Interpreting D3pi BF as fully (D- a1(->3pi)) decay #[BF update - LMH 06/2023]
+0.000000000   D+  rho0  pi-                                PHSP; #Put to zero to avoid PYTHIA; dominated by (Da1) decay#[BF update - LMH 06/2023]
+0.000000000   D+  pi+  pi-  pi-                            PHSP; #Put to zero to avoid PYTHIA; dominated by (Da1) decay#[BF update - LMH 06/2023]
 
-0.001100000   D+  rho-  pi0                                PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-0.001000000   D+  pi0  pi-  pi0                            PHSP; #No PDGLive value. Keep original value in .DEC. Do not appear in data (FEI studies); BF too high here? #[Comment - PG 09/2020]
+# Freeze to 0 to avoid PYTHIA, already accounted by a1+ decays [BF update - LMH 06/2023]
+0.000000000   D+  rho-  pi0                                PHSP;
+0.000000000   D+  pi0  pi-  pi0                            PHSP;
+
+0.000000000   b_1-  D+                                     SVS; #Put BF to be zero to avoid PYTHIA [BF update - LMH 06/2023]
 
 0.001000000   D0  pi+  pi-  pi0                            PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
 0.000100000   D0  pi0  pi0  pi0                            PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
 
-0.012994160   D*+  a_1-                                    SVV_HELAMP 0.200 0.0 0.866 0.0 0.458 0.0; #Parameters taken from factorization http://babar-hn.slac.stanford.edu:5090/HyperNews/get/event_gen/168.html, updated Ref.[B1]. #[BF update - PG 09/2020]
-0.005726240   D*+  rho0  pi-                               PHSP; #Gamma_59 PDGLive => Exclusive BF. #[BF update - PG 09/2020]
+0.012875000   D*+  a_1-                                    SVV_HELAMP 0.200 0.0 0.866 0.0 0.458 0.0; # Interpreting D*03pi BF as fully (D*0 a1(->3pi)) decay [BF update - LMH 06/2023]
+0.000000000   D*+  rho0  pi-                               PHSP; #Put NR BF to be zero to avoid PYTHIA, dominated by D*rho component [BF update - LMH 06/2023]
 0.000000000   D*+  pi+  pi-  pi-                           PHSP; #Gamma_58 PDGLive => Nonresonant BF = 0. Use 0 or estimate? #[BF update - PG 09/2020]
 
-0.001000000   D*+  rho-  pi0                               PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-0.001000000   D*+  pi0  pi-  pi0                           PHSP; #No PDGLive value. Keep original value in .DEC. Do not appear in data (FEI studies); BF too high here? #[Comment - PG 09/2020]
+# Freeze to 0 to avoid PYTHIA, already accounted by a1- decays #[BF update - LMH 06/2023]
+0.000000000   D*+  rho-  pi0                               PHSP;
+0.000000000   D*+  pi0  pi-  pi0                           PHSP;
+
+0.000000000   D*+  b_1-                                    SVV_HELAMP 0.336 0.0 0.88 0.0 0.336 0.0; #Put BF to be zero to avoid PYTHIA [BF update - LMH 06/2023]
 
 0.001000000   D*0  pi+  pi-  pi0                           PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
 0.000100000   D*0  pi0  pi0  pi0                           PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
 
+# 3pi pi0
 
-# B->D** pi and D** rho, recommendation http://babar-hn.slac.stanford.edu:5090/HyperNews/get/event_gen/151.html
-0.000100000   D_1+  pi-                                    SVS;
-0.000100000   D'_1+  pi-                                   SVS;
-0.000060000   D_0*+  pi-                                   PHSP;
-0.000215000   D_2*+  pi-                                   STS;
-0.000400000   D_1+  rho-                                   PHSP;
-0.001300000   D'_1+  rho-                                  PHSP;
-0.002200000   D_2*+  rho-                                  PHSP;
+0.00000000   D+  pi-  pi-  pi+  pi0                        PHSP; #Put NR BF to be zero to avoid PYTHIA [BF update - LMH 06/2023]
+0.00000000   D*+  pi-  pi-  pi+  pi0                       PHSP; #Put NR BF to be zero to avoid PYTHIA [BF update - LMH 06/2023]
+
+0.000000000   D+  rho0 rho-                                PHSP; # Freeze to 0 to avoid PYTHIA #[BF update - LMH 06/2023]
+0.000000000   D*+  rho0 rho-                               PHSP; # Freeze to 0 to avoid PYTHIA #[BF update - LMH 06/2023]
+0.002800000   D+  omega  pi-                               PHSP;
+0.002460560   D*+  omega  pi-                              PHSP; #[BF update - PG 09/2020]
+0.000256000   D+  eta  pi-                                 PHSP; #Limit provided to invalidate eta as a candidate for SL gap (to be measured)  [BF update - LMH 06/2023]
+0.000256000   D*+  eta  pi-                                PHSP; #Limit provided to invalidate eta as a candidate for SL gap (to be measured)  [BF update - LMH 06/2023]
+
+#Take the half BR of the B+ corresponding decays [BF update - LMH 06/2023]
+0.000930000   D_1+  pi-                                    SVS;
+0.000310000   D'_1+  pi-                                   SVS;
+0.000420000   D_0*+  pi-                                   PHSP;
+0.000430000   D_2*+  pi-                                   STS;
+0.001860000   D_1+  rho-                                   PHSP;
+0.000620000   D'_1+  rho-                                  PHSP;
+0.000830000   D_0*+  rho-                                  PHSP;
+0.000850000   D_2*+  rho-                                  PHSP;
+
+# Freeze to 0 to avoid PYTHIA #accounted by rho+ decays already [BF update - LMH 06/2023]
+0.000000000   D_1+  pi- pi0                                PHSP;
+0.000000000   D'_1+ pi- pi0                                PHSP;
+0.000000000   D_0*+ pi- pi0                                PHSP;
+0.000000000   D_2*+ pi- pi0                                PHSP;
 
 # B->DK, recommendation http://babar-hn.slac.stanford.edu:5090/HyperNews/get/event_gen/151.html, update: Ref. [B1]:
 0.000212130   D*+  K-                                      SVS;  #[BF update - PG 09/2020]
@@ -2559,9 +2608,6 @@ Decay anti-B0
 0.000300000   D*-  K0  pi+                                 PHSP;
 0.000490000   D+  anti-K0  pi-                             PHSP;
 
-0.002800000   D+  omega  pi-                               PHSP;
-0.002460560   D*+  omega  pi-                              PHSP; #[BF update - PG 09/2020]
-
 0.000430000   D'_s1-  D+                                   PHSP;
 0.000830000   D'_s1-  D*+                                  PHSP;
 
@@ -2581,7 +2627,6 @@ Decay anti-B0
 0.000120000   Sigma_c*++  anti-p-  pi-                     PHSP;
 0.000010000   Sigma_c0  anti-p-  pi+                       PHSP; #Gamma_506 PDGLive => UL<0.31e-4. Set BF e-5. #[BF update - PG 09/2020]
 0.000102000   Sigma_c++  anti-p-  pi-                      PHSP; #Gamma_505 PDGLive => Inclusive BF.           #[BF update - PG 09/2020]
-0.017598480   D*+  pi-  pi-  pi+  pi0                      PHSP; #Gamma_63  PDGLive => Inclusive BF.           #[BF update - PG 09/2020]
 0.004700000   D*+  pi-  pi-  pi-  pi+  pi+                 PHSP; #Gamma_64  PDGLive => Inclusive BF.           #[Comment - PG 09/2020]
 
 
@@ -2591,9 +2636,9 @@ Decay anti-B0
 
 # b -> u l nu
 #
-# pi: FF values from HFLAV 2016.
-0.000145000   pi+  e-  anti-nu_e                           BCL 0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52;
-0.000145000   pi+  mu-  anti-nu_mu                         BCL 0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52;
+# pi: FF values from HFLAV 2023. [BF update PDG2023]
+0.000150000   pi+  e-  anti-nu_e                           BCL 0.424 -0.484 -0.658 0 0.561 -1.393 0.763 0; #[BCL update - AN 07/2025]
+0.000150000   pi+  mu-  anti-nu_mu                         BCL 0.424 -0.484 -0.658 0 0.561 -1.393 0.763 0; #[BCL update - AN 07/2025]
 
 # rho, omega: FF values from a combined fit on LCSR prediction (1203.1359) and measurements from Belle (1306.2781) and BaBar (1005.3288).
 # fit results for BCL expansion coefficients from (2104.05739) #[BCL model update - KMA 06/2022]
@@ -2607,8 +2652,8 @@ Decay anti-B0
 0.001701000   Xu+  e-  anti-nu_e                           VUB 4.8 1.29 0.22 20 0.30 0.55 1.20 0.61 1.26 0.85 1.34 1.08 1.41 1.21 1.48 1.30 1.55 1.30 1.61 1.33 1.67 1.36 1.73 1.39 1.79 1.33 1.84 1.42 1.90 1.39 1.95 1.39 2.00 1.37 2.50 1.30 3.00 0.74 3.50 0.99 4.00 1.09 4.50 1.00; #[PDG2017]
 0.001701000   Xu+  mu-  anti-nu_mu                         VUB 4.8 1.29 0.22 20 0.30 0.55 1.20 0.61 1.26 0.85 1.34 1.08 1.41 1.21 1.48 1.30 1.55 1.30 1.61 1.33 1.67 1.36 1.73 1.39 1.79 1.33 1.84 1.42 1.90 1.39 1.95 1.39 2.00 1.37 2.50 1.30 3.00 0.74 3.50 0.99 4.00 1.09 4.50 1.00; #[PDG2017]
 
-0.000094227   pi+  tau-  anti-nu_tau                       BCL 0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52; #Assuming R_pi  = 0.641 (arXiv:1509.06938). #[BF update - PG 09/2020] #[BCL model update - KMA 06/2022]
-0.000156755   rho+  tau-  anti-nu_tau                      BCL -0.86 1.43 0.26 0.38 0.16 0.29 0.72 0.37 0.33 -0.87 1.88; #Assuming R_rho = 0.535 (priv. comm. M. Prim). #[BF update - PG 09/2020] #[BCL model update - KMA 06/2022]
+0.000096150   pi+  tau-  anti-nu_tau                       BCL 0.424 -0.484 -0.658 0 0.561 -1.393 0.763 0; #Assuming R_pi  = 0.641 (arXiv:1509.06938). #[BF update - AN 11/2023] #[BCL update - AN 07/2025]
+0.000157290   rho+  tau-  anti-nu_tau                      BCL -0.86 1.43 0.26 0.38 0.16 0.29 0.72 0.37 0.33 -0.87 1.88; #Assuming R_rho = 0.535 (arXiv:2104.05739). #[BCL model update - KMA 06/2022]  # [BF update - AN 11/2023]
 0.000090000   a_1+  tau-  anti-nu_tau                      ISGW2;
 0.000008000   b_1+  tau-  anti-nu_tau                      ISGW2;
 0.000008000   a_0+  tau-  anti-nu_tau                      ISGW2;
@@ -3419,17 +3464,17 @@ Decay anti-B0
 
 # VP
 #
-0.000003650   K_2*-  pi+                                   STS;	 #[BF update - PG 09/2020]
+0.000003650   K_2*-  pi+                                   STS;  #[BF update - PG 09/2020]
 0.000003150   anti-K_2*0  pi0                              STS;
 0.000086000   K'*-  pi+                                    PHSP; #UL
 0.000019300   anti-K'*0  pi0                               PHSP; #[K0 pi0]/[K0 pi+]*[K'*0 pi+]
 0.000008200   f'_0  anti-K0                                PHSP; #[K0 pi0]/[K+ pi0]*[f'_0 K+]
 0.000003400   f_0(1500)  anti-K0                           PHSP; #[K0 pi0]/[K+ pi0]*[f_0(1500) K+]
 0.000009000   rho(3S)0  anti-K0                            SVS;
-0.000002400   rho(2S)+  K-                                 SVS;	 #[BF update - PG 09/2020]
-0.000000600   rho(3S)+  K-                                 SVS;	 #[BF update - PG 09/2020]
-0.000025200   K_1-  pi+                                    SVS;	 #UL
-0.000021800   K'_1-  pi+                                   SVS;	 #UL
+0.000002400   rho(2S)+  K-                                 SVS;  #[BF update - PG 09/2020]
+0.000000600   rho(3S)+  K-                                 SVS;  #[BF update - PG 09/2020]
+0.000025200   K_1-  pi+                                    SVS;  #UL
+0.000021800   K'_1-  pi+                                   SVS;  #UL
 
 # PPP
 #
@@ -3896,31 +3941,31 @@ Decay anti-B0
 # Pythia contributions rescaled after each update such that the total B meson BF is compatible with 1 (decfiles/tools/b2dec-correct-pythiaBFs).
 
 # Lam_c X  / Sigma_c X   4.0 %
-0.00992629    cd_0  anti-ud_0                              PYTHIA 63;
-0.01985270    cd_1  anti-ud_1                              PYTHIA 63;
+0.01068453    cd_0  anti-ud_0                              PYTHIA 63;
+0.02136920    cd_1  anti-ud_1                              PYTHIA 63;
 
 # Xi_c X      2.5%
-0.00270702    cs_0  anti-ud_0                              PYTHIA 63;
-0.00541400    cs_1  anti-ud_1                              PYTHIA 63;
+0.00291380    cs_0  anti-ud_0                              PYTHIA 63;
+0.00582756    cs_1  anti-ud_1                              PYTHIA 63;
 
-0.24349378    anti-u  d  c  anti-d                         PYTHIA 23;
-0.04150720    anti-u  d  c  anti-d                         PYTHIA 65;
-0.01894896    anti-u  s  c  anti-d                         PYTHIA 63;
-0.01624197    anti-u  c  d  anti-d                         PYTHIA 23;
-0.00081209    anti-u  c  s  anti-d                         PYTHIA 23;
+0.26209372    anti-u  d  c  anti-d                         PYTHIA 23;
+0.04467784    anti-u  d  c  anti-d                         PYTHIA 65;
+0.02039642    anti-u  s  c  anti-d                         PYTHIA 63;
+0.01748266    anti-u  c  d  anti-d                         PYTHIA 23;
+0.00087413    anti-u  c  s  anti-d                         PYTHIA 23;
 # Try to crank up the psi production (Lange).
-0.06677709    anti-c  s  c  anti-d                         PYTHIA 43;
-0.00541438    anti-c  d  c  anti-d                         PYTHIA 43;
-0.00270721    anti-u  d  u  anti-d                         PYTHIA 23;
-0.00360960    anti-c  s  u  anti-d                         PYTHIA 23;
+0.07187804    anti-c  s  c  anti-d                         PYTHIA 43;
+0.00582797    anti-c  d  c  anti-d                         PYTHIA 43;
+0.00291400    anti-u  d  u  anti-d                         PYTHIA 23;
+0.00388533    anti-c  s  u  anti-d                         PYTHIA 23;
 # This and similar a few lines above have been divided by two to solve a double-counting problem for this channel (JGS 11/5/02).
-0.00184987    anti-u  u  d  anti-d                         PYTHIA 23;
-0.00006317    anti-d  d  d  anti-d                         PYTHIA 23;
-0.00008121    anti-s  s  d  anti-d                         PYTHIA 23;
-0.00198523    anti-u  u  s  anti-d                         PYTHIA 23;
-0.00162428    anti-d  d  s  anti-d                         PYTHIA 23;
-0.00135359    anti-s  s  s  anti-d                         PYTHIA 23;
-0.00451198    s  anti-d                                    PYTHIA 91;
+0.00199118    anti-u  u  d  anti-d                         PYTHIA 23;
+0.00006800    anti-d  d  d  anti-d                         PYTHIA 23;
+0.00008742    anti-s  s  d  anti-d                         PYTHIA 23;
+0.00213687    anti-u  u  s  anti-d                         PYTHIA 23;
+0.00174835    anti-d  d  s  anti-d                         PYTHIA 23;
+0.00145699    anti-s  s  s  anti-d                         PYTHIA 23;
+0.00485664    s  anti-d                                    PYTHIA 91;
 
 Enddecay
 
@@ -4194,47 +4239,95 @@ Decay B+
 0.000630000   anti-D*0  D+                                 SVS;
 0.000810000   anti-D*0  D*+                                SVV_HELAMP 0.56 0.0 0.96 0.0 0.47 0.0;
 
-# B -> D(*) X  Exclusive Modes
+# B -> D X  Exclusive Modes
 #
 # 1-pi
-0.004675170   anti-D0  pi+                                 PHSP; #[BF update - PG 09/2020]
-0.004900860   anti-D*0  pi+                                SVS;  #[BF update - PG 09/2020]
+0.004675170   anti-D0  pi+                                 PHSP; #PDG 2022 [BF update - NR 06/2023]
 
 # 2-pi
-0.013448300   rho+  anti-D0                                SVS;  #[BF update - PG 09/2020]
-0.000500000   anti-D0  pi0  pi+                            PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-
-0.009811760   anti-D*0  rho+                               SVV_HELAMP 0.283 1.13 0.932 0.0 0.228 0.95; #D* rho HELAMP parameters taken from ICHEP 98-852. #[BF update - PG 09/2020]
-0.000500000   anti-D*0  pi0  pi+                           PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-
-0.001072580   D-  pi+  pi+                                 PHSP; #[BF update - PG 09/2020]
-0.001348760   D*-  pi+  pi+                                PHSP; #[BF update - PG 09/2020]
+0.009390000   rho+  anti-D0                                SVS;  #PRD(L) 109 111103 (2024) [BF update - NR 06/2024]
+0.000000000   anti-D0  pi0  pi+                            PHSP; #Put NR BF to be zero to avoid PYTHIA, dominated by D0rho component. #[BF update - NR 06/2023]
 
 # 3-pi
-0.004500000   a_1+  anti-D0                                SVS;  #Gamma_109 PDGLive. #[BF update - PG 09/2020]
-0.004200000   anti-D0  rho0  pi+                           PHSP; #Gamma_108 PDGLive. #[BF update - PG 09/2020]
-0.005100000   anti-D0  pi-  pi+  pi+                       PHSP; #Gamma_107 PDGLive => Nonresonant BF. #[BF update - PG 09/2020]
+0.010000000   a_1+  anti-D0                                SVS;  #Interpreting D03pi BF as fully (D0 a1(->3pi)) decay #[BF update - NR 06/2023]
+0.000000000   anti-D0  rho0  pi+                           PHSP; #Put to zero to avoid PYTHIA; dominated by (D0 a1) decay#[BF update - NR 06/2023]
+0.000000000   anti-D0  pi-  pi+  pi+                       PHSP; #Put NR BF to be zero to avoid PYTHIA; dominated by (D0 a1) #[BF update - NR 06/2023]
 
-0.018800000   anti-D*0  a_1+                               SVV_HELAMP 0.458 0.0 0.866 0.0 0.200 0.0; #SVV_HELAMP from factorization http://babar-hn.slac.stanford.edu:5090/HyperNews/get/event_gen/168.html, updated Ref[B1], October 26, 2004 Lange update. #Gamma_137 PDGLive. #[BF update - PG 09/2020]
-0.000420000   anti-D*0  rho0  pi+                          PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-#0.010302960   anti-D*0  pi-  pi+  pi+                      PHSP; #Gamma_136 PDGLive => Inclusive BF. Correct to estimate for nonresonant? Or use inclusive BF and remove exclusive a_1+, and rho0 pi+ channels? #[BF update - PG 09/2020]
+# Freeze to 0 to avoid PYTHIA, already accounted by a1+ decays   #[BF update - NR 06/2023]
+0.000000000   anti-D0  rho+  pi0                           PHSP;
+0.000000000   anti-D0  pi+ pi0 pi0                         PHSP;
 
-0.002000000   D-  rho+  pi+                                PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-0.002000000   D-  pi0  pi+  pi+                            PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
+# Freeze to 0 to avoid PYTHIA #[BF update - NR 06/2023]
+0.000000000   anti-D0  rho0 rho+                           PHSP;
 
-0.002000000   D*-  rho+  pi+                               PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-0.015157710   D*-  pi0  pi+  pi+                           PHSP; #Gamma_142 PDGLive => Exclusive BF. #[BF update - PG 09/2020]
-0.000500000   anti-D*0  rho+  pi0                          PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-0.000500000   anti-D*0  pi+  pi0  pi0                      PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
+###
+0.000000000   b_1+  anti-D0                                SVS;  #Put BF to be zero to avoid PYTHIA [BF update - NR 06/2023]
+###
+0.000000000   anti-D0  pi-  pi+  pi+  pi0                  PHSP; #Put NR BF to be zero to avoid PYTHIA [BF update - NR 06/2023]
+###
+0.004100000   anti-D0  omega  pi+                          PHSP; #PDG 2022 [BF update - NR 06/2023]
+0.000400000   anti-D0  eta  pi+                            PHSP; #Limit provided to invalidate eta as a candidate for SL gap (to be measured)  [BF update - NR 06/2023]
+
+# B -> D* X  Exclusive Modes
+# 1-pi
+0.004900860   anti-D*0  pi+                                SVS;  #PDG 2022 #[BF update - NR 06/2023]
+
+#2-pi
+0.009811760   anti-D*0  rho+                               SVV_HELAMP 0.283 1.13 0.932 0.0 0.228 0.95; #PDG 2022 [BF update - NR 06/2023]
+0.000000000   anti-D*0  pi0  pi+                           PHSP; #Put NR BF to be zero to avoid PYTHIA, dominated by D*0rho component. #[BF update - NR 06/2023]
+
+# 3-pi
+0.018000000   anti-D*0  a_1+                               SVV_HELAMP 0.458 0.0 0.866 0.0 0.200 0.0; #Interpreting D*03pi BF as fully (D*0 a1(->3pi)) decay #[BF update - NR 06/2023]
+0.000000000   anti-D*0  rho0  pi+                          PHSP; #Put to zero to avoid PYTHIA; dominated by (D*0 a1) decay#[BF update - NR 06/2023]
+0.000000000   anti-D*0  pi-  pi+  pi+                      PHSP; #Put NR BF to be zero to avoid PYTHIA; dominated by (D*0 a1) #[BF update - NR 06/2023]
+
+# Freeze to 0 to avoid PYTHIA, already accounted by a1+ decays #[BF update - NR 06/2023]
+0.000000000   anti-D*0  rho+  pi0                          PHSP;
+0.000000000   anti-D*0  pi+  pi0  pi0                      PHSP;
+
+0.000000000   anti-D*0  b_1+                               SVV_HELAMP 0.336 0.0 0.88 0.0 0.336 0.0; #Put BF to be zero to avoid PYTHIA [BF update - NR 06/2023]
+
+0.000000000   anti-D*0  pi-  pi+  pi+  pi0                 PHSP; #Put NR BF to be zero to avoid PYTHIA [BF update - NR 06/2023]
+
+0.004500000   anti-D*0  omega  pi+                         PHSP; #PDG 2022 #[BF update - NR 06/2023]
+0.000400000   anti-D*0  eta  pi+                           PHSP; #Limit provided to invalidate eta as a candidate for SL gap (to be measured)  [BF update - NR 06/2023]
+
+# Freeze to 0 to avoid PYTHIA #[BF update - NR 06/2023]
+0.000000000   anti-D*0 sigma_0 pi+                         PHSP;
+0.000000000   anti-D*0  rho0 rho+                          PHSP;
+
+# B -> D-(*) X Exclusive modes
+
+0.000077000   D-  K+  pi+                                  PHSP; #[New mode added - PDG2024]
+
+0.000300000   D-  pi+  pi+                                 PHSP; #remaining after D**pi BFs   [BF update - NR 06/2023]
+0.000000000   D*-  pi+  pi+                                PHSP; #Freeze to 0 to avoid PYTHIA [BF update - NR 06/2023]
+
+0.000000000   D-  rho+  pi+                                PHSP; #Freeze to 0 to avoid PYTHIA [BF update - NR 06/2023]
+0.000000000   D-  pi0  pi+  pi+                            PHSP; #Freeze to 0 to avoid PYTHIA [BF update - NR 06/2023]
+
+0.000000000   D*-  rho+  pi+                               PHSP; #Freeze to 0 to avoid PYTHIA [BF update - NR 06/2023]
+0.000000000   D*-  pi0  pi+  pi+                           PHSP; #Freeze to 0 to avoid PYTHIA [BF update - NR 06/2023]
 
 # B->D** pi and D** rho, recommendation, http://babar-hn.slac.stanford.edu:5090/HyperNews/get/event_gen/151.html, further update October 26, 2004 Lange.
-0.000876000   anti-D_10  pi+                               SVS;
-0.000500000   anti-D'_10  pi+                              SVS;
-0.000520000   anti-D_2*0  pi+                              STS;
-0.000700000   anti-D_10  rho+                              PHSP;
-0.002200000   anti-D'_10  rho+                             PHSP;
-0.003800000   anti-D_2*0  rho+                             PHSP;
-0.000610000   anti-D_0*0  pi+                              PHSP;
+
+##the sum of 4 D**pi components should be equal to Dpi, the ratio of narrow modes is fixed (~2:1) from measurement, while the broad are split (roughly) equally [BF update - NR 06/2023]
+
+0.000850000   anti-D_2*0  pi+                              STS;
+0.001700000   anti-D_2*0  rho+                             PHSP; #rho+ decays are double BF of pi+ decays [BF update - NR 06/2023]
+0.000830000   anti-D_0*0  pi+                              PHSP;
+0.001660000   rho+ anti-D_0*0                              SVS;  #rho+ decays are double BF of pi+ decays [BF update - NR 06/2023]
+0.001860000   anti-D_10  pi+                               SVS;
+0.003720000   anti-D_10  rho+                              PHSP; #rho+ decays are double BF of pi+ decays [BF update - NR 06/2023]
+0.000620000   anti-D'_10  pi+                              SVS;
+0.001240000   anti-D'_10  rho+                             PHSP; #rho+ decays are double BF of pi+ decays [BF update - NR 06/2023]
+
+# Freeze to 0 to avoid PYTHIA #accounted by rho+ decays already [BF update - NR 06/2023]
+0.000000000   anti-D_0*0 pi+ pi0                           PHSP;
+0.000000000   anti-D_10  pi+ pi0                           PHSP;
+0.000000000   anti-D'_10 pi+ pi0                           PHSP;
+0.000000000   anti-D_2*0 pi+ pi0                           PHSP;
+
 
 # B->DK, recommendation, http://babar-hn.slac.stanford.edu:5090/HyperNews/get/event_gen/151.html, update: Ref [B1]
 0.000362550   anti-D0  K+                                  PHSP; #[BF update - PG 09/2020]
@@ -4252,13 +4345,10 @@ Decay B+
 0.000550000   anti-D0  K+  anti-K0                         PHSP;
 0.000525000   anti-D0  K+  anti-K*0                        PHSP; #[BF update - VB 12/2021, subtracted resonant D0 a_1+ component, BR(R+NR)=0.00075]
 0.000590000   anti-D*0  K+  anti-K*0                       PHSP; #[BF update - VB 12/2021, subtracted resonant D*0 a_1+ component, BR(R+NR)=0.00153]
-0.004100000   anti-D0  omega  pi+                          PHSP; #[BF update - PG 09/2020]
-0.004500000   anti-D*0  omega  pi+                         PHSP;
 0.000450000   anti-D0  D'_s1+                              PHSP;
 0.000940000   anti-D*0  D'_s1+                             PHSP;
 
 0.001500000   anti-D*0  K+  K*0                            PHSP;
-0.018000000   anti-D*0  pi-  pi+  pi+  pi0                 PHSP;
 0.005700000   anti-D*0  pi+  pi+  pi+  pi-  pi-            PHSP;
 0.002560000   D*-  pi+  pi+  pi+  pi-                      PHSP; #[BF update - PG 09/2020]
 0.000180230   D_s-  pi+  K+                                PHSP; #[BF update - PG 09/2020]
@@ -4272,12 +4362,12 @@ Decay B+
 
 # b -> u l nu
 #
-# pi0: FF values from HFLAV 2016.
-0.000078000   pi0  e+  nu_e                                BCL 0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52;
-0.000078000   pi0  mu+  nu_mu                              BCL 0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52;
+# pi0: FF values from HFLAV 2023.
+0.000078000   pi0  e+  nu_e                                BCL 0.424 -0.484 -0.658 0 0.561 -1.393 0.763 0; #[BCL update - AN 07/2025]
+0.000078000   pi0  mu+  nu_mu                              BCL 0.424 -0.484 -0.658 0 0.561 -1.393 0.763 0; #[BCL update - AN 07/2025]
 
-0.000038000   eta  e+  nu_e                                ISGW2; #[PDG2017]
-0.000038000   eta  mu+  nu_mu                              ISGW2; #[PDG2017]
+0.000035000   eta  e+  nu_e                                ISGW2; #[PDG2023]
+0.000035000   eta  mu+  nu_mu                              ISGW2; #[PDG2023]
 
 # rho0, omega: FF values from a combined fit on LCSR prediction (1203.1359) and measurements from Belle (1306.2781) and BaBar (1005.3288).
 # fit results for BCL expansion coefficients from (2104.05739) #[BCL model update - KMA 06/2022]
@@ -4286,8 +4376,8 @@ Decay B+
 0.000119000   omega  e+  nu_e                              BCL -0.94 1.78 0.24 0.30 0.00 0.25 0.54 -0.03 0.31 -0.89 1.81;
 0.000119000   omega  mu+  nu_mu                            BCL -0.94 1.78 0.24 0.30 0.00 0.25 0.54 -0.03 0.31 -0.89 1.81;
 
-0.000023000   eta'  e+  nu_e                               ISGW2; #[PDG2017]
-0.000023000   eta'  mu+  nu_mu                             ISGW2; #[PDG2017]
+0.000024000   eta'  e+  nu_e                               ISGW2; #[PDG2023]
+0.000024000   eta'  mu+  nu_mu                             ISGW2; #[PDG2023]
 0.000000000   anti-D(2S)0  e+  nu_e                        ISGW2;
 0.000000000   anti-D(2S)0  mu+  nu_mu                      ISGW2;
 0.000000000   anti-D*(2S)0  e+  nu_e                       ISGW2;
@@ -4295,9 +4385,9 @@ Decay B+
 0.001724000   Xu0  e+  nu_e                                VUB 4.8 1.29 0.22 20 0.30 0.54 1.20 0.95 1.26 0.78 1.34 0.98 1.41 0.91 1.48 1.23 1.55 1.36 1.61 1.39 1.67 1.38 1.73 1.43 1.79 1.41 1.84 1.42 1.90 1.45 1.95 1.40 2.00 1.42 2.50 1.31 3.00 1.36 3.50 1.15 4.00 1.01 4.50 1.51; #[PDG2017]
 0.001724000   Xu0  mu+  nu_mu                              VUB 4.8 1.29 0.22 20 0.30 0.54 1.20 0.95 1.26 0.78 1.34 0.98 1.41 0.91 1.48 1.23 1.55 1.36 1.61 1.39 1.67 1.38 1.73 1.43 1.79 1.41 1.84 1.42 1.90 1.45 1.95 1.40 2.00 1.42 2.50 1.31 3.00 1.36 3.50 1.15 4.00 1.01 4.50 1.51; #[PDG2017]
 
-0.000050804   pi0  tau+  nu_tau                            BCL 0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52; #Assuming R_pi  = 0.641 (arXiv:1509.06938). #[BF update - PG 09/2020] #[BCL model update - KMA 06/2022]
-0.000084530   rho0  tau+  nu_tau                           BCL -0.86 1.43 0.26 0.38 0.16 0.29 0.72 0.37 0.33 -0.87 1.88; #Assuming R_rho = 0.535 (priv. comm. M. Prim). #[BF update - PG 09/2020] #[BCL model update - KMA 06/2022]
-0.000064974   omega  tau+  nu_tau                          BCL -0.94 1.78 0.24 0.30 0.00 0.25 0.54 -0.03 0.31 -0.89 1.81; #Assuming R_om  = 0.543 (priv. comm. M. Prim). #[BF update - PG 09/2020] #[BCL model update - KMA 06/2022]
+0.000049998   pi0  tau+  nu_tau                            BCL 0.424 -0.484 -0.658 0 0.561 -1.393 0.763 0; #Assuming R_pi  = 0.641 (arXiv:1509.06938). #[BF update - AN 11/2023] #[BCL update - AN 07/2025]
+0.000084530   rho0  tau+  nu_tau                           BCL -0.86 1.43 0.26 0.38 0.16 0.29 0.72 0.37 0.33 -0.87 1.88; #Assuming R_rho = 0.535 (arXiv:2104.05739). #[BF update - PG 09/2020] #[BCL model update - KMA 06/2022]
+0.000064617   omega  tau+  nu_tau                          BCL -0.94 1.78 0.24 0.30 0.00 0.25 0.54 -0.03 0.31 -0.89 1.81; #Assuming R_om  = 0.543 (arXiv:2104.05739). #[BF update - AN 11/2023]
 0.000012000   eta  tau+  nu_tau                            ISGW2;
 0.000018000   eta'  tau+  nu_tau                           ISGW2;
 0.000046000   a_10  tau+  nu_tau                           ISGW2;
@@ -4965,9 +5055,9 @@ Decay B+
 0.000010700   f'_0  K+                                     PHSP; #UL
 0.000004400   f_0(1500)  K+                                PHSP; #UL
 0.000003000   f'_0  pi+                                    PHSP; #UL
-0.000003400   f'_2  K+                                     STS;	 #UL
-0.000012000   K''*0  pi+                                   SVS;	 #UL
-0.000000590   K*0  K+                                      SVS;	 #[BF update - PG 09/2020]
+0.000003400   f'_2  K+                                     STS;  #UL
+0.000012000   K''*0  pi+                                   SVS;  #UL
+0.000000590   K*0  K+                                      SVS;  #[BF update - PG 09/2020]
 0.000005000   rho(3S)0  K+                                 SVS;
 0.000005000   rho(2S)+  K0                                 SVS;
 0.000002500   rho(3S)+  K0                                 SVS;
@@ -4977,7 +5067,7 @@ Decay B+
 
 # TP
 #
-0.000001100   a_20  K+                                     STS;	 #UL
+0.000001100   a_20  K+                                     STS;  #UL
 
 # KKK
 #
@@ -5328,7 +5418,7 @@ Decay B+
 0.000001000   anti-Sigma+  Lambda0                         PHSP;
 0.000001000   anti-Sigma+  Sigma0                          PHSP;
 0.000000100   anti-Xi+  Xi0                                PHSP;
-0.000001500   Lambda(1520)0  p+                            PHSP; #UL
+0.000000315   anti-Lambda(1520)0  p+                       PHSP; # updated to https://inspirehep.net/literature/1307247
 
 # b->u (cs)
 # Ds- pi+:hep-ex/0207077 Belle + isospin. Others are ASSUMED like that.
@@ -5373,7 +5463,7 @@ Decay B+
 # Others are ASSUMED like that. The ratio D-rho+/D-pi+ is same as the ratioD+K*0/D+K0.
 #
 0.000000220   K*0  D+                                      SVS;
-0.000000020   D+  K+  pi-                                  PHSP;
+0.000005600   D+  K+  pi-                                  PHSP; #[BF update - SB 06/2024]
 0.000000010   D+  K0  pi0                                  PHSP;
 0.000000180   D*+  K*0                                     SVV_HELAMP  1.0 0.0 1.0 0.0 1.0 0.0;
 0.000000150   D*+  K+  pi-                                 PHSP;
@@ -5412,27 +5502,27 @@ Decay B+
 # Pythia contributions rescaled after each update such that the total B meson BF is compatible with 1 (decfiles/tools/b2dec-correct-pythiaBFs).
 
 # Lam_c X  / Sigma_c X   4.0 %
-0.02983137    anti-cd_1  uu_1                              PYTHIA 63;
+0.03019103    anti-cd_1  uu_1                              PYTHIA 63;
 
 # Xi_c X      2.4%
-0.00813587    anti-cs_1  uu_1                              PYTHIA 63;
+0.00823397    anti-cs_1  uu_1                              PYTHIA 63;
 
-0.20363635    u  anti-d  anti-c  u                         PYTHIA 23;
-0.03887120    u  anti-d  anti-c  u                         PYTHIA 43;
-0.02033957    u  anti-s  anti-c  u                         PYTHIA 43;
+0.24120615    u  anti-d  anti-c  u                         PYTHIA 23; # changed according to remaining BFs from 100%; the ratio of PYTHIA 23 to 43 is kept constant [BF update - NR 06/2023]
+0.04774060    u  anti-d  anti-c  u                         PYTHIA 43; # changed according to remaining BFs from 100%; the ratio of PYTHIA 23 to 43 is kept constant [BF update - NR 06/2023]
+0.02058479    u  anti-s  anti-c  u                         PYTHIA 43;
 # Try to crank up the psi production (Lange).
-0.06689463    c  anti-s  anti-c  u                         PYTHIA 43;
-0.00361591    c  anti-d  anti-c  u                         PYTHIA 43;
-0.00271192    u  anti-d  anti-u  u                         PYTHIA 23;
-0.00361591    c  anti-s  anti-u  u                         PYTHIA 23;
+0.06770115    c  anti-s  anti-c  u                         PYTHIA 43;
+0.00365951    c  anti-d  anti-c  u                         PYTHIA 43;
+0.00274462    u  anti-d  anti-u  u                         PYTHIA 23;
+0.00365951    c  anti-s  anti-u  u                         PYTHIA 23;
 # This and similar a few lines above have been divided by two to solve a double-counting problem for this channel (JGS 11/5/02).
-0.00185316    u  anti-u  anti-d  u                         PYTHIA 23;
-0.00006331    d  anti-d  anti-d  u                         PYTHIA 23;
-0.00008137    s  anti-s  anti-d  u                         PYTHIA 23;
-0.00198879    u  anti-u  anti-s  u                         PYTHIA 23;
-0.00162718    d  anti-d  anti-s  u                         PYTHIA 23;
-0.00135602    s  anti-s  anti-s  u                         PYTHIA 23;
-0.00451987    anti-s  u                                    PYTHIA 91;
+0.00187551    u  anti-u  anti-d  u                         PYTHIA 23;
+0.00006407    d  anti-d  anti-d  u                         PYTHIA 23;
+0.00008234    s  anti-s  anti-d  u                         PYTHIA 23;
+0.00201277    u  anti-u  anti-s  u                         PYTHIA 23;
+0.00164679    d  anti-d  anti-s  u                         PYTHIA 23;
+0.00137237    s  anti-s  anti-s  u                         PYTHIA 23;
+0.00457436    anti-s  u                                    PYTHIA 91;
 
 Enddecay
 
@@ -5694,47 +5784,95 @@ Decay B-
 0.000630000   D*0  D-                                      SVS;
 0.000810000   D*0  D*-                                     SVV_HELAMP 0.47 0.0 0.96 0.0 0.56 0.0;
 
-# B -> D(*) X  Exclusive Modes
+# B -> D X  Exclusive Modes
 #
 # 1-pi
-0.004675170   D0  pi-                                      PHSP; #[BF update - PG 09/2020]
-0.004900860   D*0  pi-                                     SVS;  #[BF update - PG 09/2020]
+0.004675170   D0  pi-                                      PHSP; #PDG 2022 [BF update - NR 06/2023]
 
 # 2-pi
-0.013448300   rho-  D0                                     SVS;  #[BF update - PG 09/2020]
-0.000500000   D0  pi0  pi-                                 PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-
-0.009811760   D*0  rho-                                    SVV_HELAMP 0.228 0.95 0.932 0.0 0.283 1.13;  #D* rho HELAMP parameters taken from ICHEP 98-852. #[BF update - PG 09/2020]
-0.000500000   D*0  pi0  pi-                                PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-
-0.001072580   D+  pi-  pi-                                 PHSP; #[BF update - PG 09/2020]
-0.001348760   D*+  pi-  pi-                                PHSP; #[BF update - PG 09/2020]
+0.009390000   rho-  D0                                     SVS;  #PRD(L) 109 111103 (2024) [BF update - NR 06/2024]
+0.000000000   D0  pi0  pi-                                 PHSP; #Put NR BF to be zero to avoid PYTHIA, dominated by D0rho component. #[BF update - NR 06/2023]
 
 # 3-pi
-0.004500000   a_1-  D0                                     SVS;  #Gamma_109 PDGLive. #[BF update - PG 09/2020]
-0.004200000   D0  rho0  pi-                                PHSP; #Gamma_108 PDGLive. #[BF update - PG 09/2020]
-0.005100000   D0  pi+  pi-  pi-                            PHSP; #Gamma_107 PDGLive => Nonresonant BF. #[BF update - PG 09/2020]
+0.010000000   a_1-  D0                                     SVS;  #Interpreting D03pi BF as fully (D0 a1(->3pi)) decay #[BF update - NR 06/2023]
+0.000000000   D0  rho0  pi-                                PHSP; #Put to zero to avoid PYTHIA; dominated by (D0 a1) decay#[BF update - NR 06/2023]
+0.000000000   D0  pi+  pi-  pi-                            PHSP; #Put NR BF to be zero to avoid PYTHIA; dominated by (D0 a1) #[BF update - NR 06/2023]
 
-0.018800000   D*0  a_1-                                    SVV_HELAMP 0.200 0.0 0.866 0.0 0.458 0.0;  #SVV_HELAMP from factorization http://babar-hn.slac.stanford.edu:5090/HyperNews/get/event_gen/168.html, updated Ref[B1], October 26, 2004 Lange update. #Gamma_137 PDGLive. #[BF update - PG 09/2020]
-0.000420000   D*0  rho0  pi-                               PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-#0.010302960   D*0  pi+  pi-  pi-                           PHSP; #Gamma_136 PDGLive => Inclusive BF. Correct to estimate for nonresonant? Or use inclusive BF and remove exclusive a_1+, and rho0 pi+ channels? #[BF update - PG 09/2020]
+# Freeze to 0 to avoid PYTHIA, already accounted by a1+ decays   #[BF update - NR 06/2023]
+0.000000000   D0  rho-  pi0                                PHSP;
+0.000000000   D0  pi- pi0 pi0                              PHSP;
 
-0.002000000   D+  rho-  pi-                                PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-0.002000000   D+  pi0  pi-  pi-                            PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
+# Freeze to 0 to avoid PYTHIA #[BF update - NR 06/2023]
+0.000000000   D0  rho0 rho-                                PHSP;
 
-0.002000000   D*+  rho-  pi-                               PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-0.015157710   D*+  pi0  pi-  pi-                           PHSP; #Gamma_142 PDGLive  => Exclusive BF. #[BF update - PG 09/2020]
-0.000500000   D*0  rho-  pi0                               PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
-0.000500000   D*0  pi-  pi0  pi0                           PHSP; #No PDGLive value. Keep original value in .DEC. #[Comment - PG 09/2020]
+###
+0.000000000   b_1- D0                                      SVS;  #Put BF to be zero to avoid PYTHIA [BF update - NR 06/2023]
+###
+0.000000000   D0   pi+  pi-  pi-  pi0                      PHSP; #Put NR BF to be zero to avoid PYTHIA [BF update - NR 06/2023]
+###
+0.004100000   D0  omega  pi-                               PHSP; #PDG 2022 #[BF update - NR 06/2023]
+0.000400000   D0  eta  pi-                                 PHSP; #Limit provided to invalidate eta as a candidate for SL gap (to be measured)  [BF update - NR 06/2023]
+
+# B -> D* X  Exclusive Modes
+# 1-pi
+0.004900860   D*0  pi-                                     SVS;  #PDG 2022 #[BF update - NR 06/2023]
+
+# 2-pi
+0.009811760   D*0  rho-                                    SVV_HELAMP 0.228 0.95 0.932 0.0 0.283 1.13;  #PDG 2022 [BF update - NR 06/2023]
+0.000000000   D*0  pi0  pi-                                PHSP; #Put NR BF to be zero to avoid PYTHIA, dominated by D*0rho component. #[BF update - NR 06/2023]
+
+# 3-pi
+0.018000000   D*0  a_1-                                    SVV_HELAMP 0.200 0.0 0.866 0.0 0.458 0.0;  #Interpreting D*03pi BF as fully (D*0 a1(->3pi)) decay #[BF update - NR 06/2023]
+0.000000000   D*0  rho0  pi-                               PHSP; #Put to zero to avoid PYTHIA; dominated by (D*0 a1) decay#[BF update - NR 06/2023]
+0.000000000   D*0  pi+  pi-  pi-                           PHSP; #Put NR BF to be zero to avoid PYTHIA; dominated by (D*0 a1) #[BF update - NR 06/2023]
+
+# Freeze to 0 to avoid PYTHIA, already accounted by a1+ decays #[BF update - NR 06/2023]
+0.000000000   D*0  rho-  pi0                               PHSP;
+0.000000000   D*0  pi-  pi0  pi0                           PHSP;
+
+0.000000000   D*0 b_1-                                     SVV_HELAMP 0.336 0.0 0.88 0.0 0.336 0.0; #Put BF to be zero to avoid PYTHIA [BF update - NR 06/2023]
+
+0.000000000   D*0  pi+  pi-  pi-  pi0                      PHSP; #Put NR BF to be zero to avoid PYTHIA [BF update - NR 06/2023]
+
+0.004500000   D*0  omega  pi-                              PHSP; #PDG 2022 #[BF update - NR 06/2023]
+0.000400000   D*0  eta  pi-                                PHSP; #Limit provided to invalidate eta as a candidate for SL gap (to be measured)  [BF update - NR 06/2023]
+
+# Freeze to 0 to avoid PYTHIA [BF update - NR 06/2023]
+0.000000000   D*0 sigma_0 pi-                              PHSP;
+0.000000000   D*0  rho0 rho-                               PHSP;
+
+# B -> D-(*) X Exclusive modes
+
+0.000077000   D+  K-  pi-                                  PHSP; #[New mode added - PDG2024]
+
+0.000300000   D+  pi-  pi-                                 PHSP; #remaining after D**pi BFs   [BF update - NR 06/2023]
+0.000000000   D*+  pi-  pi-                                PHSP; #Freeze to 0 to avoid PYTHIA [BF update - NR 06/2023]
+
+0.000000000   D+  rho-  pi-                                PHSP; #Freeze to 0 to avoid PYTHIA [BF update - NR 06/2023]
+0.000000000   D+  pi0  pi-  pi-                            PHSP; #Freeze to 0 to avoid PYTHIA [BF update - NR 06/2023]
+
+0.000000000   D*+  rho-  pi-                               PHSP; #Freeze to 0 to avoid PYTHIA [BF update - NR 06/2023]
+0.000000000   D*+  pi0  pi-  pi-                           PHSP; #Freeze to 0 to avoid PYTHIA [BF update - NR 06/2023]
 
 # B->D** pi and D** rho, recommendation, http://babar-hn.slac.stanford.edu:5090/HyperNews/get/event_gen/151.html, further update October 26, 2004 Lange.
-0.000876000   D_10  pi-                                    SVS;
-0.000500000   D'_10  pi-                                   SVS;
-0.000520000   D_2*0  pi-                                   STS;
-0.000700000   D_10  rho-                                   PHSP;
-0.002200000   D'_10  rho-                                  PHSP;
-0.003800000   D_2*0  rho-                                  PHSP;
-0.000610000   D_0*0  pi-                                   PHSP;
+
+##the sum of 4 D**pi components should be equal to Dpi, the ratio of narrow modes is fixed (~2:1) from measurement, while the broad are split (roughly) equally [BF update - NR 06/2023]
+
+0.000850000   D_2*0  pi-                                   STS;
+0.001700000   D_2*0  rho-                                  PHSP;#rho+ decays are double BF of pi+ decays [BF update - NR 06/2023]
+0.000830000   D_0*0  pi-                                   PHSP;
+0.001660000   rho-  D_0*0                                  SVS;#rho+ decays are double BF of pi+ decays  [BF update - NR 06/2023]
+0.001860000   D_10  pi-                                    SVS;
+0.003720000   D_10  rho-                                   PHSP;#rho+ decays are double BF of pi+ decays [BF update - NR 06/2023]
+0.000620000   D'_10  pi-                                   SVS;
+0.001240000   D'_10  rho-                                  PHSP;#rho+ decays are double BF of pi+ decays [BF update - NR 06/2023]
+
+# Freeze to 0 to avoid PYTHIA #accounted by rho+ decays already [BF update - NR 06/2023]
+0.000000000   D_0*0 pi- pi0                                PHSP;
+0.000000000   D_10  pi- pi0                                PHSP;
+0.000000000   D'_10 pi- pi0                                PHSP;
+0.000000000   D_2*0 pi- pi0                                PHSP;
+
 
 # B->DK, recommendation, http://babar-hn.slac.stanford.edu:5090/HyperNews/get/event_gen/151.html, update: Ref [B1]
 0.000362550   D0  K-                                       PHSP; #[BF update - PG 09/2020]
@@ -5752,13 +5890,10 @@ Decay B-
 0.000550000   D0  K-  anti-K0                              PHSP;
 0.000525000   D0  K-  anti-K*0                             PHSP; #[BF update - VB 12/2021, subtracted resonant anti-D0 a_1- component, BR(R+NR)=0.00075]
 0.000590000   D*0  K-  anti-K*0                            PHSP; #[BF update - VB 12/2021, subtracted resonant anti-D*0 a_1- component, BR(R+NR)=0.00153]
-0.004100000   D0  omega  pi-                               PHSP; #[BF update - PG 09/2020]
-0.004500000   D*0  omega  pi-                              PHSP;
 0.000450000   D0  D'_s1-                                   PHSP;
 0.000940000   D*0  D'_s1-                                  PHSP;
 
 0.001500000   D*0  K-  K*0                                 PHSP;
-0.018000000   D*0  pi+  pi-  pi-  pi0                      PHSP;
 0.005700000   D*0  pi-  pi-  pi-  pi+  pi+                 PHSP;
 0.002560000   D*+  pi-  pi-  pi-  pi+                      PHSP; #[BF update - PG 09/2020]
 0.000180230   D_s+  pi-  K-                                PHSP; #[BF update - PG 09/2020]
@@ -5772,12 +5907,12 @@ Decay B-
 
 # b -> u l nu
 #
-# pi: FF values from HFLAV 2016.
-0.000078000   pi0  e-  anti-nu_e                           BCL 0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52;
-0.000078000   pi0  mu-  anti-nu_mu                         BCL 0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52;
+# pi: FF values from HFLAV 2023.
+0.000078000   pi0  e-  anti-nu_e                           BCL 0.424 -0.484 -0.658 0 0.561 -1.393 0.763 0; #[BCL update - AN 07/2025]
+0.000078000   pi0  mu-  anti-nu_mu                         BCL 0.424 -0.484 -0.658 0 0.561 -1.393 0.763 0; #[BCL update - AN 07/2025]
 
-0.000038000   eta  e-  anti-nu_e                           ISGW2; #[PDG2017]
-0.000038000   eta  mu-  anti-nu_mu                         ISGW2; #[PDG2017]
+0.000035000   eta  e-  anti-nu_e                           ISGW2; #[PDG2023]
+0.000035000   eta  mu-  anti-nu_mu                         ISGW2; #[PDG2023]
 
 # rho, omega: FF values from a combined fit on LCSR prediction (1203.1359) and measurements from Belle (1306.2781) and BaBar (1005.3288).
 # fit results for BCL expansion coefficients from (2104.05739) #[BCL model update - KMA 06/2022]
@@ -5786,8 +5921,8 @@ Decay B-
 0.000119000   omega  e-  anti-nu_e                         BCL -0.94 1.78 0.24 0.30 0.00 0.25 0.54 -0.03 0.31 -0.89 1.81;
 0.000119000   omega  mu-  anti-nu_mu                       BCL -0.94 1.78 0.24 0.30 0.00 0.25 0.54 -0.03 0.31 -0.89 1.81;
 
-0.000023000   eta'  e-  anti-nu_e                          ISGW2; #[PDG2017]
-0.000023000   eta'  mu-  anti-nu_mu                        ISGW2; #[PDG2017]
+0.000024000   eta'  e-  anti-nu_e                          ISGW2; #[PDG2023]
+0.000024000   eta'  mu-  anti-nu_mu                        ISGW2; #[PDG2023]
 0.000000000   D(2S)0  e-  anti-nu_e                        ISGW2;
 0.000000000   D(2S)0  mu-  anti-nu_mu                      ISGW2;
 0.000000000   D*(2S)0  e-  anti-nu_e                       ISGW2;
@@ -5795,9 +5930,9 @@ Decay B-
 0.001724000   Xu0  e-  anti-nu_e                           VUB 4.8 1.29 0.22 20 0.30 0.54 1.20 0.95 1.26 0.78 1.34 0.98 1.41 0.91 1.48 1.23 1.55 1.36 1.61 1.39 1.67 1.38 1.73 1.43 1.79 1.41 1.84 1.42 1.90 1.45 1.95 1.40 2.00 1.42 2.50 1.31 3.00 1.36 3.50 1.15 4.00 1.01 4.50 1.51; #[PDG2017]
 0.001724000   Xu0  mu-  anti-nu_mu                         VUB 4.8 1.29 0.22 20 0.30 0.54 1.20 0.95 1.26 0.78 1.34 0.98 1.41 0.91 1.48 1.23 1.55 1.36 1.61 1.39 1.67 1.38 1.73 1.43 1.79 1.41 1.84 1.42 1.90 1.45 1.95 1.40 2.00 1.42 2.50 1.31 3.00 1.36 3.50 1.15 4.00 1.01 4.50 1.51; #[PDG2017]
 
-0.000050804   pi0  tau-  anti-nu_tau                       BCL 0.419 -0.495 -0.43 0.22 0.510 -1.700 1.53 4.52; #Assuming R_pi  = 0.641 (arXiv:1509.06938). #[BF update - PG 09/2020] #[BCL model update - KMA 06/2022]
-0.000084530   rho0  tau-  anti-nu_tau                      BCL -0.86 1.43 0.26 0.38 0.16 0.29 0.72 0.37 0.33 -0.87 1.88; #Assuming R_rho = 0.535 (priv. comm. M. Prim). #[BF update - PG 09/2020] #[BCL model update - KMA 06/2022]
-0.000064974   omega  tau-  anti-nu_tau                     BCL -0.94 1.78 0.24 0.30 0.00 0.25 0.54 -0.03 0.31 -0.89 1.81; #Assuming R_om  = 0.543 (priv. comm. M. Prim). #[BF update - PG 09/2020] #[BCL model update - KMA 06/2022]
+0.000049998   pi0  tau-  anti-nu_tau                       BCL 0.424 -0.484 -0.658 0 0.561 -1.393 0.763 0; #Assuming R_pi  = 0.641 (arXiv:1509.06938). #[BF update - AN 11/2023] #[BCL update - AN 07/2025]
+0.000084530   rho0  tau-  anti-nu_tau                      BCL -0.86 1.43 0.26 0.38 0.16 0.29 0.72 0.37 0.33 -0.87 1.88; #Assuming R_rho = 0.535 (arXiv:2104.05739). #[BF update - PG 09/2020] #[BCL model update - KMA 06/2022]
+0.000064617   omega  tau-  anti-nu_tau                     BCL -0.94 1.78 0.24 0.30 0.00 0.25 0.54 -0.03 0.31 -0.89 1.81; #Assuming R_om  = 0.543 (arXiv:2104.05739). #[BF update - AN 11/2023]
 0.000012000   eta  tau-  anti-nu_tau                       ISGW2;
 0.000018000   eta'  tau-  anti-nu_tau                      ISGW2;
 0.000046000   a_10  tau-  anti-nu_tau                      ISGW2;
@@ -6465,9 +6600,9 @@ Decay B-
 0.000010700   f'_0  K-                                     PHSP; #UL
 0.000004400   f_0(1500)  K-                                PHSP; #UL
 0.000003000   f'_0  pi-                                    PHSP; #UL
-0.000003400   f'_2  K-                                     STS;	 #UL
-0.000012000   anti-K''*0  pi-                              SVS;	 #UL
-0.000000590   anti-K*0  K-                                 SVS;	 #[BF update - PG 09/2020]
+0.000003400   f'_2  K-                                     STS;  #UL
+0.000012000   anti-K''*0  pi-                              SVS;  #UL
+0.000000590   anti-K*0  K-                                 SVS;  #[BF update - PG 09/2020]
 0.000005000   rho(3S)0  K-                                 SVS;
 0.000005000   rho(2S)-  anti-K0                            SVS;
 0.000002500   rho(3S)-  anti-K0                            SVS;
@@ -6828,7 +6963,7 @@ Decay B-
 0.000001000   Sigma-  anti-Lambda0                         PHSP;
 0.000001000   Sigma-  anti-Sigma0                          PHSP;
 0.000000100   Xi-  anti-Xi0                                PHSP;
-0.000001500   Lambda(1520)0  anti-p-                       PHSP; #UL
+0.000000315   Lambda(1520)0  anti-p-                       PHSP; # updated to https://inspirehep.net/literature/1307247
 
 # b->u (cs)
 # Ds- pi+:hep-ex/0207077 Belle + isospin. Others are ASSUMED like that.
@@ -6873,7 +7008,7 @@ Decay B-
 # Others are ASSUMED like that. The ratio D-rho+/D-pi+ is same as the ratioD+K*0/D+K0.
 #
 0.000000220   anti-K*0  D-                                 SVS;
-0.000000020   D-  K-  pi+                                  PHSP;
+0.000005600   D-  K-  pi+                                  PHSP; #[BF update - SB 06/2024]
 0.000000010   D-  anti-K0  pi0                             PHSP;
 0.000000180   D*-  anti-K*0                                SVV_HELAMP  1.0 0.0 1.0 0.0 1.0 0.0;
 0.000000150   D*-  K-  pi+                                 PHSP;
@@ -6912,27 +7047,27 @@ Decay B-
 # Pythia contributions rescaled after each update such that the total B meson BF is compatible with 1 (decfiles/tools/b2dec-correct-pythiaBFs).
 
 # Lam_c X  / Sigma_c X   4.0 %
-0.02983137    cd_1  anti-uu_1                              PYTHIA 63;
+0.03019103    cd_1  anti-uu_1                              PYTHIA 63;
 
 # Xi_c X      2.4%
-0.00813587    cs_1  anti-uu_1                              PYTHIA 63;
+0.00823397    cs_1  anti-uu_1                              PYTHIA 63;
 
-0.20363635    anti-u  d  c  anti-u                         PYTHIA 23;
-0.03887120    anti-u  d  c  anti-u                         PYTHIA 43;
-0.02033957    anti-u  s  c  anti-u                         PYTHIA 43;
+0.24120615    anti-u  d  c  anti-u                         PYTHIA 23; # changed according to remaining BFs from 100%; the ratio of PYTHIA 23 to 43 is kept constant [BF update - NR 06/2023]
+0.04774060    anti-u  d  c  anti-u                         PYTHIA 43; # changed according to remaining BFs from 100%; the ratio of PYTHIA 23 to 43 is kept constant [BF update - NR 06/2023]
+0.02058479    anti-u  s  c  anti-u                         PYTHIA 43;
 # Try to crank up the psi production (Lange).
-0.06689463    anti-c  s  c  anti-u                         PYTHIA 43;
-0.00361591    anti-c  d  c  anti-u                         PYTHIA 43;
-0.00271192    anti-u  d  u  anti-u                         PYTHIA 23;
-0.00361591    anti-c  s  u  anti-u                         PYTHIA 23;
+0.06770115    anti-c  s  c  anti-u                         PYTHIA 43;
+0.00365951    anti-c  d  c  anti-u                         PYTHIA 43;
+0.00274462    anti-u  d  u  anti-u                         PYTHIA 23;
+0.00365951    anti-c  s  u  anti-u                         PYTHIA 23;
 # This and similar a few lines above have been divided by two to solve a double-counting problem for this channel (JGS 11/5/02).
-0.00185316    anti-u  u  d  anti-u                         PYTHIA 23;
-0.00006331    anti-d  d  d  anti-u                         PYTHIA 23;
-0.00008137    anti-s  s  d  anti-u                         PYTHIA 23;
-0.00198879    anti-u  u  s  anti-u                         PYTHIA 23;
-0.00162718    anti-d  d  s  anti-u                         PYTHIA 23;
-0.00135602    anti-s  s  s  anti-u                         PYTHIA 23;
-0.00451987    s  anti-u                                    PYTHIA 91;
+0.00187551    anti-u  u  d  anti-u                         PYTHIA 23;
+0.00006407    anti-d  d  d  anti-u                         PYTHIA 23;
+0.00008234    anti-s  s  d  anti-u                         PYTHIA 23;
+0.00201277    anti-u  u  s  anti-u                         PYTHIA 23;
+0.00164679    anti-d  d  s  anti-u                         PYTHIA 23;
+0.00137237    anti-s  s  s  anti-u                         PYTHIA 23;
+0.00457436    s  anti-u                                    PYTHIA 91;
 
 Enddecay
 
@@ -7975,7 +8110,7 @@ CDecay tau+
 ##########                                                              ##########
 ##################################################################################
 #
-#   Updated PDG 2011
+#   Updated PDG 2023
 #
 
 # D*+
@@ -7997,8 +8132,9 @@ CDecay anti-D*0
 
 # D_s*+
 Decay D_s*+
-0.942000000   D_s+  gamma                                  VSP_PWAVE;
-0.058000000   D_s+  pi0                                    VSS;
+0.935000000   D_s+  gamma                                  VSP_PWAVE; #[PDG2023]
+0.058000000   D_s+  pi0                                    VSS;  #[PDG2023]
+0.007000000   D_s+  e+ e-                                  PHSP;  #[PDG2023] 
 Enddecay
 
 CDecay D_s*-
@@ -9673,7 +9809,30 @@ Decay K_S0
 0.000344328   pi-  e+  nu_e                                PHSP;
 Enddecay
 
-# K_L0 is decayed in GEANT
+Decay K_L0
+0.202464226   pi+  e-  nu_e                                PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.202464226   pi-  e+  nu_e                                PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.135033299   pi+  mu-  nu_mu                              PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.135033299   pi-  mu+  nu_mu                              PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000025738   pi0  pi+  e-  nu_e                           PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000025738   pi0  pi-  e+  nu_e                           PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000006205   pi+  e-  nu_e  e+  e-                        PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000006205   pi-  e+  nu_e  e+  e-                        PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.194795855   pi0  pi0  pi0                                PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.125231606   pi+  pi-  pi0                                PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.001880711   pi+  e-  nu_e  gamma                         PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.001880711   pi-  e+  nu_e  gamma                         PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000277023   pi+  mu-  nu_mu  gamma                       PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000277023   pi-  mu+  nu_mu  gamma                       PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000040995   pi+  pi-  gamma                              PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000001262   pi0  gamma  gamma                            PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000000016   pi0  gamma  e+  e-                           PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000545653   gamma  gamma                                 PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000009265   e+  e-  gamma                                PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000000355   mu+  mu-  gamma                              PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000000584   e+  e-  gamma  gamma                         PHSP;  #[New mode added] #[Reconstructed PDG2011]
+0.000000007   mu+  mu-  gamma  gamma                       PHSP;  #[New mode added] #[Reconstructed PDG2011]
+Enddecay
 
 # K0
 Decay K0
@@ -9730,16 +9889,18 @@ CDecay anti-K*0T
 
 # K_0*(1430)+
 Decay K_0*+
-0.666700000   K0  pi+                                      PHSP;
-0.333300000   K+  pi0                                      PHSP;
+0.613300000   K0  pi+                                      PHSP;
+0.306700000   K+  pi0                                      PHSP;
+0.080000000   K+  eta                                      PHSP; # [PDG2023 BF(Keta)/BF(Kpi) = 0.092]
 Enddecay
 
 CDecay K_0*-
 
 # K_0*(1430)0
 Decay K_0*0
-0.666700000   K+  pi-                                      PHSP;
-0.333300000   K0  pi0                                      PHSP;
+0.613300000   K+  pi-                                      PHSP;
+0.306700000   K0  pi0                                      PHSP;
+0.080000000   K0  eta                                      PHSP; # [PDG2023 BF(Keta)/BF(Kpi) = 0.092]
 Enddecay
 
 CDecay anti-K_0*0
@@ -9969,7 +10130,7 @@ Decay eta' # Edited by U. Tamponi, October 2016
 0.293511000   rho0  gamma                                  SVP_HELAMP  1.0 0.0 1.0 0.0;
 0.027500000   omega  gamma                                 SVP_HELAMP  1.0 0.0 1.0 0.0;
 0.022200000   gamma  gamma                                 PHSP;
-0.001680000   pi0  pi0  pi0                                ETA_PI0DALITZ -0.5; # PDG reporst -0.61 +- 0.08, outside of the physical boudaries. Forced back to the closest maeningful value
+0.001680000   pi0  pi0  pi0                                ETA_PI0DALITZ -0.5; # PDG reporst -0.61 +- 0.08, outside of the physical boundaries. Forced back to the closest maeningful value
 0.000109000   gamma  mu-  mu+                              PHSP;
 0.003600000   pi+  pi-  pi0                                PHSP;
 0.002400000   pi+  pi-  e+  e-                             PHSP;
@@ -10043,7 +10204,7 @@ CDecay a_0-
 # a_1's
 #
 # - Without a dedicated dalitz, but given the known rho pi dominance, the decay si modeled with incoherent sum of
-#   paritial amplitudes. Interference effects are significant but neglected here
+#   partial amplitudes. Interference effects are significant but neglected here
 # - Partial amplitudes from CLEO, Phys.Rev. D61 (2000) 01200.
 
 Decay a_10 #  Edited by U. Tamponi (March 2016), and V. Bertacchi (December 2021)
@@ -10125,7 +10286,7 @@ Enddecay
 #  The most complete and coherent study seems to be Phys.Atom.Nucl. 65 (2002) 1545-1552, Yad.Fiz. 65 (2002) 1583-1590, whose
 #  results are used here.
 #  The dominant 4 pi decay has actually sizable contribution by 2-body intermediate states (sigma sigma, rho rho...), whose
-#  amplitudes are not well measured. Therefore, PHSP is used in lack of realiable alternative models
+#  amplitudes are not well measured. Therefore, PHSP is used in lack of reliable alternative models
 
 Decay f'_0 # Edited by U. Tamponi, October 2016
 0.135700000   pi+  pi-                                     PHSP;
@@ -10190,7 +10351,7 @@ Decay f_2
 Enddecay
 
 # The dominant 4 pi decay has actually sizable contribution by 2-body intermediate states (sigma sigma, rho rho...), whose
-# amplitudes are not well measured. Therefore, PHSP is used in lack of realiable alternative models
+# amplitudes are not well measured. Therefore, PHSP is used in lack of reliable alternative models
 # Checked by U. Tamponi, october 2016. No changes are needed
 
 Decay f_0(1500)
@@ -10288,7 +10449,7 @@ Decay phi(1680) # Edited by U. Tamponi October 2016
 0.015000000   K+  K-                                       VSS;
 Enddecay
 
-# Combining the informations from Phys.Rev. D73 (2006) 052003 and Z.Phys. C56 (1992) 15-20
+# Combining the information from Phys.Rev. D73 (2006) 052003 and Z.Phys. C56 (1992) 15-20
 # one can estimate the ratios  BF(rho pi) : BF(omega pi pi) : BF(eta pi) = 2:2:0.6
 Decay omega(1650) # Edited by U. Tamponi October 2016
 0.145000000   rho+  pi-                                    PHSP;
@@ -11586,7 +11747,7 @@ Decay Lambda_c+
 # Contributes 0.0207*0.665 = 0.01376 to pKpi+ and 0.0207*0.333 = 0.0689 to pK0pi0
 0.005290000   Delta+  anti-K0                              PYTHIA         0; # [produces ppi0K0 and npiK0]
 0.005290000   Delta+  anti-K*0                             PYTHIA         0;
-0.013750000   Lambda0  pi+                                 PYTHIA         0; # [PDG2021]
+0.013750000   Lambda0  pi+                                 HypNonLepton   -0.84 3; # [PDG2023 and PHYSICAL REVIEW D 100, 072004 (2019)]
 0.006340000   Lambda0  rho+                                PYTHIA         0; # [ESTIMATE goes into L0pipi0]
 0.013650000   Sigma0  pi+                                  PYTHIA         0; # [PDG2021]
 0.005290000   Sigma0  rho+                                 PYTHIA         0; # [ESTIMATE goes into S0pipi0]
@@ -11652,7 +11813,7 @@ Decay Lambda_c+
 0.002430000   p+  pi+  pi+  pi-  pi-                       PHSP;  # [PDG2021]
 0.001690000   p+  pi+  pi-  pi0  pi0                       PHSP;  # [Isospin model]
 0.001160000   p+  pi0  pi0  pi0  pi0                       PHSP;  # [Isospin model]
-0.000530000   p+  K+  K-                                   PHSP;  # [PDG2021 in addtion to pphi mode]
+0.000530000   p+  K+  K-                                   PHSP;  # [PDG2021 in addition to pphi mode]
 0.004860000   n0  pi+  pi0                                 PHSP;  # [Isospin model]
 0.002430000   n0  pi+  pi0  pi+  pi-                       PHSP;  # [Isospin model]
 0.001690000   n0  pi+  pi0  pi0  pi0                       PHSP;  # [Isospin model]
@@ -11835,7 +11996,7 @@ CDecay anti-Lambda_c(2625)-
 # Lambda0
 # Updated Feb 2009
 Decay Lambda0
-0.638719992   p+  pi-                                      PHSP; #[Reconstructed PDG2011]
+0.638719992   p+  pi-                                      HypNonLepton 0.748 -6.5; #[PDG2023]
 0.357719992   n0  pi0                                      PHSP; #[Reconstructed PDG2011]
 0.001741600   n0  gamma                                    PHSP; #[Reconstructed PDG2011]
 0.000832160   p+  pi-  gamma                               PHSP; #[Reconstructed PDG2011]
@@ -13165,31 +13326,6 @@ Decay anti-Omega_cc*-
   0.25 anti-u   d   anti-s     anti-cs_1    PYTHIA 42;
   0.05 anti-u   s   anti-s     anti-cs_0    PYTHIA 42;
   0.03 anti-u   s   anti-s     anti-cs_1    PYTHIA 42;
-Enddecay
-
-Decay K_L0
-0.202464226   pi+  e-  nu_e                                PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.202464226   pi-  e+  nu_e                                PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.135033299   pi+  mu-  nu_mu                              PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.135033299   pi-  mu+  nu_mu                              PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000025738   pi0  pi+  e-  nu_e                           PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000025738   pi0  pi-  e+  nu_e                           PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000006205   pi+  e-  nu_e  e+  e-                        PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000006205   pi-  e+  nu_e  e+  e-                        PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.194795855   pi0  pi0  pi0                                PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.125231606   pi+  pi-  pi0                                PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.001880711   pi+  e-  nu_e  gamma                         PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.001880711   pi-  e+  nu_e  gamma                         PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000277023   pi+  mu-  nu_mu  gamma                       PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000277023   pi-  mu+  nu_mu  gamma                       PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000040995   pi+  pi-  gamma                              PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000001262   pi0  gamma  gamma                            PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000000016   pi0  gamma  e+  e-                           PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000545653   gamma  gamma                                 PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000009265   e+  e-  gamma                                PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000000355   mu+  mu-  gamma                              PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000000584   e+  e-  gamma  gamma                         PHSP;  #[New mode added] #[Reconstructed PDG2011]
-0.000000007   mu+  mu-  gamma  gamma                       PHSP;  #[New mode added] #[Reconstructed PDG2011]
 Enddecay
 
 End
