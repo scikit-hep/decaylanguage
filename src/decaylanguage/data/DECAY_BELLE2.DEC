@@ -8134,7 +8134,7 @@ CDecay anti-D*0
 Decay D_s*+
 0.935000000   D_s+  gamma                                  VSP_PWAVE; #[PDG2023]
 0.058000000   D_s+  pi0                                    VSS;  #[PDG2023]
-0.007000000   D_s+  e+ e-                                  PHSP;  #[PDG2023] 
+0.007000000   D_s+  e+ e-                                  PHSP;  #[PDG2023]
 Enddecay
 
 CDecay D_s*-
