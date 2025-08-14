@@ -6,6 +6,8 @@
   - Updated to the latest Belle II's main DECAY.DEC file.
 * Miscellaneous:
   - Remove invalid `-y` argument to `uv pip install` in the nox script.
+* CI and tests:
+  - Updates and clean-up to pre-commit hooks and CI YAML files.
 
 ## Version 0.19.0 (2025-07-04)
 
