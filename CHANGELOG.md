@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 0.19.1
+## Version 0.20.0 (2025-08-15)
 
 * Parsing of decay files (aka .dec files):
   - Updated to the latest Belle II's main DECAY.DEC file.
