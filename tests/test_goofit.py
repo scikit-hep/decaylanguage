@@ -29,4 +29,4 @@ def test_simple():
     assert Particle.from_pdgid(-211) == all_states[4]  # pi-
 
     assert len(lines) == 1
-    (line,) = lines
+    (_line,) = lines
