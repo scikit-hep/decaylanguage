@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 0.20.1 (2025-10-02)
+
+* Dependencies:
+  - Package dependent on ``Particle`` >= 0.26.0 and `hepunits` >= 2.4.0.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.20.0 (2025-08-15)
 
 * Parsing of decay files (aka .dec files):
