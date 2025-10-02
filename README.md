@@ -51,9 +51,6 @@ Required and compatibility dependencies will be automatically installed by pip.
 -   [lark](https://github.com/lark-parser/lark): A modern parsing library for Python
 -   [graphviz](https://gitlab.com/graphviz/graphviz/) to render (DOT language) graph
     descriptions and visualizations of decay chains.
-
-### Python compatibility:
--   [importlib_resources](http://importlib-resources.readthedocs.io/en/latest/) backport if using Python /< 3.9
 </p></details>
 
 

@@ -1,16 +1,16 @@
 name: decaylanguage_demo
 dependencies:
-  - python>=3.7
-  - pandas>=0.24
+  - python>=3.9
+  - pandas>=1
   - attrs>=19.2
   - pip>=9
   - jupyterlab>=0.35
-  - numpy>=1.12
+  - numpy>=1.19.3
   - graphviz>=0.12.0
   - plumbum>=1.7.0
   - lark>=1.0.0
   - RISE
-  - hepunits>=2.2.0
-  - particle>=0.22.0
+  - hepunits>=2.4.0
+  - particle>=0.26.0
   - pip:
     - .
