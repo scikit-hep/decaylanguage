@@ -35,12 +35,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.9', '3.10', '3.13']
+        python-version: ['3.9', '3.11', '3.13', '3.14']
         include:
           - {os: macos-13, python-version: '3.9'}
           - {os: macos-latest, python-version: '3.13'}
+          - {os: macos-latest, python-version: '3.14'}
           - {os: windows-latest, python-version: '3.9'}
           - {os: windows-latest, python-version: '3.13'}
+          - {os: windows-latest, python-version: '3.14'}
 
     steps:
     - uses: actions/checkout@v5
