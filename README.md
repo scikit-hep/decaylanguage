@@ -9,7 +9,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3257423.svg)](https://doi.org/10.5281/zenodo.3257423)
 
 [![GitHub Actions Status: CI](https://github.com/scikit-hep/decaylanguage/workflows/CI/badge.svg)](https://github.com/scikit-hep/decaylanguage/actions)
-[![Code Coverage](https://codecov.io/gh/scikit-hep/decaylanguage/graph/badge.svg?branch=main)](https://codecov.io/gh/scikit-hep/decaylanguage?branch=main)
+[![Code Coverage](https://codecov.io/gh/scikit-hep/decaylanguage/branch/main/graph/badge.svg)]([https://codecov.io/gh/scikit-hep/decaylanguage?branch=main](https://app.codecov.io/gh/scikit-hep/decaylanguage/tree/main))
 [![Documentation Status](https://readthedocs.org/projects/decaylanguage/badge/?style=flat)](https://decaylanguage.readthedocs.io)
 
 [![Binder demo](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scikit-hep/decaylanguage/main?urlpath=lab/tree/notebooks/DecayLanguageDemo.ipynb)
