@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 0.20.2 (2026-01-10)
+
+* Dependencies:
+  - Added support for Python 3.14.
+* CI and tests:
+  - Updates to pre-commit hooks and CI YAML files.
+
 ## Version 0.20.1 (2025-10-02)
 
 * Dependencies:
