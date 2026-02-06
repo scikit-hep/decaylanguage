@@ -4,14 +4,11 @@ from pathlib import Path
 
 import nox
 
-nox.needs_version = ">=2024.4.15"
+nox.needs_version = ">=2025.02.09"
 nox.options.default_venv_backend = "uv|virtualenv"
 
-ALL_PYTHONS = [
-    c.split()[-1]
-    for c in nox.project.load_toml("pyproject.toml")["project"]["classifiers"]
-    if c.startswith("Programming Language :: Python :: 3.")
-]
+PYPROJECT = nox.project.load_toml("pyproject.toml")
+PYTHON_VERSIONS = nox.project.python_versions(PYPROJECT)
 
 
 @nox.session
@@ -29,7 +26,7 @@ def pylint(session: nox.Session) -> None:
     session.run("pylint", "src", *session.posargs)
 
 
-@nox.session(python=ALL_PYTHONS)
+@nox.session(python=PYTHON_VERSIONS)
 def tests(session):
     session.install(".", "--group=test")
     session.run("pytest", *session.posargs)
