@@ -42,11 +42,11 @@ import copy
 import os
 import re
 import warnings
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from io import StringIO
 from itertools import chain, zip_longest
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from hepunits import GeV
 from lark import Lark, Token, Transformer, Tree, Visitor
@@ -995,7 +995,7 @@ All but the first occurrence will be discarded/removed ...""".format(
 
             aligned.append(row)
 
-        return [sep.join(row) for row in zip(*aligned)]
+        return [sep.join(row) for row in zip(*aligned, strict=True)]
 
     def build_decay_chains(
         self,
