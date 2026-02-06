@@ -56,7 +56,7 @@ jobs:
     - uses: astral-sh/setup-uv@v7
 
     - name: Install package
-      run: uv pip install --system -e .[test]
+      run: uv pip install --system -e. --group=test
 
     - name: Pytest
       if: runner.os == 'Linux'
@@ -92,7 +92,7 @@ jobs:
       run: sudo apt-get install graphviz
 
     - name: Install package
-      run: uv pip install --system -e .[test]
+      run: uv pip install --system -e. --group=test
 
     - name: Install notebook requirements
       run: uv pip install --system nbconvert jupyter_client ipykernel pydot

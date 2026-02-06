@@ -53,9 +53,9 @@ dependencies = [
 ]
 dynamic = ["version"]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
-    "pytest>=6",
+    { include-group = "test" }
 ]
 docs = [
     "sphinx-rtd-theme>=0.5.0",
@@ -146,6 +146,9 @@ messages_control.disable = [
     "unused-argument",  # covered by Ruff
     "duplicate-code",
 ]
+
+[tool.ruff]
+show-fixes = true
 
 [tool.ruff.lint]
 extend-select = [
