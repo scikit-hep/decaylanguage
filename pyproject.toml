@@ -9,7 +9,7 @@ build-backend = "hatchling.build"
 name = "decaylanguage"
 description = "A language to describe, manipulate and convert particle decays"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [
     { name = "Eduardo Rodrigues", email = "eduardo.rodrigues@cern.ch" },
     { name = "Henry Schreiner", email = "henryfs@princeton.edu" },
@@ -33,7 +33,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -53,9 +52,9 @@ dependencies = [
 ]
 dynamic = ["version"]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
-    "pytest>=6",
+    { include-group = "test" }
 ]
 docs = [
     "sphinx-rtd-theme>=0.5.0",
@@ -146,6 +145,9 @@ messages_control.disable = [
     "unused-argument",  # covered by Ruff
     "duplicate-code",
 ]
+
+[tool.ruff]
+show-fixes = true
 
 [tool.ruff.lint]
 extend-select = [

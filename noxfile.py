@@ -13,8 +13,8 @@ PYTHON_VERSIONS = nox.project.python_versions(PYPROJECT)
 
 @nox.session
 def lint(session):
-    session.install("pre-commit")
-    session.run("pre-commit", "run", "--all-files", *session.posargs)
+    session.install("prek")
+    session.run("prek", "run", "--all-files", *session.posargs)
 
 
 @nox.session
@@ -22,15 +22,13 @@ def pylint(session: nox.Session) -> None:
     """
     Run pylint.
     """
-
-    session.install("pylint")
-    session.install("-e.[dev]")
+    session.install("-e.", "--group=dev", "pylint")
     session.run("pylint", "src", *session.posargs)
 
 
 @nox.session(python=PYTHON_VERSIONS)
 def tests(session):
-    session.install(".[test]")
+    session.install(".", "--group=test")
     session.run("pytest", *session.posargs)
 
 
