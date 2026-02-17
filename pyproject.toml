@@ -61,6 +61,7 @@ docs = [
     "sphinx>=4",
 ]
 test = [
+    "pytest-benchmark>=5.2.0",
     "pytest-cov",
     "pytest>=6",
 ]
