@@ -57,7 +57,7 @@ from particle.converters import PDG2EvtGenNameMap
 
 from .. import data
 from .._compat.typing import Self
-from ..decay.decay import DecayChainDict, DecayModeDict, _expand_decay_modes
+from ..decay.decay import DecayModeDict, _expand_decay_modes
 from ..utils import charge_conjugate_name
 from .enums import PhotosEnum, known_decay_models
 
@@ -1070,26 +1070,21 @@ All but the first occurrence will be discarded/removed ...""".format(
                 # Fetch details
                 d = self._decay_mode_details(dm, display_photos_keyword=False)
 
-                fs_list = d["fs"]
+                for i, fs in enumerate(d["fs"]):
+                    if fs in stable_set:
+                        continue
+                    try:
+                        assert isinstance(fs, str)
 
-                new_fs: list[str | DecayChainDict] = []
-                for p in fs_list:
-                    if isinstance(p, str):
-                        if p in stable_set:
-                            new_fs.append(p)
-                        else:
-                            try:
-                                # Use the wrapper function `_recurse`
-                                # to ensure it gets a deepcopy of the child's decay chain.
-                                new_fs.append(_recurse(p))
-                            # if fs does not have decays defined in the parsed file
-                            except DecayNotFound:
-                                new_fs.append(p)
-                    else:
-                        new_fs.append(p)
-                d["fs"] = new_fs
+                        # Use the wrapper function `_recurse`
+                        # to ensure it gets a deepcopy of the child's decay chain.
+                        _info = _recurse(fs)
+                        d["fs"][i] = _info  # type: ignore[index]
+                    # if fs does not have decays defined in the parsed file
+                    except DecayNotFound:
+                        pass
+
                 info.append(d)
-                continue
 
             return {p_name: info}
 
