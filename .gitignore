@@ -71,3 +71,7 @@ docs/_build
 *.gv*
 
 /src/decaylanguage/_version.py
+
+# Lock files
+uv.lock
+*pylock
