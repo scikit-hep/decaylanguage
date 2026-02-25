@@ -1061,7 +1061,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         stable_set = frozenset(stable_particles)
 
         # Define the actual computation logic within a helper function
-        # This function will return the raw, mutable result which will be cached.
+        # This function will return the raw, mutable result, which will be cached.
         @cache
         def _cached_recurse_raw(p_name: str) -> dict[str, list[DecayModeDict]]:
             info = []
@@ -1094,7 +1094,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             raw_result = _cached_recurse_raw(p_name)
             return copy.deepcopy(raw_result)
 
-        # Clear the cache to not cause problem in the case DecFileParser object (self) is modified
+        # Clear the cache to not cause problem in the case the DecFileParser object (self) is modified
         _cached_recurse_raw.cache_clear()
 
         return _recurse(mother)
