@@ -43,6 +43,7 @@ import os
 import re
 import warnings
 from collections.abc import Callable, Iterable
+from functools import cache
 from io import StringIO
 from itertools import chain, zip_longest
 from pathlib import Path
@@ -1056,29 +1057,47 @@ All but the first occurrence will be discarded/removed ...""".format(
         >>> p.build_decay_chains('D+', stable_particles=['pi0'])    # doctest: +SKIP
         {'D+': [{'bf': 1.0, 'fs': ['K-', 'pi+', 'pi+', 'pi0'], 'model': 'PHSP', 'model_params': ''}]}
         """
+        # Standardize inputs for hashing
+        stable_set = frozenset(stable_particles)
 
-        info = []
-        for dm in self._find_decay_modes(mother):
-            d = self._decay_mode_details(dm, display_photos_keyword=False)
+        # Define the actual computation logic within a helper function
+        # This function will return the raw, mutable result, which will be cached.
+        @cache
+        def _cached_recurse_raw(p_name: str) -> dict[str, list[DecayModeDict]]:
+            info = []
 
-            for i, fs in enumerate(d["fs"]):
-                if fs in stable_particles:
-                    continue
+            for dm in self._find_decay_modes(p_name):
+                # Fetch details
+                d = self._decay_mode_details(dm, display_photos_keyword=False)
 
-                try:
-                    # This throws a DecayNotFound exception
+                for i, fs in enumerate(d["fs"]):
+                    if fs in stable_set:
+                        continue
+                    try:
+                        assert isinstance(fs, str)
+
+                        # Use the wrapper function `_recurse`
+                        # to ensure it gets a deepcopy of the child's decay chain.
+                        _info = _recurse(fs)
+                        d["fs"][i] = _info  # type: ignore[index]
                     # if fs does not have decays defined in the parsed file
-                    # _n_dms = len(self._find_decay_modes(fs))
+                    except DecayNotFound:
+                        pass
 
-                    assert isinstance(fs, str)
-                    _info = self.build_decay_chains(fs, stable_particles)
-                    d["fs"][i] = _info  # type: ignore[index]
-                except DecayNotFound:
-                    pass
+                info.append(d)
 
-            info.append(d)
+            return {p_name: info}
 
-        return {mother: info}
+        # This is the wrapper function that external callers (and recursive calls) will use.
+        # It always returns a deepcopy of the (potentially cached) raw result.
+        def _recurse(p_name: str) -> dict[str, list[DecayModeDict]]:
+            raw_result = _cached_recurse_raw(p_name)
+            return copy.deepcopy(raw_result)
+
+        # Clear the cache to not cause problem in the case the DecFileParser object (self) is modified
+        _cached_recurse_raw.cache_clear()
+
+        return _recurse(mother)
 
     def __repr__(self) -> str:
         if self._parsed_dec_file is not None:
