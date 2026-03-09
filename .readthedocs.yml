@@ -21,4 +21,4 @@ build:
   jobs:
     install:
     - pip install --upgrade pip
-    - pip install --group docs
+    - pip install -e . --group docs
