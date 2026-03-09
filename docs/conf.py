@@ -101,7 +101,7 @@ html_show_sourcelink = False
 # -- Build hooks: copy files into docs tree ----------------------------------
 
 
-def _copy_files(app):
+def _copy_files(_app):
     """Copy README.md, CHANGELOG.md, and notebooks into docs/ at build time."""
     for name, dst_name in [
         ("README.md", "readme.md"),
@@ -130,7 +130,7 @@ def _copy_files(app):
                 shutil.copy2(f, img_dst / f.name)
 
 
-def _cleanup_files(app, exception):
+def _cleanup_files(_app, _exception):
     """Remove copied files after build."""
     for name in ("readme.md", "changelog.md"):
         f = DIR / name
