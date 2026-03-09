@@ -103,7 +103,10 @@ html_show_sourcelink = False
 
 def _copy_files(app):
     """Copy README.md, CHANGELOG.md, and notebooks into docs/ at build time."""
-    for name, dst_name in [("README.md", "readme.md"), ("CHANGELOG.md", "changelog.md")]:
+    for name, dst_name in [
+        ("README.md", "readme.md"),
+        ("CHANGELOG.md", "changelog.md"),
+    ]:
         src = BASEDIR / name
         dst = DIR / dst_name
         if src.exists():
