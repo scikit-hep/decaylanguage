@@ -17,6 +17,7 @@ version = release = get_version("decaylanguage")
 # -- General configuration ---------------------------------------------------
 
 extensions = [
+    "jupyter_sphinx",
     "myst_parser",
     "nbsphinx",
     "sphinx.ext.autodoc",
@@ -27,21 +28,15 @@ extensions = [
     "sphinx_copybutton",
 ]
 
-source_suffix = {
-    ".rst": "restructuredtext",
-    ".md": "markdown",
-}
-
 exclude_patterns = [
     "_build",
     "**.ipynb_checkpoints",
     "readme.md",
     "changelog.md",
 ]
-
-main_doc = "index"
 nitpicky = True
 nitpick_ignore = [
+    ("py:class", "graphviz.graphs.Digraph"),
     ("py:class", "graphviz.sources.Source"),
     ("py:class", "lark.tree.Tree"),
     ("py:class", "pandas.core.frame.DataFrame"),
@@ -73,11 +68,7 @@ autodoc_member_order = "bysource"
 autodoc_typehints = "description"
 
 nbsphinx_kernel_name = "python3"
-nbsphinx_execute = "never"
-
-myst_enable_extensions = [
-    "colon_fence",
-]
+nbsphinx_execute = "always"
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -119,6 +110,14 @@ def _copy_files(_app):
         for f in nb_src.iterdir():
             if f.suffix in (".ipynb", ".txt", ".cu"):
                 shutil.copy2(f, nb_dst / f.name)
+
+    # Copy data files needed by notebooks
+    for src in [
+        BASEDIR / "models" / "DtoKpipipi_v2.txt",
+        BASEDIR / "tests" / "data" / "test_example_Dst.dec",
+    ]:
+        if src.exists():
+            shutil.copy2(src, nb_dst / src.name)
 
     # Copy images for notebook rendering
     img_src = BASEDIR / "images"
