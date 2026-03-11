@@ -17,8 +17,9 @@ build:
   tools:
     python: "3.14"
   apt_packages:
-    - pandoc
+    - graphviz  # pydot backend for Lark parse tree rendering in notebooks
+    - pandoc  # required by nbsphinx for notebook format conversion
   jobs:
     install:
     - pip install --upgrade pip
-    - pip install -e . --group docs
+    - pip install -e . --group docs  # editable install needed for importlib.metadata.version()
