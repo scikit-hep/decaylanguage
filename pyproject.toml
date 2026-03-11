@@ -57,12 +57,14 @@ dev = [
     { include-group = "test" }
 ]
 docs = [
-    "pydata-sphinx-theme>=0.16",
-    "sphinx>=7",
+    "ipykernel",
+    "jupyter-sphinx>=0.5",
     "myst-parser>=4",
     "nbsphinx>=0.9",
+    "pydot",
+    "pydata-sphinx-theme>=0.16",
+    "sphinx>=7",
     "sphinx-copybutton>=0.5",
-    "ipykernel",
 ]
 test = [
     "pytest-benchmark>=5.2.0",
