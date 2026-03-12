@@ -17,7 +17,7 @@ build:
   tools:
     python: "3.14"
   apt_packages:
-    - graphviz  # pydot backend for Lark parse tree rendering in notebooks
+    - graphviz  # dot binary needed by DecayChainViewer (via python-graphviz)
     - pandoc  # required by nbsphinx for notebook format conversion
   jobs:
     install:
