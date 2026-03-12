@@ -33,6 +33,10 @@ exclude_patterns = [
     "**.ipynb_checkpoints",
     "readme.md",
     "changelog.md",
+    # Linked/copied repo directories (created by build hooks for notebook path resolution)
+    "examples/images",
+    "examples/models",
+    "examples/tests",
 ]
 nitpicky = True
 nitpick_ignore = [
@@ -93,7 +97,12 @@ html_show_sourcelink = False
 
 
 def _copy_files(_app):
-    """Copy README.md, CHANGELOG.md, and notebooks into docs/ at build time."""
+    """Copy README.md, CHANGELOG.md, and notebooks into docs/ at build time.
+
+    Notebooks use relative paths like ``../models/...`` and ``../tests/data/...``.
+    To preserve these paths when notebooks are copied into ``docs/examples/notebooks/``,
+    we create symlinks under ``docs/examples/`` pointing back to the repo-root directories.
+    """
     for name, dst_name in [
         ("README.md", "readme.md"),
         ("CHANGELOG.md", "changelog.md"),
@@ -103,6 +112,7 @@ def _copy_files(_app):
         if src.exists():
             shutil.copy2(src, dst)
 
+    # Copy notebooks into docs tree
     nb_src = BASEDIR / "notebooks"
     nb_dst = DIR / "examples" / "notebooks"
     nb_dst.mkdir(parents=True, exist_ok=True)
@@ -111,26 +121,21 @@ def _copy_files(_app):
             if f.suffix in (".ipynb", ".txt", ".cu"):
                 shutil.copy2(f, nb_dst / f.name)
 
-    # Copy data files needed by notebooks
-    for src in [
-        BASEDIR / "models" / "DtoKpipipi_v2.txt",
-        BASEDIR / "tests" / "data" / "test_example_Dst.dec",
-    ]:
-        if src.exists():
-            shutil.copy2(src, nb_dst / src.name)
-
-    # Copy images for notebook rendering
-    img_src = BASEDIR / "images"
-    img_dst = DIR / "examples" / "images"
-    img_dst.mkdir(parents=True, exist_ok=True)
-    if img_src.exists():
-        for f in img_src.iterdir():
-            if f.is_file():
-                shutil.copy2(f, img_dst / f.name)
+    # Link repo directories so notebook relative paths (../<dir>) resolve correctly.
+    # Use symlinks where possible, fall back to copying (e.g. on Windows without dev mode).
+    examples_dir = DIR / "examples"
+    for name in ("images", "models", "tests"):
+        link = examples_dir / name
+        target = BASEDIR / name
+        if target.exists() and not link.exists():
+            try:
+                link.symlink_to(target.resolve())
+            except OSError:
+                shutil.copytree(target, link)
 
 
 def _cleanup_files(_app, _exception):
-    """Remove copied files after build."""
+    """Remove copied files and symlinks after build."""
     for name in ("readme.md", "changelog.md"):
         f = DIR / name
         if f.exists():
@@ -142,9 +147,14 @@ def _cleanup_files(_app, _exception):
             if f.is_file() and f.name != "index.rst":
                 f.unlink()
 
-    img_dst = DIR / "examples" / "images"
-    if img_dst.exists():
-        shutil.rmtree(img_dst)
+    # Remove symlinks or copied directories created for notebook path resolution
+    examples_dir = DIR / "examples"
+    for name in ("images", "models", "tests"):
+        link = examples_dir / name
+        if link.is_symlink():
+            link.unlink()
+        elif link.is_dir():
+            shutil.rmtree(link)
 
 
 def setup(app):
