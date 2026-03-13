@@ -8,9 +8,9 @@ decay chains programmatically.
 Building a decay chain
 ----------------------
 
-.. code-block:: python
+.. jupyter-execute::
 
-   from decaylanguage import DecayMode, DecayChain, DecayChainViewer
+   from decaylanguage import DecayMode, DecayChain
 
    # Define individual decay modes with branching fractions
    dm1 = DecayMode(0.0263, "D0 pi+")
@@ -18,13 +18,16 @@ Building a decay chain
 
    # Build the full chain
    dc = DecayChain("D*+", {"D*+": dm1, "D0": dm2})
+   print(dc)
 
 Visualization
 -------------
 
-Decay chains can be visualized using Graphviz:
+Decay chains can be visualized using :class:`~decaylanguage.decay.viewer.DecayChainViewer`:
 
-.. code-block:: python
+.. jupyter-execute::
+
+   from decaylanguage import DecayChainViewer
 
    dcv = DecayChainViewer(dc)
 

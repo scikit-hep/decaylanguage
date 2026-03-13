@@ -8,27 +8,32 @@ for EvtGen-format ``.dec`` decay files used by LHCb, Belle II, and other experim
 Basic usage
 -----------
 
-.. code-block:: python
+.. jupyter-execute::
 
    from decaylanguage import DecFileParser
+   from decaylanguage.data import basepath
 
    # Parse the bundled LHCb decay file
-   parser = DecFileParser.from_default("DECAY_LHCB.DEC")
+   parser = DecFileParser(basepath / "DECAY_LHCB.DEC")
    parser.parse()
 
    # List all mother particles with defined decays
-   mothers = parser.list_decay_mother_names()
+   parser.list_decay_mother_names()[:10]
+
+.. jupyter-execute::
 
    # Get decay modes for a specific particle
-   modes = parser.list_decay_modes("D*+")
+   parser.list_decay_modes("D*+")
+
+.. jupyter-execute::
 
    # Get branching fractions
    parser.print_decay_modes("D*+")
 
-Working with decay models
--------------------------
+Building decay chains
+---------------------
 
-.. code-block:: python
+.. jupyter-execute::
 
    # Access the decay model information
    parser.list_decay_mode_details("D*+")

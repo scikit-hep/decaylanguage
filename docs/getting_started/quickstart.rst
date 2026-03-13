@@ -25,8 +25,8 @@ Use :class:`~decaylanguage.dec.dec.DecFileParser` to parse EvtGen-format ``.dec`
 
 See :doc:`/examples/decfile_parsing` for more details.
 
-Building decay chains
----------------------
+Building and visualizing decay chains
+-------------------------------------
 
 Use :class:`~decaylanguage.decay.decay.DecayMode` and
 :class:`~decaylanguage.decay.decay.DecayChain` to construct and visualize decay chains:
