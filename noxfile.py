@@ -33,6 +33,16 @@ def tests(session):
 
 
 @nox.session(default=False)
+def docs(session):
+    """
+    Build the docs.
+    """
+    session.install("-e.", "--group=docs")
+    session.chdir("docs")
+    session.run("sphinx-build", "-M", "html", ".", "_build", *session.posargs)
+
+
+@nox.session(default=False)
 def build(session):
     """
     Build an SDist and wheel.
