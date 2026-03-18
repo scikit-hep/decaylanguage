@@ -35,8 +35,8 @@ Building decay chains
 
 .. jupyter-execute::
 
-   # Access the decay model information
-   parser.list_decay_mode_details("D*+")
+   # Build the full decay chain for a particle
+   chain = parser.build_decay_chains("D*+")
 
 Charge conjugation
 ------------------
