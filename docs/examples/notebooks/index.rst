@@ -2,7 +2,7 @@
 Notebooks
 =========
 
-The following Jupyter notebooks provide detailed, interactive examples.
+The following Jupyter notebooks provide detailed, interactive examples:
 
 .. toctree::
    :maxdepth: 1
