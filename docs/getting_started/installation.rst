@@ -2,19 +2,11 @@
 Installation
 ============
 
-From PyPI (recommended):
+From PyPI:
 
 .. code-block:: bash
 
    pip install decaylanguage
-
-From the GitHub repository:
-
-.. code-block:: bash
-
-   pip install git+https://github.com/scikit-hep/decaylanguage.git
-
-DecayLanguage requires Python 3.10 or later.
 
 Dependencies
 ------------
