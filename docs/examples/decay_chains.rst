@@ -37,6 +37,12 @@ Decay chains can be visualized using :class:`~decaylanguage.decay.viewer.DecayCh
    # Or export to a file
    dcv.graph.render("my_decay", format="png")
 
+.. jupyter-execute::
+   :hide-code:
+
+   from pathlib import Path
+   Path("my_decay.png").unlink()
+
 The :class:`~decaylanguage.decay.decay.DaughtersDict` class (a specialized
 :class:`~collections.Counter`) represents final-state particle multiplicities.
 
