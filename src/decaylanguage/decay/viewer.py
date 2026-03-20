@@ -74,8 +74,8 @@ class DecayChainViewer:
         decaylanguage.DecayChain: class for building a decay chain programmatically.
         """
         # Accept DecayChain objects directly, converting to dict internally
-        from decaylanguage.decay.decay import (  # noqa: PLC0415
-            DecayChain as _DecayChain,  # pylint: disable=import-outside-toplevel
+        from decaylanguage.decay.decay import (  # noqa: PLC0415  # pylint: disable=import-outside-toplevel
+            DecayChain as _DecayChain,
         )
 
         chain: dict[str, list[Any]]
