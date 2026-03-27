@@ -75,3 +75,4 @@ docs/_build
 # Lock files
 uv.lock
 *pylock
+/CLAUDE.md

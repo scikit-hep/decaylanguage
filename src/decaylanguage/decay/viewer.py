@@ -12,9 +12,13 @@ see the ``DecFileParser`` class.
 from __future__ import annotations
 
 import itertools
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import graphviz
+
+if TYPE_CHECKING:
+    from decaylanguage.decay.decay import DecayChain
+
 from particle import latex_to_html_name
 from particle.converters.bimap import DirectionalMaps
 
@@ -50,7 +54,7 @@ class DecayChainViewer:
 
     def __init__(
         self,
-        decaychain: dict[str, list[dict[str, float | str | list[Any]]]],
+        decaychain: dict[str, list[dict[str, float | str | list[Any]]]] | DecayChain,
         **attrs: dict[str, bool | int | float | str],
     ) -> None:
         """
@@ -60,17 +64,28 @@ class DecayChainViewer:
         ----------
         decaychain: dict
             Input decay chain in dict format, typically created from ``decaylanguage.DecFileParser.build_decay_chains``
-            after parsing a .dec decay file, or from building a decay chain representation with ``decaylanguage.DecayChain.to_dict``.
+            after parsing a .dec decay file, or from building a decay chain representation with ``decaylanguage.DecayChain``.
         attrs: optional
             User input ``graphviz.Digraph`` class attributes.
 
         See also
         --------
         decaylanguage.DecFileParser.build_decay_chains for creating a decay chain dict from parsing a .dec file.
-        decaylanguage.DecFileParser: class for creating an input decay chain.
+        decaylanguage.DecayChain: class for building a decay chain programmatically.
         """
-        # Store the input decay chain
-        self._chain = decaychain
+        # Accept DecayChain objects directly, converting to dict internally
+        from decaylanguage.decay.decay import (  # noqa: PLC0415  # pylint: disable=import-outside-toplevel
+            DecayChain as _DecayChain,
+        )
+
+        chain: dict[str, list[Any]]
+        if isinstance(decaychain, _DecayChain):
+            chain = decaychain.to_dict()
+        else:
+            chain = decaychain
+
+        # Store the input decay chain as dict
+        self._chain: dict[str, list[Any]] = chain
 
         # Instantiate the digraph with defaults possibly overridden by user attributes
         self._graph = self._instantiate_graph(**attrs)

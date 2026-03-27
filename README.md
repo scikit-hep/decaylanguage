@@ -44,14 +44,14 @@ Required and compatibility dependencies will be automatically installed by pip.
 
 ### Required dependencies:
 
--   [particle](https://github.com/scikit-hep/particle): PDG particle data and identification codes
 -   [NumPy](https://scipy.org/install.html): The numerical library for Python
 -   [pandas](https://pandas.pydata.org/): Tabular data in Python
 -   [attrs](https://github.com/python-attrs/attrs): DataClasses for Python
--   [plumbum](https://github.com/tomerfiliba/plumbum): Command line tools
+-   [graphviz](https://gitlab.com/graphviz/graphviz/): Render (DOT language) graph descriptions and visualizations of decay chains
 -   [lark](https://github.com/lark-parser/lark): A modern parsing library for Python
--   [graphviz](https://gitlab.com/graphviz/graphviz/) to render (DOT language) graph
-    descriptions and visualizations of decay chains.
+-   [plumbum](https://github.com/tomerfiliba/plumbum): Command line tools
+-   [hepunits](https://github.com/scikit-hep/hepunits): HEP units and constants
+-   [particle](https://github.com/scikit-hep/particle): PDG particle data and identification codes
 </p></details>
 
 
