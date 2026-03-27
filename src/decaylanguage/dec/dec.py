@@ -1030,7 +1030,7 @@ All but the first occurrence will be discarded/removed ...""".format(
             If provided, only decay chains where the product of branching
             fractions from the mother down to the stable particles
             (the "effective branching fraction") is above this value will be
-            returned. This prunes less likely decay paths.
+            returned. This prunes less likely or negligible decay paths.
 
         Returns
         -------
