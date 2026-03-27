@@ -44,14 +44,14 @@ Required and compatibility dependencies will be automatically installed by pip.
 
 ### Required dependencies:
 
--   [particle](https://github.com/scikit-hep/particle): PDG particle data and identification codes
 -   [NumPy](https://scipy.org/install.html): The numerical library for Python
 -   [pandas](https://pandas.pydata.org/): Tabular data in Python
 -   [attrs](https://github.com/python-attrs/attrs): DataClasses for Python
--   [plumbum](https://github.com/tomerfiliba/plumbum): Command line tools
+-   [graphviz](https://gitlab.com/graphviz/graphviz/): Render (DOT language) graph descriptions and visualizations of decay chains
 -   [lark](https://github.com/lark-parser/lark): A modern parsing library for Python
--   [graphviz](https://gitlab.com/graphviz/graphviz/) to render (DOT language) graph
-    descriptions and visualizations of decay chains.
+-   [plumbum](https://github.com/tomerfiliba/plumbum): Command line tools
+-   [hepunits](https://github.com/scikit-hep/hepunits): HEP units and constants
+-   [particle](https://github.com/scikit-hep/particle): PDG particle data and identification codes
 </p></details>
 
 
@@ -274,6 +274,7 @@ We hereby acknowledge the contributors that made this project possible ([emoji k
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ch2ohch2oh"><img src="https://avatars.githubusercontent.com/u/7986711?v=4?s=100" width="100px;" alt="Dazhi Wang"/><br /><sub><b>Dazhi Wang</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=ch2ohch2oh" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/manuelfs"><img src="https://avatars.githubusercontent.com/u/4977423?v=4?s=100" width="100px;" alt="Manuel Franco Sevilla"/><br /><sub><b>Manuel Franco Sevilla</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=manuelfs" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://vidyasagarv.com"><img src="https://avatars.githubusercontent.com/u/14362724?v=4?s=100" width="100px;" alt="Vidya Sagar"/><br /><sub><b>Vidya Sagar</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=vvsagar" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jonas-eschle"><img src="https://avatars.githubusercontent.com/u/17454848?v=4?s=100" width="100px;" alt="Jonas Eschle"/><br /><sub><b>Jonas Eschle</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=jonas-eschle" title="Code">💻</a> <a href="https://github.com/scikit-hep/decaylanguage/commits?author=jonas-eschle" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

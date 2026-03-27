@@ -1,21 +1,14 @@
-========
-Contents
-========
+DecayLanguage
+=============
+
+.. include:: readme.md
+   :parser: myst_parser.sphinx_
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
 
-   readme
-   installation
-   usage
-   reference/index
-   contributing
-   authors
-   changelog
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   getting_started/index
+   examples/index
+   api/index
+   development/index

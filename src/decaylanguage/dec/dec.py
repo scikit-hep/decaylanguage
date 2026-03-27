@@ -421,13 +421,16 @@ class DecFileParser:
         Return a dictionary of all particle property definitions
         in the input parsed file, of the form "Particle <PARTICLE> <MASS> <WIDTH>"
         or "Particle <PARTICLE> <MASS>",
-        as {'PARTICLE1': {'mass': MASS1, 'width': WIDTH1},
-            'PARTICLE2': {'mass': MASS2, 'width': WIDTH2}, ...}.
+        as::
+
+            {'PARTICLE1': {'mass': MASS1, 'width': WIDTH1},
+             'PARTICLE2': {'mass': MASS2, 'width': WIDTH2}, ...}.
 
         Note
         ----
-        1) Masses and widths are in GeV in EvtGen, hence the "Particle <PARTICLE> <MASS>" statement
-           needs to use GeV! A conversion to MeV may be done on the fly when information is required
+        1) Masses and widths are in GeV in EvtGen, hence the
+           "Particle <PARTICLE> <MASS>" statement needs to use GeV!
+           A conversion to MeV may be done on the fly when information is required
            from the Particle package, which uses MeV, the (standard) HEP System of Units.
         2) Particles are often defined via aliases and post-processing may be needed
            to match the mass and width to the actual particle.
@@ -445,10 +448,11 @@ class DecFileParser:
         generic decays, alias decays, or both.
         The commands are set in the input parsed file with statements of the form
         "Pythia<TYPE>Param <MODULE>:<PARAM>=<LABEL_OR_VALUE>.
-        The dictionary takes the form
-        {"PythiaAliasParam": {'<MODULE1>:<PARAM1>': 'LABEL1', '<MODULE1>:<PARAM2>': VALUE2, ...},
-         "PythiaBothParam": {'<MODULE2>:<PARAM3>': 'LABEL3', '<MODULE3>:<PARAM4>': VALUE4, ...},
-         "PythiaGenericParam": {'<MODULE4>:<PARAM5>': 'LABEL5', '<MODULE5>:<PARAM6>': VALUE6, ...}}.
+        The dictionary takes the form::
+
+            {"PythiaAliasParam": {'<MODULE1>:<PARAM1>': 'LABEL1', '<MODULE1>:<PARAM2>': VALUE2, ...},
+             "PythiaBothParam": {'<MODULE2>:<PARAM3>': 'LABEL3', '<MODULE3>:<PARAM4>': VALUE4, ...},
+             "PythiaGenericParam": {'<MODULE4>:<PARAM5>': 'LABEL5', '<MODULE5>:<PARAM6>': VALUE6, ...}}.
         """
         self._check_parsing()
         return get_pythia_definitions(self._parsed_dec_file)
@@ -458,10 +462,11 @@ class DecFileParser:
         Return a dictionary of all JETSET definitions in the input parsed file,
         of the form
         "JetSetPar <MODULE>(<PARAMETER>)=<VALUE>"
-        as
-        {'MODULE1': {PARAMETER1: VALUE1, PARAMETER2: VALUE2, ...},
-         'MODULE2': {...},
-         ...}.
+        as::
+
+            {'MODULE1': {PARAMETER1: VALUE1, PARAMETER2: VALUE2, ...},
+             'MODULE2': {...},
+             ...}.
         """
         self._check_parsing()
         return get_jetset_definitions(self._parsed_dec_file)
@@ -480,19 +485,21 @@ class DecFileParser:
     def dict_lineshape_settings(self) -> dict[str, dict[str, str | float]]:
         """
         Return a dictionary of all lineshape settings,
-        with keys corresponding to particle names or aliases, as
-        {PARTICLE1: {'lineshape': 'NAME1',  # E.g. "LSFLAT" or "LSNONRELBW"
-          'BlattWeisskopf': VALUE1,
-          'ChangeMassMin': VALUE12,
-          'ChangeMassMax': VALUE13},
-         PARTICLE2: {'lineshape': 'NAME2',
-          'BlattWeisskopf': VALUE2,
-          'ChangeMassMin': VALUE22,
-          'ChangeMassMax': VALUE23,
-          'IncludeBirthFactor': TRUE_OR_FALSE,
-          'IncludeDecayFactor': TRUE_OR_FALSE},
-         ...
-        }
+        with keys corresponding to particle names or aliases, as::
+
+            {PARTICLE1: {'lineshape': 'NAME1',  # E.g. "LSFLAT" or "LSNONRELBW"
+              'BlattWeisskopf': VALUE1,
+              'ChangeMassMin': VALUE12,
+              'ChangeMassMax': VALUE13},
+             PARTICLE2: {'lineshape': 'NAME2',
+              'BlattWeisskopf': VALUE2,
+              'ChangeMassMin': VALUE22,
+              'ChangeMassMax': VALUE23,
+              'IncludeBirthFactor': TRUE_OR_FALSE,
+              'IncludeDecayFactor': TRUE_OR_FALSE},
+             ...
+            }
+
         where not all "sub-dictionaries" may contain all and/or the same keys.
         """
         self._check_parsing()
@@ -503,10 +510,11 @@ class DecFileParser:
         Return a list of all SetLineshapePW definitions in the input parsed file,
         of the form
         "SetLineshapePW <MOTHER> <DAUGHTER1> <DAUGHTER2> <VALUE>",
-        as
-        [(['MOTHER1', 'DAUGHTER1-1', 'DAUGHTER1-2'], VALUE1),
-        (['MOTHER2', 'DAUGHTER2-1', 'DAUGHTER2-2'], VALUE2),
-        ...]
+        as::
+
+            [(['MOTHER1', 'DAUGHTER1-1', 'DAUGHTER1-2'], VALUE1),
+             (['MOTHER2', 'DAUGHTER2-1', 'DAUGHTER2-2'], VALUE2),
+             ...]
         """
         self._check_parsing()
         return get_lineshapePW_definitions(self._parsed_dec_file)
@@ -1360,12 +1368,14 @@ def get_final_state_particles(decay_mode: Tree) -> list[Tree]:
 
     Examples
     --------
-    For a decay
+    For a decay::
+
         Decay MyB_s0
             1.000     K+     K-     SSD_CP 20.e12 0.1 1.0 0.04 9.6 -0.8 8.4 -0.6;
         Enddecay
+
     the list
-        [Tree(particle, [Token(LABEL, 'K+')]), Tree(particle, [Token(LABEL, 'K-')])]
+    ``[Tree(particle, [Token(LABEL, 'K+')]), Tree(particle, [Token(LABEL, 'K-')])]``
     will be returned.
     """
     if decay_mode.data != "decayline":
@@ -1387,11 +1397,13 @@ def get_final_state_particle_names(decay_mode: Tree) -> list[str]:
 
     Examples
     --------
-    For a decay
+    For a decay::
+
         Decay MyB_s0
             1.000     K+     K-     SSD_CP 20.e12 0.1 1.0 0.04 9.6 -0.8 8.4 -0.6;
         Enddecay
-    the list ['K+', 'K-'] will be returned.
+
+    the list ``['K+', 'K-']`` will be returned.
     """
     if decay_mode.data != "decayline":
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
@@ -1412,11 +1424,13 @@ def get_model_name(decay_mode: Tree) -> str:
 
     Examples
     --------
-    For a decay
+    For a decay::
+
         Decay MyB_s0
             1.000     K+     K-     SSD_CP 20.e12 0.1 1.0 0.04 9.6 -0.8 8.4 -0.6;
         Enddecay
-    the string 'SSD_CP' will be returned.
+
+    the string ``'SSD_CP'`` will be returned.
     """
     if decay_mode.data != "decayline":
         raise RuntimeError("Input not an instance of a 'decayline' Tree!")
@@ -1437,20 +1451,24 @@ def get_model_parameters(decay_mode: Tree) -> str | list[str | Any]:
 
     Examples
     --------
-    For a decay
+    For a decay::
+
         Decay MyB_s0
             1.000     K+     K-     SSD_CP 20.e12 0.1 1.0 0.04 9.6 -0.8 8.4 -0.6;
         Enddecay
+
     the list
-        [20000000000000.0, 0.1, 1.0, 0.04, 9.6, -0.8, 8.4, -0.6]
+    ``[20000000000000.0, 0.1, 1.0, 0.04, 9.6, -0.8, 8.4, -0.6]``
     will be returned.
 
-    For a decay
+    For a decay::
+
         Decay MyD0
             1.00      K-   pi-   pi+   pi+     LbAmpGen DtoKpipipi_v1 ;
         Enddecay
+
     the list
-        ['DtoKpipipi_v1']
+    ``['DtoKpipipi_v1']``
     will be returned.
     """
     if decay_mode.data != "decayline":
@@ -1471,9 +1489,10 @@ def get_decays(parsed_file: Tree) -> list[Tree]:
     """
     Return a list of all decay definitions in the input parsed file,
     of the form "Decay <MOTHER>",
-    as a tuple of Lark Tree instances with Tree.data=='decay', i.e.,
-    [Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER1>]), ...),
-     Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER2>]), ...)].
+    as a tuple of Lark Tree instances with Tree.data=='decay', i.e.::
+
+        [Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER1>]), ...),
+         Tree(decay, [Tree(particle, [Token(LABEL, <MOTHER2>]), ...)].
 
     Parameters
     ----------
@@ -1630,13 +1649,16 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
     Return a dictionary of all particle property definitions
     in the input parsed file, of the form "Particle <PARTICLE> <MASS> <WIDTH>"
     or "Particle <PARTICLE> <MASS>",
-    as {'PARTICLE1': {'mass': MASS1, 'width': WIDTH1},
-        'PARTICLE2': {'mass': MASS2, 'width': WIDTH2}, ...}.
+    as::
+
+        {'PARTICLE1': {'mass': MASS1, 'width': WIDTH1},
+         'PARTICLE2': {'mass': MASS2, 'width': WIDTH2}, ...}.
 
     Note
     ----
-    1) Masses and widths are in GeV in EvtGen, hence the "Particle <PARTICLE> <MASS>" statement
-       needs to use GeV! A conversion to MeV may be done on the fly when information is required
+    1) Masses and widths are in GeV in EvtGen, hence the
+       "Particle <PARTICLE> <MASS>" statement needs to use GeV!
+       A conversion to MeV may be done on the fly when information is required
        from the Particle package, which uses MeV, the (standard) HEP System of Units.
     2) Particles are often defined via aliases and post-processing may be needed
        to match the mass and width to the actual particle.
@@ -1688,10 +1710,11 @@ def get_pythia_definitions(parsed_file: Tree) -> dict[str, dict[str, str | float
     generic decays, alias decays, or both.
     The commands are set in the input parsed file with statements of the form
     "Pythia<TYPE>Param <MODULE>:<PARAM>=<LABEL_OR_VALUE>.
-    The dictionary takes the form
-    {"PythiaAliasParam": {'<MODULE1>:<PARAM1>': 'LABEL1', '<MODULE1>:<PARAM2>': VALUE2, ...},
-     "PythiaBothParam": {'<MODULE2>:<PARAM3>': 'LABEL3', '<MODULE3>:<PARAM4>': VALUE4, ...},
-     "PythiaGenericParam": {'<MODULE4>:<PARAM5>': 'LABEL5', '<MODULE5>:<PARAM6>': VALUE6, ...}}.
+    The dictionary takes the form::
+
+        {"PythiaAliasParam": {'<MODULE1>:<PARAM1>': 'LABEL1', '<MODULE1>:<PARAM2>': VALUE2, ...},
+         "PythiaBothParam": {'<MODULE2>:<PARAM3>': 'LABEL3', '<MODULE3>:<PARAM4>': VALUE4, ...},
+         "PythiaGenericParam": {'<MODULE4>:<PARAM5>': 'LABEL5', '<MODULE5>:<PARAM6>': VALUE6, ...}}.
 
     Parameters
     ----------
@@ -1730,10 +1753,11 @@ def get_jetset_definitions(
     Return a dictionary of all JETSET definitions in the input parsed file,
     of the form
     "JetSetPar <MODULE>(<PARAMETER>)=<VALUE>"
-    as
-    {'MODULE1': {PARAMETER1: VALUE1, PARAMETER2: VALUE2, ...},
-     'MODULE2': {...},
-     ...}.
+    as::
+
+        {'MODULE1': {PARAMETER1: VALUE1, PARAMETER2: VALUE2, ...},
+         'MODULE2': {...},
+         ...}.
 
     Parameters
     ----------
@@ -1787,26 +1811,28 @@ def get_lineshape_settings(
     parsed_file: Tree,
 ) -> dict[str, dict[str, str | float]]:
     """
-     Return a dictionary of all lineshape settings,
-     with keys corresponding to particle names or aliases, as
-     {PARTICLE1: {'lineshape': 'NAME1',  # E.g. "LSFLAT" or "LSNONRELBW"
-       'BlattWeisskopf': VALUE11,
-       'ChangeMassMin': VALUE12,
-       'ChangeMassMax': VALUE13},
-      PARTICLE2: {'lineshape': 'NAME2',
-       'BlattWeisskopf': VALUE21,
-       'ChangeMassMin': VALUE22,
-       'ChangeMassMax': VALUE23,
-       'IncludeBirthFactor': TRUE_OR_FALSE,
-       'IncludeDecayFactor': TRUE_OR_FALSE},
-      ...
-     }
-     where not all "sub-dictionaries" may contain all and/or the same keys.
+    Return a dictionary of all lineshape settings,
+    with keys corresponding to particle names or aliases, as::
+
+        {PARTICLE1: {'lineshape': 'NAME1',  # E.g. "LSFLAT" or "LSNONRELBW"
+          'BlattWeisskopf': VALUE11,
+          'ChangeMassMin': VALUE12,
+          'ChangeMassMax': VALUE13},
+         PARTICLE2: {'lineshape': 'NAME2',
+          'BlattWeisskopf': VALUE21,
+          'ChangeMassMin': VALUE22,
+          'ChangeMassMax': VALUE23,
+          'IncludeBirthFactor': TRUE_OR_FALSE,
+          'IncludeDecayFactor': TRUE_OR_FALSE},
+         ...
+        }
+
+    where not all "sub-dictionaries" may contain all and/or the same keys.
 
     Parameters
-     ----------
-     parsed_file: Lark Tree instance
-         Input parsed file.
+    ----------
+    parsed_file: Lark Tree instance
+        Input parsed file.
     """
     d: dict[str, dict[str, str | float]] = {}
     try:
@@ -1878,10 +1904,11 @@ def get_lineshapePW_definitions(
     Return a list of all SetLineshapePW definitions in the input parsed file,
     of the form
     "SetLineshapePW <MOTHER> <DAUGHTER1> <DAUGHTER2> <VALUE>",
-    as
-    [(['MOTHER1', 'DAUGHTER1-1', 'DAUGHTER1-2'], VALUE1),
-     (['MOTHER2', 'DAUGHTER2-1', 'DAUGHTER2-2'], VALUE2),
-     ...]
+    as::
+
+        [(['MOTHER1', 'DAUGHTER1-1', 'DAUGHTER1-2'], VALUE1),
+         (['MOTHER2', 'DAUGHTER2-1', 'DAUGHTER2-2'], VALUE2),
+         ...]
 
     Parameters
     ----------

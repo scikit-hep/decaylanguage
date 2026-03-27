@@ -31,6 +31,7 @@ def charge_conjugate_name(name: str, pdg_name: bool = False) -> str:
     Note
     ----
     Search/match in order:
+
     1) Trivial case - does the name correspond to a self-conjugate particle?
        Only works for particles in the DB.
     2) Try to match the antiparticle looking for the opposite PDG ID
