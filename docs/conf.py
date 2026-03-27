@@ -11,7 +11,7 @@ BASEDIR = DIR.parent
 
 project = "DecayLanguage"
 author = "Scikit-HEP"
-copyright = "2018, Scikit-HEP developers"  # pylint: disable=redefined-builtin
+copyright = "2018-2026, Eduardo Rodrigues and Henry Schreiner"  # pylint: disable=redefined-builtin
 version = release = get_version("decaylanguage")
 
 # -- General configuration ---------------------------------------------------

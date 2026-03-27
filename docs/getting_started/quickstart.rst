@@ -37,7 +37,8 @@ Use :class:`~decaylanguage.decay.decay.DecayMode` and
 
    dm1 = DecayMode(0.5, "K- pi+ pi+ pi0")
    dm2 = DecayMode(0.5, "K+ pi- pi- pi0")
-   dc = DecayChain("D+", {"D+": dm1, "D-": dm2})
+   dm3 = DecayMode(1.0, "D+ D-")
+   dc = DecayChain("B0", {"D+": dm1, "D-": dm2, "B0": dm3})
 
    # Visualize the chain
    dcv = DecayChainViewer(dc)
