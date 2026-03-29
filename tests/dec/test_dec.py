@@ -698,6 +698,35 @@ def test_build_decay_chains_minimum_effective_bf():
                 "model": "VSS",
                 "model_params": "",
             },
+        ]
+    }
+    assert p.build_decay_chains("D*+", minimum_effective_bf=0.305) == output
+
+
+def test_build_decay_chains_minimum_effective_bf_and_stable_particles():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    output = {
+        "D*+": [
+            {
+                "bf": 0.677,
+                "fs": [
+                    {
+                        "D0": [
+                            {
+                                "bf": 1.0,
+                                "fs": ["K-", "pi+"],
+                                "model": "PHSP",
+                                "model_params": "",
+                            }
+                        ]
+                    },
+                    "pi+",
+                ],
+                "model": "VSS",
+                "model_params": "",
+            },
             {
                 "bf": 0.307,
                 "fs": [
@@ -709,39 +738,26 @@ def test_build_decay_chains_minimum_effective_bf():
                                     "K-",
                                     "pi+",
                                     "pi+",
-                                    {
-                                        "pi0": [
-                                            {
-                                                "bf": 0.988228297,
-                                                "fs": ["gamma", "gamma"],
-                                                "model": "PHSP",
-                                                "model_params": "",
-                                            }
-                                        ]
-                                    },
+                                    "pi0",
                                 ],
                                 "model": "PHSP",
                                 "model_params": "",
                             }
                         ]
                     },
-                    {
-                        "pi0": [
-                            {
-                                "bf": 0.988228297,
-                                "fs": ["gamma", "gamma"],
-                                "model": "PHSP",
-                                "model_params": "",
-                            }
-                        ]
-                    },
+                    "pi0",
                 ],
                 "model": "VSS",
                 "model_params": "",
             },
         ]
     }
-    assert p.build_decay_chains("D*+", minimum_effective_bf=0.3) == output
+    assert (
+        p.build_decay_chains(
+            "D*+", minimum_effective_bf=0.305, stable_particles=["pi0"]
+        )
+        == output
+    )
 
 
 def test_expand_decay_chains():
