@@ -1105,11 +1105,13 @@ All but the first occurrence will be discarded/removed ...""".format(
                             current_effective_bf=current_effective_bf * d["bf"],
                         )
                         d["fs"][i] = _info  # type: ignore[index]
+                        if (minimum_effective_bf is not None) and (_info[fs] == []):
+                            break  # daughter had decays but all filtered, so skip
                     # if fs does not have decays defined in the parsed file
                     except DecayNotFound:
                         pass
-
-                info.append(d)
+                else:
+                    info.append(d)
 
             return {p_name: info}
 
