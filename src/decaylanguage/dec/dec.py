@@ -1010,6 +1010,7 @@ All but the first occurrence will be discarded/removed ...""".format(
         self,
         mother: str,
         stable_particles: list[str] | set[str] | tuple[str] | tuple[()] = (),
+        minimum_effective_bf: float | None = None,
     ) -> dict[str, list[DecayModeDict]]:
         """
         Iteratively build the entire decay chains of a given mother particle,
@@ -1025,6 +1026,11 @@ All but the first occurrence will be discarded/removed ...""".format(
         stable_particles: iterable, optional, default=()
             If provided, stops the decay-chain parsing,
             taking the "list" as particles to be considered stable.
+        minimum_effective_bf: float | None, optional, default=None
+            If provided, only decay chains where the product of branching
+            fractions from the mother down to the stable particles
+            (the "effective branching fraction") is above this value will be
+            returned. This prunes less likely or negligible decay paths.
 
         Returns
         -------
@@ -1071,12 +1077,20 @@ All but the first occurrence will be discarded/removed ...""".format(
         # Define the actual computation logic within a helper function
         # This function will return the raw, mutable result, which will be cached.
         @cache
-        def _cached_recurse_raw(p_name: str) -> dict[str, list[DecayModeDict]]:
+        def _cached_recurse_raw(
+            p_name: str,
+            current_effective_bf: float = 1.0,
+        ) -> dict[str, list[DecayModeDict]]:
             info = []
 
             for dm in self._find_decay_modes(p_name):
                 # Fetch details
                 d = self._decay_mode_details(dm, display_photos_keyword=False)
+
+                if (minimum_effective_bf is not None) and (
+                    d["bf"] * current_effective_bf < minimum_effective_bf
+                ):
+                    continue
 
                 for i, fs in enumerate(d["fs"]):
                     if fs in stable_set:
@@ -1086,20 +1100,28 @@ All but the first occurrence will be discarded/removed ...""".format(
 
                         # Use the wrapper function `_recurse`
                         # to ensure it gets a deepcopy of the child's decay chain.
-                        _info = _recurse(fs)
+                        _info = _recurse(
+                            fs,
+                            current_effective_bf=current_effective_bf * d["bf"],
+                        )
                         d["fs"][i] = _info  # type: ignore[index]
+                        if (minimum_effective_bf is not None) and (_info[fs] == []):
+                            break  # daughter had decays but all filtered, so skip
                     # if fs does not have decays defined in the parsed file
                     except DecayNotFound:
                         pass
-
-                info.append(d)
+                else:
+                    info.append(d)
 
             return {p_name: info}
 
         # This is the wrapper function that external callers (and recursive calls) will use.
         # It always returns a deepcopy of the (potentially cached) raw result.
-        def _recurse(p_name: str) -> dict[str, list[DecayModeDict]]:
-            raw_result = _cached_recurse_raw(p_name)
+        def _recurse(
+            p_name: str,
+            current_effective_bf: float = 1.0,
+        ) -> dict[str, list[DecayModeDict]]:
+            raw_result = _cached_recurse_raw(p_name, current_effective_bf)
             return copy.deepcopy(raw_result)
 
         # Clear the cache to not cause problem in the case the DecFileParser object (self) is modified

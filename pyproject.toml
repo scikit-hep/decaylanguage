@@ -111,6 +111,9 @@ addopts = [
     "--strict-markers",
     "--strict-config",
 ]
+markers = [
+    "benchmark: marks tests as benchmarks (select with -m benchmark)",
+]
 log_level = "DEBUG"
 filterwarnings = [
     "error",

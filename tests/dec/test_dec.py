@@ -674,6 +674,53 @@ def test_build_decay_chains():
     assert p.build_decay_chains("D+", stable_particles=["pi0"]) == output
 
 
+def test_build_decay_chains_minimum_effective_bf():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    output_s = """
+    Decay D*+
+    0.677             D0 pi+       VSS;
+    Enddecay
+
+    Decay D0
+    1.0   K-      pi+                  PHSP;
+    Enddecay
+    """
+    output_p = DecFileParser.from_string(output_s)
+    output_p.parse()
+
+    assert p.build_decay_chains(
+        "D*+", minimum_effective_bf=0.305
+    ) == output_p.build_decay_chains("D*+")
+
+
+def test_build_decay_chains_minimum_effective_bf_and_stable_particles():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    output_s = """
+    Decay D*+
+    0.677             D0 pi+       VSS;
+    0.307             D+ pi0       VSS;
+    Enddecay
+
+    Decay D0
+    1.0   K-      pi+                  PHSP;
+    Enddecay
+
+    Decay D+
+    1.0   K-   pi+   pi+   pi0    PHSP;
+    Enddecay
+    """
+    output_p = DecFileParser.from_string(output_s)
+    output_p.parse()
+
+    assert p.build_decay_chains(
+        "D*+", minimum_effective_bf=0.305, stable_particles=["pi0"]
+    ) == output_p.build_decay_chains("D*+")
+
+
 def test_expand_decay_chains():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
