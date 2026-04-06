@@ -175,5 +175,5 @@ def test_show_effective_bf_chain():
     graph_output_as_dot = dcv.to_string()
 
     assert "eff BF: 0.677" in graph_output_as_dot
-    assert "eff BF: 0.3034" in graph_output_as_dot # 0.307*0.988228297
+    assert "eff BF: 0.3034" in graph_output_as_dot  # 0.307*0.988228297
     assert "style=invis" in graph_output_as_dot
