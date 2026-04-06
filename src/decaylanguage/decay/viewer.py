@@ -50,11 +50,12 @@ class DecayChainViewer:
     >>> dcv.graph.render(filename="test", format="pdf", view=True, cleanup=True)    # doctest: +SKIP
     """
 
-    __slots__ = ("_chain", "_graph", "_graph_attributes")
+    __slots__ = ("_chain", "_graph", "_graph_attributes", "_show_effective_bf")
 
     def __init__(
         self,
         decaychain: dict[str, list[dict[str, float | str | list[Any]]]] | DecayChain,
+        show_effective_bf: bool = False,
         **attrs: dict[str, bool | int | float | str],
     ) -> None:
         """
@@ -65,6 +66,10 @@ class DecayChainViewer:
         decaychain: dict
             Input decay chain in dict format, typically created from ``decaylanguage.DecFileParser.build_decay_chains``
             after parsing a .dec decay file, or from building a decay chain representation with ``decaylanguage.DecayChain``.
+        show_effective_bf: bool, optional
+            If True, display the effective branching fraction on the terminal node (node with no
+            subchains). The effective branching fraction is the product of all branching fractions
+            along the chain from the mother particle to the terminal node. Default is False.
         attrs: optional
             User input ``graphviz.Digraph`` class attributes.
 
@@ -86,6 +91,9 @@ class DecayChainViewer:
 
         # Store the input decay chain as dict
         self._chain: dict[str, list[Any]] = chain
+
+        # Store whether to show effective branching fractions
+        self._show_effective_bf = show_effective_bf
 
         # Instantiate the digraph with defaults possibly overridden by user attributes
         self._graph = self._instantiate_graph(**attrs)
@@ -134,10 +142,19 @@ class DecayChainViewer:
             label += "{tr}</TABLE>>".format(tr="" if add_tags else "</TR>")
             return label
 
-        def new_node_no_subchain(list_parts: list[str]) -> str:
+        def new_node_no_subchain(list_parts: list[str], effective_bf: float) -> str:
             label = html_table_label(list_parts, bgcolor="#eef3f8")
             r = f"dec{next(counter)}"
             self.graph.node(r, label=label, style="filled", fillcolor="#eef3f8")
+            if self._show_effective_bf:
+                bf_node = f"dec{next(counter)}"
+                self.graph.node(
+                    bf_node,
+                    label=f"eff BF: {effective_bf:.4g}",
+                    shape="none",
+                    fontcolor="#4c4c4c",
+                )
+                self.graph.edge(r, bf_node, style="invis")
             return r
 
         def new_node_with_subchain(list_parts: list[Any]) -> str:
@@ -153,6 +170,7 @@ class DecayChainViewer:
             subchain: list[dict[str, float | str | list[Any]]],
             top_node: str | None = None,
             link_pos: int | None = None,
+            effective_bf: float = 1.0,
         ) -> None:
             if not top_node:
                 top_node = "mother"
@@ -160,28 +178,34 @@ class DecayChainViewer:
             n_decaymodes = len(subchain)
             for idm in range(n_decaymodes):
                 _list_parts = subchain[idm]["fs"]
+                _bf = subchain[idm]["bf"]
+                _effective_bf = effective_bf * _bf
                 if not has_subdecay(_list_parts):  # type: ignore[arg-type]
-                    _ref = new_node_no_subchain(_list_parts)  # type: ignore[arg-type]
-                    _bf = subchain[idm]["bf"]
+                    _ref = new_node_no_subchain(_list_parts, _effective_bf)  # type: ignore[arg-type]
                     if link_pos is None:
                         self.graph.edge(top_node, _ref, label=str(_bf))
                     else:
                         self.graph.edge(f"{top_node}:p{link_pos}", _ref, label=str(_bf))
                 else:
                     _ref_1 = new_node_with_subchain(_list_parts)  # type: ignore[arg-type]
-                    _bf_1 = subchain[idm]["bf"]
+                    edge_label = str(_bf)
                     if link_pos is None:
-                        self.graph.edge(top_node, _ref_1, label=str(_bf_1))
+                        self.graph.edge(top_node, _ref_1, label=edge_label)
                     else:
                         self.graph.edge(
                             f"{top_node}:p{link_pos}",
                             _ref_1,
-                            label=str(_bf_1),
+                            label=edge_label,
                         )
                     for i, _p in enumerate(_list_parts):  # type: ignore[arg-type]
                         if not isinstance(_p, str):
                             _k = next(iter(_p.keys()))
-                            iterate_chain(_p[_k], top_node=_ref_1, link_pos=i)
+                            iterate_chain(
+                                _p[_k],
+                                top_node=_ref_1,
+                                link_pos=i,
+                                effective_bf=_effective_bf,
+                            )
 
         def has_subdecay(ds: list[Any]) -> bool:
             return not all(isinstance(p, str) for p in ds)
