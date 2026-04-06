@@ -139,3 +139,41 @@ def test_graphs_with_EvtGen_specific_names():
     assert "(cs)<SUB>0</SUB>" in dcv.to_string()  # not 'cs_0' ;-)
     assert "&#x039e;<SUB>b</SUB><SUP>-</SUP>" in dcv.to_string()
     assert "&#x039e;<SUB>c</SUB><SUP>0</SUP>" in dcv.to_string()
+
+
+def test_no_effective_bf_by_default():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    chain = p.build_decay_chains("D*+", stable_particles=["D+", "D0", "pi0"])
+    dcv = DecayChainViewer(chain)
+    graph_output_as_dot = dcv.to_string()
+
+    assert "eff BF:" not in graph_output_as_dot
+
+
+def test_show_effective_bf():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    chain = p.build_decay_chains("D*+", stable_particles=["D+", "D0", "pi0"])
+    dcv = DecayChainViewer(chain, show_effective_bf=True)
+    graph_output_as_dot = dcv.to_string()
+
+    assert "eff BF: " in graph_output_as_dot
+    assert "eff BF: 0.677" in graph_output_as_dot
+    assert "eff BF: 0.307" in graph_output_as_dot
+    assert "eff BF: 0.016" in graph_output_as_dot
+
+
+def test_show_effective_bf_chain():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    chain = p.build_decay_chains("D*+")
+    dcv = DecayChainViewer(chain, show_effective_bf=True)
+    graph_output_as_dot = dcv.to_string()
+
+    assert "eff BF: 0.677" in graph_output_as_dot
+    assert "eff BF: 0.3034" in graph_output_as_dot # 0.307*0.988228297
+    assert "style=invis" in graph_output_as_dot
