@@ -179,7 +179,7 @@ class DecayChainViewer:
             for idm in range(n_decaymodes):
                 _list_parts = subchain[idm]["fs"]
                 _bf = subchain[idm]["bf"]
-                _effective_bf = effective_bf * _bf
+                _effective_bf = effective_bf * float(_bf)  # type: ignore[arg-type]
                 if not has_subdecay(_list_parts):  # type: ignore[arg-type]
                     _ref = new_node_no_subchain(_list_parts, _effective_bf)  # type: ignore[arg-type]
                     if link_pos is None:
