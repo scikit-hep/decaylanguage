@@ -2,6 +2,8 @@
 
 ## WIP - UNRELEASED
 
+* New API:
+  - Added `decaylanguage.decay_chain_to_dataframe` (and `DecayChain.to_dataframe`) to tabulate a decay chain as a `pandas.DataFrame`.
 * Dependencies:
   - Require dependency on ``Particle`` >= 1.1.0
     to pick up the PDG ID scheme changes for tetraquarks and pentaquarks.
