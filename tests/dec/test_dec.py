@@ -674,6 +674,295 @@ def test_build_decay_chains():
     assert p.build_decay_chains("D+", stable_particles=["pi0"]) == output
 
 
+def test_build_decay_chains_minimum_effective_bf_zero_is_no_filter():
+    """minimum_effective_bf=0.0 is a no-op, equivalent to not filtering at all."""
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+    assert p.build_decay_chains(
+        "D*+", minimum_effective_bf=0.0
+    ) == p.build_decay_chains("D*+")
+
+
+def test_build_decay_chains_minimum_effective_bf_none_is_no_filter():
+    """minimum_effective_bf=None (the default) applies no filtering at all."""
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    assert p.build_decay_chains(
+        "D*+", minimum_effective_bf=None
+    ) == p.build_decay_chains("D*+")
+
+
+def test_build_decay_chains_minimum_effective_bf_no_output():
+    """Too stringent a threshold - no chain survives."""
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    assert p.build_decay_chains("D*+", minimum_effective_bf=0.8) == {"D*+": []}
+
+
+def test_build_decay_chains_minimum_effective_bf_unit_threshold():
+    """minimum_effective_bf=1.0 filters every mode with BF < 1.0.
+
+    Also tests the boundary condition: a mode with BF exactly 1.0 must survive
+    (1.0 is not strictly less than 1.0).
+    """
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    # All D*+ modes have BF < 1.0, so nothing survives.
+    assert p.build_decay_chains("D*+", minimum_effective_bf=1.0) == {"D*+": []}
+
+    # D0 has a single mode with BF = 1.0 exactly — boundary passes.
+    assert p.build_decay_chains("D0", minimum_effective_bf=1.0) == {
+        "D0": [{"bf": 1, "fs": ["K-", "pi+"], "model": "PHSP", "model_params": ""}]
+    }
+
+
+def test_build_decay_chains_minimum_effective_bf_cache_cleared_between_calls():
+    """Results are independent across successive calls with different thresholds.
+
+    The internal LRU cache is cleared at the start of each build_decay_chains call.
+    Without that clearing, a strict first call would poison the cache and cause a
+    subsequent looser call to return an erroneously empty result.
+    """
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    assert p.build_decay_chains("D*+", minimum_effective_bf=0.8) == {"D*+": []}
+
+    assert p.build_decay_chains("D*+", minimum_effective_bf=0.6) == {
+        "D*+": [
+            {
+                "bf": 0.677,
+                "fs": [
+                    {
+                        "D0": [
+                            {
+                                "bf": 1,
+                                "fs": ["K-", "pi+"],
+                                "model": "PHSP",
+                                "model_params": "",
+                            }
+                        ]
+                    },
+                    "pi+",
+                ],
+                "model": "VSS",
+                "model_params": "",
+            },
+        ]
+    }
+
+
+def test_build_decay_chains_minimum_effective_bf_single_chain():
+    """At min_bf=0.6, only the D0 pi+ chain (BF 0.677) passes; D+ pi0 (0.307) is filtered.
+    Setting D0 as stable just simplifies to a leaf"""
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    assert p.build_decay_chains("D*+", minimum_effective_bf=0.6) == {
+        "D*+": [
+            {
+                "bf": 0.677,
+                "fs": [
+                    {
+                        "D0": [
+                            {
+                                "bf": 1,
+                                "fs": ["K-", "pi+"],
+                                "model": "PHSP",
+                                "model_params": "",
+                            }
+                        ]
+                    },
+                    "pi+",
+                ],
+                "model": "VSS",
+                "model_params": "",
+            },
+        ]
+    }
+    assert p.build_decay_chains(
+        "D*+", minimum_effective_bf=0.6, stable_particles=["D0"]
+    ) == {
+        "D*+": [
+            {
+                "bf": 0.677,
+                "fs": [
+                    "D0",
+                    "pi+",
+                ],
+                "model": "VSS",
+                "model_params": "",
+            },
+        ]
+    }
+
+
+def test_build_decay_chains_minimum_effective_bf_exact_boundary():
+    """BF product exactly equal to minimum_effective_bf (not strictly less) should pass.
+
+    The filter condition is ``effective_bf < minimum_effective_bf``, so equality must pass.
+    At min_bf = 0.677 the D*+ → D0 pi+ mode (BF = 0.677) sits exactly on the boundary
+    and should survive; all other modes (BF < 0.677) are filtered.
+    A threshold of 0.678 — just above — must filter the D0 chain too.
+    """
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    assert p.build_decay_chains("D*+", minimum_effective_bf=0.677) == {
+        "D*+": [
+            {
+                "bf": 0.677,
+                "fs": [
+                    {
+                        "D0": [
+                            {
+                                "bf": 1,
+                                "fs": ["K-", "pi+"],
+                                "model": "PHSP",
+                                "model_params": "",
+                            }
+                        ]
+                    },
+                    "pi+",
+                ],
+                "model": "VSS",
+                "model_params": "",
+            }
+        ]
+    }
+
+    assert p.build_decay_chains("D*+", minimum_effective_bf=0.678) == {"D*+": []}
+
+
+def test_build_decay_chains_minimum_effective_bf_partial_pi0_and_stable_comparison():
+    """Partial filtering of pi0 modes and effect of treating pi0 as stable.
+
+    At min_bf=0.3 with D0 and D+ stable:
+    - pi0 gamma-gamma passes   (effective BF 0.307 * 0.988... = 0.303 >= 0.3)
+    - pi0 e+e-gamma is filtered (effective BF 0.307 * 0.01174... = 0.00360 < 0.3)
+    With pi0 also stable the chain structure simplifies to a leaf.
+    """
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    assert p.build_decay_chains(
+        "D*+", stable_particles=["D0", "D+"], minimum_effective_bf=0.3
+    ) == {
+        "D*+": [
+            {"bf": 0.677, "fs": ["D0", "pi+"], "model": "VSS", "model_params": ""},
+            {
+                "bf": 0.307,
+                "fs": [
+                    "D+",
+                    {
+                        "pi0": [
+                            {
+                                "bf": 0.988228297,
+                                "fs": ["gamma", "gamma"],
+                                "model": "PHSP",
+                                "model_params": "",
+                            }
+                        ]
+                    },
+                ],
+                "model": "VSS",
+                "model_params": "",
+            },
+        ]
+    }
+    assert p.build_decay_chains(
+        "D*+", stable_particles=["D0", "D+", "pi0"], minimum_effective_bf=0.3
+    ) == {
+        "D*+": [
+            {"bf": 0.677, "fs": ["D0", "pi+"], "model": "VSS", "model_params": ""},
+            {"bf": 0.307, "fs": ["D+", "pi0"], "model": "VSS", "model_params": ""},
+        ]
+    }
+
+
+def test_build_decay_chains_minimum_effective_bf_stable_pi0_rescues_chain():
+    """Treating pi0 as stable rescues the D+ pi0 chain that would otherwise be cut.
+
+    At min_bf=0.304 the pi0 gamma-gamma effective BF (0.307 * 0.988... = 0.303) falls just
+    below the threshold, so all pi0 modes are filtered and the chain is skipped entirely.
+    With pi0 stable its effective BF is 0.307 * 1.0 = 0.307 >= 0.304, so the chain is kept.
+    """
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    assert p.build_decay_chains(
+        "D*+", stable_particles=["D0", "D+"], minimum_effective_bf=0.306
+    ) == {
+        "D*+": [{"bf": 0.677, "fs": ["D0", "pi+"], "model": "VSS", "model_params": ""}]
+    }
+    assert p.build_decay_chains(
+        "D*+", stable_particles=["D0", "D+", "pi0"], minimum_effective_bf=0.306
+    ) == {
+        "D*+": [
+            {"bf": 0.677, "fs": ["D0", "pi+"], "model": "VSS", "model_params": ""},
+            {"bf": 0.307, "fs": ["D+", "pi0"], "model": "VSS", "model_params": ""},
+        ]
+    }
+
+
+def test_build_decay_chains_minimum_effective_bf_first_daughter_filtered():
+    """Chain is skipped when the first daughter's sub-decays are all filtered.
+
+    In D*+ → D+ Mypi0, D+ is the first daughter (index 0).
+
+    With stable=["Mypi0"] at min_bf=0.304: D+ is expanded and finds pi0 inside its own
+    decay filtered (effective ≈ 0.303 < 0.304), so D+ returns {} and the break fires
+    at i=0 in the D*+ loop.
+
+    With stable=[D+"] at the same threshold: D+ is a stable leaf (skipped via
+    ``continue``), and Mypi0 — the second daughter (i=1) — has all its modes filtered,
+    so the break fires at i=1 instead.
+
+    Both paths skip the D*+ → D+ pi0 chain, leaving only the D0 chain.
+    """
+    input_s = """
+    Decay D*+
+    0.677             D0 pi+       VSS;
+    0.307             D+ Mypi0       VSS;
+    Enddecay
+
+    Decay D+
+    1.0   K-   pi+   pi+   pi0    PHSP;
+    Enddecay
+
+    Decay pi0
+    0.988228297   gamma   gamma                   PHSP;
+    Enddecay
+
+    Decay Mypi0
+    0.988228297   gamma   gamma                   PHSP;
+    Enddecay
+    """
+    p = DecFileParser.from_string(input_s)
+    p.parse()
+
+    expected = {
+        "D*+": [{"bf": 0.677, "fs": ["D0", "pi+"], "model": "VSS", "model_params": ""}]
+    }
+
+    # break at i=0: D+ (first daughter) recurses and returns {}
+    assert (
+        p.build_decay_chains(
+            "D*+", stable_particles=["Mypi0"], minimum_effective_bf=0.304
+        )
+        == expected
+    )
+
+    # break at i=1: Mypi0 (second daughter, after the stable D+) returns {}
+    assert (
+        p.build_decay_chains("D*+", stable_particles=["D+"], minimum_effective_bf=0.304)
+        == expected
+    )
+
+
 def test_expand_decay_chains():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
