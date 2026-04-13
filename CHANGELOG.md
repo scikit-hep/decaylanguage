@@ -4,6 +4,8 @@
 
 * Parsing of decay files (aka .dec files):
   - An extra optional argument called `minimum_effective_bf` to filter decay chains based on their effective branching fraction; added related validation and benchmark tests.
+* Universal representation of decay chains:
+  - Added `show_effective_bf` argument to `DecayChainViewer`.
 
 ## Version 0.20.3 (2026-03-06)
 
