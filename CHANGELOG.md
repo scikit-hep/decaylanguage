@@ -1,11 +1,14 @@
 # Changelog
 
-## Version 0.20.4 (2026-0)
+## Version 0.20.4 (2026-04-16)
 
 * Parsing of decay files (aka .dec files):
   - An extra optional argument called `minimum_effective_bf` to filter decay chains based on their effective branching fraction; added related validation and benchmark tests.
 * Universal representation of decay chains:
   - Added `show_effective_bf` argument to `DecayChainViewer`.
+* Added a comprehensive ReadTheDocs documentation.
+* CI and tests:
+  - Updates and improvements to pre-commit hooks and CI YAML files.
 
 ## Version 0.20.3 (2026-03-06)
 
