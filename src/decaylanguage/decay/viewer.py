@@ -18,6 +18,7 @@ import graphviz
 
 if TYPE_CHECKING:
     from particle.converters.bimap import DirectionalMap
+
     from decaylanguage.decay.decay import DecayChain
 
 from particle import latex_to_html_name
