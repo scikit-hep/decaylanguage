@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING, Any
 import graphviz
 
 if TYPE_CHECKING:
+    from particle.converters.bimap import DirectionalMap
     from decaylanguage.decay.decay import DecayChain
 
 from particle import latex_to_html_name
@@ -25,6 +26,8 @@ from particle.converters.bimap import DirectionalMaps
 counter = iter(itertools.count())
 
 
+_EvtGen2LatexNameMap: DirectionalMap[str, str]
+_Latex2EvtGenNameMap: DirectionalMap[str, str]
 _EvtGen2LatexNameMap, _Latex2EvtGenNameMap = DirectionalMaps("EvtGenName", "LaTexName")
 
 
