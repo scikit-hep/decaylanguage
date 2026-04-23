@@ -95,8 +95,6 @@ strict = true
 module = [
     "lark",
     "graphviz",
-    "pandas",
-    "plumbum",
 ]
 ignore_missing_imports = true
 
