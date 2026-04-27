@@ -11,8 +11,10 @@ from collections import Counter
 from collections.abc import Collection, Iterable, Iterator, Sequence
 from copy import deepcopy
 from itertools import product
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypedDict
 
+from lark import Lark, LarkError, Token, Transformer
 from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
 from particle.exceptions import MatchingIDNotFound
@@ -449,6 +451,18 @@ class DecayMode:
     def __str__(self) -> str:
         return repr(self)
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, DecayMode):
+            return NotImplemented
+        return (
+            self.bf == other.bf
+            and self.daughters == other.daughters
+            and self.metadata == other.metadata
+        )
+
+    def __hash__(self) -> int:
+        raise TypeError(f"unhashable type: '{type(self).__name__}'")
+
 
 def _has_no_subdecay(ds: list[Any]) -> bool:
     """
@@ -729,6 +743,60 @@ def _expand_decay_modes(
     return expanded_modes
 
 
+class _DescriptorTreeToDict(Transformer):  # type: ignore[misc]
+    """Map a parsed descriptor tree into a ``DecayChainDict`` structure."""
+
+    def start(self, items: list[Any]) -> DecayChainDict:
+        # start: decay
+        return typing.cast(DecayChainDict, items[0])
+
+    def particle(self, items: list[Any]) -> str:
+        # particle: PARTICLE
+        return str(items[0])
+
+    def daughter(self, items: list[Any]) -> str | DecayChainDict:
+        # daughter: particle | sub_decay
+        return typing.cast(str | DecayChainDict, items[0])
+
+    def daughters(self, items: list[Any]) -> list[str | DecayChainDict]:
+        # daughters: daughter+
+        return [item for item in items if isinstance(item, (str, dict))]
+
+    def sub_decay(self, items: list[Any]) -> DecayChainDict:
+        # sub_decay: LPAR decay RPAR
+        for item in items:
+            if isinstance(item, dict):
+                return item
+        raise ValueError("Malformed sub-decay in parse tree")
+
+    def decay(self, items: list[Any]) -> DecayChainDict:
+        # decay: particle ARROW daughters
+        mother: str | None = None
+        daughters: list[str | DecayChainDict] | None = None
+
+        for item in items:
+            if isinstance(item, str) and mother is None:
+                mother = item
+            elif isinstance(item, list):
+                daughters = item
+            elif isinstance(item, Token):
+                # Ignore punctuation tokens such as ARROW.
+                continue
+
+        if not mother or not daughters:
+            raise ValueError(
+                f"Malformed decay in parse tree. Parsing result: {mother=}, {daughters=}"
+            )
+
+        mode: DecayModeDict = {
+            "bf": 1.0,
+            "fs": daughters,
+            "model": "",
+            "model_params": "",
+        }
+        return {mother: [mode]}
+
+
 class DecayChain:
     """
     Class holding a particle (single) decay chain, which is typically a top-level decay
@@ -794,6 +862,73 @@ class DecayChain:
         _build_decay_modes(decay_modes, decay_chain_dict)
 
         return cls(mother, decay_modes)
+
+    @classmethod
+    def from_string(
+        cls,
+        descriptor: str,
+        *,
+        grammar_file: str | Path | None = None,
+    ) -> Self:
+        """
+        Construct a ``DecayChain`` by parsing a descriptor string.
+
+        Parameters
+        ----------
+        descriptor : str
+            The decay descriptor string, e.g.
+            ``"D*+ -> (D0 -> K+ pi-) pi+"``.
+        grammar_file : str or Path, optional
+            Path to a custom Lark grammar file for descriptor parsing.
+            If not provided, the default grammar is used.
+        Returns
+        -------
+        DecayChain
+
+        Raises
+        ------
+        ValueError
+            If the descriptor string is malformed.
+
+        Examples
+        --------
+        >>> dc = DecayChain.from_string("D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)")
+        >>> dc.mother
+        'D0'
+        >>> len(dc.decays)
+        3
+        """
+
+        # Load the grammar
+        if grammar_file is None:
+            # Use the default descriptor grammar
+            grammar_file = Path(__file__).parent.parent / "data" / "descriptor.lark"
+
+        if isinstance(grammar_file, str):
+            grammar_file = Path(grammar_file)
+
+        if not grammar_file.exists():
+            raise FileNotFoundError(f"Grammar file not found: {grammar_file}")
+
+        with grammar_file.open() as f:
+            grammar = f.read()
+
+        # Parse the descriptor
+        try:
+            parser = Lark(grammar, parser="lalr", transformer=None)
+            tree = parser.parse(descriptor)
+        except LarkError as e:
+            raise ValueError(f"Failed to parse descriptor '{descriptor}': {e}") from e
+
+        # Transform to a DecayChainDict
+        try:
+            decay_chain_dict = _DescriptorTreeToDict().transform(tree)
+        except Exception as e:
+            raise ValueError(
+                f"Failed to transform parse tree into decay chain: {e}"
+            ) from e
+
+        return cls.from_dict(decay_chain_dict)
 
     def top_level_decay(self) -> DecayMode:
         """
@@ -1037,3 +1172,11 @@ class DecayChain:
 
     def __str__(self) -> str:
         return repr(self)
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, DecayChain):
+            return NotImplemented
+        return self.mother == other.mother and self.decays == other.decays
+
+    def __hash__(self) -> int:
+        raise TypeError(f"unhashable type: '{type(self).__name__}'")
