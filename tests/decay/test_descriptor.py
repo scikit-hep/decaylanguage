@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import copy
+from pathlib import Path
 
 import pytest
 
@@ -57,6 +58,28 @@ def test_descriptor_parser(expected: DecayChain, desc: str):
     expected = copy.deepcopy(expected)
     for mode in expected.decays.values():
         mode.bf = 1.0
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("conventional", "alternative"),
+    [
+        (
+            "D*+ -> (D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)) pi+",
+            "D*+ => {D0 => {K_S0 => pi+ pi-} {pi0 => gamma gamma}} pi+",
+        ),
+        (
+            "B0 -> (D- -> K+ pi- pi-) (tau+ -> anti-nu_tau pi+ pi+ pi-) nu_tau",
+            "B0 => {D- => K+ pi- pi-} {tau+ => anti-nu_tau pi+ pi+ pi-} nu_tau",
+        ),
+    ],
+)
+def test_descriptor_parser_alternative(conventional: str, alternative: str):
+    result = DecayChain.from_string(
+        alternative,
+        grammar_file=Path(__file__).parent.parent / "data" / "descriptor_alt.lark",
+    )
+    expected = DecayChain.from_string(conventional)
     assert result == expected
 
 
