@@ -5,6 +5,9 @@
 
 from __future__ import annotations
 
+import copy
+from pathlib import Path
+
 import pytest
 
 from decaylanguage import DecayChain, DecayMode
@@ -21,27 +24,76 @@ dm9a = DecayMode(0.491, "K+ K-")  #  phi
 dm9b = DecayMode(0.154, "pi+ pi- pi0")  #  phi
 
 
+EXAMPLES = [
+    (
+        DecayChain("D0", {"D0": dm2, "K_S0": dm3, "pi0": dm4}),
+        "D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)",
+    ),
+    (
+        DecayChain("D*+", {"D*+": dm1, "D0": dm2, "K_S0": dm3, "pi0": dm4}),
+        "D*+ -> (D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)) pi+",
+    ),
+    (
+        DecayChain("B0", {"B0": dm5, "D-": dm6, "tau+": dm7}),
+        "B0 -> (D- -> K+ pi- pi-) (tau+ -> anti-nu_tau pi+ pi+ pi-) nu_tau",
+    ),
+    (
+        DecayChain("B_s0", {"B_s0": dm8, "phi": dm9a, "phi'": dm9b}),
+        "B_s0 -> (phi -> K+ K-) (phi' -> pi+ pi- pi0)",
+    ),
+]
+
+
+@pytest.mark.parametrize(("dc", "expected"), EXAMPLES)
+def test_descriptor_formatter(dc: DecayChain, expected: str):
+    descriptor = dc.to_string()
+    assert descriptor == expected
+
+
+@pytest.mark.parametrize(("expected", "desc"), EXAMPLES)
+def test_descriptor_parser(expected: DecayChain, desc: str):
+    result = DecayChain.from_string(desc)
+    # Branching fractions are not deduced from the descriptor
+    # We set them explicitly to 1.0 as a known difference
+    expected = copy.deepcopy(expected)
+    for mode in expected.decays.values():
+        mode.bf = 1.0
+    assert result == expected
+
+
 @pytest.mark.parametrize(
-    ("dc", "expected"),
+    ("conventional", "alternative"),
     [
         (
-            DecayChain("D0", {"D0": dm2, "K_S0": dm3, "pi0": dm4}),
-            "D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)",
-        ),
-        (
-            DecayChain("D*+", {"D*+": dm1, "D0": dm2, "K_S0": dm3, "pi0": dm4}),
             "D*+ -> (D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)) pi+",
+            "D*+ => {D0 => {K_S0 => pi+ pi-} {pi0 => gamma gamma}} pi+",
         ),
         (
-            DecayChain("B0", {"B0": dm5, "D-": dm6, "tau+": dm7}),
             "B0 -> (D- -> K+ pi- pi-) (tau+ -> anti-nu_tau pi+ pi+ pi-) nu_tau",
-        ),
-        (
-            DecayChain("B_s0", {"B_s0": dm8, "phi": dm9a, "phi'": dm9b}),
-            "B_s0 -> (phi -> K+ K-) (phi' -> pi+ pi- pi0)",
+            "B0 => {D- => K+ pi- pi-} {tau+ => anti-nu_tau pi+ pi+ pi-} nu_tau",
         ),
     ],
 )
-def test_descriptor(dc: DecayChain, expected: str):
-    descriptor = dc.to_string()
-    assert descriptor == expected
+def test_descriptor_parser_alternative(conventional: str, alternative: str):
+    result = DecayChain.from_string(
+        alternative,
+        grammar_file=Path(__file__).parent.parent / "data" / "descriptor_alt.lark",
+    )
+    expected = DecayChain.from_string(conventional)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "descriptor",
+    [
+        "D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)",
+        "D*+ -> (D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)) pi+",
+        "B0 -> (D- -> K+ pi- pi-) (tau+ -> anti-nu_tau pi+ pi+ pi-) nu_tau",
+        "B_s0 -> (phi -> K+ K-) (phi' -> pi+ pi- pi0)",
+    ],
+)
+def test_from_string_to_string(descriptor: str):
+    dc = DecayChain.from_string(descriptor)
+    # Verify that we can round-trip: string -> chain -> string
+    result = dc.to_string()
+    assert result == descriptor
