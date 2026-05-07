@@ -899,6 +899,7 @@ class DecayChain:
         grammar_file : str or Path, optional
             Path to a custom Lark grammar file for descriptor parsing.
             If not provided, the default grammar is used.
+
         Returns
         -------
         DecayChain
