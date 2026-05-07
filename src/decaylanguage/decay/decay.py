@@ -916,7 +916,7 @@ class DecayChain:
 
         # Parse the descriptor
         try:
-            parser = Lark(grammar, parser="lalr", transformer=None)
+            parser = Lark(grammar, parser="lalr", transformer=None, lexer="auto")
             tree = parser.parse(descriptor)
         except LarkError as e:
             raise ValueError(f"Failed to parse descriptor '{descriptor}': {e}") from e
