@@ -19,6 +19,7 @@ from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
 from particle.exceptions import MatchingIDNotFound
 
+from .. import data
 from .._compat.typing import Self
 from ..utils import DescriptorFormat, charge_conjugate_name
 
@@ -920,17 +921,13 @@ class DecayChain:
 
         # Load the grammar
         if grammar_file is None:
-            # Use the default descriptor grammar
-            grammar_file = Path(__file__).parent.parent / "data" / "descriptor.lark"
-
-        if isinstance(grammar_file, str):
-            grammar_file = Path(grammar_file)
-
-        if not grammar_file.exists():
-            raise FileNotFoundError(f"Grammar file not found: {grammar_file}")
-
-        with grammar_file.open() as f:
-            grammar = f.read()
+            # Use the default descriptor grammar from the data package
+            grammar = data.basepath.joinpath("descriptor.lark").read_text()
+        else:
+            # Use custom grammar file
+            if isinstance(grammar_file, str):
+                grammar_file = Path(grammar_file)
+            grammar = grammar_file.read_text()
 
         # Parse the descriptor
         try:
