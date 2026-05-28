@@ -899,7 +899,7 @@ class DecayChain:
             ``"D*+ -> (D0 -> K+ pi-) pi+"``.
         grammar_file : str or Path, optional
             Path to a custom Lark grammar file for descriptor parsing.
-            If not provided, the default grammar is used.
+            The default grammar file is ``decaylanguage/data/descriptor.lark``.
 
         Returns
         -------
@@ -922,12 +922,14 @@ class DecayChain:
         # Load the grammar
         if grammar_file is None:
             # Use the default descriptor grammar from the data package
-            grammar = data.basepath.joinpath("descriptor.lark").read_text()
+            grammar = data.basepath.joinpath("descriptor.lark").read_text(
+                encoding="utf-8"
+            )
         else:
             # Use custom grammar file
             if isinstance(grammar_file, str):
                 grammar_file = Path(grammar_file)
-            grammar = grammar_file.read_text()
+            grammar = grammar_file.read_text(encoding="utf-8")
 
         # Parse the descriptor
         try:
