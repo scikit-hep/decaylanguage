@@ -772,8 +772,26 @@ class _DescriptorTreeToDict(Transformer):  # type: ignore[misc]
         return typing.cast(DecayChainDict, items[0])
 
     def particle(self, items: list[Any]) -> str:
-        # particle: PARTICLE
-        return str(items[0])
+        # particle: PHEAD psuffix*
+        # Rebuild full particle name from head + suffixes
+        return "".join(self._item_text(i) for i in items if not self._is_ws(i))
+
+    def psuffix(self, items: list[Any]) -> str:
+        # psuffix: PCHUNK | pgroup_paren
+        # Return the only significant piece
+        for item in items:
+            if not self._is_ws(item):
+                return self._item_text(item)
+        return ""
+
+    def pgroup_paren(self, items: list[Any]) -> str:
+        # pgroup_paren: "(" _ws PCHUNK _ws ")"
+        inner = "".join(
+            self._item_text(i)
+            for i in items
+            if not self._is_ws(i) and not self._is_paren_token(i)
+        )
+        return f"({inner})"
 
     def daughter(self, items: list[Any]) -> str | DecayChainDict:
         # daughter: particle | sub_decay
@@ -781,7 +799,11 @@ class _DescriptorTreeToDict(Transformer):  # type: ignore[misc]
 
     def daughters(self, items: list[Any]) -> list[str | DecayChainDict]:
         # daughters: daughter+
-        return [item for item in items if isinstance(item, (str, dict))]
+        return [
+            item
+            for item in items
+            if not isinstance(item, Token) and isinstance(item, (str, dict))
+        ]
 
     def sub_decay(self, items: list[Any]) -> DecayChainDict:
         # sub_decay: LPAR decay RPAR
@@ -796,13 +818,13 @@ class _DescriptorTreeToDict(Transformer):  # type: ignore[misc]
         daughters: list[str | DecayChainDict] | None = None
 
         for item in items:
+            if isinstance(item, Token):
+                # Ignore punctuation and whitespace tokens.
+                continue
             if isinstance(item, str) and mother is None:
                 mother = item
             elif isinstance(item, list):
                 daughters = item
-            elif isinstance(item, Token):
-                # Ignore punctuation tokens such as ARROW.
-                continue
 
         if not mother or not daughters:
             raise ValueError(
@@ -816,6 +838,18 @@ class _DescriptorTreeToDict(Transformer):  # type: ignore[misc]
             "model_params": "",
         }
         return {mother: [mode]}
+
+    @staticmethod
+    def _is_ws(item: Any) -> bool:
+        return isinstance(item, Token) and item.type == "WS_INLINE"
+
+    @staticmethod
+    def _is_paren_token(item: Any) -> bool:
+        return isinstance(item, Token) and item.type in {"LPAR", "RPAR"}
+
+    @staticmethod
+    def _item_text(item: Any) -> str:
+        return str(item.value) if isinstance(item, Token) else str(item)
 
 
 class DecayChain:
