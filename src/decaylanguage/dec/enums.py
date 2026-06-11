@@ -17,8 +17,9 @@ class PhotosEnum(IntEnum):
     yes = 1
 
 
-# This list should match the list specified in the decay file parser file
-# 'decaylanguage/data/decfile.lark'!
+# This list is injected at parse time into the grammar via ``edit_terminals``
+# in ``DecFileParser._load_grammar``; it no longer needs to be kept in sync
+# with a static terminal in 'decaylanguage/data/decfile.lark'.
 known_decay_models = (
     "B_TO_2BARYON_SCALAR",
     "B_TO_LAMBDA_PBAR_GAMMA",

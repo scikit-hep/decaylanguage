@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+* Parsing of decay files (aka .dec files):
+  - Typing modernisations in `dec/dec.py`: `Collection[str]` for `stable_particles`,
+    `list[str] | list[list[str]]` for `_align_items`, proper generics on `Visitor[Token]`
+    subclasses, and normalised `None | (X)` constructs.
+  - Collapsed four near-identical two-token extractors (`get_definitions`,
+    `get_aliases`, `get_charge_conjugate_defs`, `get_decays2copy_statements`)
+    into a shared private helper `_extract_two_token_dict`.
+  - Simplified `get_pythia_definitions` and `get_jetset_definitions` to use
+    `dict.setdefault` instead of if/else-update and try/except-KeyError patterns.
+  - Updated the `known_decay_models` comment in `dec/enums.py` to reflect that
+    the list is injected via `edit_terminals` rather than a static grammar terminal.
+
 * CI and tests:
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).
