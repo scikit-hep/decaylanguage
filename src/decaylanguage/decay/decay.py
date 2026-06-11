@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import typing
 from collections import Counter
-from collections.abc import Collection, Iterable, Iterator, Sequence
+from collections.abc import Collection, Iterator, Sequence
 from copy import deepcopy
 from itertools import product
 from typing import TYPE_CHECKING, Any, TypedDict
@@ -146,7 +146,7 @@ class DaughtersDict(CounterStr):
         <DaughtersDict: ['K(S)0', 'pi-']>
         """
         return self.__class__(
-            {charge_conjugate_name(p, pdg_name): n for p, n in self.items()}
+            {charge_conjugate_name(p, pdg_name=pdg_name): n for p, n in self.items()}
         )
 
     def __repr__(self) -> str:
@@ -168,8 +168,29 @@ class DaughtersDict(CounterStr):
     def __add__(self, other: Self) -> Self:  # type: ignore[override]
         """
         Add two final states, particle-type-wise.
+
+        Examples
+        --------
+        >>> dd1 = DaughtersDict({'K+': 1, 'K-': 1})
+        >>> dd2 = DaughtersDict({'pi0': 1})
+        >>> dd1 + dd2
+        <DaughtersDict: ['K+', 'K-', 'pi0']>
         """
         dd = super().__add__(other)
+        return self.__class__(dd)
+
+    def __sub__(self, other: Self) -> Self:  # type: ignore[override]
+        """
+        Subtract two final states, particle-type-wise.
+
+        Examples
+        --------
+        >>> dd1 = DaughtersDict({'K+': 1, 'K-': 2, 'pi0': 3})
+        >>> dd2 = DaughtersDict({'K-': 1, 'pi0': 1})
+        >>> dd1 - dd2
+        <DaughtersDict: ['K+', 'K-', 'pi0', 'pi0']>
+        """
+        dd = super().__sub__(other)
         return self.__class__(dd)
 
     def __iter__(self) -> Iterator[str]:
@@ -539,11 +560,18 @@ def _build_decay_modes(
     mother = next(iter(dc_dict.keys()))
     dms = dc_dict[mother]
 
-    for dm in dms:
-        # Single decay chains are allowed, which means a particle cannot have 2 decay modes
-        if mother in decay_modes:
-            raise RuntimeError("Input is not a single decay chain!") from None
+    def _set_decay_mode(mother: str, decay_mode: DecayMode) -> None:
+        # Single decay chains are allowed, which means a particle cannot
+        # have 2 *different* decay modes. The same particle may, however,
+        # appear several times in a chain with the same sub-decay
+        # (e.g. eta -> pi0 pi0 with pi0 -> gamma gamma), in which case
+        # the identical mode is simply re-confirmed rather than rejected.
+        existing = decay_modes.get(mother)
+        if existing is not None and existing.to_dict() != decay_mode.to_dict():
+            raise RuntimeError("Input is not a single decay chain!")
+        decay_modes[mother] = decay_mode
 
+    for dm in dms:
         try:
             fs = dm["fs"]
         except Exception as e:
@@ -553,7 +581,7 @@ def _build_decay_modes(
 
         assert isinstance(fs, list)
         if _has_no_subdecay(fs):
-            decay_modes[mother] = DecayMode.from_dict(dm)
+            _set_decay_mode(mother, DecayMode.from_dict(dm))
         else:
             d = deepcopy(dm)
             fs_local = d["fs"]
@@ -567,7 +595,7 @@ def _build_decay_modes(
                     _build_decay_modes(decay_modes, fs[i])
             # Create the decay mode now that none of its particles
             # has a sub-decay
-            decay_modes[mother] = DecayMode.from_dict(d)
+            _set_decay_mode(mother, DecayMode.from_dict(d))
 
 
 T = typing.TypeVar("T")
@@ -971,7 +999,7 @@ class DecayChain:
 
     def flatten(
         self,
-        stable_particles: Iterable[dict[str, int] | list[str] | str] = (),
+        stable_particles: Collection[str] = (),
     ) -> Self:
         """
         Flatten the decay chain replacing all intermediate, decaying particles,
@@ -979,9 +1007,11 @@ class DecayChain:
 
         Parameters
         ----------
-        stable_particles: iterable, optional, default=()
+        stable_particles: collection of str, optional, default=()
             If provided, ignores the sub-decays of the listed particles,
-            considering them as stable.
+            considering them as stable. The mother particle is always
+            decayed (flattening its own decay is the whole point), so it
+            is ignored even if present in this collection.
 
         Note
         ----
@@ -1011,7 +1041,11 @@ class DecayChain:
         fs = DaughtersDict(self.decays[self.mother].daughters)
 
         if stable_particles:
-            keys = [k for k in self.decays if k not in stable_particles]
+            # The mother must always be decayed (that is the point of
+            # flattening), so it is never treated as stable even if listed.
+            keys = [
+                k for k in self.decays if k == self.mother or k not in stable_particles
+            ]
         else:
             keys = list(self.decays.keys())
         keys.insert(0, keys.pop(keys.index(self.mother)))

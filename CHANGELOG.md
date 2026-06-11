@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+* Universal representation of decay chains:
+  - Fixed `DecayChain.from_dict` so it can read back its own `to_dict` output when the same particle appears more than once with an identical sub-decay (e.g. `eta -> pi0 pi0` with `pi0 -> gamma gamma`); genuinely conflicting redefinitions still raise.
+  - Fixed `DecayChain.flatten` crashing when the mother particle was listed in `stable_particles` (the mother is now always decayed).
+  - Changed `DecayChain.flatten`'s `stable_particles` annotation to `Collection[str]` to avoid accidental substring matching when a plain string was passed.
+  - Added `DaughtersDict.__sub__`, returning a `DaughtersDict` (mirrors `__add__`).
+  - Made `DaughtersDict.charge_conjugate` call `charge_conjugate_name` with a keyword argument for consistent `lru_cache` keys.
+  - `DecayChainViewer` now uses a per-instance node counter, so rendering the same chain twice yields identical, reproducible DOT output.
+  - `DecayChainViewer` now HTML-escapes particle names in its fallback label path, producing valid DOT for names containing `&`, `<`, `>`.
+  - `DecayChainViewer` no longer leaks `graphviz.Digraph` constructor arguments (`name`, `engine`, `format`) into the DOT graph attribute list.
+
 * CI and tests:
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).

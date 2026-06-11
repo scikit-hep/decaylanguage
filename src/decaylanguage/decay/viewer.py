@@ -11,6 +11,7 @@ see the ``DecFileParser`` class.
 
 from __future__ import annotations
 
+import html
 import itertools
 from typing import TYPE_CHECKING, Any
 
@@ -21,9 +22,6 @@ if TYPE_CHECKING:
 
 from particle import latex_to_html_name
 from particle.converters.bimap import DirectionalMap, DirectionalMaps
-
-counter = iter(itertools.count())
-
 
 _EvtGen2LatexNameMap: DirectionalMap[str, str]
 _Latex2EvtGenNameMap: DirectionalMap[str, str]
@@ -52,7 +50,13 @@ class DecayChainViewer:
     >>> dcv.graph.render(filename="test", format="pdf", view=True, cleanup=True)    # doctest: +SKIP
     """
 
-    __slots__ = ("_chain", "_graph", "_graph_attributes", "_show_effective_bf")
+    __slots__ = (
+        "_chain",
+        "_counter",
+        "_graph",
+        "_graph_attributes",
+        "_show_effective_bf",
+    )
 
     def __init__(
         self,
@@ -97,6 +101,10 @@ class DecayChainViewer:
         # Store whether to show effective branching fractions
         self._show_effective_bf = show_effective_bf
 
+        # Per-instance node counter, so that rendering the same chain
+        # twice produces identical, reproducible DOT output.
+        self._counter = itertools.count()
+
         # Instantiate the digraph with defaults possibly overridden by user attributes
         self._graph = self._instantiate_graph(**attrs)
 
@@ -125,7 +133,9 @@ class DecayChainViewer:
             try:
                 return latex_to_html_name(_EvtGen2LatexNameMap[name])
             except Exception:
-                return name
+                # Escape characters such as &, <, > (legal in .dec Alias
+                # statements) so the fallback yields valid HTML-like DOT labels.
+                return html.escape(name)
 
         def html_table_label(
             names: list[str],
@@ -146,10 +156,10 @@ class DecayChainViewer:
 
         def new_node_no_subchain(list_parts: list[str], effective_bf: float) -> str:
             label = html_table_label(list_parts, bgcolor="#eef3f8")
-            r = f"dec{next(counter)}"
+            r = f"dec{next(self._counter)}"
             self.graph.node(r, label=label, style="filled", fillcolor="#eef3f8")
             if self._show_effective_bf:
-                bf_node = f"dec{next(counter)}"
+                bf_node = f"dec{next(self._counter)}"
                 self.graph.node(
                     bf_node,
                     label=f"eff BF: {effective_bf:.4g}",
@@ -164,7 +174,7 @@ class DecayChainViewer:
                 next(iter(p.keys())) if isinstance(p, dict) else p for p in list_parts
             ]
             label = html_table_label(_list_parts, add_tags=True)
-            r = f"dec{next(counter)}"
+            r = f"dec{next(self._counter)}"
             self.graph.node(r, shape="none", label=label)
             return r
 
@@ -275,9 +285,10 @@ class DecayChainViewer:
         }
 
     def _get_graph_defaults(self) -> dict[str, bool | int | float | str]:
-        d = self._get_default_arguments()
-        d.update(rankdir="LR")
-        return d
+        # Only real DOT graph attributes belong here. Constructor arguments
+        # such as name/comment/engine/format are handled separately via
+        # _get_default_arguments, so they do not leak into the DOT body.
+        return {"rankdir": "LR"}
 
     def _get_node_defaults(self) -> dict[str, bool | int | float | str]:
         return {"fontname": "Helvetica", "fontsize": "11", "shape": "oval"}

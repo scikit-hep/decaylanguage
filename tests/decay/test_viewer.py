@@ -37,11 +37,11 @@ def test_simple_decay_chain():
     dcv = DecayChainViewer(chain)
     graph_output_as_dot = dcv.to_string()
 
-    assert "mother -> dec3 [label=0.677]" in graph_output_as_dot
-    assert "dec3:p0 -> dec4 [label=1.0]" in graph_output_as_dot
-    assert "mother -> dec5 [label=0.307]" in graph_output_as_dot
-    assert "dec5:p0 -> dec6 [label=1.0]" in graph_output_as_dot
-    assert "dec6:p3 -> dec7 [label=0.988228297]" in graph_output_as_dot
+    assert "mother -> dec0 [label=0.677]" in graph_output_as_dot
+    assert "dec0:p0 -> dec1 [label=1.0]" in graph_output_as_dot
+    assert "mother -> dec2 [label=0.307]" in graph_output_as_dot
+    assert "dec2:p0 -> dec3 [label=1.0]" in graph_output_as_dot
+    assert "dec3:p3 -> dec4 [label=0.988228297]" in graph_output_as_dot
 
 
 checklist_decfiles = (
@@ -79,6 +79,39 @@ def test_duplicate_arrows(decfilepath, signal_mother, dup):
         i.split(" ")[0] for i in graph_output_as_dot.split("-> dec")[1:]
     ]  # list of node identifiers
     assert len(set(ls)) == len(ls)
+
+
+def test_reproducible_node_numbering():
+    # The node counter must be per-instance so rendering the same chain
+    # twice yields identical DOT (regression: it used to be a shared global).
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    chain = p.build_decay_chains("D*+")
+    out1 = DecayChainViewer(chain).to_string()
+    out2 = DecayChainViewer(chain).to_string()
+    assert out1 == out2
+    assert "mother -> dec0" in out1
+
+
+def test_no_constructor_kwargs_in_graph_attrs():
+    # engine/format/name are Digraph constructor arguments, not DOT graph
+    # attributes, so they must not appear in the graph [...] attribute list.
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    chain = p.build_decay_chains("D*+")
+    dcv = DecayChainViewer(chain)
+    out = dcv.to_string()
+
+    assert "graph [rankdir=LR]" in out
+    assert "engine=" not in out
+    assert "format=" not in out
+    assert "name=DecayChainGraph" not in out
+    # The Digraph itself still receives its constructor arguments.
+    assert dcv.graph.name == "DecayChainGraph"
+    assert dcv.graph.engine == "dot"
+    assert dcv.graph.format == "png"
 
 
 def test_init_non_defaults_basic():
