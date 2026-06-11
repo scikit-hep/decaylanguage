@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+* Parsing of decay files (aka .dec files):
+  - Fixed a crash when a `ModelAlias` is used in more than one decay, caused by sharing the same parse-tree tokens across decays (the model-parameter substitution mutated them in place).
+  - Fixed `DecFileParser.print_decay_modes(ascending=...)`, which previously ignored the flag and always sorted descending; `scale` now always normalizes to the largest branching fraction.
+  - Made `DecFileParser.from_string` filter intermediate `End` lines like the file-based constructor, so identical content parses the same way either way.
+  - `ChargeConjugateReplacement` no longer mutates the caller's `charge_conj_defs` dict and no longer caches `ChargeConj(...)` failure sentinels.
+  - `get_lineshape_settings` no longer masks its own specific "redefined"/structure diagnostics behind a generic error.
+  - `get_branching_fraction` now catches the exception types actually raised by malformed input.
+  - `load_additional_decay_models` now warns when called after the grammar is loaded and stores a materialized container instead of a one-shot iterator.
+  - Fixed a missing f-string prefix in a `print_decay_modes` error message.
+
 * CI and tests:
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).

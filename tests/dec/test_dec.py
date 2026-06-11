@@ -657,6 +657,67 @@ def test_print_decay_modes_options():
     del old_stdout, tmp_stdout
 
 
+def _bf_column(output):
+    """Extract the leading branching-fraction column from print_decay_modes output."""
+    return [float(line.split()[0]) for line in output.strip().splitlines()]
+
+
+def test_print_decay_modes_ascending(capsys):
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    p.print_decay_modes("D*+")
+    descending = _bf_column(capsys.readouterr().out)
+
+    p.print_decay_modes("D*+", ascending=True)
+    ascending = _bf_column(capsys.readouterr().out)
+
+    # Default is descending; ascending=True flips the order
+    assert descending == sorted(descending, reverse=True)
+    assert ascending == sorted(ascending)
+    assert ascending == descending[::-1]
+
+
+def test_print_decay_modes_scale_uses_largest_bf(capsys):
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    # Regardless of sort order, scaling sets the largest BF to `scale`.
+    p.print_decay_modes("D*+", scale=0.5)
+    desc = _bf_column(capsys.readouterr().out)
+
+    p.print_decay_modes("D*+", scale=0.5, ascending=True)
+    asc = _bf_column(capsys.readouterr().out)
+
+    assert max(desc) == pytest.approx(0.5)
+    assert max(asc) == pytest.approx(0.5)
+
+
+def test_load_additional_decay_models_too_late():
+    p = DecFileParser(DIR / "../data/test_custom_decay_model.dec")
+    # Force the grammar to load.
+    assert p.grammar() is not None
+    assert p.grammar_loaded
+
+    with pytest.warns(UserWarning, match="already been loaded"):
+        p.load_additional_decay_models("CUSTOM_MODEL1")
+
+
+def test_load_additional_decay_models_repeated_calls():
+    # Regression test: the second call used to store a one-shot itertools.chain
+    # iterator that was exhausted the first time the grammar callback consumed
+    # it, so the grammar silently lost the additional models.
+    p = DecFileParser(DIR / "../data/test_custom_decay_model.dec")
+    p.load_additional_decay_models("CUSTOM_MODEL1")
+    p.load_additional_decay_models("CUSTOM_MODEL2")
+
+    assert p.grammar() is not None
+    p.parse()
+
+    assert get_model_name(p._parsed_decays[0].children[1]) == "CUSTOM_MODEL1"
+    assert get_model_name(p._parsed_decays[0].children[2]) == "CUSTOM_MODEL2"
+
+
 def test_build_decay_chains():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
