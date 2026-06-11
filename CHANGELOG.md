@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+* Parsing of decay files (aka .dec files):
+  - Performance improvements in `DecFileParser`: `build_decay_chains` now caches
+    sub-chains by particle name when no `minimum_effective_bf` cut is requested
+    (~9x faster on `DECAY_BELLE2.DEC`), `_find_decay_modes` uses a lazily-built
+    name→tree index instead of a linear scan, `_check_parsed_decays` uses
+    `collections.Counter` instead of repeated `list.count`/`list.remove`, the
+    decay-model regex is built once per grammar, and Lark parsers are cached and
+    reused across parser instances.
+
 * CI and tests:
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).
