@@ -21,7 +21,7 @@ class DecayLanguageDecay(cli.Application):
     def main(self, filename):
         if self.generator == "goofit":
             ampgen2goofit(filename)
-        if self.generator == "goofitpy":
+        elif self.generator == "goofitpy":
             ampgen2goofitpy(filename)
 
 

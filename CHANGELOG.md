@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+* Modeling subsystem (`modeling/`):
+  - Migrated `ModelDecay` and `AmplitudeChain` from old-style `@attr.s`/`attr.ib` to modern `@attrs.define`/`attrs.field`.
+  - Removed dead `graphviz` import guard in `decay.py` (graphviz is a hard dependency).
+  - Removed unused local variables `a`, `b` in `make_lineshape` methods of `GooFitChain` and `GooFitPyChain`.
+  - Removed unreachable `if not spin_factors:` branches in `make_spinfactor` (`spinfactors` raises `LineFailure` rather than returning empty).
+  - Fixed sequential `if` checks in `__main__.py` `main` to use `elif`.
+
 * CI and tests:
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).
