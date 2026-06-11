@@ -11,6 +11,11 @@
   - Migrated `ModelDecay` and `AmplitudeChain` from old-style `@attr.s`/`attr.ib` to modern `@attrs.define`/`attrs.field`.
   - Removed dead `graphviz` import guard in `decay.py` (graphviz is a hard dependency).
   - Various fixes and minor improvements.
+* Utilities:
+  - Fixed a bug in `split()` where a trailing comma was not handled correctly (e.g. `split("a,")` returned `["a,"]` instead of `["a", ""]`); rewrote as a single linear scan to eliminate O(n²) repeated string slicing.
+  - Fixed `filter_lines()` to collect matched lines and residuals in a single pass instead of running the regex twice per line.
+  - Removed dead code in `particleutils._from_group_dict_list`: the `prime` group check could never fire as the `_getname` regex has no `prime` capture group.
+  - Bumped `lru_cache(maxsize=64)` to `lru_cache(maxsize=None)` on the pure string-mapping `charge_conjugate_name` function.
 * Dependencies:
   - Moved `numpy`, `pandas` and `plumbum` into an optional `decaylanguage[modeling]` extra; they are only needed by the `modeling` subpackage and the command-line interface. Core `.dec` parsing and decay-chain functionality no longer pull them in.
 * CI and tests:
