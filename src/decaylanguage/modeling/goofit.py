@@ -41,7 +41,7 @@ class SF_4Body(Enum):
 known_spinfactors = {
     "DtoA1P1_A1toS2P2_S2toP3P4": (SF_4Body.DtoAP1_AtoSP2_StoP3P4,),
     "DtoA1P1_A1toV2P2Dwave_V2toP3P4": (SF_4Body.DtoAP1_AtoVP2Dwave_VtoP3P4,),
-    "DtoA1P1_A1toV2P2_V2toP3P4": (SF_4Body.DtoAP1_AtoVP2Dwave_VtoP3P4,),
+    "DtoA1P1_A1toV2P2_V2toP3P4": (SF_4Body.DtoAP1_AtoVP2_VtoP3P4,),
     "DtoS1S2_S1toP1P2_S2toP3P4": (SF_4Body.ONE,),
     "DtoT1P1_T1toV2P2_V2toP3P4": (SF_4Body.DtoTP1_TtoVP2_VtoP3P4,),
     "DtoV1S2_V1toP1P2_S2toP3P4": (SF_4Body.DtoVS_VtoP1P2_StoP3P4,),
@@ -688,12 +688,12 @@ class GooFitPyChain(AmplitudeChain):
         real_coeff = (
             f'Variable("{self!s}_r", {self.amp.real:.6})'
             if self.fix
-            else f'Variable("{self!s}_r", {self.amp.real:.6},{self.err.real:.6}, 0., 1000.)'
+            else f'Variable("{self!s}_r", {self.amp.real:.6}, {self.err.real:.6})'
         )
         imag_coeff = (
             f'Variable("{self!s}_i", {self.amp.imag:.6})'
             if self.fix
-            else f'Variable("{self!s}_r", {self.amp.imag:.6},{self.err.imag:.6}, 0., 1000.)'
+            else f'Variable("{self!s}_i", {self.amp.imag:.6}, {self.err.imag:.6})'
         )
         return (
             "amplitudes_list.append(Amplitude(\n"
