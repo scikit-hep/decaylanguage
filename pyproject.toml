@@ -44,8 +44,8 @@ dependencies = [
     "attrs>=19.2",
     "graphviz>=0.12.0",
     "lark>=1.0.0",
-    "numpy>=1.9.3",
-    "pandas>=1",
+    "numpy>=1.21.6",
+    "pandas>=1.4",
     "particle>=0.26.0",
     "hepunits>=2.4.0",
     "plumbum>=1.7.0",
@@ -105,7 +105,7 @@ testpaths = ["tests"]
 addopts = [
     "-ra",
     "--doctest-modules",
-    "--doctest-glob=\\*.rst",
+    "--doctest-glob=*.rst",
     "--strict-markers",
     "--strict-config",
 ]
@@ -115,13 +115,12 @@ markers = [
 log_level = "DEBUG"
 filterwarnings = [
     "error",
-    '''ignore:\s*Pyarrow will become a required dependency of pandas:DeprecationWarning''',
 ]
 xfail_strict = true
 
 
 [tool.pylint]
-py-version = "3.12"
+py-version = "3.10"
 reports.output-format = "colorized"
 similarities.ignore-imports = "yes"
 jobs = "0"

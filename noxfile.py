@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 import nox
 
 nox.needs_version = ">=2025.02.09"
@@ -51,6 +49,4 @@ def build(session):
     session.install("build", "twine", "check-wheel-contents")
     session.run("python", "-m", "build")
     session.run("twine", "check", "--strict", "dist/*")
-    session.run(
-        "check-wheel-contents", str(*Path("dist").glob("*.whl")), "--ignore=W002"
-    )
+    session.run("check-wheel-contents", "dist/", "--ignore=W002")
