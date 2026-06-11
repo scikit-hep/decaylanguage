@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+* Universal representation of decay chains:
+  - Mechanical modernizations in `decay/` and `utils/`: removed obsolete `CounterStr` TYPE_CHECKING workaround (subclass `Counter[str]` directly), fixed `tuple[str]`/`tuple[int]` → `tuple[str, ...]`/`tuple[int, ...]` annotations, widened `DecayMode.metadata` type to `dict[str, Any]`, corrected constructor docstrings, converted `str.format` to f-strings, removed stray `from None` outside except, dropped unused `__slots__` entry, promoted local `DecayChain` import to module level, reused `_has_no_subdecay` in viewer, collapsed repetitive `graph_attr`/`node_attr`/`edge_attr` update loop, fixed `_repr_mimebundle_` include/exclude type annotations, and fixed `DescriptorFormat.__exit__` `*args` annotation.
+
 * CI and tests:
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).
