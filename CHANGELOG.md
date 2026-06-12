@@ -3,15 +3,9 @@
 ## Unreleased
 
 * CI and tests:
-  - Fixed over-escaped `--doctest-glob=\\*.rst` pattern in pytest config (was `\*.rst`, never matched).
+  - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).
-  - Aligned `[tool.pylint] py-version` with `requires-python` (`"3.10"`).
-  - Fixed `check-wheel-contents` invocation in nox `build` session to pass `dist/` directory instead of a fragile glob.
   - Trimmed mypy pre-commit hook's `additional_dependencies` to only what the covered code actually imports (`particle`, `hepunits`).
-  - Removed dead `requirements-txt-fixer` pre-commit hook (no requirements*.txt files exist).
-  - Replaced deprecated `pre-commit/action` with `j178/prek-action@v2` in the lint CI job.
-  - Added `fetch-depth: 0` to the `checks` job for consistent hatch-vcs version stamping.
-  - Folded `pytest-github-actions-annotate-failures` into the main uv install step.
   - Raised minimum dependency floors to oldest versions with cp310 wheels: `numpy>=1.21.6`, `pandas>=1.4`.
 
 ## Version 0.20.4 (2026-04-16)
