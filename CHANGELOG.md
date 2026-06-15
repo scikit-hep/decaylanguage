@@ -10,8 +10,9 @@
   - `get_lineshape_settings` no longer masks its own specific "redefined"/structure diagnostics behind a generic error.
   - `get_branching_fraction` now catches the exception types actually raised by malformed input.
   - `load_additional_decay_models` now warns when called after the grammar is loaded and stores a materialized container instead of a one-shot iterator.
-  - Fixed a missing f-string prefix in a `print_decay_modes` error message.
 
+* Dependencies:
+  - Moved `numpy`, `pandas` and `plumbum` into an optional `decaylanguage[modeling]` extra; they are only needed by the `modeling` subpackage and the command-line interface. Core `.dec` parsing and decay-chain functionality no longer pull them in.
 * CI and tests:
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).
