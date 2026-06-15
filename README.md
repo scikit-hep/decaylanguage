@@ -57,7 +57,7 @@ Required and compatibility dependencies will be automatically installed by pip.
 -   [hepunits](https://github.com/scikit-hep/hepunits): HEP units and constants
 -   [particle](https://github.com/scikit-hep/particle): PDG particle data and identification codes
 
-### Optional `modeling` dependencies:
+### Optional `modeling` submodule dependencies:
 
 -   [NumPy](https://scipy.org/install.html): The numerical library for Python
 -   [pandas](https://pandas.pydata.org/): Tabular data in Python
