@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+* CI and tests:
+  - Several improvements, enhancements and clean_ups.
+  - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).
+  - Trimmed mypy pre-commit hook's `additional_dependencies` to only what the covered code actually imports (`particle`, `hepunits`).
+  - Raised minimum dependency floors to oldest versions with cp310 wheels: `numpy>=1.21.6`, `pandas>=1.4`.
+
 ## Version 0.20.4 (2026-04-16)
 
 * Parsing of decay files (aka .dec files):
