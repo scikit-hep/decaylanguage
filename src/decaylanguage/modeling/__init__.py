@@ -5,7 +5,16 @@
 
 from __future__ import annotations
 
-from .amplitudechain import LS, AmplitudeChain
+try:
+    from .amplitudechain import LS, AmplitudeChain
+except ModuleNotFoundError as err:
+    if err.name in {"numpy", "pandas", "plumbum"}:
+        msg = (
+            "The decaylanguage modeling subpackage requires extra dependencies; "
+            "install them with `pip install decaylanguage[modeling]`."
+        )
+        raise ModuleNotFoundError(msg) from err
+    raise
 
 __all__ = ("LS", "AmplitudeChain")
 

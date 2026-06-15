@@ -32,6 +32,13 @@ Just run the following:
 pip install decaylanguage
 ```
 
+The amplitude `modeling` subpackage and the command-line interface need a few
+extra dependencies (NumPy, pandas and plumbum). Install them with:
+
+```bash
+pip install "decaylanguage[modeling]"
+```
+
 You can use a virtual environment through pipenv or with `--user` if you know
 what those are. [Python
 3.10+](http://docs.python-guide.org/en/latest/starting/installation) supported
@@ -44,14 +51,17 @@ Required and compatibility dependencies will be automatically installed by pip.
 
 ### Required dependencies:
 
--   [NumPy](https://scipy.org/install.html): The numerical library for Python
--   [pandas](https://pandas.pydata.org/): Tabular data in Python
 -   [attrs](https://github.com/python-attrs/attrs): DataClasses for Python
 -   [graphviz](https://gitlab.com/graphviz/graphviz/): Render (DOT language) graph descriptions and visualizations of decay chains
 -   [lark](https://github.com/lark-parser/lark): A modern parsing library for Python
--   [plumbum](https://github.com/tomerfiliba/plumbum): Command line tools
 -   [hepunits](https://github.com/scikit-hep/hepunits): HEP units and constants
 -   [particle](https://github.com/scikit-hep/particle): PDG particle data and identification codes
+
+### Optional `modeling` submodule dependencies:
+
+-   [NumPy](https://scipy.org/install.html): The numerical library for Python
+-   [pandas](https://pandas.pydata.org/): Tabular data in Python
+-   [plumbum](https://github.com/tomerfiliba/plumbum): Command line tools
 </p></details>
 
 

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Dependencies:
+  - Moved `numpy`, `pandas` and `plumbum` into an optional `decaylanguage[modeling]` extra; they are only needed by the `modeling` subpackage and the command-line interface. Core `.dec` parsing and decay-chain functionality no longer pull them in.
 * CI and tests:
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).
