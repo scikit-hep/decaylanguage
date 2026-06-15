@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+* Modeling subsystem (`modeling/`):
+  - Migrated `ModelDecay` and `AmplitudeChain` from old-style `@attr.s`/`attr.ib` to modern `@attrs.define`/`attrs.field`.
+  - Removed dead `graphviz` import guard in `decay.py` (graphviz is a hard dependency).
+  - Various fixes and minor improvements.
+
 * Dependencies:
   - Moved `numpy`, `pandas` and `plumbum` into an optional `decaylanguage[modeling]` extra; they are only needed by the `modeling` subpackage and the command-line interface. Core `.dec` parsing and decay-chain functionality no longer pull them in.
 * CI and tests:

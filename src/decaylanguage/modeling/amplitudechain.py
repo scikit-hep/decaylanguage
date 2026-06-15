@@ -17,7 +17,7 @@ from enum import Enum
 from itertools import product
 from typing import ClassVar
 
-import attr
+import attrs
 import numpy as np
 import pandas as pd
 from lark import Lark
@@ -38,22 +38,31 @@ class LS(Enum):
     FOCUS = 3
 
 
-@attr.s(slots=True)
+@attrs.define(order=True)
 class AmplitudeChain(ModelDecay):
     'This is a chain of decays (a "line")'
 
-    lineshape = attr.ib(None)
-    spinfactor = attr.ib(None)
-    amp = attr.ib(
-        1 + 0j, eq=False, order=False, validator=attr.validators.instance_of(complex)
+    lineshape = attrs.field(default=None)
+    spinfactor = attrs.field(default=None)
+    amp = attrs.field(
+        default=1 + 0j,
+        eq=False,
+        order=False,
+        validator=attrs.validators.instance_of(complex),
     )
-    err = attr.ib(
-        0 + 0j, eq=False, order=False, validator=attr.validators.instance_of(complex)
+    err = attrs.field(
+        default=0 + 0j,
+        eq=False,
+        order=False,
+        validator=attrs.validators.instance_of(complex),
     )
-    fix = attr.ib(
-        True, eq=False, order=False, validator=attr.validators.instance_of(bool)
+    fix = attrs.field(
+        default=True,
+        eq=False,
+        order=False,
+        validator=attrs.validators.instance_of(bool),
     )
-    name = attr.ib(None)
+    name = attrs.field(default=None)
 
     # Class members keep track of additions
     all_particles: ClassVar[Particle] = set()
