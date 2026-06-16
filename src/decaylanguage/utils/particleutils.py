@@ -19,7 +19,7 @@ from particle.converters import (
 from particle.exceptions import MatchingIDNotFound
 from particle.particle.enums import Charge_mapping
 
-cacher = lru_cache(maxsize=64)
+cacher = lru_cache(maxsize=None)
 
 
 @cacher
@@ -139,9 +139,6 @@ def _from_group_dict_list(mat: dict[str, Any]) -> list[Particle]:
         name += f"({mat['family']})"
     if mat["state"]:
         name += f"({mat['state']})"
-
-    if mat.get("prime"):
-        name += "'"
 
     if mat["star"]:
         name += "*"

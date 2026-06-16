@@ -9,32 +9,24 @@ A general base class representing decays.
 
 from __future__ import annotations
 
-import warnings
 from itertools import product
 
-import attr
+import attrs
+import graphviz
 
 from ..utils import iter_flatten
 
-try:
-    import graphviz
-except ImportError:
-    graphviz = None
-    warnings.warn(
-        "Graphviz is not installed. Line display not available.", stacklevel=1
-    )
 
-
-@attr.s(slots=True)
+@attrs.define(order=True)
 class ModelDecay:
     """
     This describes a decay very generally, with search and print features.
     Subclassed for further usage.
     """
 
-    particle = attr.ib()
-    daughters = attr.ib([], converter=lambda x: x if x else [])
-    name = attr.ib(None)
+    particle = attrs.field()
+    daughters = attrs.field(factory=list)
+    name = attrs.field(default=None)
 
     def __attrs_post_init__(self):
         if self.name is None:
@@ -114,20 +106,18 @@ class ModelDecay:
             name += "{" + ",".join(map(str, self.daughters)) + "}"
         return name
 
-    if graphviz:
+    def _make_graphviz(self):
+        d = graphviz.Digraph()
+        d.attr(labelloc="t", label=str(self))
+        self._add_nodes(d)
+        return d
 
-        def _make_graphviz(self):
-            d = graphviz.Digraph()
-            d.attr(labelloc="t", label=str(self))
-            self._add_nodes(d)
-            return d
-
-        def _repr_mimebundle_(self, include=None, exclude=None, **kwargs):
-            try:
-                return self._make_graphviz()._repr_mimebundle_(
-                    include=include, exclude=exclude, **kwargs
-                )
-            except AttributeError:
-                return {
-                    "image/svg+xml": self._make_graphviz()._repr_svg_()
-                }  # for graphviz < 0.19
+    def _repr_mimebundle_(self, include=None, exclude=None, **kwargs):
+        try:
+            return self._make_graphviz()._repr_mimebundle_(
+                include=include, exclude=exclude, **kwargs
+            )
+        except AttributeError:
+            return {
+                "image/svg+xml": self._make_graphviz()._repr_svg_()
+            }  # for graphviz < 0.19

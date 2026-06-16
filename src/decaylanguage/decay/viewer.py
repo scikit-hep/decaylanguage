@@ -11,19 +11,16 @@ see the ``DecFileParser`` class.
 
 from __future__ import annotations
 
+import html
 import itertools
-from typing import TYPE_CHECKING, Any
+from collections.abc import Iterable
+from typing import Any
 
 import graphviz
-
-if TYPE_CHECKING:
-    from decaylanguage.decay.decay import DecayChain
-
 from particle import latex_to_html_name
 from particle.converters.bimap import DirectionalMap, DirectionalMaps
 
-counter = iter(itertools.count())
-
+from decaylanguage.decay.decay import DecayChain, _has_no_subdecay
 
 _EvtGen2LatexNameMap: DirectionalMap[str, str]
 _Latex2EvtGenNameMap: DirectionalMap[str, str]
@@ -52,7 +49,7 @@ class DecayChainViewer:
     >>> dcv.graph.render(filename="test", format="pdf", view=True, cleanup=True)    # doctest: +SKIP
     """
 
-    __slots__ = ("_chain", "_graph", "_graph_attributes", "_show_effective_bf")
+    __slots__ = ("_chain", "_counter", "_graph", "_show_effective_bf")
 
     def __init__(
         self,
@@ -81,12 +78,8 @@ class DecayChainViewer:
         decaylanguage.DecayChain: class for building a decay chain programmatically.
         """
         # Accept DecayChain objects directly, converting to dict internally
-        from decaylanguage.decay.decay import (  # noqa: PLC0415  # pylint: disable=import-outside-toplevel
-            DecayChain as _DecayChain,
-        )
-
         chain: dict[str, list[Any]]
-        if isinstance(decaychain, _DecayChain):
+        if isinstance(decaychain, DecayChain):
             chain = decaychain.to_dict()
         else:
             chain = decaychain
@@ -96,6 +89,10 @@ class DecayChainViewer:
 
         # Store whether to show effective branching fractions
         self._show_effective_bf = show_effective_bf
+
+        # Per-instance node counter, so that rendering the same chain
+        # twice produces identical, reproducible DOT output.
+        self._counter = itertools.count()
 
         # Instantiate the digraph with defaults possibly overridden by user attributes
         self._graph = self._instantiate_graph(**attrs)
@@ -125,7 +122,9 @@ class DecayChainViewer:
             try:
                 return latex_to_html_name(_EvtGen2LatexNameMap[name])
             except Exception:
-                return name
+                # Escape characters such as &, <, > (legal in .dec Alias
+                # statements) so the fallback yields valid HTML-like DOT labels.
+                return html.escape(name)
 
         def html_table_label(
             names: list[str],
@@ -146,10 +145,10 @@ class DecayChainViewer:
 
         def new_node_no_subchain(list_parts: list[str], effective_bf: float) -> str:
             label = html_table_label(list_parts, bgcolor="#eef3f8")
-            r = f"dec{next(counter)}"
+            r = f"dec{next(self._counter)}"
             self.graph.node(r, label=label, style="filled", fillcolor="#eef3f8")
             if self._show_effective_bf:
-                bf_node = f"dec{next(counter)}"
+                bf_node = f"dec{next(self._counter)}"
                 self.graph.node(
                     bf_node,
                     label=f"eff BF: {effective_bf:.4g}",
@@ -164,7 +163,7 @@ class DecayChainViewer:
                 next(iter(p.keys())) if isinstance(p, dict) else p for p in list_parts
             ]
             label = html_table_label(_list_parts, add_tags=True)
-            r = f"dec{next(counter)}"
+            r = f"dec{next(self._counter)}"
             self.graph.node(r, shape="none", label=label)
             return r
 
@@ -182,7 +181,7 @@ class DecayChainViewer:
                 _list_parts = subchain[idm]["fs"]
                 _bf = subchain[idm]["bf"]
                 _effective_bf = effective_bf * float(_bf)  # type: ignore[arg-type]
-                if not has_subdecay(_list_parts):  # type: ignore[arg-type]
+                if _has_no_subdecay(_list_parts):  # type: ignore[arg-type]
                     _ref = new_node_no_subchain(_list_parts, _effective_bf)  # type: ignore[arg-type]
                     if link_pos is None:
                         self.graph.edge(top_node, _ref, label=str(_bf))
@@ -208,9 +207,6 @@ class DecayChainViewer:
                                 link_pos=i,
                                 effective_bf=_effective_bf,
                             )
-
-        def has_subdecay(ds: list[Any]) -> bool:
-            return not all(isinstance(p, str) for p in ds)
 
         k = next(iter(self._chain.keys()))
         label = html_table_label([k], add_tags=True, bgcolor="#568dba")
@@ -246,15 +242,13 @@ class DecayChainViewer:
         graph_attr = self._get_graph_defaults()
         node_attr = self._get_node_defaults()
         edge_attr = self._get_edge_defaults()
-        if "graph_attr" in attrs:
-            graph_attr.update(**attrs["graph_attr"])
-            attrs.pop("graph_attr")
-        if "node_attr" in attrs:
-            node_attr.update(**attrs["node_attr"])
-            attrs.pop("node_attr")
-        if "edge_attr" in attrs:
-            edge_attr.update(**attrs["edge_attr"])
-            attrs.pop("edge_attr")
+        for key, attr in (
+            ("graph_attr", graph_attr),
+            ("node_attr", node_attr),
+            ("edge_attr", edge_attr),
+        ):
+            if key in attrs:
+                attr.update(**attrs.pop(key))
 
         arguments = self._get_default_arguments()
         arguments.update(**attrs)  # type: ignore[call-overload]
@@ -275,9 +269,10 @@ class DecayChainViewer:
         }
 
     def _get_graph_defaults(self) -> dict[str, bool | int | float | str]:
-        d = self._get_default_arguments()
-        d.update(rankdir="LR")
-        return d
+        # Only real DOT graph attributes belong here. Constructor arguments
+        # such as name/comment/engine/format are handled separately via
+        # _get_default_arguments, so they do not leak into the DOT body.
+        return {"rankdir": "LR"}
 
     def _get_node_defaults(self) -> dict[str, bool | int | float | str]:
         return {"fontname": "Helvetica", "fontsize": "11", "shape": "oval"}
@@ -287,8 +282,8 @@ class DecayChainViewer:
 
     def _repr_mimebundle_(
         self,
-        include: bool | None = None,
-        exclude: bool | None = None,
+        include: Iterable[str] | None = None,
+        exclude: Iterable[str] | None = None,
         **kwargs: Any,
     ) -> Any:  # pragma: no cover
         """

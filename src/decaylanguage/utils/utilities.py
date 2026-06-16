@@ -31,23 +31,19 @@ def split(x: str) -> list[str]:
     this, that { that { this, that } }
     would only break on the first comma, since the second is in a {} list
     """
-
-    c = 0
-    i = 0
+    depth = 0
+    start = 0
     out = []
-    while len(x) > 0:
-        if i + 1 == len(x):
-            out.append(x[: i + 1])
-            return out
-        if x[i] == "," and c == 0:
-            out.append(x[:i])
-            x = x[i + 1 :]
-            i = -1
-        elif x[i] == "{":
-            c += 1
-        elif x[i] == "}":
-            c -= 1
-        i += 1
+    for i, ch in enumerate(x):
+        if ch == "," and depth == 0:
+            out.append(x[start:i])
+            start = i + 1
+        elif ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+    if x:
+        out.append(x[start:])
     return out
 
 
@@ -57,9 +53,14 @@ def filter_lines(
     """
     Filter out lines into new variable if they match a regular expression
     """
-    matches = (matcher.match(ln) for ln in inp)
-    output = [match.groupdict() for match in matches if match is not None]
-    new_inp = [ln for ln in inp if matcher.match(ln) is None]
+    output = []
+    new_inp = []
+    for ln in inp:
+        m = matcher.match(ln)
+        if m is not None:
+            output.append(m.groupdict())
+        else:
+            new_inp.append(ln)
     return output, new_inp
 
 
@@ -101,7 +102,7 @@ class DescriptorFormat:
     def __enter__(self) -> None:
         self.set_config(**self.new_config)
 
-    def __exit__(self, *args: list[Any]) -> None:
+    def __exit__(self, *args: object) -> None:
         self.set_config(**self.old_config)
 
     @staticmethod
