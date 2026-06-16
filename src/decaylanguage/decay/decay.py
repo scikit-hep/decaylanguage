@@ -553,10 +553,10 @@ def _build_decay_modes(
     dms = dc_dict[mother]
 
     def _set_decay_mode(mother: str, decay_mode: DecayMode) -> None:
-        # Single decay chains are allowed, which means a particle cannot
-        # have 2 *different* decay modes. The same particle may, however,
-        # appear several times in a chain with the same sub-decay
-        # (e.g. eta -> pi0 pi0 with pi0 -> gamma gamma), in which case
+        # Single decay chains are allowed, which means a particle
+        # cannot have 2 *different* decay modes. The same particle may, however,
+        # appear several times in a chain with the same sub-decay.
+        # For example, eta -> pi0 pi0 with pi0 -> gamma gamma, in which case
         # the identical mode is simply re-confirmed rather than rejected.
         existing = decay_modes.get(mother)
         if existing is not None and existing.to_dict() != decay_mode.to_dict():
