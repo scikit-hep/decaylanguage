@@ -12,15 +12,14 @@ see the ``DecFileParser`` class.
 from __future__ import annotations
 
 import itertools
-from typing import TYPE_CHECKING, Any
+from collections.abc import Iterable
+from typing import Any
 
 import graphviz
-
-if TYPE_CHECKING:
-    from decaylanguage.decay.decay import DecayChain
-
 from particle import latex_to_html_name
 from particle.converters.bimap import DirectionalMap, DirectionalMaps
+
+from decaylanguage.decay.decay import DecayChain, _has_no_subdecay
 
 counter = iter(itertools.count())
 
@@ -52,7 +51,7 @@ class DecayChainViewer:
     >>> dcv.graph.render(filename="test", format="pdf", view=True, cleanup=True)    # doctest: +SKIP
     """
 
-    __slots__ = ("_chain", "_graph", "_graph_attributes", "_show_effective_bf")
+    __slots__ = ("_chain", "_graph", "_show_effective_bf")
 
     def __init__(
         self,
@@ -81,12 +80,8 @@ class DecayChainViewer:
         decaylanguage.DecayChain: class for building a decay chain programmatically.
         """
         # Accept DecayChain objects directly, converting to dict internally
-        from decaylanguage.decay.decay import (  # noqa: PLC0415  # pylint: disable=import-outside-toplevel
-            DecayChain as _DecayChain,
-        )
-
         chain: dict[str, list[Any]]
-        if isinstance(decaychain, _DecayChain):
+        if isinstance(decaychain, DecayChain):
             chain = decaychain.to_dict()
         else:
             chain = decaychain
@@ -182,7 +177,7 @@ class DecayChainViewer:
                 _list_parts = subchain[idm]["fs"]
                 _bf = subchain[idm]["bf"]
                 _effective_bf = effective_bf * float(_bf)  # type: ignore[arg-type]
-                if not has_subdecay(_list_parts):  # type: ignore[arg-type]
+                if _has_no_subdecay(_list_parts):  # type: ignore[arg-type]
                     _ref = new_node_no_subchain(_list_parts, _effective_bf)  # type: ignore[arg-type]
                     if link_pos is None:
                         self.graph.edge(top_node, _ref, label=str(_bf))
@@ -208,9 +203,6 @@ class DecayChainViewer:
                                 link_pos=i,
                                 effective_bf=_effective_bf,
                             )
-
-        def has_subdecay(ds: list[Any]) -> bool:
-            return not all(isinstance(p, str) for p in ds)
 
         k = next(iter(self._chain.keys()))
         label = html_table_label([k], add_tags=True, bgcolor="#568dba")
@@ -246,15 +238,13 @@ class DecayChainViewer:
         graph_attr = self._get_graph_defaults()
         node_attr = self._get_node_defaults()
         edge_attr = self._get_edge_defaults()
-        if "graph_attr" in attrs:
-            graph_attr.update(**attrs["graph_attr"])
-            attrs.pop("graph_attr")
-        if "node_attr" in attrs:
-            node_attr.update(**attrs["node_attr"])
-            attrs.pop("node_attr")
-        if "edge_attr" in attrs:
-            edge_attr.update(**attrs["edge_attr"])
-            attrs.pop("edge_attr")
+        for key, attr in (
+            ("graph_attr", graph_attr),
+            ("node_attr", node_attr),
+            ("edge_attr", edge_attr),
+        ):
+            if key in attrs:
+                attr.update(**attrs.pop(key))
 
         arguments = self._get_default_arguments()
         arguments.update(**attrs)  # type: ignore[call-overload]
@@ -287,8 +277,8 @@ class DecayChainViewer:
 
     def _repr_mimebundle_(
         self,
-        include: bool | None = None,
-        exclude: bool | None = None,
+        include: Iterable[str] | None = None,
+        exclude: Iterable[str] | None = None,
         **kwargs: Any,
     ) -> Any:  # pragma: no cover
         """

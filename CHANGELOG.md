@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Universal representation of decay chains:
+  - Modernisations in `decay/` and `utils/`.
 * Parsing of decay files (aka .dec files):
   - Various improvements to the code, for more robustness.
   - A couple of fixes related to the decay file parser.
