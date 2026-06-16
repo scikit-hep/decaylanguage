@@ -4,6 +4,7 @@
 
 * Parsing of decay files (aka .dec files):
   - Various improvements to the code, for more robustness.
+  - Performance improvements in `DecFileParser`, with caching and lazily-built indexing where possible.
   - A couple of fixes related to the decay file parser.
   - Typing modernisations.
   - Code simplifications to various helper functions.
