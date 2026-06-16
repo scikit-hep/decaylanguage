@@ -273,11 +273,6 @@ class GooFitChain(AmplitudeChain):
         """
         name = self.name
         par = self.particle.programmatic_name
-        a = structure[0] + 1
-        b = structure[1] + 1
-        # order assignment
-        if a > b:
-            a, b = b, a
         L = self.L
         radius = 5.0 if "c" in self.particle.quarks.lower() else 1.5
 
@@ -319,16 +314,11 @@ class GooFitChain(AmplitudeChain):
         intro = "    spin_factor_list.push_back(std::vector<SpinFactor*>({\n"
         factor = []
         for structure in self.list_structure(final_states):
-            if not spin_factors:
+            for spin_factor in spin_factors:
+                structure_list = ", ".join(map(str, structure))
                 factor.append(
-                    f"        // TODO: Spin factor not implemented yet for {self.spindetails()}"
+                    f'        new SpinFactor("SF", SF_4Body::{spin_factor.name:37}, {structure_list})'
                 )
-            else:
-                for spin_factor in spin_factors:
-                    structure_list = ", ".join(map(str, structure))
-                    factor.append(
-                        f'        new SpinFactor("SF", SF_4Body::{spin_factor.name:37}, {structure_list})'
-                    )
         exit_ = "\n    }));\n"
         return intro + ",\n".join(factor) + exit_
 
@@ -620,11 +610,6 @@ class GooFitPyChain(AmplitudeChain):
         """
         name = self.name
         par = self.particle.programmatic_name
-        a = structure[0] + 1
-        b = structure[1] + 1
-        # order assignment
-        if a > b:
-            a, b = b, a
         L = int(self.L)
         radius = 5.0 if "c" in self.particle.quarks.lower() else 1.5
 
@@ -666,16 +651,11 @@ class GooFitPyChain(AmplitudeChain):
         intro = "spin_factor_list.append((\n"
         factor = []
         for structure in self.list_structure(final_states):
-            if not spin_factors:
+            for spin_factor in spin_factors:
+                structure_list = ", ".join(map(str, structure))
                 factor.append(
-                    f"        // TODO: Spin factor not implemented yet for {self.spindetails()}"
+                    f'        SpinFactor("SF", SF_4Body.{spin_factor.name:37}, {structure_list})'
                 )
-            else:
-                for spin_factor in spin_factors:
-                    structure_list = ", ".join(map(str, structure))
-                    factor.append(
-                        f'        SpinFactor("SF", SF_4Body.{spin_factor.name:37}, {structure_list})'
-                    )
         exit_ = "))\n"
         return intro + ",\n".join(factor) + exit_
 

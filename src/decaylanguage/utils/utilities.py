@@ -101,7 +101,7 @@ class DescriptorFormat:
     def __enter__(self) -> None:
         self.set_config(**self.new_config)
 
-    def __exit__(self, *args: list[Any]) -> None:
+    def __exit__(self, *args: object) -> None:
         self.set_config(**self.old_config)
 
     @staticmethod

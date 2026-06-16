@@ -3,15 +3,16 @@
 ## Unreleased
 
 * Universal representation of decay chains:
-  - Fixed `DecayChain.from_dict` so it can read back its own `to_dict` output when the same particle appears more than once with an identical sub-decay (e.g. `eta -> pi0 pi0` with `pi0 -> gamma gamma`); genuinely conflicting redefinitions still raise.
-  - Fixed `DecayChain.flatten` crashing when the mother particle was listed in `stable_particles` (the mother is now always decayed).
-  - Changed `DecayChain.flatten`'s `stable_particles` annotation to `Collection[str]` to avoid accidental substring matching when a plain string was passed.
-  - Added `DaughtersDict.__sub__`, returning a `DaughtersDict` (mirrors `__add__`).
-  - Made `DaughtersDict.charge_conjugate` call `charge_conjugate_name` with a keyword argument for consistent `lru_cache` keys.
-  - `DecayChainViewer` now uses a per-instance node counter, so rendering the same chain twice yields identical, reproducible DOT output.
-  - `DecayChainViewer` now HTML-escapes particle names in its fallback label path, producing valid DOT for names containing `&`, `<`, `>`.
-  - `DecayChainViewer` no longer leaks `graphviz.Digraph` constructor arguments (`name`, `engine`, `format`) into the DOT graph attribute list.
-
+  - Modernisations in `decay/` and `utils/`.
+* Parsing of decay files (aka .dec files):
+  - Various improvements to the code, for more robustness.
+  - A couple of fixes related to the decay file parser.
+* Modeling subsystem (`modeling/`):
+  - Migrated `ModelDecay` and `AmplitudeChain` from old-style `@attr.s`/`attr.ib` to modern `@attrs.define`/`attrs.field`.
+  - Removed dead `graphviz` import guard in `decay.py` (graphviz is a hard dependency).
+  - Various fixes and minor improvements.
+* Dependencies:
+  - Moved `numpy`, `pandas` and `plumbum` into an optional `decaylanguage[modeling]` extra; they are only needed by the `modeling` subpackage and the command-line interface. Core `.dec` parsing and decay-chain functionality no longer pull them in.
 * CI and tests:
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).

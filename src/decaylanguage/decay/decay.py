@@ -11,7 +11,7 @@ from collections import Counter
 from collections.abc import Collection, Iterator, Sequence
 from copy import deepcopy
 from itertools import product
-from typing import TYPE_CHECKING, Any, TypedDict
+from typing import Any, TypedDict
 
 from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
@@ -19,11 +19,6 @@ from particle.exceptions import MatchingIDNotFound
 
 from .._compat.typing import Self
 from ..utils import DescriptorFormat, charge_conjugate_name
-
-if TYPE_CHECKING:
-    CounterStr = Counter[str]  # pragma: no cover
-else:
-    CounterStr = Counter
 
 
 class DecayModeDict(TypedDict):
@@ -36,7 +31,7 @@ class DecayModeDict(TypedDict):
 DecayChainDict = dict[str, list[DecayModeDict]]
 
 
-class DaughtersDict(CounterStr):
+class DaughtersDict(Counter[str]):
     """
     Class holding a decay final state as a dictionary.
     It is a building block for the digital representation of full decay chains.
@@ -221,7 +216,7 @@ class DecayMode:
         self,
         bf: float = 0,
         daughters: (
-            DaughtersDict | dict[str, int] | list[str] | tuple[str] | str | None
+            DaughtersDict | dict[str, int] | list[str] | tuple[str, ...] | str | None
         ) = None,
         **info: Any,
     ) -> None:
@@ -237,7 +232,7 @@ class DecayMode:
         info: keyword arguments, optional
             Decay mode model information and/or user metadata (aka extra info)
             By default the following elements are always created:
-            dict(model=None, model_params=None).
+            dict(model='', model_params='').
             The user can provide any metadata, see the examples below.
 
         Note
@@ -279,7 +274,7 @@ class DecayMode:
             daughters = info.pop("fs")
         self.daughters = DaughtersDict(daughters)
 
-        self.metadata: dict[str, str | None] = {"model": "", "model_params": ""}
+        self.metadata: dict[str, Any] = {"model": "", "model_params": ""}
         self.metadata.update(**info)
 
     @classmethod
@@ -330,7 +325,7 @@ class DecayMode:
     def from_pdgids(
         cls,
         bf: float = 0,
-        daughters: list[int] | tuple[int] | None = None,
+        daughters: list[int] | tuple[int, ...] | None = None,
         **info: Any,
     ) -> Self:
         """
@@ -345,7 +340,7 @@ class DecayMode:
         info: keyword arguments, optional
             Decay mode model information and/or user metadata (aka extra info)
             By default the following elements are always created:
-            dict(model=None, model_params=None).
+            dict(model='', model_params='').
             The user can provide any metadata, see the examples below.
 
         Note
@@ -384,16 +379,16 @@ class DecayMode:
         """
         Make a nice high-density string for all decay-mode properties and info.
         """
-        val = """Daughters: {daughters} , BF: {bf:<15.8g}
-    Decay model: {model} {model_params}""".format(
-            daughters=" ".join(self.daughters),
-            bf=self.bf,
-            model=self.metadata["model"],
-            model_params=(
-                self.metadata["model_params"]
-                if self.metadata["model_params"] is not None
-                else ""
-            ),
+        _daughters = " ".join(self.daughters)
+        _model = self.metadata["model"]
+        _model_params = (
+            self.metadata["model_params"]
+            if self.metadata["model_params"] is not None
+            else ""
+        )
+        val = (
+            f"Daughters: {_daughters} , BF: {self.bf:<15.8g}\n"
+            f"    Decay model: {_model} {_model_params}"
         )
 
         keys = [k for k in self.metadata if k not in ("model", "model_params")]
@@ -461,11 +456,8 @@ class DecayMode:
         return len(self.daughters)
 
     def __repr__(self) -> str:
-        return "<{self.__class__.__name__}: daughters={daughters}, BF={bf}>".format(
-            self=self,
-            daughters=self.daughters.to_string() if len(self.daughters) > 0 else "[]",
-            bf=self.bf,
-        )
+        daughters = self.daughters.to_string() if len(self.daughters) > 0 else "[]"
+        return f"<{self.__class__.__name__}: daughters={daughters}, BF={self.bf}>"
 
     def __str__(self) -> str:
         return repr(self)
@@ -798,9 +790,7 @@ class DecayChain:
         >>> dc = DecayChain('D0', {'D0':dm1, 'K_S0':dm2, 'pi0':dm3})
         """
         if mother not in decays:
-            raise RuntimeError(
-                "Input decay modes do not include the mother particle!"
-            ) from None
+            raise RuntimeError("Input decay modes do not include the mother particle!")
 
         self.mother = mother
         self.decays = decays
