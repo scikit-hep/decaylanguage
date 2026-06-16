@@ -2,11 +2,20 @@
 
 ## Unreleased
 
-* Universal representation of decay chains:
-  - Modernisations in `decay/` and `utils/`.
 * Parsing of decay files (aka .dec files):
   - Various improvements to the code, for more robustness.
   - A couple of fixes related to the decay file parser.
+  - Typing modernisations.
+  - Code simplifications to various helper functions.
+  - Updated the `known_decay_models` comment in `dec/enums.py` to reflect that
+    the list is injected via `edit_terminals` rather than a static grammar terminal.
+* Universal representation of decay chains:
+  - Added `DaughtersDict.__sub__`, returning a `DaughtersDict` (mirrors `__add__`).
+  - Fixed `DecayChain.from_dict` so it can read back its own `to_dict` output when the same particle appears more than once with an identical sub-decay (e.g. `eta -> pi0 pi0` with `pi0 -> gamma gamma`); genuinely conflicting redefinitions still raise.
+  - `DecayChainViewer` now uses a per-instance node counter, so rendering the same chain twice yields identical, reproducible DOT output.
+  - `DecayChainViewer` now HTML-escapes particle names in its fallback label path, producing valid DOT for names containing `&`, `<`, `>`.
+  - Modernisations in `decay/` and `utils/`.
+  - Other minor fixes.
 * Modeling submodule (`modeling/`):
   - Migrated `ModelDecay` and `AmplitudeChain` from old-style `@attr.s`/`attr.ib` to modern `@attrs.define`/`attrs.field`.
   - Removed dead `graphviz` import guard in `decay.py` (graphviz is a hard dependency).
