@@ -7,10 +7,13 @@
 * Parsing of decay files (aka .dec files):
   - Various improvements to the code, for more robustness.
   - A couple of fixes related to the decay file parser.
-* Modeling subsystem (`modeling/`):
+* Modeling submodule (`modeling/`):
   - Migrated `ModelDecay` and `AmplitudeChain` from old-style `@attr.s`/`attr.ib` to modern `@attrs.define`/`attrs.field`.
   - Removed dead `graphviz` import guard in `decay.py` (graphviz is a hard dependency).
   - Various fixes and minor improvements.
+* Utilities submodule:
+  - Fixed a bug in `split()` where a trailing comma was not handled correctly (e.g. `split("a,")` returned `["a,"]` instead of `["a", ""]`).
+  - Fixed `filter_lines()` to collect matched lines and residuals in a single pass instead of running the regex twice per line.
 * Dependencies:
   - Moved `numpy`, `pandas` and `plumbum` into an optional `decaylanguage[modeling]` extra; they are only needed by the `modeling` subpackage and the command-line interface. Core `.dec` parsing and decay-chain functionality no longer pull them in.
 * CI and tests:
