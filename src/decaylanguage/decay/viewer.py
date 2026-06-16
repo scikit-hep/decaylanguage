@@ -180,15 +180,17 @@ class DecayChainViewer:
             for idm in range(n_decaymodes):
                 _list_parts = subchain[idm]["fs"]
                 _bf = subchain[idm]["bf"]
-                _effective_bf = effective_bf * float(_bf)  # type: ignore[arg-type]
-                if _has_no_subdecay(_list_parts):  # type: ignore[arg-type]
-                    _ref = new_node_no_subchain(_list_parts, _effective_bf)  # type: ignore[arg-type]
+                assert isinstance(_list_parts, list)
+                assert isinstance(_bf, (int, float))
+                _effective_bf = effective_bf * float(_bf)
+                if _has_no_subdecay(_list_parts):
+                    _ref = new_node_no_subchain(_list_parts, _effective_bf)
                     if link_pos is None:
                         self.graph.edge(top_node, _ref, label=str(_bf))
                     else:
                         self.graph.edge(f"{top_node}:p{link_pos}", _ref, label=str(_bf))
                 else:
-                    _ref_1 = new_node_with_subchain(_list_parts)  # type: ignore[arg-type]
+                    _ref_1 = new_node_with_subchain(_list_parts)
                     edge_label = str(_bf)
                     if link_pos is None:
                         self.graph.edge(top_node, _ref_1, label=edge_label)
@@ -198,7 +200,7 @@ class DecayChainViewer:
                             _ref_1,
                             label=edge_label,
                         )
-                    for i, _p in enumerate(_list_parts):  # type: ignore[arg-type]
+                    for i, _p in enumerate(_list_parts):
                         if not isinstance(_p, str):
                             _k = next(iter(_p.keys()))
                             iterate_chain(
@@ -228,7 +230,7 @@ class DecayChainViewer:
         Return a string representation of the built graph in the DOT language.
         The function is a trivial shortcut for ``graphviz.Digraph.source``.
         """
-        return self.graph.source  # type: ignore[no-any-return]
+        return str(self.graph.source)
 
     def _instantiate_graph(
         self, **attrs: dict[str, bool | int | float | str]

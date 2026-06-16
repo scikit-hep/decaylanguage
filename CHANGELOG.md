@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+* Typing:
+  - Reviewed and reduced `# type: ignore` comments across `dec/`, `decay/`, and
+    `utils/` (#435). Several were replaced by proper annotations or `assert`
+    invariants (e.g. on `DecFileParser._parsed_decays`), turning silently
+    ignored errors into real runtime guards.
 * Parsing of decay files (aka .dec files):
   - Various improvements to the code, for more robustness.
   - Performance improvements in `DecFileParser`, with caching and lazily-built indexing where possible.

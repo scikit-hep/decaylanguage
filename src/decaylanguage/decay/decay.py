@@ -11,7 +11,7 @@ from collections import Counter
 from collections.abc import Collection, Iterator, Sequence
 from copy import deepcopy
 from itertools import product
-from typing import Any, TypedDict
+from typing import Any, NoReturn, TypedDict
 
 from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
@@ -88,7 +88,7 @@ class DaughtersDict(Counter[str]):
         super().__init__(iterable, **kwds)
 
     @classmethod
-    def fromkeys(cls, iterable, v=None):  # type: ignore[no-untyped-def]
+    def fromkeys(cls, iterable: Any, v: Any = None) -> NoReturn:
         # ==> Comment copied from Counter.fromkeys():
         # There is no equivalent method for counters because the semantics
         # would be ambiguous in cases such as Counter.fromkeys('aaabbc', v=2).
