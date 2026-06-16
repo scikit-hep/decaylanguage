@@ -116,15 +116,7 @@ class DecFileParser:
                     raise FileNotFoundError(f"{str(filename)!r}!")
 
                 with filename.open(encoding="utf_8") as file:
-                    for line in file:
-                        # We need to strip the unicode byte ordering if present before checking for *
-                        beg = line.lstrip("\ufeff").lstrip()
-                        # Make sure one discards all lines "End"
-                        # in intermediate files, to avoid a parsing error
-                        if not (
-                            beg.startswith("End") and not beg.startswith("Enddecay")
-                        ):
-                            stream.write(line)
+                    stream.write(self._filter_lines(file))
                     stream.write("\n")
 
             stream.seek(0)
@@ -146,6 +138,21 @@ class DecFileParser:
         # By default, consider charge-conjugate decays when parsing
         self._include_ccdecays = True
 
+    @staticmethod
+    def _filter_lines(lines: Iterable[str]) -> str:
+        """
+        Filter out intermediate "End" lines (but not "Enddecay" lines),
+        which are present in intermediate decay files and would otherwise
+        cause a parsing error. The unicode byte-order mark is stripped before
+        the check, if present.
+        """
+        stream = StringIO()
+        for line in lines:
+            beg = line.lstrip("﻿").lstrip()
+            if not (beg.startswith("End") and not beg.startswith("Enddecay")):
+                stream.write(line)
+        return stream.getvalue()
+
     @classmethod
     def from_string(cls, filecontent: str) -> Self:
         """
@@ -156,12 +163,11 @@ class DecFileParser:
         filecontent: str
             Input .dec decay file content.
         """
-        stream = StringIO(filecontent)
-        stream.seek(0)
-
         _cls = cls()
         _cls._dec_file_names = ["<dec file input as a string>"]
-        _cls._dec_file = stream.read()
+        # Apply the same intermediate-"End"-line filtering as the file-based
+        # constructor, so identical content parses the same way either way.
+        _cls._dec_file = _cls._filter_lines(StringIO(filecontent))
 
         return _cls
 
@@ -209,9 +215,11 @@ class DecFileParser:
 
         # At last, find all particle decays defined in the .dec decay file ...
         self._find_parsed_decays()
-        # Replace model aliases with the actual models and model parameters. Deepcopy to avoid modification of dict by
-        # DecayModelParamValueReplacement Visitor.
-        dict_model_aliases = copy.deepcopy(self._dict_raw_model_aliases())
+        # Replace model aliases with the actual models and model parameters.
+        # DecayModelAliasReplacement deep-copies each subtree at replacement
+        # time, so the in-place mutations later done by
+        # DecayModelParamValueReplacement do not leak across decay trees.
+        dict_model_aliases = self._dict_raw_model_aliases()
         self._parsed_decays = [
             DecayModelAliasReplacement(model_alias_defs=dict_model_aliases).transform(
                 tree
@@ -277,13 +285,27 @@ class DecFileParser:
         models: str
             names of the additional decay models to be considered.
         """
+        # The additional models are injected into the grammar terminals when the
+        # grammar is loaded (see ``_generate_edit_terminals_callback``). Once the
+        # grammar has been loaded, calling this method has no effect, so warn the
+        # user that they called it too late.
+        if self.grammar_loaded:
+            warnings.warn(
+                "The grammar has already been loaded; additional decay models "
+                "passed to ``load_additional_decay_models`` will be ignored. "
+                "Call this method before ``grammar``/``parse``.",
+                stacklevel=2,
+            )
 
         if self._additional_decay_models is None:
-            self._additional_decay_models = models
+            self._additional_decay_models = list(models)
         else:
-            self._additional_decay_models = chain.from_iterable(
-                (self._additional_decay_models, models)
-            )
+            # Store a materialized container, not a one-shot iterator that would
+            # be exhausted the first time the grammar callback consumes it.
+            self._additional_decay_models = [
+                *self._additional_decay_models,
+                *models,
+            ]
 
     def _load_grammar(
         self,
@@ -927,7 +949,7 @@ All but the first occurrence will be discarded/removed ...""".format(
                 )
             if not 0.0 < scale <= 1.0:
                 raise RuntimeError(
-                    "A branching fraction must be in the range ]0, 1]! You set scale = {scale}."
+                    f"A branching fraction must be in the range ]0, 1]! You set scale = {scale}."
                 )
 
         if pdg_name:
@@ -947,16 +969,16 @@ All but the first occurrence will be discarded/removed ...""".format(
             max_length = max(len(decay_chain), max_length)
             ls.append((dmdict["bf"], decay_chain, dmdict["model"], model_params))
 
-        # Sort decays by decreasing BF
-        ls = sorted(ls, key=lambda x: -x[0])
+        # Sort decays by branching fraction, ascending or descending as requested
+        ls = sorted(ls, key=lambda x: x[0], reverse=not ascending)
 
         norm: float = 1.0
         if normalize:
             norm = sum(bf for bf, _, _, _ in ls)
         elif scale is not None:
-            # Get the largest branching fraction
-            i = -1 if ascending else 0
-            norm = ls[i][0] / scale
+            # Normalize relative to the largest branching fraction,
+            # independently of the chosen sort order
+            norm = max(bf for bf, _, _, _ in ls) / scale
 
         max_length_string = str(max_length + 2)
         for bf, fs, model, model_params in ls:
@@ -1165,7 +1187,11 @@ class DecayModelAliasReplacement(Transformer):  # type: ignore[misc]
                 f"Decay model or ModelAlias {t.value} is not defined. Please load the decay model with "
                 "``load_additional_decay_models`` or define a ModelAlias in the decayfile."
             )
-        return self.define_defs[t.value]
+        # Deep-copy so that every use of a model alias gets its own Token/Tree
+        # instances. Otherwise all decay trees using the alias would share the
+        # same children, and the in-place mutations done by
+        # DecayModelParamValueReplacement would corrupt them across trees.
+        return copy.deepcopy(self.define_defs[t.value])
 
     def model(self, treelist: list[Tree]) -> Tree:
         """
@@ -1281,7 +1307,9 @@ class ChargeConjugateReplacement(Visitor):  # type: ignore[misc]
     """
 
     def __init__(self, charge_conj_defs: dict[str, str] | None = None) -> None:
-        self.charge_conj_defs = charge_conj_defs or {}
+        # Copy the user-provided dict, since it is used internally as a cache.
+        # Mutating the caller's dict would silently pollute it.
+        self.charge_conj_defs = dict(charge_conj_defs) if charge_conj_defs else {}
 
     def particle(self, tree: Tree) -> None:
         """
@@ -1290,7 +1318,11 @@ class ChargeConjugateReplacement(Visitor):  # type: ignore[misc]
         assert tree.data == "particle"
         pname = tree.children[0].value
         ccpname = find_charge_conjugate_match(pname, self.charge_conj_defs)
-        self.charge_conj_defs[pname] = ccpname
+        # Do not cache failure sentinels of the form 'ChargeConj(<name>)':
+        # they are not genuine matches and, if cached, the reverse lookup in
+        # find_charge_conjugate_match could spuriously match against them.
+        if not ccpname.startswith("ChargeConj("):
+            self.charge_conj_defs[pname] = ccpname
         tree.children[0].value = ccpname
 
 
@@ -1352,7 +1384,7 @@ def get_branching_fraction(decay_mode: Tree) -> float:
     # and tree.children[0].children[0].value is the BF stored as a str
     try:  # the branching fraction value as a float
         return float(decay_mode.children[0].children[0].value)
-    except RuntimeError as e:
+    except (AttributeError, IndexError, ValueError) as e:
         raise RuntimeError(
             "'decayline' Tree does not seem to have the usual structure. Check it."
         ) from e
@@ -1845,7 +1877,7 @@ def get_lineshape_settings(
             else:
                 raise RuntimeError(
                     "Input parsed file does not seem to have the expected structure for the lineshape definitions."
-                ) from None
+                )
 
         # Blatt-Weisskopf barrier factor for a lineshape
         for tree in parsed_file.find_data("setlsbw"):
@@ -1854,7 +1886,7 @@ def get_lineshape_settings(
                 if "BlattWeisskopf" in d[particle_or_alias]:
                     raise RuntimeError(
                         f"The Blatt-Weisskopf barrier factor for particle/alias {particle_or_alias} seems to be redefined."
-                    ) from None
+                    )
                 d[particle_or_alias]["BlattWeisskopf"] = float(tree.children[1].value)
             else:
                 d[particle_or_alias] = {"BlattWeisskopf": float(tree.children[1].value)}
@@ -1866,7 +1898,7 @@ def get_lineshape_settings(
                 if tree.children[0].value in d[particle_or_alias]:
                     raise RuntimeError(
                         f"The upper/lower mass cut on the lineshape for particle/alias {particle_or_alias} seems to be redefined."
-                    ) from None
+                    )
                 d[particle_or_alias][f"{tree.children[0].value}"] = float(
                     tree.children[2].value
                 )
@@ -1882,7 +1914,7 @@ def get_lineshape_settings(
                 if tree.children[0].value in d[particle_or_alias]:
                     raise RuntimeError(
                         f"The birth/decay momentum factor for particle/alias {particle_or_alias} seems to be redefined."
-                    ) from None
+                    )
                 d[particle_or_alias][f"{tree.children[0].value}"] = _str_to_bool(
                     tree.children[2].value
                 )
@@ -1893,6 +1925,10 @@ def get_lineshape_settings(
 
         return d
 
+    except RuntimeError:
+        # Let the specific, informative "redefined"/structure diagnostics
+        # raised above propagate unchanged.
+        raise
     except Exception as err:
         raise RuntimeError(
             "Input parsed file does not seem to have the expected structure."

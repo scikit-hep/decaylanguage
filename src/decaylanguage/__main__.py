@@ -7,9 +7,18 @@
 
 from __future__ import annotations
 
-from plumbum import cli
+try:
+    from plumbum import cli
 
-from decaylanguage.modeling.ampgen2goofit import ampgen2goofit, ampgen2goofitpy
+    from decaylanguage.modeling.ampgen2goofit import ampgen2goofit, ampgen2goofitpy
+except ModuleNotFoundError as err:
+    if err.name in {"numpy", "pandas", "plumbum"}:
+        msg = (
+            "The decaylanguage command-line interface requires extra dependencies; "
+            "install them with `pip install decaylanguage[modeling]`."
+        )
+        raise ModuleNotFoundError(msg) from err
+    raise
 
 
 class DecayLanguageDecay(cli.Application):
@@ -21,7 +30,7 @@ class DecayLanguageDecay(cli.Application):
     def main(self, filename):
         if self.generator == "goofit":
             ampgen2goofit(filename)
-        if self.generator == "goofitpy":
+        elif self.generator == "goofitpy":
             ampgen2goofitpy(filename)
 
 
