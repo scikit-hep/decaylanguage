@@ -22,9 +22,6 @@ from particle.converters.bimap import DirectionalMap, DirectionalMaps
 
 from decaylanguage.decay.decay import DecayChain, _has_no_subdecay
 
-counter = iter(itertools.count())
-
-
 _EvtGen2LatexNameMap: DirectionalMap[str, str]
 _Latex2EvtGenNameMap: DirectionalMap[str, str]
 _EvtGen2LatexNameMap, _Latex2EvtGenNameMap = DirectionalMaps("EvtGenName", "LaTexName")
@@ -52,7 +49,7 @@ class DecayChainViewer:
     >>> dcv.graph.render(filename="test", format="pdf", view=True, cleanup=True)    # doctest: +SKIP
     """
 
-    __slots__ = ("_chain", "_graph", "_show_effective_bf")
+    __slots__ = ("_chain", "_counter", "_graph", "_show_effective_bf")
 
     def __init__(
         self,
