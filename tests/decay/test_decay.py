@@ -60,6 +60,14 @@ def test_DaughtersDict_add():
     assert len(dd3) == 8
 
 
+def test_DaughtersDict_sub():
+    dd1 = DaughtersDict({"K+": 1, "K-": 2, "pi0": 3})
+    dd2 = DaughtersDict({"K-": 1, "pi0": 1})
+    dd3 = dd1 - dd2
+    assert isinstance(dd3, DaughtersDict)
+    assert dd3 == {"K+": 1, "K-": 1, "pi0": 2}
+
+
 def test_DaughtersDict_to_string():
     dd1 = DaughtersDict({"K+": 1, "K-": 2, "pi0": 3})
     assert dd1.to_string() == "K+ K- K- pi0 pi0 pi0"
@@ -314,6 +322,17 @@ def test_DecayChain_constructor_from_dict():
     assert DecayChain.from_dict(dc_dict).to_dict() == dc_dict
 
 
+def test_DecayChain_from_dict_roundtrip_repeated_subdecay():
+    # A chain where the same decaying particle appears twice in a final state
+    # (eta -> pi0 pi0, pi0 -> gamma gamma) embeds the identical sub-dict twice.
+    # from_dict must accept its own to_dict output.
+    dm_eta = DecayMode(1.0, "pi0 pi0")
+    dm_pi0 = DecayMode(0.98823, "gamma gamma")
+    dc = DecayChain("eta", {"eta": dm_eta, "pi0": dm_pi0})
+    dc_dict = dc.to_dict()
+    assert DecayChain.from_dict(dc_dict).to_dict() == dc_dict
+
+
 def test_DecayChain_constructor_from_dict_multiple_final_states():
     dc_dict = {
         "MyD-": [
@@ -429,6 +448,32 @@ def test_DecayChain_flatten_with_stable_particles():
         {"pi0": 4, "pi+": 3, "pi-": 2}
     )
     assert dc_flatten.bf == approx(0.5 * (0.0124**2) * (0.692**2))
+
+
+def test_DecayChain_flatten_mother_in_stable_particles():
+    # The mother must always be decayed when flattening, even if it is
+    # (nonsensically) listed as stable. This used to raise a bare ValueError.
+    dm1 = DecayMode(0.0124, "K_S0 pi0")
+    dm2 = DecayMode(0.692, "pi+ pi-")
+    dm3 = DecayMode(0.98823, "gamma gamma")
+    dc = DecayChain("D0", {"D0": dm1, "K_S0": dm2, "pi0": dm3})
+    dc_flatten = dc.flatten(stable_particles=["D0", "pi0"])
+    assert dc_flatten.mother == "D0"
+    # K_S0 is still decayed, pi0 stays stable, D0 (mother) is decayed too.
+    assert dc_flatten.decays["D0"].daughters == DaughtersDict(["pi+", "pi-", "pi0"])
+
+
+def test_DecayChain_flatten_stable_particles_no_substring_match():
+    # stable_particles must not do substring matching:
+    # 'pi' should not make 'pi0'/'pi+' stable.
+    dm1 = DecayMode(0.0124, "K_S0 pi0")
+    dm2 = DecayMode(0.692, "pi+ pi-")
+    dm3 = DecayMode(0.98823, "gamma gamma")
+    dc = DecayChain("D0", {"D0": dm1, "K_S0": dm2, "pi0": dm3})
+    # Passing a string 'pi0 K_S0' must be treated as a collection of two names,
+    # not as a string whose substrings match particle names.
+    dc_flatten = dc.flatten(stable_particles=["pi0", "K_S0"])
+    assert dc_flatten.decays["D0"].daughters == DaughtersDict(["K_S0", "pi0"])
 
 
 def test_DecayChain_string_repr(dc):

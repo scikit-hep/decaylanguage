@@ -3,17 +3,28 @@
 ## Unreleased
 
 * Parsing of decay files (aka .dec files):
-  - Typing modernisations in `dec/dec.py`: `Collection[str]` for `stable_particles`,
-    `list[str] | list[list[str]]` for `_align_items`, proper generics on `Visitor[Token]`
-    subclasses, and normalised `None | (X)` constructs.
-  - Collapsed four near-identical two-token extractors (`get_definitions`,
-    `get_aliases`, `get_charge_conjugate_defs`, `get_decays2copy_statements`)
-    into a shared private helper `_extract_two_token_dict`.
-  - Simplified `get_pythia_definitions` and `get_jetset_definitions` to use
-    `dict.setdefault` instead of if/else-update and try/except-KeyError patterns.
+  - Various improvements to the code, for more robustness.
+  - A couple of fixes related to the decay file parser.
+  - Typing modernisations.
+  - Code simplifications to various helper functions.
   - Updated the `known_decay_models` comment in `dec/enums.py` to reflect that
     the list is injected via `edit_terminals` rather than a static grammar terminal.
-
+* Universal representation of decay chains:
+  - Added `DaughtersDict.__sub__`, returning a `DaughtersDict` (mirrors `__add__`).
+  - Fixed `DecayChain.from_dict` so it can read back its own `to_dict` output when the same particle appears more than once with an identical sub-decay (e.g. `eta -> pi0 pi0` with `pi0 -> gamma gamma`); genuinely conflicting redefinitions still raise.
+  - `DecayChainViewer` now uses a per-instance node counter, so rendering the same chain twice yields identical, reproducible DOT output.
+  - `DecayChainViewer` now HTML-escapes particle names in its fallback label path, producing valid DOT for names containing `&`, `<`, `>`.
+  - Modernisations in `decay/` and `utils/`.
+  - Other minor fixes.
+* Modeling submodule (`modeling/`):
+  - Migrated `ModelDecay` and `AmplitudeChain` from old-style `@attr.s`/`attr.ib` to modern `@attrs.define`/`attrs.field`.
+  - Removed dead `graphviz` import guard in `decay.py` (graphviz is a hard dependency).
+  - Various fixes and minor improvements.
+* Utilities submodule:
+  - Fixed a bug in `split()` where a trailing comma was not handled correctly (e.g. `split("a,")` returned `["a,"]` instead of `["a", ""]`).
+  - Fixed `filter_lines()` to collect matched lines and residuals in a single pass instead of running the regex twice per line.
+* Dependencies:
+  - Moved `numpy`, `pandas` and `plumbum` into an optional `decaylanguage[modeling]` extra; they are only needed by the `modeling` subpackage and the command-line interface. Core `.dec` parsing and decay-chain functionality no longer pull them in.
 * CI and tests:
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).
