@@ -82,8 +82,8 @@ def test_duplicate_arrows(decfilepath, signal_mother, dup):
 
 
 def test_reproducible_node_numbering():
-    # The node counter must be per-instance so rendering the same chain
-    # twice yields identical DOT (regression: it used to be a shared global).
+    # The node counter must be per-instance so rendering the same chain twice
+    # yields identical DOT.
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 

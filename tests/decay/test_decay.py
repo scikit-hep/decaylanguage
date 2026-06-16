@@ -325,7 +325,7 @@ def test_DecayChain_constructor_from_dict():
 def test_DecayChain_from_dict_roundtrip_repeated_subdecay():
     # A chain where the same decaying particle appears twice in a final state
     # (eta -> pi0 pi0, pi0 -> gamma gamma) embeds the identical sub-dict twice.
-    # from_dict must accept its own to_dict output (regression).
+    # from_dict must accept its own to_dict output.
     dm_eta = DecayMode(1.0, "pi0 pi0")
     dm_pi0 = DecayMode(0.98823, "gamma gamma")
     dc = DecayChain("eta", {"eta": dm_eta, "pi0": dm_pi0})
@@ -464,9 +464,8 @@ def test_DecayChain_flatten_mother_in_stable_particles():
 
 
 def test_DecayChain_flatten_stable_particles_no_substring_match():
-    # stable_particles must not do substring matching: 'pi' should not make
-    # 'pi0'/'pi+' stable (regression for the str annotation accepting a plain
-    # string and falling into substring containment).
+    # stable_particles must not do substring matching:
+    # 'pi' should not make 'pi0'/'pi+' stable.
     dm1 = DecayMode(0.0124, "K_S0 pi0")
     dm2 = DecayMode(0.692, "pi+ pi-")
     dm3 = DecayMode(0.98823, "gamma gamma")
