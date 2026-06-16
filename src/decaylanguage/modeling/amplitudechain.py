@@ -9,7 +9,6 @@ A class representing a set of decays. Can be subclassed to provide custom conver
 
 from __future__ import annotations
 
-import os
 import re
 import sys
 from copy import copy
@@ -80,15 +79,12 @@ class AmplitudeChain(ModelDecay):
         :return: A new amplitude chain instance
         """
 
-        getall = "all" if hasattr(Particle, "all") else "table"  # Support 0.4.4
-
-        # Check to see if new particles loaded; if not, load them.
-        if 998100 not in getattr(Particle, getall)():
-            data_dir = os.path.dirname(os.path.realpath(__file__))
-            special_filename = os.path.join(
-                data_dir, "..", "data", "MintDalitzSpecialParticles.csv"
-            )
-            Particle.load_table(special_filename, append=True)
+        # Check to see if the special MintDalitz particles are loaded; if not, load them.
+        try:
+            Particle.from_pdgid(998101)
+        except Exception:
+            special_filename = data.basepath / "MintDalitzSpecialParticles.csv"
+            Particle.load_table(str(special_filename), append=True)
 
         try:
             mat["particle"] = particle_from_string_name(mat["name"])
@@ -117,8 +113,8 @@ class AmplitudeChain(ModelDecay):
 
             mat["amp"] = A * np.exp(theta * 1j)
 
-            mat["err"] = (dA * np.cos(theta) + A * np.sin(dtheta)) + (
-                dA * np.sin(theta) + A * np.cos(dtheta)
+            mat["err"] = (dA * np.cos(theta) + A * np.sin(theta) * dtheta) + (
+                dA * np.sin(theta) + A * np.cos(theta) * dtheta
             ) * 1j
 
         return cls(**mat)
@@ -176,9 +172,13 @@ class AmplitudeChain(ModelDecay):
         S = self.particle.J
         s1 = self[0].particle.J
         s2 = self[1].particle.J
-        min_spin = abs(S - s1 - s2)
-        min_spin = min(abs(S + s1 - s2), min_spin)
-        min_spin = min(abs(S - s1 + s2), min_spin)
+        # Allowed intrinsic spins of the two-daughter system: |s1-s2| .. s1+s2.
+        # For each, the orbital L can range over |S-S12| .. S+S12; the overall
+        # minimum L is achieved when S falls within the [|s1-s2|, s1+s2] window.
+        if abs(s1 - s2) <= S <= s1 + s2:
+            min_spin = 0
+        else:
+            min_spin = min(abs(S - abs(s1 - s2)), abs(S - (s1 + s2)))
         max_spin = S + s1 + s2
         if not conserveParity:
             return (min_spin, max_spin)
@@ -229,6 +229,14 @@ class AmplitudeChain(ModelDecay):
         :return: array of AmplitudeChains, parameters, constants, event type
         """
 
+        # Reset class-level state so repeated calls (and sibling subclasses
+        # sharing the base-class sets) do not accumulate stale particles or
+        # leak a stale Cartesian flag. Rebinding on ``cls`` gives the calling
+        # subclass its own fresh sets rather than mutating the base class.
+        cls.all_particles = set()
+        cls.final_particles = set()
+        cls.cartesian = False
+
         if grammar is None:
             grammar = data.basepath.joinpath("ampgen.lark").read_text()
 
@@ -258,9 +266,10 @@ class AmplitudeChain(ModelDecay):
 
         fcs = get_from_parser(parsed, "fast_coherent_sum")
         if fcs:
-            (fcs,) = fcs
-            (fcs,) = fcs.children
-            cls.cartesian = bool(fcs)
+            # get_from_parser returns a list of children lists; here a single
+            # match holding the single INT token.
+            ((fcs,),) = fcs
+            cls.cartesian = bool(int(fcs))
 
         # TODO: re-enable this
         # Combine dual line Cartesian lines into traditional cartesian lines

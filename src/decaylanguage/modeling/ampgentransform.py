@@ -23,15 +23,9 @@ class AmpGenTransformer(Transformer):
     def event_type(self, lines):
         return Tree("event_type", [str(p.children[0]) for p in lines])
 
-    def fixed(self, lines):
-        return False
-
-    def free(self, lines):
-        return True
-
     def checkfixed(self, lines):
         val = int(lines[0])
-        # AmpGen convention: 0 is free
+        # AmpGen convention: Free=0, Fix=2. Returns True if the value is fixed.
         return val > 0
 
     def variable(self, lines):
@@ -40,10 +34,10 @@ class AmpGenTransformer(Transformer):
 
     def cplx_decay_line(self, lines):
         decay, real, imag = lines
-        real_free, real_val, real_err = real.children
-        imag_free, imag_val, imag_err = imag.children
+        real_fixed, real_val, real_err = real.children
+        imag_fixed, imag_val, imag_err = imag.children
 
-        decay["fix"] = not (real_free and imag_free)
+        decay["fix"] = bool(real_fixed and imag_fixed)
         decay["amp"] = complex(float(real_val), float(imag_val))
         decay["err"] = complex(float(real_err), float(imag_err))
 
