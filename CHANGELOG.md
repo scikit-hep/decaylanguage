@@ -2,11 +2,6 @@
 
 ## Unreleased
 
-* Typing:
-  - Reviewed and reduced `# type: ignore` comments across `dec/`, `decay/`, and
-    `utils/` (#435). Several were replaced by proper annotations or `assert`
-    invariants (e.g. on `DecFileParser._parsed_decays`), turning silently
-    ignored errors into real runtime guards.
 * Parsing of decay files (aka .dec files):
   - Various improvements to the code, for more robustness.
   - Performance improvements in `DecFileParser`, with caching and lazily-built indexing where possible.
@@ -50,6 +45,8 @@
   - Fixed `filter_lines()` to collect matched lines and residuals in a single pass instead of running the regex twice per line.
 * Dependencies:
   - Moved `numpy`, `pandas` and `plumbum` into an optional `decaylanguage[modeling]` extra; they are only needed by the `modeling` subpackage and the command-line interface. Core `.dec` parsing and decay-chain functionality no longer pull them in.
+* Miscellaneous -typing:
+  - Reviewed and reduced `# type: ignore` comments across submodules.
 * CI and tests:
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).
