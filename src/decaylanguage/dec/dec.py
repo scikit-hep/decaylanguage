@@ -142,6 +142,7 @@ class DecFileParser:
         )
 
         # Name(s) of the input decay file(s)
+        self._dec_file: str | None = None  # Content of input file(s)
         if filenames:
             self._dec_file_names = list(filenames)
 
@@ -156,16 +157,13 @@ class DecFileParser:
                     stream.write("\n")
 
             stream.seek(0)
-            # Content of input file(s)
             self._dec_file = stream.read()
         else:
             self._dec_file_names = []
-            self._dec_file = None  # type: ignore[assignment]
 
         self._parsed_dec_file: Tree | None = None  # Parsed decay file
-        self._parsed_decays: None | (
-            Any
-        ) = None  # Particle decays found in the decay file
+        # Particle decays found in the decay file
+        self._parsed_decays: list[Tree] | None = None
         # Lazily-built index mapping a mother particle name to the tuple of its
         # decay-mode Trees, avoiding repeated linear scans of self._parsed_decays.
         # Invalidated (set to None) whenever self._parsed_decays is modified.
@@ -266,6 +264,7 @@ class DecFileParser:
 
         # At last, find all particle decays defined in the .dec decay file ...
         self._find_parsed_decays()
+        assert self._parsed_decays is not None
         # Replace model aliases with the actual models and model parameters.
         # DecayModelAliasReplacement deep-copies each subtree at replacement
         # time, so the in-place mutations later done by
@@ -275,7 +274,7 @@ class DecFileParser:
             DecayModelAliasReplacement(model_alias_defs=dict_model_aliases).transform(
                 tree
             )
-            for tree in self._parsed_decays  # type: ignore[union-attr]
+            for tree in self._parsed_decays
         ]
         self._decay_modes_index = None
 
@@ -307,8 +306,9 @@ class DecFileParser:
         """
         if not self.grammar_loaded:
             self._load_grammar()
+        assert self._grammar is not None
 
-        return self._grammar  # type: ignore[return-value]
+        return self._grammar
 
     def grammar_info(self) -> dict[str, Any]:
         """
@@ -665,11 +665,12 @@ class DecFileParser:
         2) Method not meant to be used directly!
         """
         decays2copy = self.dict_decays2copy()
+        assert self._parsed_decays is not None
 
         # match name -> position in list self._parsed_decays
         name2treepos = {
             t.children[0].children[0].value: i
-            for i, t in enumerate(self._parsed_decays)  # type: ignore[arg-type]
+            for i, t in enumerate(self._parsed_decays)
         }
 
         # Make the copies taking care to change the name of the mother particle
@@ -677,7 +678,7 @@ class DecFileParser:
         misses = []
         for decay2copy, decay2becopied in decays2copy.items():
             try:
-                match = self._parsed_decays[name2treepos[decay2becopied]]  # type: ignore[index]
+                match = self._parsed_decays[name2treepos[decay2becopied]]
                 copied_decay = copy.deepcopy(match)
                 copied_decay.children[0].children[0].value = decay2copy
                 copied_decays.append(copied_decay)
@@ -690,7 +691,7 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
             warnings.warn(msg, stacklevel=2)
 
         # Actually add all these copied decays to the list of decays!
-        self._parsed_decays.extend(copied_decays)  # type: ignore[union-attr]
+        self._parsed_decays.extend(copied_decays)
         self._decay_modes_index = None
 
     def _add_charge_conjugate_decays(self) -> None:
@@ -720,11 +721,12 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
         if len(mother_names_ccdecays) == 0:
             return
 
+        assert self._parsed_decays is not None
+
         # Cross-check - make sure charge conjugate decays are not defined
         # with both 'Decay' and 'CDecay' statements!
         mother_names_decays = [
-            get_decay_mother_name(tree)
-            for tree in self._parsed_decays  # type: ignore[union-attr]
+            get_decay_mother_name(tree) for tree in self._parsed_decays
         ]
 
         duplicates = [n for n in mother_names_ccdecays if n in mother_names_decays]
@@ -754,7 +756,7 @@ The 'CDecay' definition(s) will be ignored ..."""
         # match name -> position in list self._parsed_decays
         name2treepos = {
             t.children[0].children[0].value: i
-            for i, t in enumerate(self._parsed_decays)  # type: ignore[arg-type]
+            for i, t in enumerate(self._parsed_decays)
         }
 
         trees_to_conjugate = []
@@ -762,7 +764,7 @@ The 'CDecay' definition(s) will be ignored ..."""
         for ccname in mother_names_ccdecays:
             name = find_charge_conjugate_match(ccname, dict_cc_names)
             try:
-                match = self._parsed_decays[name2treepos[name]]  # type: ignore[index]
+                match = self._parsed_decays[name2treepos[name]]
                 trees_to_conjugate.append(match)
             except Exception:
                 misses.append(ccname)
@@ -795,7 +797,7 @@ Skipping creation of charge-conjugate decay Tree."""
                 ChargeConjugateReplacement(charge_conj_defs=dict_cc_names).visit(t)
 
         # ... and add all these charge-conjugate decays to the list of decays!
-        self._parsed_decays.extend(cdecays)  # type: ignore[union-attr]
+        self._parsed_decays.extend(cdecays)
         self._decay_modes_index = None
 
     def _check_parsing(self) -> None:
@@ -825,9 +827,10 @@ All but the first occurrence will be discarded/removed ...""".format(
             warnings.warn(msg, stacklevel=2)
 
             # Rebuild the list keeping only the first occurrence of each name
+            assert self._parsed_decays is not None
             seen: set[str] = set()
             kept = []
-            for tree in self._parsed_decays:  # type: ignore[union-attr]
+            for tree in self._parsed_decays:
                 val = tree.children[0].children[0].value
                 if val in seen:
                     continue
@@ -840,16 +843,18 @@ All but the first occurrence will be discarded/removed ...""".format(
     def number_of_decays(self) -> int:
         """Return the number of particle decays defined in the parsed .dec file."""
         self._check_parsing()
+        assert self._parsed_decays is not None
 
-        return len(self._parsed_decays)  # type: ignore[arg-type]
+        return len(self._parsed_decays)
 
     def list_decay_mother_names(self) -> list[str | Any]:
         """
         Return a list of all decay mother names found in the parsed decay file.
         """
         self._check_parsing()
+        assert self._parsed_decays is not None
 
-        return [get_decay_mother_name(d) for d in self._parsed_decays]  # type: ignore[union-attr]
+        return [get_decay_mother_name(d) for d in self._parsed_decays]
 
     def _find_decay_modes(self, mother: str) -> tuple[Any, ...]:
         """
@@ -862,12 +867,13 @@ All but the first occurrence will be discarded/removed ...""".format(
             Input mother particle name.
         """
         self._check_parsing()
+        assert self._parsed_decays is not None
 
         if self._decay_modes_index is None:
             # Build the index once; later lookups are O(1). The index is
             # invalidated (reset to None) whenever self._parsed_decays changes.
             index: dict[str, tuple[Any, ...]] = {}
-            for decay_Tree in self._parsed_decays:  # type: ignore[union-attr]
+            for decay_Tree in self._parsed_decays:
                 name = get_decay_mother_name(decay_Tree)
                 # Keep the first occurrence, mirroring _find_decay_modes' old
                 # behavior of returning the first matching decay Tree.
