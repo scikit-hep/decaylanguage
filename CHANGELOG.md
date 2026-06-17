@@ -18,28 +18,9 @@
   - Modernisations in `decay/` and `utils/`.
   - Other minor fixes.
 * Modeling submodule (`modeling/`):
-  - Migrated `ModelDecay` and `AmplitudeChain` from old-style `@attr.s`/`attr.ib` to modern `@attrs.define`/`attrs.field`.
-  - Removed dead `graphviz` import guard in `decay.py` (graphviz is a hard dependency).
-  - Various fixes and minor improvements.
-  - AmpGen to GooFit conversion fixes:
-    - Fixed inverted amplitude fix/free flags: AmpGen `Fix=2` now maps to a fixed
-      GooFit variable and `Free=0` to a free one.
-    - Fixed polar-to-cartesian error propagation (now uses `sin(theta)*dtheta` and
-      `cos(theta)*dtheta`); a zero input error correctly yields a zero output error.
-    - Fixed `GooFitPyChain.make_amplitude`: the imaginary free coefficient is now
-      named `_i` (was `_r`), and cartesian coefficients use unbounded `Variable`s.
-    - Fixed `ampgen2goofitpy` losing the header and final amplitudes line when
-      returning output as a string.
-    - Fixed a parser crash and truthiness bug on `FastCoherentSum::UseCartesian`.
-    - The `MintDalitzSpecialParticles.csv` table is now loaded once instead of for
-      every node of every decay line.
-    - Reset class-level state on each `read_ampgen` so repeated calls and sibling
-      subclasses no longer leak stale particles or the Cartesian flag.
-    - Corrected `L_range` to include intermediate spin couplings (e.g. a spin-1
-      decay to two vectors now allows `L = 0`).
-    - Mapped the S-wave `A -> V P` spin structure to the S-wave spin factor instead
-      of the D-wave one.
-    - ANSI color codes no longer leak into the generated output.
+  - Migrated `ModelDecay` and `AmplitudeChain` to modern `@attrs.define`/`attrs.field`.
+  - Several AmpGen to GooFit conversion fixes (fix/free flags, polar-to-cartesian error propagation, spin factor mappings, state leakage, output formatting, and more).
+  - Various other fixes and minor improvements.
 * Utilities submodule:
   - Fixed a bug in `split()` where a trailing comma was not handled correctly (e.g. `split("a,")` returned `["a,"]` instead of `["a", ""]`).
   - Fixed `filter_lines()` to collect matched lines and residuals in a single pass instead of running the regex twice per line.
