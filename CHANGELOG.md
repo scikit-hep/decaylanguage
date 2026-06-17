@@ -24,6 +24,8 @@
 * Utilities submodule:
   - Fixed a bug in `split()` where a trailing comma was not handled correctly (e.g. `split("a,")` returned `["a,"]` instead of `["a", ""]`).
   - Fixed `filter_lines()` to collect matched lines and residuals in a single pass instead of running the regex twice per line.
+* Documentation:
+  - Expanded the README to cover recently added, Flavour-Physics-oriented features: inspecting decay modes (`list_decay_modes`, `print_decay_modes`, `expand_decay_modes`), pruning decay chains via `build_decay_chains(..., minimum_effective_bf=...)` and annotating them with `DecayChainViewer(..., show_effective_bf=True)`, and text-based decay-chain tools (`to_string`, `print_as_tree`, `flatten`, `DaughtersDict` arithmetic and charge conjugation).
 * Dependencies:
   - Moved `numpy`, `pandas` and `plumbum` into an optional `decaylanguage[modeling]` extra; they are only needed by the `modeling` subpackage and the command-line interface. Core `.dec` parsing and decay-chain functionality no longer pull them in.
 * Miscellaneous -typing:
