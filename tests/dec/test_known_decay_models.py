@@ -74,6 +74,7 @@ parsed_models = (
     ("BTO3PI_CP", [0.507e12, 1.365]),
     ("BTODDALITZCPK", [1.22, 2.27, 0.10]),
     ("BToDiBaryonlnupQCD", [67.7, -280.0, -38.3, -840.0, -10.1, -157.0, 800000]),
+    ("BTOKK0K0", ""),
     ("BTOSLLALI", ""),
     ("BTOSLLBALL", [6.0]),
     ("BTOSLLMS", [5.0, 5.0, 0.0, 1.0, 0.88, 0.227, 0.22, 0.34]),
