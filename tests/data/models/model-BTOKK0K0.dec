@@ -1,5 +1,6 @@
 # File for testing purposes. Contains a single decay mode with a specific model.
 
+ChargeConj B+sig   B-sig
 
 Decay Upsilon(4S)
 0.5 B+sig B- VSS;
