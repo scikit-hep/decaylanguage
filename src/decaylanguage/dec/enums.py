@@ -44,6 +44,7 @@ known_decay_models = (
     "BTO3PI_CP",
     "BTODDALITZCPK",
     "BToDiBaryonlnupQCD",
+    "BTOKK0K0"
     "BTOSLLALI",
     "BTOSLLBALL",
     "BTOSLLMS",
