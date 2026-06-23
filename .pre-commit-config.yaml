@@ -45,6 +45,13 @@ repos:
     language: pygrep
     entry: PyBind|Numpy|Cmake|CCache|Github|PyTest
     exclude: .pre-commit-config.yaml
+  - id: decaylanguage-validate
+    name: Validate EvtGen decay files
+    language: python
+    entry: decaylanguage-validate
+    additional_dependencies: [.]
+    files: '^(src/decaylanguage/data/.*\.DEC|tests/data/.*\.dec)$'
+    exclude: '^tests/data/(duplicate-decays|test_Xicc2XicPiPi|test_custom_decay_model|test_issue90)\.dec$'
 
 - repo: https://github.com/pre-commit/pygrep-hooks
   rev: "v1.10.0"

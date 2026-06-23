@@ -82,3 +82,22 @@ Tips
 To run a subset of tests::
 
     nox -s tests-3.9 -- -k test_myfeature
+
+Decay file pre-commit hook
+--------------------------
+
+Downstream projects can validate EvtGen ``.dec`` files with the packaged
+pre-commit hook::
+
+    - repo: https://github.com/scikit-hep/decaylanguage
+      rev: <version>
+      hooks:
+      - id: decaylanguage-validate
+
+The hook reports selectable diagnostic codes. Experiments can ignore exact
+codes or whole code families, for example::
+
+    - id: decaylanguage-validate
+      args: ["--ignore=DLW004"]
+
+Use ``decaylanguage-validate --list-diagnostics`` to list the current codes.
