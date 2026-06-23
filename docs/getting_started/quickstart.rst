@@ -25,6 +25,24 @@ Use :class:`~decaylanguage.dec.dec.DecFileParser` to parse EvtGen-format ``.dec`
 
 See :doc:`/examples/decfile_parsing` for more details.
 
+Validate ``.dec`` files from the command line:
+
+.. code-block:: bash
+
+   decaylanguage-validate my_decays.dec
+   decaylanguage-validate path/to/decfiles-directory
+
+Use ``decaylanguage-validate --list-diagnostics`` to list selectable
+diagnostic codes. Downstream pre-commit hooks can disable experiment-specific
+codes with options such as ``--ignore=DLW004``.
+
+On failure, pre-commit shows output such as:
+
+.. code-block:: text
+
+   tests/data/example.dec: DLW004 missing-cdecay-source: missing Decay source for CDecay: anti-B0sig
+   summary: DLW004=1
+
 Building and visualizing decay chains
 -------------------------------------
 
