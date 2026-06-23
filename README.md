@@ -32,8 +32,9 @@ Just run the following:
 pip install decaylanguage
 ```
 
-The amplitude `modeling` subpackage and the command-line interface need a few
-extra dependencies (NumPy, pandas and plumbum). Install them with:
+The amplitude `modeling` subpackage and the AmpGen-to-GooFit command-line
+interface need a few extra dependencies (NumPy, pandas and plumbum). Install
+them with:
 
 ```bash
 pip install "decaylanguage[modeling]"
@@ -178,6 +179,73 @@ dfp.parse()
 
 This being said, please do submit a pull request to add new models,
 if you spot missing ones ...
+
+#### Validating decay files
+
+Decay files can be validated from the command line:
+
+```bash
+decaylanguage-validate my-decay-file.dec
+decaylanguage-validate path/to/decfiles-directory
+```
+
+The validator is also available as a pre-commit hook for downstream projects:
+
+```yaml
+- repo: https://github.com/scikit-hep/decaylanguage
+  rev: <version>
+  hooks:
+  - id: decaylanguage-validate
+```
+
+Diagnostics use stable codes, which can be disabled per experiment policy. For
+example, LHCb-style files that intentionally rely on unmatched `CDecay` source
+decays can ignore `DLW004`:
+
+```yaml
+- id: decaylanguage-validate
+  args: ["--ignore=DLW004"]
+```
+
+Run `decaylanguage-validate --list-diagnostics` to list the currently available
+codes.
+
+Available diagnostics:
+
+| Code | Name | Meaning |
+| --- | --- | --- |
+| `DLP001` | `parse-error` | The file could not be parsed by `DecFileParser`. |
+| `DLW001` | `duplicate-decay` | A particle has multiple `Decay` blocks; only the first is retained. |
+| `DLW002` | `missing-copydecay-source` | A `CopyDecay` statement references a missing `Decay` source. |
+| `DLW003` | `duplicate-cdecay` | A particle is defined with both `Decay` and `CDecay`; `CDecay` is ignored. |
+| `DLW004` | `missing-cdecay-source` | A `CDecay` statement has no corresponding `Decay` source. |
+| `DLW005` | `self-conjugate-cdecay` | A `CDecay` statement targets a self-conjugate particle. |
+| `DLW999` | `parser-warning` | An otherwise unclassified warning was emitted by `DecFileParser`. |
+
+When the hook finds a problem, pre-commit prints the validator output. A parser
+error includes the source line and column pointer:
+
+```text
+Validate EvtGen decay files..............................................Failed
+- hook id: decaylanguage-validate
+- exit code: 1
+
+DecayLanguage: 1 diagnostic(s) in 1 file(s)
+tests/data/broken.dec:13:68: DLP001 parse-error: UnexpectedToken: Unexpected token Token('SIGNED_NUMBER', '2') at line 13, column 68.
+       13: 0.000044342 Upsilon pi0     pi0                             VVPIPI;2 #[Reconstructed PDG2011]
+                                                                             ^
+summary: DLP001=1
+```
+
+Parser warnings are shorter:
+
+```text
+tests/data/example.dec: DLW004 missing-cdecay-source: missing Decay source for CDecay: anti-B0sig
+summary: DLW004=1
+```
+
+By default, the validator prints up to 100 diagnostics and then summarizes the
+rest. Use `--max-diagnostics=0` to print every diagnostic.
 
 ### Visualize decay files
 

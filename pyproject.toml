@@ -81,6 +81,9 @@ test = [
 [project.urls]
 Homepage = "https://github.com/scikit-hep/decaylanguage"
 
+[project.scripts]
+decaylanguage-validate = "decaylanguage.dec.validate:main"
+
 
 [tool.hatch]
 version.source = "vcs"

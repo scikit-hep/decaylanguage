@@ -1,0 +1,6 @@
+- id: decaylanguage-validate
+  name: Validate EvtGen decay files
+  description: Validate .dec decay files with decaylanguage.DecFileParser.
+  entry: decaylanguage-validate
+  language: python
+  files: '\.(dec|DEC)$'
