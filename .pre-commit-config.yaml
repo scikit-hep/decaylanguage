@@ -47,9 +47,8 @@ repos:
     exclude: .pre-commit-config.yaml
   - id: decaylanguage-validate
     name: Validate EvtGen decay files
-    language: python
-    entry: decaylanguage-validate
-    additional_dependencies: [.]
+    language: system
+    entry: uv run decaylanguage-validate
     files: '^(src/decaylanguage/data/.*\.DEC|tests/data/.*\.dec)$'
     exclude: '^tests/data/(duplicate-decays|test_Xicc2XicPiPi|test_custom_decay_model|test_issue90)\.dec$'
 
