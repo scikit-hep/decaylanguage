@@ -44,7 +44,7 @@ dependencies = [
     "attrs>=19.2",
     "graphviz>=0.12.0",
     "lark>=1.0.0",
-    "particle>=0.26.0",
+    "particle>=1.0.0",
     "hepunits>=2.4.0",
 ]
 dynamic = ["version"]
