@@ -1,7 +1,7 @@
 name: decaylanguage_demo
 dependencies:
   - python>=3.10
-  - pandas>=1
+  - pandas>=2.0
   - attrs>=22.2.0
   - pip>=9
   - jupyterlab>=0.4
