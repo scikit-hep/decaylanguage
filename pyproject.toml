@@ -41,10 +41,10 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 dependencies = [
-    "attrs>=19.2",
+    "attrs>=22.2.0",
     "graphviz>=0.12.0",
     "lark>=1.0.0",
-    "particle>=0.26.0",
+    "particle>=1.0.0",
     "hepunits>=2.4.0",
 ]
 dynamic = ["version"]
@@ -52,7 +52,7 @@ dynamic = ["version"]
 [project.optional-dependencies]
 modeling = [
     "numpy>=1.21.6",
-    "pandas>=1.4",
+    "pandas>=2.0",
     "plumbum>=1.7.0",
 ]
 
@@ -75,7 +75,7 @@ test = [
     "decaylanguage[modeling]",
     "pytest-benchmark>=5.2.0",
     "pytest-cov",
-    "pytest>=6",
+    "pytest>=7",
 ]
 
 [project.urls]
@@ -106,7 +106,7 @@ ignore_missing_imports = true
 
 
 [tool.pytest.ini_options]
-minversion = "6.0"
+minversion = "7.0"
 testpaths = ["tests"]
 addopts = [
     "-ra",
