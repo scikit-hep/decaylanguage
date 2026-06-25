@@ -42,6 +42,7 @@
 * Miscellaneous - typing:
   - Reviewed and reduced `# type: ignore` comments across submodules.
 * CI and tests:
+  - Minor updates of tests for Particle 1.0.0
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).
   - Trimmed mypy pre-commit hook's `additional_dependencies` to only what the covered code actually imports (`particle`, `hepunits`).

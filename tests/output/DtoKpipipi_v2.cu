@@ -58,39 +58,39 @@ PseudoTensor:
   NonDefined:
 
 
- 0 D0[D]{K*(892)~0{K-,pi+},rho(770)0{pi+,pi-}}                            spinfactors: 2  L: 2 [0-2.0]
- 1 D0[D]{rho(1450)0{pi+,pi-},K*(892)~0{K-,pi+}}                           spinfactors: 2  L: 2 [0-2.0]
- 2 D0[P]{K*(892)~0{K-,pi+},rho(770)0{pi+,pi-}}                            spinfactors: 2  L: 1 [0-2.0]
- 3 D0[P]{rho(1450)0{pi+,pi-},K*(892)~0{K-,pi+}}                           spinfactors: 2  L: 1 [0-2.0]
- 4 D0{K(1)(1270)-[D;GSpline.EFF]{K*(892)~0{K-,pi+},pi-},pi+}              spinfactors: 2  L: 1.0 [1.0-1.0]
- 5 D0{K(1)(1270)-[GSpline.EFF]{K*(892)~0{K-,pi+},pi-},pi+}                spinfactors: 2  L: 1.0 [1.0-1.0]
- 6 D0{K(1)(1270)-[GSpline.EFF]{KPi20[FOCUS.Kpi]{K-,pi+},pi-},pi+}         spinfactors: 2  L: 1.0 [1.0-1.0]
- 7 D0{K(1)(1270)-[GSpline.EFF]{omega(782){pi+,pi-},K-},pi+}               spinfactors: 2  L: 1.0 [1.0-1.0]
- 8 D0{K(1)(1270)-[GSpline.EFF]{rho(1450)0{pi+,pi-},K-},pi+}               spinfactors: 2  L: 1.0 [1.0-1.0]
- 9 D0{K(1)(1270)-[GSpline.EFF]{rho(770)0{pi+,pi-},K-},pi+}                spinfactors: 2  L: 1.0 [1.0-1.0]
-10 D0{K(1)(1400)-{K*(892)~0{K-,pi+},pi-},pi+}                             spinfactors: 2  L: 1.0 [1.0-1.0]
-11 D0{K(1460)-[GSpline.EFF]{K*(892)~0{K-,pi+},pi-},pi+}                   spinfactors: 1  L: 0 [0-0.0]
-12 D0{K(1460)-[GSpline.EFF]{PiPi3[kMatrix.pole.0]{pi+,pi-},K-},pi+}       spinfactors: 1  L: 0 [0-0.0]
-13 D0{K(1460)-[GSpline.EFF]{PiPi3[kMatrix.pole.1]{pi+,pi-},K-},pi+}       spinfactors: 1  L: 0 [0-0.0]
-14 D0{K(1460)-[GSpline.EFF]{PiPi3[kMatrix.prod.1]{pi+,pi-},K-},pi+}       spinfactors: 1  L: 0 [0-0.0]
-15 D0{K(2)*(1430)-{K*(892)~0{K-,pi+},pi-},pi+}                            spinfactors: 2  L: 2.0 [2.0-2.0]
-16 D0{K*(892)~0{K-,pi+},PiPi1[kMatrix.pole.1]{pi+,pi-}}                   spinfactors: 2  L: 1.0 [1.0-1.0]
-17 D0{K*(892)~0{K-,pi+},PiPi1[kMatrix.prod.0]{pi+,pi-}}                   spinfactors: 2  L: 1.0 [1.0-1.0]
-18 D0{K*(892)~0{K-,pi+},rho(770)0{pi+,pi-}}                               spinfactors: 1  L: 0 [0-2.0]
-19 D0{KPi00[FOCUS.I32]{K-,pi+},PiPi0[kMatrix.pole.1]{pi+,pi-}}            spinfactors: 1  L: 0 [0-0.0]
-20 D0{KPi00[FOCUS.I32]{K-,pi+},PiPi0[kMatrix.prod.0]{pi+,pi-}}            spinfactors: 1  L: 0 [0-0.0]
-21 D0{KPi00[FOCUS.KEta]{K-,pi+},PiPi0[kMatrix.pole.1]{pi+,pi-}}           spinfactors: 1  L: 0 [0-0.0]
-22 D0{KPi00[FOCUS.KEta]{K-,pi+},PiPi0[kMatrix.prod.0]{pi+,pi-}}           spinfactors: 1  L: 0 [0-0.0]
-23 D0{KPi00[FOCUS.Kpi]{K-,pi+},PiPi0[kMatrix.pole.1]{pi+,pi-}}            spinfactors: 1  L: 0 [0-0.0]
-24 D0{KPi00[FOCUS.Kpi]{K-,pi+},PiPi0[kMatrix.prod.0]{pi+,pi-}}            spinfactors: 1  L: 0 [0-0.0]
-25 D0{a(1)(1260)+[D;GSpline.EFF]{rho(770)0{pi+,pi-},pi+},K-}              spinfactors: 2  L: 1.0 [1.0-1.0]
-26 D0{a(1)(1260)+[GSpline.EFF]{PiPi2[kMatrix.pole.0]{pi+,pi-},pi+},K-}    spinfactors: 2  L: 1.0 [1.0-1.0]
-27 D0{a(1)(1260)+[GSpline.EFF]{PiPi2[kMatrix.pole.1]{pi+,pi-},pi+},K-}    spinfactors: 2  L: 1.0 [1.0-1.0]
-28 D0{a(1)(1260)+[GSpline.EFF]{PiPi2[kMatrix.prod.0]{pi+,pi-},pi+},K-}    spinfactors: 2  L: 1.0 [1.0-1.0]
-29 D0{a(1)(1260)+[GSpline.EFF]{rho(770)0{pi+,pi-},pi+},K-}                spinfactors: 2  L: 1.0 [1.0-1.0]
-30 D0{rho(1450)0{pi+,pi-},K*(892)~0{K-,pi+}}                              spinfactors: 1  L: 0 [0-2.0]
-31 D0{rho(770)0{pi+,pi-},KPi10[FOCUS.I32]{K-,pi+}}                        spinfactors: 2  L: 1.0 [1.0-1.0]
-32 D0{rho(770)0{pi+,pi-},KPi10[FOCUS.Kpi]{K-,pi+}}                        spinfactors: 2  L: 1.0 [1.0-1.0]
+ 0 D0[D]{K*(892)~0{K-,pi+},rho(770)0{pi+,pi-}}                            spinfactors: 2  L: 2 [0-2]
+ 1 D0[D]{rho(1450)0{pi+,pi-},K*(892)~0{K-,pi+}}                           spinfactors: 2  L: 2 [0-2]
+ 2 D0[P]{K*(892)~0{K-,pi+},rho(770)0{pi+,pi-}}                            spinfactors: 2  L: 1 [0-2]
+ 3 D0[P]{rho(1450)0{pi+,pi-},K*(892)~0{K-,pi+}}                           spinfactors: 2  L: 1 [0-2]
+ 4 D0{K(1)(1270)-[D;GSpline.EFF]{K*(892)~0{K-,pi+},pi-},pi+}              spinfactors: 2  L: 1 [1-1]
+ 5 D0{K(1)(1270)-[GSpline.EFF]{K*(892)~0{K-,pi+},pi-},pi+}                spinfactors: 2  L: 1 [1-1]
+ 6 D0{K(1)(1270)-[GSpline.EFF]{KPi20[FOCUS.Kpi]{K-,pi+},pi-},pi+}         spinfactors: 2  L: 1 [1-1]
+ 7 D0{K(1)(1270)-[GSpline.EFF]{omega(782){pi+,pi-},K-},pi+}               spinfactors: 2  L: 1 [1-1]
+ 8 D0{K(1)(1270)-[GSpline.EFF]{rho(1450)0{pi+,pi-},K-},pi+}               spinfactors: 2  L: 1 [1-1]
+ 9 D0{K(1)(1270)-[GSpline.EFF]{rho(770)0{pi+,pi-},K-},pi+}                spinfactors: 2  L: 1 [1-1]
+10 D0{K(1)(1400)-{K*(892)~0{K-,pi+},pi-},pi+}                             spinfactors: 2  L: 1 [1-1]
+11 D0{K(1460)-[GSpline.EFF]{K*(892)~0{K-,pi+},pi-},pi+}                   spinfactors: 1  L: 0 [0-0]
+12 D0{K(1460)-[GSpline.EFF]{PiPi3[kMatrix.pole.0]{pi+,pi-},K-},pi+}       spinfactors: 1  L: 0 [0-0]
+13 D0{K(1460)-[GSpline.EFF]{PiPi3[kMatrix.pole.1]{pi+,pi-},K-},pi+}       spinfactors: 1  L: 0 [0-0]
+14 D0{K(1460)-[GSpline.EFF]{PiPi3[kMatrix.prod.1]{pi+,pi-},K-},pi+}       spinfactors: 1  L: 0 [0-0]
+15 D0{K(2)*(1430)-{K*(892)~0{K-,pi+},pi-},pi+}                            spinfactors: 2  L: 2 [2-2]
+16 D0{K*(892)~0{K-,pi+},PiPi1[kMatrix.pole.1]{pi+,pi-}}                   spinfactors: 2  L: 1 [1-1]
+17 D0{K*(892)~0{K-,pi+},PiPi1[kMatrix.prod.0]{pi+,pi-}}                   spinfactors: 2  L: 1 [1-1]
+18 D0{K*(892)~0{K-,pi+},rho(770)0{pi+,pi-}}                               spinfactors: 1  L: 0 [0-2]
+19 D0{KPi00[FOCUS.I32]{K-,pi+},PiPi0[kMatrix.pole.1]{pi+,pi-}}            spinfactors: 1  L: 0 [0-0]
+20 D0{KPi00[FOCUS.I32]{K-,pi+},PiPi0[kMatrix.prod.0]{pi+,pi-}}            spinfactors: 1  L: 0 [0-0]
+21 D0{KPi00[FOCUS.KEta]{K-,pi+},PiPi0[kMatrix.pole.1]{pi+,pi-}}           spinfactors: 1  L: 0 [0-0]
+22 D0{KPi00[FOCUS.KEta]{K-,pi+},PiPi0[kMatrix.prod.0]{pi+,pi-}}           spinfactors: 1  L: 0 [0-0]
+23 D0{KPi00[FOCUS.Kpi]{K-,pi+},PiPi0[kMatrix.pole.1]{pi+,pi-}}            spinfactors: 1  L: 0 [0-0]
+24 D0{KPi00[FOCUS.Kpi]{K-,pi+},PiPi0[kMatrix.prod.0]{pi+,pi-}}            spinfactors: 1  L: 0 [0-0]
+25 D0{a(1)(1260)+[D;GSpline.EFF]{rho(770)0{pi+,pi-},pi+},K-}              spinfactors: 2  L: 1 [1-1]
+26 D0{a(1)(1260)+[GSpline.EFF]{PiPi2[kMatrix.pole.0]{pi+,pi-},pi+},K-}    spinfactors: 2  L: 1 [1-1]
+27 D0{a(1)(1260)+[GSpline.EFF]{PiPi2[kMatrix.pole.1]{pi+,pi-},pi+},K-}    spinfactors: 2  L: 1 [1-1]
+28 D0{a(1)(1260)+[GSpline.EFF]{PiPi2[kMatrix.prod.0]{pi+,pi-},pi+},K-}    spinfactors: 2  L: 1 [1-1]
+29 D0{a(1)(1260)+[GSpline.EFF]{rho(770)0{pi+,pi-},pi+},K-}                spinfactors: 2  L: 1 [1-1]
+30 D0{rho(1450)0{pi+,pi-},K*(892)~0{K-,pi+}}                              spinfactors: 1  L: 0 [0-2]
+31 D0{rho(770)0{pi+,pi-},KPi10[FOCUS.I32]{K-,pi+}}                        spinfactors: 2  L: 1 [1-1]
+32 D0{rho(770)0{pi+,pi-},KPi10[FOCUS.Kpi]{K-,pi+}}                        spinfactors: 2  L: 1 [1-1]
 
 
 All discovered spin configurations:
@@ -141,8 +141,8 @@ ONE
 
     Variable PiPi1_M         { "PiPi1_M"            , 9990       };
     Variable PiPi1_W         { "PiPi1_W"            , 9.9e+09    };
-    Variable Kst_892_0_bar_M { "Kst_892_0_bar_M"    , 895.55     };
-    Variable Kst_892_0_bar_W { "Kst_892_0_bar_W"    , 47.3       };
+    Variable Kst_892_0_bar_M { "Kst_892_0_bar_M"    , 895.56     };
+    Variable Kst_892_0_bar_W { "Kst_892_0_bar_W"    , 47.1       };
     Variable KPi1_0_M        { "KPi1_0_M"           , 9990       };
     Variable KPi1_0_W        { "KPi1_0_W"           , 9.9e+09    };
     Variable rho_1450_0_M    { "rho_1450_0_M"       , 1465       };
@@ -159,7 +159,7 @@ ONE
     Variable K_1460_minus_W  { "K_1460_minus_W"     , 335.6      };
     Variable PiPi3_M         { "PiPi3_M"            , 9990       };
     Variable PiPi3_W         { "PiPi3_W"            , 9.9e+09    };
-    Variable K_1_1270_minus_M { "K_1_1270_minus_M"   , 1253       };
+    Variable K_1_1270_minus_M { "K_1_1270_minus_M"   , 1256       };
     Variable K_1_1270_minus_W { "K_1_1270_minus_W"   , 90         };
     Variable rho_770_0_M     { "rho_770_0_M"        , 775.26     };
     Variable rho_770_0_W     { "rho_770_0_W"        , 147.4      };
@@ -535,10 +535,10 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_34, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_24, FF::BL2)
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_34, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_24, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -563,10 +563,10 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1.0, M_24, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2),
-        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1.0, M_34, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2)
+        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1, M_24, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2),
+        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1, M_34, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -591,10 +591,10 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_34, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_24, FF::BL2)
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_34, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_24, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -619,10 +619,10 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1.0, M_24, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2),
-        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1.0, M_34, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2)
+        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1, M_24, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2),
+        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1, M_34, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -649,10 +649,10 @@ ONE
     line_factor_list.push_back(std::vector<Lineshape*>{
         new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 2, M_12_4, FF::BL2,
             1.5, K_1_1270bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2),
         new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 2, M_13_4, FF::BL2,
             1.5, K_1_1270bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2)
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -679,10 +679,10 @@ ONE
     line_factor_list.push_back(std::vector<Lineshape*>{
         new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 0, M_12_4, FF::BL2,
             1.5, K_1_1270bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2),
         new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 0, M_13_4, FF::BL2,
             1.5, K_1_1270bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2)
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -707,10 +707,10 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 1.0, M_12_4, FF::BL2,
+        new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 1, M_12_4, FF::BL2,
             1.5, K_1_1270bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
         new Lineshapes::FOCUS("KPi20", Lineshapes::FOCUS::Mod::Kpi, KPi2_0_M, KPi2_0_W, 0, M_12, FF::BL2, 1.5),
-        new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 1.0, M_13_4, FF::BL2,
+        new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 1, M_13_4, FF::BL2,
             1.5, K_1_1270bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
         new Lineshapes::FOCUS("KPi20", Lineshapes::FOCUS::Mod::Kpi, KPi2_0_M, KPi2_0_W, 0, M_13, FF::BL2, 1.5)
     });
@@ -739,10 +739,10 @@ ONE
     line_factor_list.push_back(std::vector<Lineshape*>{
         new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 0, M_24_1, FF::BL2,
             1.5, K_1_1270bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
-        new Lineshapes::RBW("omega(782)0", omega_782_M, omega_782_W, 1.0, M_24, FF::BL2),
+        new Lineshapes::RBW("omega(782)0", omega_782_M, omega_782_W, 1, M_24, FF::BL2),
         new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 0, M_34_1, FF::BL2,
             1.5, K_1_1270bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
-        new Lineshapes::RBW("omega(782)0", omega_782_M, omega_782_W, 1.0, M_34, FF::BL2)
+        new Lineshapes::RBW("omega(782)0", omega_782_M, omega_782_W, 1, M_34, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -769,10 +769,10 @@ ONE
     line_factor_list.push_back(std::vector<Lineshape*>{
         new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 0, M_24_1, FF::BL2,
             1.5, K_1_1270bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
-        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1.0, M_24, FF::BL2),
+        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1, M_24, FF::BL2),
         new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 0, M_34_1, FF::BL2,
             1.5, K_1_1270bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
-        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1.0, M_34, FF::BL2)
+        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1, M_34, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -799,10 +799,10 @@ ONE
     line_factor_list.push_back(std::vector<Lineshape*>{
         new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 0, M_24_1, FF::BL2,
             1.5, K_1_1270bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_24, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_24, FF::BL2),
         new Lineshapes::GSpline("K(1)(1270)bar-", K_1_1270_minus_M, K_1_1270_minus_W, 0, M_34_1, FF::BL2,
             1.5, K_1_1270bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_34, FF::BL2)
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_34, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -828,9 +828,9 @@ ONE
 
     line_factor_list.push_back(std::vector<Lineshape*>{
         new Lineshapes::RBW("K(1)(1400)bar-", K_1_1400_minus_M, K_1_1400_minus_W, 0, M_12_4, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2),
         new Lineshapes::RBW("K(1)(1400)bar-", K_1_1400_minus_M, K_1_1400_minus_W, 0, M_13_4, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2)
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -853,12 +853,12 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::GSpline("K(1460)bar-", K_1460_minus_M, K_1460_minus_W, 1.0, M_12_4, FF::BL2,
+        new Lineshapes::GSpline("K(1460)bar-", K_1460_minus_M, K_1460_minus_W, 1, M_12_4, FF::BL2,
             1.5, K_1460bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2),
-        new Lineshapes::GSpline("K(1460)bar-", K_1460_minus_M, K_1460_minus_W, 1.0, M_13_4, FF::BL2,
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2),
+        new Lineshapes::GSpline("K(1460)bar-", K_1460_minus_M, K_1460_minus_W, 1, M_13_4, FF::BL2,
             1.5, K_1460bar_minus_SplineArr, Lineshapes::spline_t(0.6,3.0,40)),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2)
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -985,10 +985,10 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::RBW("K(2)*(1430)bar-", K_2st_1430_minus_M, K_2st_1430_minus_W, 1.0, M_12_4, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2),
-        new Lineshapes::RBW("K(2)*(1430)bar-", K_2st_1430_minus_M, K_2st_1430_minus_W, 1.0, M_13_4, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2)
+        new Lineshapes::RBW("K(2)*(1430)bar-", K_2st_1430_minus_M, K_2st_1430_minus_W, 1, M_12_4, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2),
+        new Lineshapes::RBW("K(2)*(1430)bar-", K_2st_1430_minus_M, K_2st_1430_minus_W, 1, M_13_4, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -1013,12 +1013,12 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2),
         new Lineshapes::kMatrix("PiPi10", 1, true,
             sA_0, sA, s0_prod, s0_scatt,
             f_scatt, IS_poles,
             PiPi1_M, PiPi1_W, 0, M_34, FF::BL2, 1.5),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2),
         new Lineshapes::kMatrix("PiPi10", 1, true,
             sA_0, sA, s0_prod, s0_scatt,
             f_scatt, IS_poles,
@@ -1047,12 +1047,12 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2),
         new Lineshapes::kMatrix("PiPi10", 0, false,
             sA_0, sA, s0_prod, s0_scatt,
             f_scatt, IS_poles,
             PiPi1_M, PiPi1_W, 0, M_34, FF::BL2, 1.5),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2),
         new Lineshapes::kMatrix("PiPi10", 0, false,
             sA_0, sA, s0_prod, s0_scatt,
             f_scatt, IS_poles,
@@ -1079,10 +1079,10 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_34, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_24, FF::BL2)
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_34, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_24, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -1301,10 +1301,10 @@ ONE
     line_factor_list.push_back(std::vector<Lineshape*>{
         new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 2, M_24_3, FF::BL2,
             1.5, a_1_1260_plus_SplineArr, Lineshapes::spline_t(0.18412,1.9,40)),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_24, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_24, FF::BL2),
         new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 2, M_34_2, FF::BL2,
             1.5, a_1_1260_plus_SplineArr, Lineshapes::spline_t(0.18412,1.9,40)),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_34, FF::BL2)
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_34, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -1329,13 +1329,13 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 1.0, M_24_3, FF::BL2,
+        new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 1, M_24_3, FF::BL2,
             1.5, a_1_1260_plus_SplineArr, Lineshapes::spline_t(0.18412,1.9,40)),
         new Lineshapes::kMatrix("PiPi20", 0, true,
             sA_0, sA, s0_prod, s0_scatt,
             f_scatt, IS_poles,
             PiPi2_M, PiPi2_W, 0, M_24, FF::BL2, 1.5),
-        new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 1.0, M_34_2, FF::BL2,
+        new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 1, M_34_2, FF::BL2,
             1.5, a_1_1260_plus_SplineArr, Lineshapes::spline_t(0.18412,1.9,40)),
         new Lineshapes::kMatrix("PiPi20", 0, true,
             sA_0, sA, s0_prod, s0_scatt,
@@ -1365,13 +1365,13 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 1.0, M_24_3, FF::BL2,
+        new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 1, M_24_3, FF::BL2,
             1.5, a_1_1260_plus_SplineArr, Lineshapes::spline_t(0.18412,1.9,40)),
         new Lineshapes::kMatrix("PiPi20", 1, true,
             sA_0, sA, s0_prod, s0_scatt,
             f_scatt, IS_poles,
             PiPi2_M, PiPi2_W, 0, M_24, FF::BL2, 1.5),
-        new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 1.0, M_34_2, FF::BL2,
+        new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 1, M_34_2, FF::BL2,
             1.5, a_1_1260_plus_SplineArr, Lineshapes::spline_t(0.18412,1.9,40)),
         new Lineshapes::kMatrix("PiPi20", 1, true,
             sA_0, sA, s0_prod, s0_scatt,
@@ -1401,13 +1401,13 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 1.0, M_24_3, FF::BL2,
+        new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 1, M_24_3, FF::BL2,
             1.5, a_1_1260_plus_SplineArr, Lineshapes::spline_t(0.18412,1.9,40)),
         new Lineshapes::kMatrix("PiPi20", 0, false,
             sA_0, sA, s0_prod, s0_scatt,
             f_scatt, IS_poles,
             PiPi2_M, PiPi2_W, 0, M_24, FF::BL2, 1.5),
-        new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 1.0, M_34_2, FF::BL2,
+        new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 1, M_34_2, FF::BL2,
             1.5, a_1_1260_plus_SplineArr, Lineshapes::spline_t(0.18412,1.9,40)),
         new Lineshapes::kMatrix("PiPi20", 0, false,
             sA_0, sA, s0_prod, s0_scatt,
@@ -1439,10 +1439,10 @@ ONE
     line_factor_list.push_back(std::vector<Lineshape*>{
         new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 0, M_24_3, FF::BL2,
             1.5, a_1_1260_plus_SplineArr, Lineshapes::spline_t(0.18412,1.9,40)),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_24, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_24, FF::BL2),
         new Lineshapes::GSpline("a(1)(1260)+", a_1_1260_plus_M, a_1_1260_plus_W, 0, M_34_2, FF::BL2,
             1.5, a_1_1260_plus_SplineArr, Lineshapes::spline_t(0.18412,1.9,40)),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_34, FF::BL2)
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_34, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -1465,10 +1465,10 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1.0, M_24, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_13, FF::BL2),
-        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1.0, M_34, FF::BL2),
-        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1.0, M_12, FF::BL2)
+        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1, M_24, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_13, FF::BL2),
+        new Lineshapes::RBW("rho(1450)0", rho_1450_0_M, rho_1450_0_W, 1, M_34, FF::BL2),
+        new Lineshapes::RBW("K*(892)bar0", Kst_892_0_bar_M, Kst_892_0_bar_W, 1, M_12, FF::BL2)
     });
 
     amplitudes_list.push_back(new Amplitude{
@@ -1493,9 +1493,9 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_24, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_24, FF::BL2),
         new Lineshapes::FOCUS("KPi10", Lineshapes::FOCUS::Mod::I32, KPi1_0_M, KPi1_0_W, 0, M_13, FF::BL2, 1.5),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_34, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_34, FF::BL2),
         new Lineshapes::FOCUS("KPi10", Lineshapes::FOCUS::Mod::I32, KPi1_0_M, KPi1_0_W, 0, M_12, FF::BL2, 1.5)
     });
 
@@ -1521,9 +1521,9 @@ ONE
     }));
 
     line_factor_list.push_back(std::vector<Lineshape*>{
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_24, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_24, FF::BL2),
         new Lineshapes::FOCUS("KPi10", Lineshapes::FOCUS::Mod::Kpi, KPi1_0_M, KPi1_0_W, 0, M_13, FF::BL2, 1.5),
-        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1.0, M_34, FF::BL2),
+        new Lineshapes::RBW("rho(770)0", rho_770_0_M, rho_770_0_W, 1, M_34, FF::BL2),
         new Lineshapes::FOCUS("KPi10", Lineshapes::FOCUS::Mod::Kpi, KPi1_0_M, KPi1_0_W, 0, M_12, FF::BL2, 1.5)
     });
 
