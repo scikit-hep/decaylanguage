@@ -698,7 +698,7 @@ def test_print_decay_modes_unallowed_scale(capsys):
     p.parse()
 
     with pytest.raises(RuntimeError):
-        p.print_decay_modes("D*+", scale=5.)
+        p.print_decay_modes("D*+", scale=5.0)
 
 
 def test_load_additional_decay_models_too_late():
