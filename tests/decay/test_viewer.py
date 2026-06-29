@@ -29,6 +29,14 @@ def test_single_decay():
     assert "mother -> dec2 [label=0.016]" in graph_output_as_dot
 
 
+def test_constructor_from_DecayChain_instance():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    chain = p.build_decay_chains("D*+", stable_particles=["D+", "D0", "pi0"], minimum_effective_bf=0.5)
+    dcv = DecayChainViewer(chain)
+
+
 def test_simple_decay_chain():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
