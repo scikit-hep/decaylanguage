@@ -1694,7 +1694,9 @@ def _extract_two_token_dict(
             tree.children[0].value: value_converter(tree.children[1].value)
             for tree in parsed_file.find_data(rule)
         }
-    except Exception as err:
+    # This line should never be reached given that Lark's find_data
+    # returns an iterator and we then provide in the "worst-case scenario" an empty dict.
+    except Exception as err:  # pragma: no cover
         raise RuntimeError(
             "Input parsed file does not seem to have the expected structure."
         ) from err
@@ -1750,7 +1752,9 @@ def get_model_aliases(parsed_file: Tree) -> dict[str, list[str]]:
             model_alias[0].value: [model.value for model in model_alias[1:]]
             for model_alias in model_alias_tokens
         }
-    except Exception as err:
+    # This line should never be reached given that Lark's find_data
+    # returns an iterator and we then provide in the "worst-case scenario" an empty dict.
+    except Exception as err:  # pragma: no cover
         raise RuntimeError(
             "Input parsed file does not seem to have the expected structure."
         ) from err

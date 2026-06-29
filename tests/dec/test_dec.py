@@ -1362,7 +1362,7 @@ def test_get_final_state_particles_wrong_Treem():
 def test_get_final_state_particle_names_wrong_Tree():
     bad = Tree("particle", [Token("LABEL", "B0sig")])
     with pytest.raises(RuntimeError):
-        get_branching_fraction(bad)
+        get_final_state_particle_names(bad)
 
 
 def test_get_model_name_wrong_Tree():
