@@ -1864,10 +1864,12 @@ def get_pythia_definitions(parsed_file: Tree) -> dict[str, dict[str, str | float
                 f"{tree.children[1].value}:{tree.children[2].value}"
             ] = _str_or_float(tree.children[3].value)
         return d
-    except Exception as err:
+    # This line should never be reached given that the decfile parsing
+    # run before in any standard workflow will have stumbled over the unexpected structure.
+    except Exception as err:  # pragma: no cover
         raise RuntimeError(
             "Input parsed file does not seem to have the expected structure."
-        ) from err
+        ) from err  # pragma: no cover
 
 
 def get_jetset_definitions(
@@ -1920,10 +1922,12 @@ def get_jetset_definitions(
                 to_int_or_float(tree.children[1].value)
             )
         return dict_params
-    except Exception as err:
+    # This line should never be reached given that the decfile parsing
+    # run before in any standard workflow will have stumbled over the unexpected structure.
+    except Exception as err:  # pragma: no cover
         raise RuntimeError(
             "Input parsed file does not seem to have the expected structure."
-        ) from err
+        ) from err  # pragma: no cover
 
 
 def get_lineshape_settings(
@@ -2045,10 +2049,12 @@ def get_lineshapePW_definitions(
             val = int(tree.children[3].value)
             d.append((particles, val))
         return d
-    except Exception as err:
+    # This line should never be reached given that the decfile parsing
+    # run before in any standard workflow will have stumbled over the unexpected structure.
+    except Exception as err:  # pragma: no cover
         raise RuntimeError(
             "Input parsed file does not seem to have the expected structure."
-        ) from err
+        ) from err  # pragma: no cover
 
 
 def get_global_photos_flag(parsed_file: Tree) -> int:

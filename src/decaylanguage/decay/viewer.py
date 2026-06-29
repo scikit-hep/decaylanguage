@@ -62,8 +62,9 @@ class DecayChainViewer:
 
         Parameters
         ----------
-        decaychain: dict
-            Input decay chain in dict format, typically created from ``decaylanguage.DecFileParser.build_decay_chains``
+        decaychain: dict or ``DecayChain``
+            Input decay chain in dict format, or from a ``DecayChain`` instance,
+            typically created from ``decaylanguage.DecFileParser.build_decay_chains``
             after parsing a .dec decay file, or from building a decay chain representation with ``decaylanguage.DecayChain``.
         show_effective_bf: bool, optional
             If True, display the effective branching fraction on the terminal node (node with no

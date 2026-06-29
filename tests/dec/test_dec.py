@@ -693,6 +693,14 @@ def test_print_decay_modes_scale_uses_largest_bf(capsys):
     assert max(asc) == pytest.approx(0.5)
 
 
+def test_print_decay_modes_forbidden_scale():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    with pytest.raises(RuntimeError):
+        p.print_decay_modes("D*+", scale=5.0)
+
+
 def test_load_additional_decay_models_too_late():
     p = DecFileParser(DIR / "../data/test_custom_decay_model.dec")
     # Force the grammar to load.

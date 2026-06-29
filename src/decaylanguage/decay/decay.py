@@ -604,7 +604,10 @@ def _get_fs(decay: DecayModeDict) -> list[Any]:
     fs = decay["fs"]
     if isinstance(fs, list):
         return fs
-    raise TypeError(f"Expected list, not {type(fs)}")
+    # This line should never be reached given that _get_fs is only used inside the
+    # internal helper function _expand_decay_modes,
+    # which by construction contains a valid decay chain dict
+    raise TypeError(f"Expected list, not {type(fs)}")  # pragma: no cover
 
 
 def _expand_decay_modes(
