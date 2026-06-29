@@ -38,6 +38,9 @@ def test_constructor_from_DecayChain_instance():
     )
     dc = DecayChain.from_dict(dc_dict)
     dcv = DecayChainViewer(dc)
+    graph_output_as_dot = dcv.to_string()
+
+    assert "mother -> dec0 [label=0.677]" in graph_output_as_dot    
 
 
 def test_simple_decay_chain():
