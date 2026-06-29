@@ -83,5 +83,5 @@ def test_ampgen_style_names(name, pid):
 
 
 def test_particle_from_string_name_ParticleNotFound():
-    # An empty list is returned at the end when catching an ParticleNotFound exception
+    # An empty list is returned at the end when catching a ParticleNotFound exception
     particle_list_from_string_name("abc+") == []

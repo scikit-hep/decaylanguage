@@ -33,8 +33,9 @@ def test_constructor_from_DecayChain_instance():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
-    chain = p.build_decay_chains("D*+", stable_particles=["D+", "D0", "pi0"], minimum_effective_bf=0.5)
-    dcv = DecayChainViewer(chain)
+    dc_dict = p.build_decay_chains("D*+", stable_particles=["D+", "D0", "pi0"], minimum_effective_bf=0.5)
+    dc = DecayChain.from_dict(dc_dict)
+    dcv = DecayChainViewer(dc)
 
 
 def test_simple_decay_chain():
