@@ -693,7 +693,7 @@ def test_print_decay_modes_scale_uses_largest_bf(capsys):
     assert max(asc) == pytest.approx(0.5)
 
 
-def test_print_decay_modes_unallowed_scale(capsys):
+def test_print_decay_modes_forbidden_scale():
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
