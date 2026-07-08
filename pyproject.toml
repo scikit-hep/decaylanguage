@@ -51,9 +51,9 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 modeling = [
-    "numpy>=1.21.6",
+    "numpy>=1.26.0",
     "pandas>=2.0",
-    "plumbum>=1.7.0",
+    "plumbum>=1.9.0",
 ]
 
 [dependency-groups]
