@@ -280,6 +280,9 @@ ChargeConj Xi-sig               anti-Xi+sig
 Alias      Xi0sig               Xi0
 Alias      anti-Xi0sig          anti-Xi0
 ChargeConj Xi0sig               anti-Xi0sig
+Alias      Xi*-sig              Xi*-
+Alias      anti-Xi*+sig         anti-Xi*+
+ChargeConj Xi*-sig              anti-Xi*+sig
 Alias      Omega_cc+sig         Omega_cc+
 Alias      anti-Omega_cc-sig    anti-Omega_cc-
 ChargeConj Omega_cc+sig         anti-Omega_cc-sig

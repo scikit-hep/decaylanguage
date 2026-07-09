@@ -11,6 +11,7 @@ from particle import ParticleNotFound
 from decaylanguage.utils.particleutils import (
     charge_conjugate_name,
     particle_from_string_name,
+    particle_list_from_string_name,
 )
 
 matches_evtgen = (
@@ -79,3 +80,8 @@ def test_ampgen_style_names(name, pid):
 
     assert particle.pdgid == pid
     assert particle == pid
+
+
+def test_particle_from_string_name_ParticleNotFound():
+    # An empty list is returned at the end when catching a ParticleNotFound exception
+    assert particle_list_from_string_name("abc+") == []

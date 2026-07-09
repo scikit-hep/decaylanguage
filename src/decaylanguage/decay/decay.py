@@ -12,7 +12,7 @@ from collections.abc import Collection, Iterator, Sequence
 from copy import deepcopy
 from itertools import product
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Any, NoReturn, TypedDict
 
 from lark import Lark, LarkError, Token, Transformer
 from particle import PDGID, ParticleNotFound
@@ -91,7 +91,7 @@ class DaughtersDict(Counter[str]):
         super().__init__(iterable, **kwds)
 
     @classmethod
-    def fromkeys(cls, iterable, v=None):  # type: ignore[no-untyped-def]
+    def fromkeys(cls, iterable: Any, v: Any = None) -> NoReturn:
         # ==> Comment copied from Counter.fromkeys():
         # There is no equivalent method for counters because the semantics
         # would be ambiguous in cases such as Counter.fromkeys('aaabbc', v=2).
@@ -619,7 +619,10 @@ def _get_fs(decay: DecayModeDict) -> list[Any]:
     fs = decay["fs"]
     if isinstance(fs, list):
         return fs
-    raise TypeError(f"Expected list, not {type(fs)}")
+    # This line should never be reached given that _get_fs is only used inside the
+    # internal helper function _expand_decay_modes,
+    # which by construction contains a valid decay chain dict
+    raise TypeError(f"Expected list, not {type(fs)}")  # pragma: no cover
 
 
 def _expand_decay_modes(

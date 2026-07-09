@@ -1,51 +1,48 @@
 # Changelog
 
-## Unreleased
+## Version 1.0.0 (2026-06-25)
 
 * Parsing of decay files (aka .dec files):
-  - Various improvements to the code, for more robustness.
   - Performance improvements in `DecFileParser`, with caching and lazily-built indexing where possible.
   - A couple of fixes related to the decay file parser.
+  - Various improvements to the code, for more robustness.
   - Typing modernisations.
   - Code simplifications to various helper functions.
   - Updated the `known_decay_models` comment in `dec/enums.py` to reflect that
     the list is injected via `edit_terminals` rather than a static grammar terminal.
 * Universal representation of decay chains:
   - Added `DaughtersDict.__sub__`, returning a `DaughtersDict` (mirrors `__add__`).
-  - Fixed `DecayChain.from_dict` so it can read back its own `to_dict` output when the same particle appears more than once with an identical sub-decay (e.g. `eta -> pi0 pi0` with `pi0 -> gamma gamma`); genuinely conflicting redefinitions still raise.
-  - `DecayChainViewer` now uses a per-instance node counter, so rendering the same chain twice yields identical, reproducible DOT output.
-  - `DecayChainViewer` now HTML-escapes particle names in its fallback label path, producing valid DOT for names containing `&`, `<`, `>`.
+  - Fixed `DecayChain.from_dict` so it can read back its own `to_dict` output when the same particle
+    appears more than once with an identical sub-decay (e.g. `eta -> pi0 pi0` with `pi0 -> gamma gamma`);
+    genuinely conflicting redefinitions still raise.
+  - `DecayChainViewer` now uses a per-instance node counter,
+    so rendering the same chain twice yields identical, reproducible DOT output.
+  - `DecayChainViewer` now HTML-escapes particle names in its fallback label path,
+     producing valid DOT for names containing `&`, `<`, `>`.
   - Modernisations in `decay/` and `utils/`.
   - Other minor fixes.
 * Modeling submodule (`modeling/`):
-  - Migrated `ModelDecay` and `AmplitudeChain` from old-style `@attr.s`/`attr.ib` to modern `@attrs.define`/`attrs.field`.
-  - Removed dead `graphviz` import guard in `decay.py` (graphviz is a hard dependency).
-  - Various fixes and minor improvements.
-  - AmpGen to GooFit conversion fixes:
-    - Fixed inverted amplitude fix/free flags: AmpGen `Fix=2` now maps to a fixed
-      GooFit variable and `Free=0` to a free one.
-    - Fixed polar-to-cartesian error propagation (now uses `sin(theta)*dtheta` and
-      `cos(theta)*dtheta`); a zero input error correctly yields a zero output error.
-    - Fixed `GooFitPyChain.make_amplitude`: the imaginary free coefficient is now
-      named `_i` (was `_r`), and cartesian coefficients use unbounded `Variable`s.
-    - Fixed `ampgen2goofitpy` losing the header and final amplitudes line when
-      returning output as a string.
-    - Fixed a parser crash and truthiness bug on `FastCoherentSum::UseCartesian`.
-    - The `MintDalitzSpecialParticles.csv` table is now loaded once instead of for
-      every node of every decay line.
-    - Reset class-level state on each `read_ampgen` so repeated calls and sibling
-      subclasses no longer leak stale particles or the Cartesian flag.
-    - Corrected `L_range` to include intermediate spin couplings (e.g. a spin-1
-      decay to two vectors now allows `L = 0`).
-    - Mapped the S-wave `A -> V P` spin structure to the S-wave spin factor instead
-      of the D-wave one.
-    - ANSI color codes no longer leak into the generated output.
+  - Migrated `ModelDecay` and `AmplitudeChain` to modern `@attrs.define`/`attrs.field`.
+  - Several AmpGen to GooFit conversion fixes (fix/free flags, polar-to-cartesian error propagation, spin factor mappings, state leakage, output formatting, and more).
+  - Various other fixes and minor improvements.
 * Utilities submodule:
-  - Fixed a bug in `split()` where a trailing comma was not handled correctly (e.g. `split("a,")` returned `["a,"]` instead of `["a", ""]`).
-  - Fixed `filter_lines()` to collect matched lines and residuals in a single pass instead of running the regex twice per line.
+  - Fixed a bug in `split()` where a trailing comma was not handled correctly
+    (e.g. `split("a,")` returned `["a,"]` instead of `["a", ""]`).
+  - Fixed `filter_lines()` to collect matched lines and residuals in a single pass
+    instead of running the regex twice per line.
+* Documentation:
+  - Expanded the README to cover recently added, Flavour-Physics-oriented features:
+    inspecting decay modes (`list_decay_modes`, `print_decay_modes`, `expand_decay_modes`),
+    pruning decay chains via `build_decay_chains(..., minimum_effective_bf=...)`
+    and annotating them with `DecayChainViewer(..., show_effective_bf=True)`,
+    and text-based decay-chain tools (`to_string`, `print_as_tree`, `flatten`,
+    `DaughtersDict` arithmetic and charge conjugation).
 * Dependencies:
   - Moved `numpy`, `pandas` and `plumbum` into an optional `decaylanguage[modeling]` extra; they are only needed by the `modeling` subpackage and the command-line interface. Core `.dec` parsing and decay-chain functionality no longer pull them in.
+* Miscellaneous - typing:
+  - Reviewed and reduced `# type: ignore` comments across submodules.
 * CI and tests:
+  - Minor updates of tests for Particle 1.0.0
   - Several improvements, enhancements and clean_ups.
   - Removed dead `filterwarnings` ignore for PyArrow/pandas deprecation (pandas >=2.2.2 no longer emits it).
   - Trimmed mypy pre-commit hook's `additional_dependencies` to only what the covered code actually imports (`particle`, `hepunits`).

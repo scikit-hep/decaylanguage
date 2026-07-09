@@ -132,6 +132,29 @@ dfp = DecFileParser.from_string(s)
 dfp.parse()
 ```
 
+#### Inspecting decay modes
+
+The decay modes of any mother particle can be listed or pretty-printed.
+Branching fractions can optionally be normalised (so they sum to 1) or
+rescaled, and the list can be sorted in ascending order:
+
+```python
+# List of decay modes, each as a list of daughter names
+dfp.list_decay_modes('pi0')
+
+# Pretty print, here with branching fractions normalised to unity
+dfp.print_decay_modes('pi0', normalize=True)
+```
+
+The fully expanded list of decay descriptors of a particle, with every
+sub-decay resolved down to final states, is available via
+`expand_decay_modes` (this also reverts any aliases back to the original
+EvtGen names):
+
+```python
+dfp.expand_decay_modes('D*+')
+```
+
 #### Advanced usage
 
 The list of `.dec` file decay models known to the package can be inspected via
@@ -170,6 +193,23 @@ DecayChainViewer(d)  # works in a notebook
 ```
 
 ![DecayChain D*](https://raw.githubusercontent.com/scikit-hep/decaylanguage/main/images/DecayChain_Dst_stable-D0-and-D+.png)
+
+Real-life decay files easily produce decay chains with a very large number of
+sub-decays. The `minimum_effective_bf` argument of `build_decay_chains` prunes
+the chains whose effective branching fraction (the product of branching
+fractions from the mother down to the final states) falls below a threshold,
+keeping only the dominant paths:
+
+```python
+d = dfp.build_decay_chains('D*+', minimum_effective_bf=1e-4)
+```
+
+`DecayChainViewer` can in turn annotate each node with its effective branching
+fraction:
+
+```python
+DecayChainViewer(d, show_effective_bf=True)
+```
 
 The actual graph is available as
 
@@ -218,6 +258,41 @@ representation understood by `DecayChainViewer`, as see above:
 
 ```python
 DecayChainViewer(dc.to_dict())
+```
+
+Even without graphviz, a decay chain can be inspected on the terminal,
+either as a one-line descriptor or as an ASCII tree:
+
+```python
+>>> print(dc.to_string())
+D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)
+>>> dc.print_as_tree()
+D0
++--> K_S0
+|    +--> pi+
+|    +--> pi-
++--> pi0
+     +--> gamma
+     +--> gamma
+```
+
+Intermediate, decaying particles can be collapsed onto their final states with
+`flatten`, optionally treating some particles as stable:
+
+```python
+>>> dc.flatten().to_string()
+'D0 -> gamma gamma pi+ pi-'
+```
+
+Final states are easily manipulated as multisets via `DaughtersDict`, which
+supports addition, subtraction and charge conjugation:
+
+```python
+>>> from decaylanguage import DaughtersDict
+>>> (DaughtersDict('K+ K- pi0') + DaughtersDict('pi+ pi-')).to_string()
+'K+ K- pi+ pi- pi0'
+>>> DaughtersDict('K+ pi-').charge_conjugate().to_string()
+'K- pi+'
 ```
 
 The fact that 2 representations of particle decay chains are provided ensures

@@ -11,6 +11,7 @@ from pathlib import Path
 import pytest
 
 from decaylanguage.dec.dec import DecFileParser
+from decaylanguage.decay.decay import DecayChain
 from decaylanguage.decay.viewer import DecayChainViewer
 
 DIR = Path(__file__).parent.resolve()
@@ -27,6 +28,20 @@ def test_single_decay():
     assert "mother -> dec0 [label=0.677]" in graph_output_as_dot
     assert "mother -> dec1 [label=0.307]" in graph_output_as_dot
     assert "mother -> dec2 [label=0.016]" in graph_output_as_dot
+
+
+def test_constructor_from_DecayChain_instance():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    dc_dict = p.build_decay_chains(
+        "D*+", stable_particles=["D+", "D0", "pi0"], minimum_effective_bf=0.5
+    )
+    dc = DecayChain.from_dict(dc_dict)
+    dcv = DecayChainViewer(dc)
+    graph_output_as_dot = dcv.to_string()
+
+    assert "mother -> dec0 [label=0.677]" in graph_output_as_dot
 
 
 def test_simple_decay_chain():

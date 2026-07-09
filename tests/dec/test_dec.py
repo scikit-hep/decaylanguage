@@ -19,8 +19,10 @@ from decaylanguage.dec.dec import (
     DecayNotFound,
     DecFileNotParsed,
     DecFileParser,
+    get_branching_fraction,
     get_decay_mother_name,
     get_final_state_particle_names,
+    get_final_state_particles,
     get_model_name,
     get_model_parameters,
 )
@@ -198,7 +200,7 @@ def test_particle_property_definitions():
         "MyPhi": {"mass": 1.02, "width": 0.004},
         "rho0": {"mass": 0.8, "width": 0.2},
         "MyRho0": {"mass": 0.77, "width": 0.1474},
-        "chi_c0": {"mass": 3.42, "width": 0.0109},
+        "chi_c0": {"mass": 3.42, "width": 0.0124},
     }
 
 
@@ -647,6 +649,16 @@ def test_print_decay_modes_options():
 
     tmp_stdout = io.StringIO()
     sys.stdout = tmp_stdout
+    p1.print_decay_modes("D*+", print_model=False)
+    no_model = tmp_stdout.getvalue()
+    s = """  0.677        D0 pi+;
+  0.307        D+ pi0;
+  0.016        D+ gamma;"""
+    assert all(_ in no_model for _ in s.split(";\n"))
+    tmp_stdout.truncate(0)
+
+    tmp_stdout = io.StringIO()
+    sys.stdout = tmp_stdout
     p2.print_decay_modes("B_c+sig")
     photos_included = tmp_stdout.getvalue()
     assert "PHOTOS " in photos_included
@@ -691,6 +703,14 @@ def test_print_decay_modes_scale_uses_largest_bf(capsys):
 
     assert max(desc) == pytest.approx(0.5)
     assert max(asc) == pytest.approx(0.5)
+
+
+def test_print_decay_modes_forbidden_scale():
+    p = DecFileParser(DIR / "../data/test_example_Dst.dec")
+    p.parse()
+
+    with pytest.raises(RuntimeError):
+        p.print_decay_modes("D*+", scale=5.0)
 
 
 def test_load_additional_decay_models_too_late():
@@ -1318,9 +1338,43 @@ def test_BELLE2_decfile():
     p = DecFileParser(DIR / "../../src/decaylanguage/data/DECAY_BELLE2.DEC")
     p.parse()
 
-    # Just check the dec file will parse since I do not know
-    # how many decays are in the dec file.
     assert p.number_of_decays == 363
+
+
+def test_get_decay_mother_name_wrong_Tree():
+    bad = Tree("decayline", [Tree("value", [Token("SIGNED_NUMBER", "1.0")])])
+    with pytest.raises(RuntimeError):
+        get_decay_mother_name(bad)
+
+
+def test_get_branching_fraction_wrong_Tree():
+    bad = Tree("particle", [Token("LABEL", "B0sig")])
+    with pytest.raises(RuntimeError):
+        get_branching_fraction(bad)
+
+
+def test_get_final_state_particles_wrong_Treem():
+    bad = Tree("particle", [Token("LABEL", "B0sig")])
+    with pytest.raises(RuntimeError):
+        get_final_state_particles(bad)
+
+
+def test_get_final_state_particle_names_wrong_Tree():
+    bad = Tree("particle", [Token("LABEL", "B0sig")])
+    with pytest.raises(RuntimeError):
+        get_final_state_particle_names(bad)
+
+
+def test_get_model_name_wrong_Tree():
+    bad = Tree("particle", [Token("LABEL", "B0sig")])
+    with pytest.raises(RuntimeError):
+        get_model_name(bad)
+
+
+def test_get_model_parameters_wrong_Tree():
+    bad = Tree("particle", [Token("LABEL", "B0sig")])
+    with pytest.raises(RuntimeError):
+        get_model_parameters(bad)
 
 
 def test_align_items_simple():
@@ -1359,3 +1413,21 @@ def test_align_items_complex_right_align():
     aligned = DecFileParser._align_items(to_align, align_mode="right")
 
     assert aligned == ["alpha beta gamma", "    a    b     c", "   01   02    03"]
+
+
+def test_align_items_simple_wrong_align_mode():
+    to_align = ["a", "quick", "brown", "fox"]
+
+    with pytest.raises(ValueError, match="Unknown align mode"):
+        _ = DecFileParser._align_items(to_align, align_mode="nonexistent")
+
+
+def test_align_items_complex_wrong_align_mode():
+    to_align = [
+        ("alpha", "beta", "gamma"),
+        ("a", "b", "c"),
+        ("01", "02", "03"),
+    ]
+
+    with pytest.raises(ValueError, match="Unknown align mode"):
+        _ = DecFileParser._align_items(to_align, align_mode="nonexistent")
