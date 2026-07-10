@@ -1,6 +1,7 @@
 ci:
   autoupdate_commit_msg: "chore: update pre-commit hooks"
   autofix_commit_msg: "style: pre-commit fixes"
+  skip: [decaylanguage-validate]
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -42,9 +43,8 @@ repos:
   hooks:
   - id: decaylanguage-validate
     name: Validate bundled EvtGen decay files
-    entry: decaylanguage-validate
-    language: python
-    additional_dependencies: [.]
+    entry: uv run decaylanguage-validate
+    language: system
     files: '(?i:\.dec)$'
     args: [--ignore=DLW]
     exclude: '^tests/data/(?:models/|test_custom_decay_model\.dec$|test_issue90\.dec$)'
