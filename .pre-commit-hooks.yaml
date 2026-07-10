@@ -3,4 +3,4 @@
   description: Validate .dec decay files with decaylanguage.DecFileParser.
   entry: decaylanguage-validate
   language: python
-  files: '\.(dec|DEC)$'
+  files: '(?i:\.dec)$'

@@ -40,6 +40,13 @@ repos:
 
 - repo: local
   hooks:
+  - id: decaylanguage-validate
+    name: Validate bundled EvtGen decay files
+    entry: decaylanguage-validate
+    language: python
+    files: '(?i:\.dec)$'
+    args: [--ignore=DLW]
+    exclude: '^tests/data/(?:models/|test_custom_decay_model\.dec$|test_issue90\.dec$)'
   - id: disallow-caps
     name: Disallow improper capitalization
     language: pygrep
