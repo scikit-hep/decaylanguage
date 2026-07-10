@@ -5,13 +5,75 @@
 
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
 
 import pytest
 
-from decaylanguage.dec.validate import main, validate_files
+from decaylanguage.dec.dec import (
+    DuplicateCDecayWarning,
+    DuplicateDecayWarning,
+    MissingCDecaySourceWarning,
+    MissingCopyDecaySourceWarning,
+    SelfConjugateCDecayWarning,
+)
+from decaylanguage.dec.validate import _diagnostic_from_warning, main, validate_files
 
 DIR = Path(__file__).parent.resolve()
+
+
+@pytest.mark.parametrize(
+    ("category", "message", "code", "compact_message"),
+    [
+        (
+            DuplicateDecayWarning,
+            "The following particle(s) is(are) redefined in the input .dec file "
+            "with 'Decay': D0! All but the first occurrence will be "
+            "discarded/removed ...",
+            "DLW001",
+            "duplicate Decay block(s): D0; later definitions ignored",
+        ),
+        (
+            MissingCopyDecaySourceWarning,
+            "Corresponding 'Decay' statement for 'CopyDecay' statement(s) of "
+            "following particle(s) not found: D0. Skipping creation of these "
+            "copied decay trees.",
+            "DLW002",
+            "missing Decay source for CopyDecay: D0",
+        ),
+        (
+            DuplicateCDecayWarning,
+            "The following particles are defined in the input .dec file with both "
+            "'Decay' and 'CDecay': D0! The 'CDecay' definition(s) will be ignored ...",
+            "DLW003",
+            "both Decay and CDecay defined: D0; CDecay ignored",
+        ),
+        (
+            MissingCDecaySourceWarning,
+            "Corresponding 'Decay' statement for 'CDecay' statement(s) of following "
+            "particle(s) not found: D0. Skipping creation of these charge-conjugate "
+            "decay trees.",
+            "DLW004",
+            "missing Decay source for CDecay: D0",
+        ),
+        (
+            SelfConjugateCDecayWarning,
+            "Found 'CDecay' statement for self-conjugate particle pi0. This is a bug! "
+            "Skipping creation of charge-conjugate decay Tree.",
+            "DLW005",
+            "CDecay targets self-conjugate particle: pi0",
+        ),
+    ],
+)
+def test_warning_categories_map_to_diagnostics(
+    category: type[Warning], message: str, code: str, compact_message: str
+) -> None:
+    warning = warnings.WarningMessage(category(message), category, "test.dec", 1)
+
+    diagnostic = _diagnostic_from_warning(Path("test.dec"), warning)
+
+    assert diagnostic.code == code
+    assert diagnostic.message == compact_message
 
 
 def test_validate_files_reports_duplicate_decay() -> None:
@@ -62,6 +124,14 @@ def test_validate_files_reports_parse_errors(tmp_path: Path) -> None:
     assert len(diagnostics) == 1
     assert diagnostics[0].code == "DLP001"
     assert diagnostics[0].line is not None
+
+
+def test_validate_files_reports_missing_files(tmp_path: Path) -> None:
+    diagnostics = validate_files([tmp_path / "missing.dec"])
+
+    assert len(diagnostics) == 1
+    assert diagnostics[0].code == "DLP001"
+    assert diagnostics[0].message == "file does not exist or is not a regular file"
 
 
 def test_main_returns_failure_for_diagnostics() -> None:

@@ -17,7 +17,7 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from .dec import DecFileParser
+from .dec import DecFileParser, DecFileWarning
 
 
 @dataclass(frozen=True)
@@ -27,7 +27,6 @@ class DiagnosticRule:
     code: str
     name: str
     description: str
-    pattern: re.Pattern[str] | None = None
 
 
 @dataclass(frozen=True)
@@ -52,48 +51,26 @@ DLW001 = DiagnosticRule(
     "DLW001",
     "duplicate-decay",
     "A particle has multiple Decay blocks; only the first is retained.",
-    re.compile(
-        r"The following particle\(s\) is\(are\) redefined in the input \.dec file "
-        r"with 'Decay': .* All but the first occurrence will be discarded/removed "
-        r"\.\.\."
-    ),
 )
 DLW002 = DiagnosticRule(
     "DLW002",
     "missing-copydecay-source",
     "A CopyDecay statement references a missing Decay source.",
-    re.compile(
-        r"Corresponding 'Decay' statement for 'CopyDecay' statement\(s\).* "
-        r"Skipping creation of these copied decay trees\."
-    ),
 )
 DLW003 = DiagnosticRule(
     "DLW003",
     "duplicate-cdecay",
     "A particle is defined with both Decay and CDecay; CDecay is ignored.",
-    re.compile(
-        r"The following particles are defined in the input \.dec file with both "
-        r"'Decay' and 'CDecay': .* The 'CDecay' definition\(s\) will be ignored "
-        r"\.\.\."
-    ),
 )
 DLW004 = DiagnosticRule(
     "DLW004",
     "missing-cdecay-source",
     "A CDecay statement has no corresponding Decay source.",
-    re.compile(
-        r"Corresponding 'Decay' statement for 'CDecay' statement\(s\).* "
-        r"Skipping creation of these charge-conjugate decay trees\."
-    ),
 )
 DLW005 = DiagnosticRule(
     "DLW005",
     "self-conjugate-cdecay",
     "A CDecay statement targets a self-conjugate particle.",
-    re.compile(
-        r"Found 'CDecay' statement for self-conjugate particle .* "
-        r"Skipping creation of charge-conjugate decay Tree\."
-    ),
 )
 DLW999 = DiagnosticRule(
     "DLW999",
@@ -137,11 +114,12 @@ def validate_files(
     """Validate decay files and return non-ignored diagnostics."""
 
     ignored = tuple(ignore)
+    additional_models = tuple(additional_decay_models)
     diagnostics: list[Diagnostic] = []
     for path in _iter_decay_files(paths):
         diagnostics.extend(
             diagnostic
-            for diagnostic in _validate_file(path, additional_decay_models)
+            for diagnostic in _validate_file(path, additional_models)
             if not _is_ignored(diagnostic.code, ignored)
         )
     return diagnostics
@@ -161,6 +139,15 @@ def _validate_file(
     path: Path,
     additional_decay_models: Iterable[str],
 ) -> list[Diagnostic]:
+    if not path.is_file():
+        return [
+            Diagnostic(
+                code=DLP001.code,
+                name=DLP001.name,
+                path=path,
+                message="file does not exist or is not a regular file",
+            )
+        ]
     caught_warnings: list[warnings.WarningMessage]
     try:
         with warnings.catch_warnings(record=True) as caught_warnings:
@@ -200,14 +187,9 @@ def _diagnostic_from_warning(
     warning: warnings.WarningMessage,
 ) -> Diagnostic:
     message = _normalize_warning_message(warning)
-    rule = next(
-        (
-            candidate
-            for candidate in DIAGNOSTIC_RULES
-            if candidate.pattern is not None and candidate.pattern.fullmatch(message)
-        ),
-        DLW999,
-    )
+    category = warning.category
+    code = category.code if issubclass(category, DecFileWarning) else DLW999.code
+    rule = _RULES_BY_CODE.get(code, DLW999)
     return Diagnostic(
         code=rule.code,
         name=rule.name,
