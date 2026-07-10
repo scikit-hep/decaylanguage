@@ -70,6 +70,12 @@ DIR = Path(__file__).parent.resolve()
             "DLW005",
             "CDecay targets self-conjugate particle: pi0",
         ),
+        (
+            UserWarning,
+            "An unclassified parser warning.",
+            "DLW999",
+            "An unclassified parser warning.",
+        ),
     ],
 )
 def test_warning_categories_map_to_diagnostics(
@@ -112,6 +118,18 @@ def test_validate_files_accepts_directories() -> None:
     diagnostics = validate_files(
         [DIR / "../data"],
         ignore=["DLW", "DLP"],
+    )
+
+    assert diagnostics == []
+
+
+def test_validate_files_reuses_additional_decay_model_generator() -> None:
+    path = DIR / "../data/test_custom_decay_model.dec"
+    models = (model for model in ("CUSTOM_MODEL1", "CUSTOM_MODEL2"))
+
+    diagnostics = validate_files(
+        [path, path],
+        additional_decay_models=models,
     )
 
     assert diagnostics == []
