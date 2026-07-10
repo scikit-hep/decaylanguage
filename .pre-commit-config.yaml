@@ -44,6 +44,7 @@ repos:
     name: Validate bundled EvtGen decay files
     entry: decaylanguage-validate
     language: python
+    additional_dependencies: [.]
     files: '(?i:\.dec)$'
     args: [--ignore=DLW]
     exclude: '^tests/data/(?:models/|test_custom_decay_model\.dec$|test_issue90\.dec$)'

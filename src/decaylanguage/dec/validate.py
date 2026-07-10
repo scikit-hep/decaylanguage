@@ -171,11 +171,16 @@ def _diagnostic_from_exception(path: Path, exc: Exception) -> Diagnostic:
         except Exception:
             source_line = None
 
+    message_lines = str(exc).strip().splitlines()
+    message = exc.__class__.__name__
+    if message_lines:
+        message += f": {message_lines[0]}"
+
     return Diagnostic(
         code=DLP001.code,
         name=DLP001.name,
         path=path,
-        message=f"{exc.__class__.__name__}: {str(exc).splitlines()[0]}",
+        message=message,
         line=line if isinstance(line, int) else None,
         column=column if isinstance(column, int) else None,
         source_line=source_line,
@@ -290,13 +295,21 @@ def _print_diagnostics(
                 f"{diagnostic.name}: {diagnostic.message}\n"
             )
             if diagnostic.line is not None and diagnostic.source_line is not None:
+                source_prefix = f"       {diagnostic.line}: "
+                expanded_source_line = diagnostic.source_line.expandtabs()
                 sys.stderr.write(
-                    style.muted(f"       {diagnostic.line}: {diagnostic.source_line}")
-                    + "\n"
+                    style.muted(f"{source_prefix}{expanded_source_line}") + "\n"
                 )
                 if diagnostic.column is not None:
-                    pointer = " " * max(diagnostic.column - 1, 0) + "^"
-                    sys.stderr.write(style.muted(f"          {pointer}") + "\n")
+                    source_before_column = diagnostic.source_line[
+                        : max(diagnostic.column - 1, 0)
+                    ]
+                    pointer = (
+                        " " * len(source_prefix)
+                        + " " * len(source_before_column.expandtabs())
+                        + "^"
+                    )
+                    sys.stderr.write(style.muted(pointer) + "\n")
         hidden = len(diagnostics) - len(shown_diagnostics)
         if hidden:
             sys.stderr.write(
@@ -406,14 +419,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     ignored = _validate_ignore_codes(args.ignore)
     if args.max_diagnostics < 0:
         raise SystemExit("--max-diagnostics must be non-negative")
+    files = list(_iter_decay_files(args.files))
     diagnostics = validate_files(
-        args.files,
+        files,
         ignore=ignored,
         additional_decay_models=args.additional_decay_model,
     )
     _print_diagnostics(
         diagnostics,
-        files=args.files,
+        files=files,
         show_ok=args.show_ok,
         color=args.color,
         max_diagnostics=args.max_diagnostics,

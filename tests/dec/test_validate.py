@@ -17,7 +17,14 @@ from decaylanguage.dec.dec import (
     MissingCopyDecaySourceWarning,
     SelfConjugateCDecayWarning,
 )
-from decaylanguage.dec.validate import _diagnostic_from_warning, main, validate_files
+from decaylanguage.dec.validate import (
+    Diagnostic,
+    _diagnostic_from_exception,
+    _diagnostic_from_warning,
+    _print_diagnostics,
+    main,
+    validate_files,
+)
 
 DIR = Path(__file__).parent.resolve()
 
@@ -126,6 +133,13 @@ def test_validate_files_reports_parse_errors(tmp_path: Path) -> None:
     assert diagnostics[0].line is not None
 
 
+@pytest.mark.parametrize("message", ["", "\n \t"])
+def test_diagnostic_from_exception_accepts_empty_message(message: str) -> None:
+    diagnostic = _diagnostic_from_exception(Path("broken.dec"), AssertionError(message))
+
+    assert diagnostic.message == "AssertionError"
+
+
 def test_validate_files_reports_missing_files(tmp_path: Path) -> None:
     diagnostics = validate_files([tmp_path / "missing.dec"])
 
@@ -153,6 +167,76 @@ def test_main_limits_displayed_diagnostics(capsys: pytest.CaptureFixture[str]) -
     captured = capsys.readouterr()
     assert "additional diagnostic(s) hidden" in captured.err
     assert "summary: DLW001=1, DLW003=1" in captured.err
+
+
+def test_print_diagnostics_aligns_column_pointer(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    diagnostic = Diagnostic(
+        code="DLP001",
+        name="parse-error",
+        path=Path("broken.dec"),
+        message="bad input",
+        line=12,
+        column=3,
+        source_line="abcdef",
+    )
+
+    _print_diagnostics(
+        [diagnostic],
+        files=[diagnostic.path],
+        show_ok=False,
+        color="never",
+        max_diagnostics=100,
+    )
+
+    lines = capsys.readouterr().err.splitlines()
+    source_line = next(line for line in lines if line.endswith("abcdef"))
+    pointer_line = next(line for line in lines if line.endswith("^"))
+    assert pointer_line.index("^") == source_line.index("c")
+
+
+def test_print_diagnostics_aligns_column_pointer_after_tab(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    diagnostic = Diagnostic(
+        code="DLP001",
+        name="parse-error",
+        path=Path("broken.dec"),
+        message="bad input",
+        line=1,
+        column=3,
+        source_line="a\tb",
+    )
+
+    _print_diagnostics(
+        [diagnostic],
+        files=[diagnostic.path],
+        show_ok=False,
+        color="never",
+        max_diagnostics=100,
+    )
+
+    lines = capsys.readouterr().err.splitlines()
+    source_line = next(line for line in lines if line.endswith("b"))
+    pointer_line = next(line for line in lines if line.endswith("^"))
+    assert "\t" not in source_line
+    assert pointer_line.index("^") == source_line.index("b")
+
+
+@pytest.mark.parametrize("number_of_files", [0, 2])
+def test_main_show_ok_counts_expanded_directory_files(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    number_of_files: int,
+) -> None:
+    for index in range(number_of_files):
+        (tmp_path / f"valid-{index}.dec").write_text("End\n", encoding="utf_8")
+
+    assert main(["--color=never", "--show-ok", str(tmp_path)]) == 0
+
+    captured = capsys.readouterr()
+    assert f"DecayLanguage: {number_of_files} file(s) passed" in captured.err
 
 
 def test_main_returns_success_for_ignored_diagnostics() -> None:
