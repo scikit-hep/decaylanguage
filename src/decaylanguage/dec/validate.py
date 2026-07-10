@@ -45,7 +45,7 @@ class Diagnostic:
 DLP001 = DiagnosticRule(
     "DLP001",
     "parse-error",
-    "The file could not be parsed by DecFileParser.",
+    "The file could not be read or parsed by DecFileParser.",
 )
 DLW001 = DiagnosticRule(
     "DLW001",

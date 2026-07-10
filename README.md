@@ -189,6 +189,13 @@ decaylanguage-validate my-decay-file.dec
 decaylanguage-validate path/to/decfiles-directory
 ```
 
+Experiment-specific decay models can be enabled by repeating
+`--additional-decay-model` as needed:
+
+```bash
+decaylanguage-validate --additional-decay-model=MYMODEL my-decay-file.dec
+```
+
 The validator is also available as a pre-commit hook for downstream projects:
 
 ```yaml
@@ -214,7 +221,7 @@ Available diagnostics:
 
 | Code | Name | Meaning |
 | --- | --- | --- |
-| `DLP001` | `parse-error` | The file could not be parsed by `DecFileParser`. |
+| `DLP001` | `parse-error` | The file could not be read or parsed by `DecFileParser`. |
 | `DLW001` | `duplicate-decay` | A particle has multiple `Decay` blocks; only the first is retained. |
 | `DLW002` | `missing-copydecay-source` | A `CopyDecay` statement references a missing `Decay` source. |
 | `DLW003` | `duplicate-cdecay` | A particle is defined with both `Decay` and `CDecay`; `CDecay` is ignored. |
@@ -233,7 +240,7 @@ Validate EvtGen decay files..............................................Failed
 DecayLanguage: 1 diagnostic(s) in 1 file(s)
 tests/data/broken.dec:13:68: DLP001 parse-error: UnexpectedToken: Unexpected token Token('SIGNED_NUMBER', '2') at line 13, column 68.
        13: 0.000044342 Upsilon pi0     pi0                             VVPIPI;2 #[Reconstructed PDG2011]
-                                                                             ^
+                                                                              ^
 summary: DLP001=1
 ```
 

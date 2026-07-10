@@ -54,6 +54,13 @@ EvtGen ``.dec`` files can be validated without writing Python code:
    decaylanguage-validate my-decay-file.dec
    decaylanguage-validate path/to/decfiles-directory
 
+Experiment-specific decay models can be enabled by repeating
+``--additional-decay-model`` as needed:
+
+.. code-block:: bash
+
+   decaylanguage-validate --additional-decay-model=MYMODEL my-decay-file.dec
+
 The validator reports stable diagnostic codes. Exact codes or code families can
 be disabled, which lets experiments choose their own pre-commit policy:
 
@@ -74,7 +81,7 @@ Available diagnostics:
      - Meaning
    * - ``DLP001``
      - ``parse-error``
-     - The file could not be parsed by ``DecFileParser``.
+     - The file could not be read or parsed by ``DecFileParser``.
    * - ``DLW001``
      - ``duplicate-decay``
      - A particle has multiple ``Decay`` blocks; only the first is retained.
@@ -106,7 +113,7 @@ errors include the source location and a pointer:
    DecayLanguage: 1 diagnostic(s) in 1 file(s)
    tests/data/broken.dec:13:68: DLP001 parse-error: UnexpectedToken: Unexpected token Token('SIGNED_NUMBER', '2') at line 13, column 68.
           13: 0.000044342 Upsilon pi0     pi0                             VVPIPI;2 #[Reconstructed PDG2011]
-                                                                                ^
+                                                                                 ^
    summary: DLP001=1
 
 Parser warnings are reported more compactly:
