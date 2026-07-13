@@ -44,6 +44,8 @@ Charge conjugation
 By default, charge-conjugated decays are automatically included. This behavior
 can be controlled at parse time.
 
+For more detailed examples, see the :doc:`/examples/notebooks/index` section.
+
 Command-line validation
 -----------------------
 
@@ -134,5 +136,3 @@ Downstream projects can use the packaged pre-commit hook:
      hooks:
      - id: decaylanguage-validate
        args: ["--ignore=DLW004"]
-
-For more detailed examples, see the :doc:`/examples/notebooks/index` section.

@@ -72,7 +72,6 @@ For merging, you should:
 1. Include passing tests (run ``nox``) [1]_.
 2. Update documentation when there's new API, functionality etc.
 3. Add a note to ``CHANGELOG.md`` about the changes.
-4. Add yourself to ``AUTHORS.rst``.
 
 .. [1] If you don't have all the necessary python versions available locally, you can run a specific nox session with  ``nox -s tests-3.9``, for example. GitHub Actions will run all the tests whenever a pull request is made, so testing all versions of Python locally is usually not necessary.
 
