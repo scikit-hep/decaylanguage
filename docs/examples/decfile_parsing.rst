@@ -47,7 +47,8 @@ can be controlled at parse time.
 Command-line validation
 -----------------------
 
-EvtGen ``.dec`` files can be validated without writing Python code:
+EvtGen ``.dec`` files can be validated without writing Python code
+with a provided script:
 
 .. code-block:: bash
 
@@ -69,9 +70,7 @@ be disabled, which lets experiments choose their own pre-commit policy:
    decaylanguage-validate --ignore=DLW004 my-decay-file.dec
 
 Use ``decaylanguage-validate --list-diagnostics`` to inspect the currently
-available diagnostics.
-
-Available diagnostics:
+available diagnostics, which are the following:
 
 .. list-table::
    :header-rows: 1

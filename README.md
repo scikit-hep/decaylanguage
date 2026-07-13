@@ -33,8 +33,8 @@ pip install decaylanguage
 ```
 
 The amplitude `modeling` subpackage and the AmpGen-to-GooFit command-line
-interface need a few extra dependencies (NumPy, pandas and plumbum). Install
-them with:
+interface need a few extra dependencies (NumPy, pandas and plumbum).
+Install them with:
 
 ```bash
 pip install "decaylanguage[modeling]"
