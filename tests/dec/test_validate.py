@@ -7,9 +7,11 @@ from __future__ import annotations
 
 import warnings
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
+import decaylanguage.dec.validate as validate_module
 from decaylanguage.dec.dec import (
     DuplicateCDecayWarning,
     DuplicateDecayWarning,
@@ -89,11 +91,43 @@ def test_warning_categories_map_to_diagnostics(
     assert diagnostic.message == compact_message
 
 
+def test_known_warning_with_unrecognized_message_is_not_rewritten() -> None:
+    message = "A future version of this warning with different wording."
+    warning = warnings.WarningMessage(
+        DuplicateDecayWarning(message), DuplicateDecayWarning, "test.dec", 1
+    )
+
+    diagnostic = _diagnostic_from_warning(Path("test.dec"), warning)
+
+    assert diagnostic.code == "DLW001"
+    assert diagnostic.message == message
+
+
 def test_validate_files_reports_duplicate_decay() -> None:
     diagnostics = validate_files([DIR / "../data/duplicate-decays.dec"])
 
     assert [diagnostic.code for diagnostic in diagnostics] == ["DLW001", "DLW003"]
     assert diagnostics[0].message.startswith("duplicate Decay block")
+
+
+def test_validate_files_reports_self_conjugate_cdecay(tmp_path: Path) -> None:
+    path = tmp_path / "self-conjugate-cdecay.dec"
+    path.write_text(
+        """Alias MyPi0 pi0
+ChargeConj MyPi0 pi0
+Decay pi0
+1.0 gamma gamma PHSP;
+Enddecay
+CDecay MyPi0
+End
+""",
+        encoding="utf_8",
+    )
+
+    diagnostics = validate_files([path])
+
+    assert [diagnostic.code for diagnostic in diagnostics] == ["DLW005"]
+    assert diagnostics[0].message == "CDecay targets self-conjugate particle: pi0"
 
 
 def test_validate_files_can_ignore_exact_code() -> None:
@@ -168,6 +202,24 @@ def test_validate_files_reports_missing_files(tmp_path: Path) -> None:
 
 def test_main_returns_failure_for_diagnostics() -> None:
     assert main(["--color=never", str(DIR / "../data/duplicate-decays.dec")]) == 1
+
+
+def test_main_can_force_colored_output(capsys: pytest.CaptureFixture[str]) -> None:
+    assert main(["--color=always", str(DIR / "../data/duplicate-decays.dec")]) == 1
+
+    assert "\033[" in capsys.readouterr().err
+
+
+def test_automatic_color_detection(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setattr(
+        validate_module.sys, "stderr", SimpleNamespace(isatty=lambda: True)
+    )
+
+    assert validate_module._use_color("auto") is True
+
+    monkeypatch.setenv("NO_COLOR", "1")
+    assert validate_module._use_color("auto") is False
 
 
 def test_main_limits_displayed_diagnostics(capsys: pytest.CaptureFixture[str]) -> None:
@@ -274,3 +326,34 @@ def test_main_returns_success_for_ignored_diagnostics() -> None:
 def test_main_rejects_unknown_ignore_code() -> None:
     with pytest.raises(SystemExit, match="unknown diagnostic code"):
         main(["--ignore=NOPE", str(DIR / "../data/duplicate-decays.dec")])
+
+
+def test_main_lists_diagnostics(capsys: pytest.CaptureFixture[str]) -> None:
+    assert main(["--list-diagnostics"]) == 0
+
+    output = capsys.readouterr().out
+    assert "DLP001 parse-error" in output
+    assert "DLW999 parser-warning" in output
+
+
+def test_main_rejects_missing_files_argument() -> None:
+    with pytest.raises(SystemExit, match="at least one decay file"):
+        main([])
+
+
+def test_main_rejects_negative_max_diagnostics() -> None:
+    with pytest.raises(SystemExit, match="must be non-negative"):
+        main(["--max-diagnostics=-1", "example.dec"])
+
+
+def test_display_path_handles_cross_drive_paths(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    path = Path("D:/decays/example.dec")
+
+    def raise_value_error(_: Path) -> str:
+        raise ValueError
+
+    monkeypatch.setattr(validate_module.os.path, "relpath", raise_value_error)
+
+    assert validate_module._display_path(path) == str(path)
