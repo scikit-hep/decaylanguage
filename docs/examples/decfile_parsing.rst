@@ -65,7 +65,7 @@ Experiment-specific decay models can be enabled by repeating
    decaylanguage-validate --additional-decay-model=MYMODEL my-decay-file.dec
 
 The validator reports stable diagnostic codes. Exact codes or code families can
-be disabled, which lets experiments choose their own pre-commit policy:
+be disabled, which lets experiments choose their own pre-commit hence validation policy:
 
 .. code-block:: bash
 

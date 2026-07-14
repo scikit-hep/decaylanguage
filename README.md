@@ -180,9 +180,9 @@ dfp.parse()
 This being said, please do submit a pull request to add new models,
 if you spot missing ones ...
 
-#### Validating decay files
+#### Validating decay files, and package pre-commit hook
 
-Decay files can be validated from the command line:
+Decay files can be validated from the command line with the following script:
 
 ```bash
 decaylanguage-validate my-decay-file.dec
