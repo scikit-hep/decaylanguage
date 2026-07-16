@@ -22,7 +22,11 @@ from .dec import DecFileParser, DecFileWarning
 
 @dataclass(frozen=True)
 class DiagnosticRule:
-    """A selectable validation diagnostic."""
+    """
+    A selectable EvtGen ``.dec`` file validation diagnostic.
+    
+    Helper class meant for internal use.
+    """
 
     code: str
     name: str
@@ -31,7 +35,11 @@ class DiagnosticRule:
 
 @dataclass(frozen=True)
 class Diagnostic:
-    """One validation finding for a decay file."""
+    """
+    One validation finding for an EvtGen ``.dec`` decay file.
+    
+    Helper class meant for internal use.
+    """
 
     code: str
     name: str
@@ -41,6 +49,8 @@ class Diagnostic:
     column: int | None = None
     source_line: str | None = None
 
+
+# The available validation diagnostic rules
 
 DLP001 = DiagnosticRule(
     "DLP001",
@@ -75,7 +85,7 @@ DLW005 = DiagnosticRule(
 DLW999 = DiagnosticRule(
     "DLW999",
     "parser-warning",
-    "An otherwise unclassified warning was emitted by DecFileParser.",
+    "An otherwise unclassified warning emitted by DecFileParser.",
 )
 
 DIAGNOSTIC_RULES = (DLP001, DLW001, DLW002, DLW003, DLW004, DLW005, DLW999)
@@ -84,6 +94,11 @@ _DEFAULT_MAX_DIAGNOSTICS = 100
 
 
 class Style:
+    """
+    Provide printing style for EvtGen ``.dec`` file validation diagnostics.
+    
+    Helper class meant for internal use.
+    """
     def __init__(self, enabled: bool) -> None:
         self.enabled = enabled
 
@@ -111,7 +126,7 @@ def validate_files(
     ignore: Iterable[str] = (),
     additional_decay_models: Iterable[str] = (),
 ) -> list[Diagnostic]:
-    """Validate decay files and return non-ignored diagnostics."""
+    """Validate EvtGen ``.dec`` decay files and return non-ignored diagnostics."""
 
     ignored = tuple(ignore)
     additional_models = tuple(additional_decay_models)
@@ -414,7 +429,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         _print_rules()
         return 0
     if not args.files:
-        raise SystemExit("at least one decay file must be provided")
+        raise SystemExit("at least one decay file must be provided!")
 
     ignored = _validate_ignore_codes(args.ignore)
     if args.max_diagnostics < 0:
