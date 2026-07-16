@@ -24,7 +24,7 @@ from .dec import DecFileParser, DecFileWarning
 class DiagnosticRule:
     """
     A selectable EvtGen ``.dec`` file validation diagnostic.
-    
+
     Helper class meant for internal use.
     """
 
@@ -37,7 +37,7 @@ class DiagnosticRule:
 class Diagnostic:
     """
     One validation finding for an EvtGen ``.dec`` decay file.
-    
+
     Helper class meant for internal use.
     """
 
@@ -96,9 +96,10 @@ _DEFAULT_MAX_DIAGNOSTICS = 100
 class Style:
     """
     Provide printing style for EvtGen ``.dec`` file validation diagnostics.
-    
+
     Helper class meant for internal use.
     """
+
     def __init__(self, enabled: bool) -> None:
         self.enabled = enabled
 
