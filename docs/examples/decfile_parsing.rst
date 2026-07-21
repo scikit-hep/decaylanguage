@@ -124,12 +124,26 @@ Parser warnings are reported more compactly:
 By default, at most 100 diagnostics are printed before the remaining diagnostics
 are summarized. Pass ``--max-diagnostics=0`` to print every diagnostic.
 
-Downstream projects can use the packaged pre-commit hook:
+Pre-commit hook
+^^^^^^^^^^^^^^^
+
+Downstream projects can run the same validator automatically with the packaged
+pre-commit hook:
 
 .. code-block:: yaml
 
    - repo: https://github.com/scikit-hep/decaylanguage
      rev: <version>
      hooks:
-     - id: decaylanguage-validate
-       args: ["--ignore=DLW004"]
+       - id: decaylanguage-validate
+
+The hook accepts the same options as the command-line validator. For example,
+experiments can ignore exact diagnostic codes or whole code families:
+
+.. code-block:: yaml
+
+   - id: decaylanguage-validate
+     args: ["--ignore=DLW004"]
+
+Use ``decaylanguage-validate --list-diagnostics`` to list the available
+diagnostics.
