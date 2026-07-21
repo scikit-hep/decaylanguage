@@ -66,12 +66,14 @@ Experiment-specific decay models can be enabled by repeating
 
    decaylanguage-validate --additional-decay-model=MYMODEL my-decay-file.dec
 
-The validator reports stable diagnostic codes. Exact codes or code families can
-be disabled, which lets experiments choose their own validation policy:
+The validator reports stable diagnostic codes. Exact codes such as ``DLW004``
+or code families such as ``DLW`` can be disabled, which lets experiments choose
+their own validation policy:
 
 .. code-block:: bash
 
    decaylanguage-validate --ignore=DLW004 my-decay-file.dec
+   decaylanguage-validate --ignore=DLW my-decay-file.dec
 
 Use ``decaylanguage-validate --list-diagnostics`` to inspect the currently
 available diagnostics, which are the following:
@@ -146,6 +148,13 @@ experiments can ignore exact diagnostic codes or whole code families:
 
    - id: decaylanguage-validate
      args: ["--ignore=DLW004"]
+
+To ignore a whole diagnostic family, use the family prefix:
+
+.. code-block:: yaml
+
+   - id: decaylanguage-validate
+     args: ["--ignore=DLW"]
 
 Use ``decaylanguage-validate --list-diagnostics`` to list the available
 diagnostics.

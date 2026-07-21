@@ -100,11 +100,11 @@ class Style:
     Helper class meant for internal use.
     """
 
-    def __init__(self, enabled: bool) -> None:
-        self.enabled = enabled
+    def __init__(self, use_color: bool) -> None:
+        self.use_color = use_color
 
     def color(self, text: str, code: str) -> str:
-        if not self.enabled:
+        if not self.use_color:
             return text
         return f"\033[{code}m{text}\033[0m"
 
@@ -166,6 +166,7 @@ def _validate_file(
         ]
     caught_warnings: list[warnings.WarningMessage]
     try:
+        # DecFileParser reports recoverable validation issues as warnings.
         with warnings.catch_warnings(record=True) as caught_warnings:
             warnings.simplefilter("always")
             parser = DecFileParser(path)
@@ -183,6 +184,8 @@ def _diagnostic_from_exception(path: Path, exc: Exception) -> Diagnostic:
     source_line = None
     if isinstance(line, int):
         try:
+            # Keep parse-error output useful even when the parser gives only
+            # location attributes on the exception.
             source_line = path.read_text(encoding="utf_8").splitlines()[line - 1]
         except Exception:
             source_line = None
@@ -224,6 +227,8 @@ def _normalize_warning_message(warning: warnings.WarningMessage) -> str:
 
 
 def _compact_warning_message(rule: DiagnosticRule, message: str) -> str:
+    # Warning text from DecFileParser is user-facing but verbose; keep the
+    # diagnostic stable by extracting only the particle names we need.
     if rule is DLW001:
         particles = _search_message(message, r"with 'Decay': (?P<particles>.*?)!")
         if particles is not None:
@@ -262,13 +267,13 @@ def _is_ignored(code: str, ignored: Sequence[str]) -> bool:
 
 
 def _validate_ignore_codes(codes: Iterable[str]) -> list[str]:
+    # Accept exact diagnostic codes and family prefixes such as "DLW".
     prefixes = {rule.code[:3] for rule in DIAGNOSTIC_RULES}
-    valid_codes = set(_RULES_BY_CODE)
     invalid = [
-        code for code in codes if code not in valid_codes and code not in prefixes
+        code for code in codes if code not in _RULES_BY_CODE and code not in prefixes
     ]
     if invalid:
-        known = ", ".join(sorted(valid_codes | prefixes))
+        known = ", ".join(sorted(_RULES_BY_CODE.keys() | prefixes))
         msg = f"unknown diagnostic code(s): {', '.join(invalid)}. Known codes: {known}"
         raise SystemExit(msg)
     return list(codes)
@@ -320,6 +325,8 @@ def _print_diagnostics(
                     source_before_column = diagnostic.source_line[
                         : max(diagnostic.column - 1, 0)
                     ]
+                    # Expand tabs before measuring so the caret aligns with
+                    # the rendered source line.
                     pointer = (
                         " " * len(source_prefix)
                         + " " * len(source_before_column.expandtabs())
