@@ -200,8 +200,12 @@ def test_validate_files_reports_missing_files(tmp_path: Path) -> None:
     assert diagnostics[0].message == "file does not exist or is not a regular file"
 
 
-def test_main_returns_failure_for_diagnostics() -> None:
+def test_main_returns_failure_for_diagnostics(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     assert main(["--color=never", str(DIR / "../data/duplicate-decays.dec")]) == 1
+
+    assert "\033[" not in capsys.readouterr().err
 
 
 def test_main_can_force_colored_output(capsys: pytest.CaptureFixture[str]) -> None:
