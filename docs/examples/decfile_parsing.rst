@@ -46,6 +46,8 @@ can be controlled at parse time.
 
 For more detailed examples, see the :doc:`/examples/notebooks/index` section.
 
+.. _decfile-command-line-validation:
+
 Command-line validation
 -----------------------
 

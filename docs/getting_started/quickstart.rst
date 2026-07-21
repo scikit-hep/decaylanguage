@@ -32,16 +32,18 @@ Validate ``.dec`` files from the command line:
    decaylanguage-validate my_decays.dec
    decaylanguage-validate path/to/decfiles-directory
 
-Use ``decaylanguage-validate --list-diagnostics`` to list selectable
-diagnostic codes. Downstream pre-commit hooks can disable experiment-specific
-codes with options such as ``--ignore=DLW004``.
-
-On failure, pre-commit shows output such as:
+On failure, the validator prints output such as:
 
 .. code-block:: text
 
-   tests/data/example.dec: DLW004 missing-cdecay-source: missing Decay source for CDecay: anti-B0sig
-   summary: DLW004=1
+   DecayLanguage: 2 diagnostic(s) in 1 file(s)
+   tests/data/duplicate-decays.dec: DLW001 duplicate-decay: duplicate Decay block(s): Sigma(1775)0; later definitions ignored
+   tests/data/duplicate-decays.dec: DLW003 duplicate-cdecay: both Decay and CDecay defined: anti-Sigma(1775)0; CDecay ignored
+   summary: DLW001=1, DLW003=1
+
+Use ``decaylanguage-validate --list-diagnostics`` to list the available
+diagnostics. For diagnostic options and the packaged pre-commit hook, see
+:ref:`the detailed validation guide <decfile-command-line-validation>`.
 
 Building and visualizing decay chains
 -------------------------------------
