@@ -65,7 +65,7 @@ Experiment-specific decay models can be enabled by repeating
    decaylanguage-validate --additional-decay-model=MYMODEL my-decay-file.dec
 
 The validator reports stable diagnostic codes. Exact codes or code families can
-be disabled, which lets experiments choose their own pre-commit hence validation policy:
+be disabled, which lets experiments choose their own validation policy:
 
 .. code-block:: bash
 
@@ -102,17 +102,12 @@ available diagnostics, which are the following:
      - ``parser-warning``
      - An otherwise unclassified warning was emitted by ``DecFileParser``.
 
-When run through pre-commit, failures include the validator output. Parser
-errors include the source location and a pointer:
+Parser errors include the source location and a pointer:
 
 .. code-block:: text
 
-   Validate EvtGen decay files..............................................Failed
-   - hook id: decaylanguage-validate
-   - exit code: 1
-
    DecayLanguage: 1 diagnostic(s) in 1 file(s)
-   tests/data/broken.dec:13:68: DLP001 parse-error: UnexpectedToken: Unexpected token Token('SIGNED_NUMBER', '2') at line 13, column 68.
+   tests/data/test_issue90.dec:13:68: DLP001 parse-error: UnexpectedToken: Unexpected token Token('SIGNED_NUMBER', '2') at line 13, column 68.
           13: 0.000044342 Upsilon pi0     pi0                             VVPIPI;2 #[Reconstructed PDG2011]
                                                                                  ^
    summary: DLP001=1
@@ -121,8 +116,10 @@ Parser warnings are reported more compactly:
 
 .. code-block:: text
 
-   tests/data/example.dec: DLW004 missing-cdecay-source: missing Decay source for CDecay: anti-B0sig
-   summary: DLW004=1
+   DecayLanguage: 2 diagnostic(s) in 1 file(s)
+   tests/data/duplicate-decays.dec: DLW001 duplicate-decay: duplicate Decay block(s): Sigma(1775)0; later definitions ignored
+   tests/data/duplicate-decays.dec: DLW003 duplicate-cdecay: both Decay and CDecay defined: anti-Sigma(1775)0; CDecay ignored
+   summary: DLW001=1, DLW003=1
 
 By default, at most 100 diagnostics are printed before the remaining diagnostics
 are summarized. Pass ``--max-diagnostics=0`` to print every diagnostic.
