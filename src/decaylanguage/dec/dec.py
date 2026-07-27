@@ -163,7 +163,7 @@ class DecFileParser:
             Input .dec decay file name(s).
         """
         self._grammar: str | None = None  # Loaded Lark grammar definition file
-        self._grammar_info: None | (dict[str, Any]) = (
+        self._grammar_info: dict[str, Any] | None = (
             None  # Name of Lark grammar definition file
         )
 
@@ -195,7 +195,7 @@ class DecFileParser:
         # Invalidated (set to None) whenever self._parsed_decays is modified.
         self._decay_modes_index: dict[str, tuple[Any, ...]] | None = None
 
-        self._additional_decay_models: None | Iterable[str] = (
+        self._additional_decay_models: Iterable[str] | None = (
             None  # Additional decay models not (yet) known to DecayLanguage
         )
 
