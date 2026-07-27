@@ -59,7 +59,7 @@ with a provided script:
    decaylanguage-validate my-decay-file.dec
    decaylanguage-validate path/to/decfiles-directory
 
-Experiment-specific decay models can be enabled by repeating
+Experiment-specific and decay models not yet available in the package can be enabled by repeating
 ``--additional-decay-model`` as needed:
 
 .. code-block:: bash

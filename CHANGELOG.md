@@ -3,7 +3,7 @@
 ## Unreleased
 
 * Parsing of decay files (aka .dec files):
-  - Added `decaylanguage-validate` and a pre-commit hook for validating
+  - Added the `decaylanguage-validate` script and a pre-commit hook for validating
     EvtGen `.dec` files with selectable diagnostic codes.
 * CI and tests:
   - Added validation of this repository's own decay files and a
