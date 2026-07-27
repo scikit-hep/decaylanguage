@@ -24,6 +24,10 @@ jobs:
     - uses: j178/prek-action@v2
       with:
         extra-args: --all-files --hook-stage manual
+    - name: Test published pre-commit hook
+      run: >-
+        uvx pre-commit try-repo . decaylanguage-validate
+        --files tests/data/minimalistic.dec
     - name: PyLint
       run: uvx nox -s pylint -- --output-format=github
 

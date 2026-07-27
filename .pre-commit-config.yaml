@@ -1,6 +1,7 @@
 ci:
   autoupdate_commit_msg: "chore: update pre-commit hooks"
   autofix_commit_msg: "style: pre-commit fixes"
+  skip: [decaylanguage-validate]
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -18,21 +19,21 @@ repos:
   - id: end-of-file-fixer
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: "v0.15.20"
+  rev: "v0.15.22"
   hooks:
     - id: ruff-check
       args: ["--fix"]
     - id: ruff-format
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v2.1.0
+  rev: v2.3.0
   hooks:
   - id: mypy
     files: '^src/decaylanguage/(decay|dec|utils)/'
     additional_dependencies: [particle, hepunits]
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.4.2
+  rev: v2.4.3
   hooks:
   - id: codespell
     args: ["-L", "vertexes,unkown,te,HEP,hep"]
@@ -40,6 +41,13 @@ repos:
 
 - repo: local
   hooks:
+  - id: decaylanguage-validate
+    name: Validate bundled EvtGen decay files
+    entry: uv run decaylanguage-validate
+    language: system
+    files: '(?i:\.dec)$'
+    args: [--ignore=DLW]
+    exclude: '^tests/data/(?:models/|test_custom_decay_model\.dec$|test_issue90\.dec$)'
   - id: disallow-caps
     name: Disallow improper capitalization
     language: pygrep
