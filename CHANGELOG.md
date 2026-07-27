@@ -1,14 +1,18 @@
 # Changelog
 
-## Unreleased
+## Version 1.1.0 (2026-07-27)
 
 * Parsing of decay files (aka .dec files):
+  - Updated to the latest LHCb main file DECAY.DEC.
   - Added the `decaylanguage-validate` script and a pre-commit hook for validating
     EvtGen `.dec` files with selectable diagnostic codes.
+* Dependencies:
+  - Package dependent on ``NumPy`` >= 1.26.0 and ``plumbum`` >=1.9.0.
 * CI and tests:
   - Added validation of this repository's own decay files and a
     downstream-style installation test for the published decay-file pre-commit
     hook.
+  - Improved testing of all package submodules.
 
 ## Version 1.0.0 (2026-06-25)
 
