@@ -7,4 +7,3 @@ Development
 
    changelog
    contributing
-   authors

@@ -71,6 +71,32 @@ class DecayNotFound(RuntimeError):
     pass
 
 
+class DecFileWarning(UserWarning):
+    """Warning emitted while interpreting a parsed decay file."""
+
+    code: str
+
+
+class DuplicateDecayWarning(DecFileWarning):
+    code = "DLW001"
+
+
+class MissingCopyDecaySourceWarning(DecFileWarning):
+    code = "DLW002"
+
+
+class DuplicateCDecayWarning(DecFileWarning):
+    code = "DLW003"
+
+
+class MissingCDecaySourceWarning(DecFileWarning):
+    code = "DLW004"
+
+
+class SelfConjugateCDecayWarning(DecFileWarning):
+    code = "DLW005"
+
+
 @cache
 def _build_lark_parser(
     grammar: str,
@@ -688,7 +714,7 @@ class DecFileParser:
             msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{}.
 Skipping creation of these copied decay trees.""".format("\n".join(misses))
 
-            warnings.warn(msg, stacklevel=2)
+            warnings.warn(msg, MissingCopyDecaySourceWarning, stacklevel=2)
 
         # Actually add all these copied decays to the list of decays!
         self._parsed_decays.extend(copied_decays)
@@ -734,7 +760,7 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
             str_duplicates = ", ".join(d for d in duplicates)
             msg = f"""The following particles are defined in the input .dec file with both 'Decay' and 'CDecay': {str_duplicates}!
 The 'CDecay' definition(s) will be ignored ..."""
-            warnings.warn(msg, stacklevel=2)
+            warnings.warn(msg, DuplicateCDecayWarning, stacklevel=2)
 
         # If that's the case, proceed using the decay definitions specified
         # via the 'Decay' statement, hence discard/remove the definition
@@ -773,7 +799,7 @@ The 'CDecay' definition(s) will be ignored ..."""
 Skipping creation of these charge-conjugate decay trees.""".format(
                 "\n".join(m for m in misses)
             )
-            warnings.warn(msg, stacklevel=2)
+            warnings.warn(msg, MissingCDecaySourceWarning, stacklevel=2)
 
         cdecays = [copy.deepcopy(tree) for tree in trees_to_conjugate]
 
@@ -786,7 +812,7 @@ Skipping creation of these charge-conjugate decay trees.""".format(
                 if Particle.from_evtgen_name(mname).is_self_conjugate:
                     msg = f"""Found 'CDecay' statement for self-conjugate particle {mname}. This is a bug!
 Skipping creation of charge-conjugate decay Tree."""
-                    warnings.warn(msg, stacklevel=2)
+                    warnings.warn(msg, SelfConjugateCDecayWarning, stacklevel=2)
                     return False
                 return True
             except Exception:
@@ -824,7 +850,7 @@ All but the first occurrence will be discarded/removed ...""".format(
                 ", ".join(duplicates)
             )
 
-            warnings.warn(msg, stacklevel=2)
+            warnings.warn(msg, DuplicateDecayWarning, stacklevel=2)
 
             # Rebuild the list keeping only the first occurrence of each name
             assert self._parsed_decays is not None

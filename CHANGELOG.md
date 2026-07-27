@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+* Parsing of decay files (aka .dec files):
+  - Added the `decaylanguage-validate` script and a pre-commit hook for validating
+    EvtGen `.dec` files with selectable diagnostic codes.
+* CI and tests:
+  - Added validation of this repository's own decay files and a
+    downstream-style installation test for the published decay-file pre-commit
+    hook.
+
 ## Version 1.0.0 (2026-06-25)
 
 * Parsing of decay files (aka .dec files):
