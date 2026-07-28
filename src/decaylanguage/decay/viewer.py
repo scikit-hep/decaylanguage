@@ -122,7 +122,7 @@ class DecayChainViewer:
             """
             try:
                 return latex_to_html_name(_EvtGen2LatexNameMap[name])
-            except Exception:
+            except Exception:  # noqa: BLE001
                 # Escape characters such as &, <, > (legal in .dec Alias
                 # statements) so the fallback yields valid HTML-like DOT labels.
                 return html.escape(name)
