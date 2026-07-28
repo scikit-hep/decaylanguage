@@ -708,7 +708,7 @@ class DecFileParser:
                 copied_decay = copy.deepcopy(match)
                 copied_decay.children[0].children[0].value = decay2copy
                 copied_decays.append(copied_decay)
-            except Exception:  # noqa: BLE001  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 misses.append(decay2copy)
         if misses:
             msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{}.
@@ -792,7 +792,7 @@ The 'CDecay' definition(s) will be ignored ..."""
             try:
                 match = self._parsed_decays[name2treepos[name]]
                 trees_to_conjugate.append(match)
-            except Exception:  # noqa: BLE001
+            except Exception:
                 misses.append(ccname)
         if len(misses) > 0:
             msg = """\nCorresponding 'Decay' statement for 'CDecay' statement(s) of following particle(s) not found:\n{}.
@@ -815,7 +815,7 @@ Skipping creation of charge-conjugate decay Tree."""
                     warnings.warn(msg, SelfConjugateCDecayWarning, stacklevel=2)
                     return False
                 return True
-            except Exception:  # noqa: BLE001
+            except Exception:
                 return True
 
         for t in cdecays:
@@ -1943,7 +1943,7 @@ def get_jetset_definitions(
         except ValueError:
             try:
                 return float(n)
-            except Exception:  # noqa: BLE001
+            except Exception:
                 # pass though non-numbers unchanged
                 return n
 
@@ -2124,7 +2124,7 @@ def get_global_photos_flag(parsed_file: Tree) -> int:
 def _str_or_float(arg: str) -> str | float:
     try:
         return float(arg)
-    except Exception:  # noqa: BLE001
+    except Exception:
         return arg
 
 
