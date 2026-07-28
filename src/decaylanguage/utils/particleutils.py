@@ -64,10 +64,10 @@ def charge_conjugate_name(name: str, pdg_name: bool = False) -> str:
     # Dealing only with EvtGen names at this stage
     try:
         return Particle.from_evtgen_name(name).invert().evtgen_name
-    except Exception:
+    except Exception:  # noqa: BLE001
         try:
             return EvtGenName2PDGIDBiMap[-EvtGenName2PDGIDBiMap[name]]
-        except Exception:
+        except Exception:  # noqa: BLE001
             return f"ChargeConj({name})"
 
 

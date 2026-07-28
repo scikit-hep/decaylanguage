@@ -36,39 +36,49 @@ DIR = Path(__file__).parent.resolve()
     [
         (
             DuplicateDecayWarning,
-            "The following particle(s) is(are) redefined in the input .dec file "
-            "with 'Decay': D0! All but the first occurrence will be "
-            "discarded/removed ...",
+            (
+                "The following particle(s) is(are) redefined in the input .dec file "
+                "with 'Decay': D0! All but the first occurrence will be "
+                "discarded/removed ..."
+            ),
             "DLW001",
             "duplicate Decay block(s): D0; later definitions ignored",
         ),
         (
             MissingCopyDecaySourceWarning,
-            "Corresponding 'Decay' statement for 'CopyDecay' statement(s) of "
-            "following particle(s) not found: D0. Skipping creation of these "
-            "copied decay trees.",
+            (
+                "Corresponding 'Decay' statement for 'CopyDecay' statement(s) of "
+                "following particle(s) not found: D0. Skipping creation of these "
+                "copied decay trees."
+            ),
             "DLW002",
             "missing Decay source for CopyDecay: D0",
         ),
         (
             DuplicateCDecayWarning,
-            "The following particles are defined in the input .dec file with both "
-            "'Decay' and 'CDecay': D0! The 'CDecay' definition(s) will be ignored ...",
+            (
+                "The following particles are defined in the input .dec file with both "
+                "'Decay' and 'CDecay': D0! The 'CDecay' definition(s) will be ignored ..."
+            ),
             "DLW003",
             "both Decay and CDecay defined: D0; CDecay ignored",
         ),
         (
             MissingCDecaySourceWarning,
-            "Corresponding 'Decay' statement for 'CDecay' statement(s) of following "
-            "particle(s) not found: D0. Skipping creation of these charge-conjugate "
-            "decay trees.",
+            (
+                "Corresponding 'Decay' statement for 'CDecay' statement(s) of following "
+                "particle(s) not found: D0. Skipping creation of these charge-conjugate "
+                "decay trees."
+            ),
             "DLW004",
             "missing Decay source for CDecay: D0",
         ),
         (
             SelfConjugateCDecayWarning,
-            "Found 'CDecay' statement for self-conjugate particle pi0. This is a bug! "
-            "Skipping creation of charge-conjugate decay Tree.",
+            (
+                "Found 'CDecay' statement for self-conjugate particle pi0. This is a bug! "
+                "Skipping creation of charge-conjugate decay Tree."
+            ),
             "DLW005",
             "CDecay targets self-conjugate particle: pi0",
         ),
