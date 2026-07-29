@@ -224,9 +224,10 @@ Available diagnostics:
 | `DLP001` | `parse-error` | The file could not be read or parsed by `DecFileParser`. |
 | `DLW001` | `duplicate-decay` | A particle has multiple `Decay` blocks; only the first is retained. |
 | `DLW002` | `missing-copydecay-source` | A `CopyDecay` statement references a missing `Decay` source. |
-| `DLW003` | `duplicate-cdecay` | A particle is defined with both `Decay` and `CDecay`; `CDecay` is ignored. |
+| `DLW003` | `decay-cdecay-conflict` | A particle is defined with both `Decay` and `CDecay`; `CDecay` is ignored. |
 | `DLW004` | `missing-cdecay-source` | A `CDecay` statement has no corresponding `Decay` source. |
 | `DLW005` | `self-conjugate-cdecay` | A `CDecay` statement targets a self-conjugate particle. |
+| `DLW006` | `duplicate-cdecay` | A particle has multiple `CDecay` statements; only the first is retained. |
 | `DLW999` | `parser-warning` | An otherwise unclassified warning was emitted by `DecFileParser`. |
 
 When the hook finds a problem, pre-commit prints the validator output. A parser

@@ -69,7 +69,7 @@ DLW002 = DiagnosticRule(
 )
 DLW003 = DiagnosticRule(
     "DLW003",
-    "duplicate-cdecay",
+    "decay-cdecay-conflict",
     "A particle is defined with both Decay and CDecay; CDecay is ignored.",
 )
 DLW004 = DiagnosticRule(
@@ -82,13 +82,27 @@ DLW005 = DiagnosticRule(
     "self-conjugate-cdecay",
     "A CDecay statement targets a self-conjugate particle.",
 )
+DLW006 = DiagnosticRule(
+    "DLW006",
+    "duplicate-cdecay",
+    "A particle has multiple CDecay statements; only the first is retained.",
+)
 DLW999 = DiagnosticRule(
     "DLW999",
     "parser-warning",
     "An otherwise unclassified warning emitted by DecFileParser.",
 )
 
-DIAGNOSTIC_RULES = (DLP001, DLW001, DLW002, DLW003, DLW004, DLW005, DLW999)
+DIAGNOSTIC_RULES = (
+    DLP001,
+    DLW001,
+    DLW002,
+    DLW003,
+    DLW004,
+    DLW005,
+    DLW006,
+    DLW999,
+)
 _RULES_BY_CODE = {rule.code: rule for rule in DIAGNOSTIC_RULES}
 _DEFAULT_MAX_DIAGNOSTICS = 100
 
@@ -252,6 +266,12 @@ def _compact_warning_message(rule: DiagnosticRule, message: str) -> str:
         )
         if particle is not None:
             return f"CDecay targets self-conjugate particle: {particle}"
+    if rule is DLW006:
+        particles = _search_message(message, r"with 'CDecay': (?P<particles>.*?)!")
+        if particles is not None:
+            return (
+                f"duplicate CDecay statement(s): {particles}; later statements ignored"
+            )
     return message
 
 

@@ -85,7 +85,7 @@ class MissingCopyDecaySourceWarning(DecFileWarning):
     code = "DLW002"
 
 
-class DuplicateCDecayWarning(DecFileWarning):
+class DecayAndCDecayWarning(DecFileWarning):
     code = "DLW003"
 
 
@@ -95,6 +95,10 @@ class MissingCDecaySourceWarning(DecFileWarning):
 
 class SelfConjugateCDecayWarning(DecFileWarning):
     code = "DLW005"
+
+
+class DuplicateCDecayWarning(DecFileWarning):
+    code = "DLW006"
 
 
 @cache
@@ -749,6 +753,18 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
 
         assert self._parsed_decays is not None
 
+        # As for duplicate Decay blocks, retain only the first CDecay
+        # statement for each particle.
+        counts = Counter(mother_names_ccdecays)
+        duplicate_cdecays = [name for name, count in counts.items() if count > 1]
+        if duplicate_cdecays:
+            msg = """The following particle(s) is(are) redefined in the input .dec file with 'CDecay': {}!
+All but the first occurrence will be discarded/removed ...""".format(
+                ", ".join(duplicate_cdecays)
+            )
+            warnings.warn(msg, DuplicateCDecayWarning, stacklevel=2)
+            mother_names_ccdecays = list(dict.fromkeys(mother_names_ccdecays))
+
         # Cross-check - make sure charge conjugate decays are not defined
         # with both 'Decay' and 'CDecay' statements!
         mother_names_decays = [
@@ -760,7 +776,7 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
             str_duplicates = ", ".join(d for d in duplicates)
             msg = f"""The following particles are defined in the input .dec file with both 'Decay' and 'CDecay': {str_duplicates}!
 The 'CDecay' definition(s) will be ignored ..."""
-            warnings.warn(msg, DuplicateCDecayWarning, stacklevel=2)
+            warnings.warn(msg, DecayAndCDecayWarning, stacklevel=2)
 
         # If that's the case, proceed using the decay definitions specified
         # via the 'Decay' statement, hence discard/remove the definition
