@@ -163,7 +163,7 @@ class DecFileParser:
             Input .dec decay file name(s).
         """
         self._grammar: str | None = None  # Loaded Lark grammar definition file
-        self._grammar_info: None | (dict[str, Any]) = (
+        self._grammar_info: dict[str, Any] | None = (
             None  # Name of Lark grammar definition file
         )
 
@@ -195,7 +195,7 @@ class DecFileParser:
         # Invalidated (set to None) whenever self._parsed_decays is modified.
         self._decay_modes_index: dict[str, tuple[Any, ...]] | None = None
 
-        self._additional_decay_models: None | Iterable[str] = (
+        self._additional_decay_models: Iterable[str] | None = (
             None  # Additional decay models not (yet) known to DecayLanguage
         )
 
@@ -708,7 +708,7 @@ class DecFileParser:
                 copied_decay = copy.deepcopy(match)
                 copied_decay.children[0].children[0].value = decay2copy
                 copied_decays.append(copied_decay)
-            except Exception:
+            except Exception:  # noqa: BLE001
                 misses.append(decay2copy)
         if misses:
             msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{}.
@@ -792,7 +792,7 @@ The 'CDecay' definition(s) will be ignored ..."""
             try:
                 match = self._parsed_decays[name2treepos[name]]
                 trees_to_conjugate.append(match)
-            except Exception:
+            except Exception:  # noqa: BLE001
                 misses.append(ccname)
         if len(misses) > 0:
             msg = """\nCorresponding 'Decay' statement for 'CDecay' statement(s) of following particle(s) not found:\n{}.
@@ -815,7 +815,7 @@ Skipping creation of charge-conjugate decay Tree."""
                     warnings.warn(msg, SelfConjugateCDecayWarning, stacklevel=2)
                     return False
                 return True
-            except Exception:
+            except Exception:  # noqa: BLE001
                 return True
 
         for t in cdecays:
@@ -1943,7 +1943,7 @@ def get_jetset_definitions(
         except ValueError:
             try:
                 return float(n)
-            except Exception:
+            except ValueError:
                 # pass though non-numbers unchanged
                 return n
 
@@ -2124,7 +2124,7 @@ def get_global_photos_flag(parsed_file: Tree) -> int:
 def _str_or_float(arg: str) -> str | float:
     try:
         return float(arg)
-    except Exception:
+    except ValueError:
         return arg
 
 

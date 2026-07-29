@@ -172,7 +172,7 @@ def _validate_file(
             parser = DecFileParser(path)
             parser.load_additional_decay_models(*additional_decay_models)
             parser.parse()
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         return [_diagnostic_from_exception(path, exc)]
 
     return [_diagnostic_from_warning(path, warning) for warning in caught_warnings]
@@ -187,7 +187,7 @@ def _diagnostic_from_exception(path: Path, exc: Exception) -> Diagnostic:
             # Keep parse-error output useful even when the parser gives only
             # location attributes on the exception.
             source_line = path.read_text(encoding="utf_8").splitlines()[line - 1]
-        except Exception:
+        except Exception:  # noqa: BLE001
             source_line = None
 
     message_lines = str(exc).strip().splitlines()

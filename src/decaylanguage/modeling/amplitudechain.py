@@ -82,7 +82,7 @@ class AmplitudeChain(ModelDecay):
         # Check to see if the special MintDalitz particles are loaded; if not, load them.
         try:
             Particle.from_pdgid(998101)
-        except Exception:
+        except Exception:  # noqa: BLE001
             special_filename = data.basepath / "MintDalitzSpecialParticles.csv"
             Particle.load_table(str(special_filename), append=True)
 
