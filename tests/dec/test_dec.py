@@ -19,6 +19,7 @@ from decaylanguage.dec.dec import (
     DecayNotFound,
     DecFileNotParsed,
     DecFileParser,
+    DuplicateCDecayWarning,
     get_branching_fraction,
     get_decay_mother_name,
     get_final_state_particle_names,
@@ -552,6 +553,24 @@ def test_duplicate_decay_definitions():
     assert p.number_of_decays == 2
 
     assert p.list_decay_mother_names() == ["Sigma(1775)0", "anti-Sigma(1775)0"]
+
+
+def test_duplicate_cdecay_definitions_are_only_applied_once():
+    p = DecFileParser.from_string(
+        """Decay D0
+1.0 K- pi+ PHSP;
+Enddecay
+CDecay anti-D0
+CDecay anti-D0
+End
+"""
+    )
+
+    with pytest.warns(DuplicateCDecayWarning, match="CDecay") as caught:
+        p.parse()
+
+    assert len(caught) == 1
+    assert p.list_decay_mother_names() == ["D0", "anti-D0"]
 
 
 def test_list_decay_modes():

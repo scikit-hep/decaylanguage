@@ -91,10 +91,10 @@ available diagnostics, which are the following:
      - ``duplicate-decay``
      - A particle has multiple ``Decay`` blocks; only the first is retained.
    * - ``DLW002``
-     - ``missing-copydecay-source``
-     - A ``CopyDecay`` statement references a missing ``Decay`` source.
-   * - ``DLW003``
      - ``duplicate-cdecay``
+     - A particle has multiple ``CDecay`` statements; only the first is retained.
+   * - ``DLW003``
+     - ``decay-cdecay-conflict``
      - A particle is defined with both ``Decay`` and ``CDecay``; ``CDecay`` is ignored.
    * - ``DLW004``
      - ``missing-cdecay-source``
@@ -102,6 +102,9 @@ available diagnostics, which are the following:
    * - ``DLW005``
      - ``self-conjugate-cdecay``
      - A ``CDecay`` statement targets a self-conjugate particle.
+   * - ``DLW006``
+     - ``missing-copydecay-source``
+     - A ``CopyDecay`` statement references a missing ``Decay`` source.
    * - ``DLW999``
      - ``parser-warning``
      - An otherwise unclassified warning was emitted by ``DecFileParser``.
@@ -122,7 +125,7 @@ Parser warnings are reported more compactly:
 
    DecayLanguage: 2 diagnostic(s) in 1 file(s)
    tests/data/duplicate-decays.dec: DLW001 duplicate-decay: duplicate Decay block(s): Sigma(1775)0; later definitions ignored
-   tests/data/duplicate-decays.dec: DLW003 duplicate-cdecay: both Decay and CDecay defined: anti-Sigma(1775)0; CDecay ignored
+   tests/data/duplicate-decays.dec: DLW003 decay-cdecay-conflict: both Decay and CDecay defined: anti-Sigma(1775)0; CDecay ignored
    summary: DLW001=1, DLW003=1
 
 By default, at most 100 diagnostics are printed before the remaining diagnostics
