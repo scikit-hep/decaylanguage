@@ -39,7 +39,7 @@ DIR = Path(__file__).parent.resolve()
             DuplicateDecayWarning,
             (
                 "The following particle(s) is(are) redefined in the input .dec file "
-                "with 'Decay': D0! All but the first occurrence will be "
+                "with 'Decay': D0! All but the first occurrence(s) will be "
                 "discarded/removed ..."
             ),
             "DLW001",
@@ -68,7 +68,7 @@ DIR = Path(__file__).parent.resolve()
             DuplicateCDecayWarning,
             (
                 "The following particle(s) is(are) redefined in the input .dec file "
-                "with 'CDecay': D0! All but the first occurrence will be "
+                "with 'CDecay': D0! All but the first occurrence(s) will be "
                 "discarded/removed ..."
             ),
             "DLW002",

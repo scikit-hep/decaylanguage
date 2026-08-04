@@ -759,7 +759,7 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
         duplicate_cdecays = [name for name, count in counts.items() if count > 1]
         if duplicate_cdecays:
             msg = """The following particle(s) is(are) redefined in the input .dec file with 'CDecay': {}!
-All but the first occurrence will be discarded/removed ...""".format(
+All but the first occurrence(s) will be discarded/removed ...""".format(
                 ", ".join(duplicate_cdecays)
             )
             warnings.warn(msg, DuplicateCDecayWarning, stacklevel=2)
@@ -862,7 +862,7 @@ Skipping creation of charge-conjugate decay Tree."""
         # Issue a helpful warning if duplicates are found
         if duplicates:
             msg = """The following particle(s) is(are) redefined in the input .dec file with 'Decay': {}!
-All but the first occurrence will be discarded/removed ...""".format(
+All but the first occurrence(s) will be discarded/removed ...""".format(
                 ", ".join(duplicates)
             )
 
