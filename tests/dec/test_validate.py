@@ -52,7 +52,7 @@ DIR = Path(__file__).parent.resolve()
                 "following particle(s) not found: D0. Skipping creation of these "
                 "copied decay trees."
             ),
-            "DLW002",
+            "DLW006",
             "missing Decay source for CopyDecay: D0",
         ),
         (
@@ -71,7 +71,7 @@ DIR = Path(__file__).parent.resolve()
                 "with 'CDecay': D0! All but the first occurrence will be "
                 "discarded/removed ..."
             ),
-            "DLW006",
+            "DLW002",
             "duplicate CDecay statement(s): D0; later statements ignored",
         ),
         (
@@ -166,7 +166,7 @@ End
 
     diagnostics = validate_files([path])
 
-    assert [diagnostic.code for diagnostic in diagnostics] == ["DLW006"]
+    assert [diagnostic.code for diagnostic in diagnostics] == ["DLW002"]
     assert diagnostics[0].message == (
         "duplicate CDecay statement(s): anti-D0; later statements ignored"
     )
@@ -186,7 +186,7 @@ CDecay anti-D0
 CDecay anti-D0
 End
 """,
-            ["DLW006", "DLW003"],
+            ["DLW002", "DLW003"],
         ),
         (
             """Decay D0
@@ -196,7 +196,7 @@ CDecay B0
 CDecay B0
 End
 """,
-            ["DLW006", "DLW004"],
+            ["DLW002", "DLW004"],
         ),
     ],
 )

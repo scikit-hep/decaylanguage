@@ -91,8 +91,8 @@ available diagnostics, which are the following:
      - ``duplicate-decay``
      - A particle has multiple ``Decay`` blocks; only the first is retained.
    * - ``DLW002``
-     - ``missing-copydecay-source``
-     - A ``CopyDecay`` statement references a missing ``Decay`` source.
+     - ``duplicate-cdecay``
+     - A particle has multiple ``CDecay`` statements; only the first is retained.
    * - ``DLW003``
      - ``decay-cdecay-conflict``
      - A particle is defined with both ``Decay`` and ``CDecay``; ``CDecay`` is ignored.
@@ -103,8 +103,8 @@ available diagnostics, which are the following:
      - ``self-conjugate-cdecay``
      - A ``CDecay`` statement targets a self-conjugate particle.
    * - ``DLW006``
-     - ``duplicate-cdecay``
-     - A particle has multiple ``CDecay`` statements; only the first is retained.
+     - ``missing-copydecay-source``
+     - A ``CopyDecay`` statement references a missing ``Decay`` source.
    * - ``DLW999``
      - ``parser-warning``
      - An otherwise unclassified warning was emitted by ``DecFileParser``.

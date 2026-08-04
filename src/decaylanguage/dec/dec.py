@@ -81,7 +81,7 @@ class DuplicateDecayWarning(DecFileWarning):
     code = "DLW001"
 
 
-class MissingCopyDecaySourceWarning(DecFileWarning):
+class DuplicateCDecayWarning(DecFileWarning):
     code = "DLW002"
 
 
@@ -97,7 +97,7 @@ class SelfConjugateCDecayWarning(DecFileWarning):
     code = "DLW005"
 
 
-class DuplicateCDecayWarning(DecFileWarning):
+class MissingCopyDecaySourceWarning(DecFileWarning):
     code = "DLW006"
 
 

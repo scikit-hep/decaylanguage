@@ -5,8 +5,9 @@
 * Decay-file validation:
   - Renamed diagnostic `DLW003` to `decay-cdecay-conflict` to describe a
     particle defined by both `Decay` and `CDecay`.
-  - Added `DLW006` (`duplicate-cdecay`) for repeated `CDecay` statements;
+  - Added `DLW002` (`duplicate-cdecay`) for repeated `CDecay` statements;
     later occurrences are now ignored.
+  - Renumbered `missing-copydecay-source` to `DLW006`.
 
 ## Version 1.1.0 (2026-07-27)
 

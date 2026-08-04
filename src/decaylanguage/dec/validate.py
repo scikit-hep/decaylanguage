@@ -64,8 +64,8 @@ DLW001 = DiagnosticRule(
 )
 DLW002 = DiagnosticRule(
     "DLW002",
-    "missing-copydecay-source",
-    "A CopyDecay statement references a missing Decay source.",
+    "duplicate-cdecay",
+    "A particle has multiple CDecay statements; only the first is retained.",
 )
 DLW003 = DiagnosticRule(
     "DLW003",
@@ -84,8 +84,8 @@ DLW005 = DiagnosticRule(
 )
 DLW006 = DiagnosticRule(
     "DLW006",
-    "duplicate-cdecay",
-    "A particle has multiple CDecay statements; only the first is retained.",
+    "missing-copydecay-source",
+    "A CopyDecay statement references a missing Decay source.",
 )
 DLW999 = DiagnosticRule(
     "DLW999",
@@ -248,9 +248,11 @@ def _compact_warning_message(rule: DiagnosticRule, message: str) -> str:
         if particles is not None:
             return f"duplicate Decay block(s): {particles}; later definitions ignored"
     if rule is DLW002:
-        particles = _search_message(message, r"not found: (?P<particles>.*?)\.")
+        particles = _search_message(message, r"with 'CDecay': (?P<particles>.*?)!")
         if particles is not None:
-            return f"missing Decay source for CopyDecay: {particles}"
+            return (
+                f"duplicate CDecay statement(s): {particles}; later statements ignored"
+            )
     if rule is DLW003:
         particles = _search_message(message, r"'CDecay': (?P<particles>.*?)!")
         if particles is not None:
@@ -267,11 +269,9 @@ def _compact_warning_message(rule: DiagnosticRule, message: str) -> str:
         if particle is not None:
             return f"CDecay targets self-conjugate particle: {particle}"
     if rule is DLW006:
-        particles = _search_message(message, r"with 'CDecay': (?P<particles>.*?)!")
+        particles = _search_message(message, r"not found: (?P<particles>.*?)\.")
         if particles is not None:
-            return (
-                f"duplicate CDecay statement(s): {particles}; later statements ignored"
-            )
+            return f"missing Decay source for CopyDecay: {particles}"
     return message
 
 
