@@ -38,7 +38,7 @@ On failure, the validator prints output such as:
 
    DecayLanguage: 2 diagnostic(s) in 1 file(s)
    tests/data/duplicate-decays.dec: DLW001 duplicate-decay: duplicate Decay block(s): Sigma(1775)0; later definitions ignored
-   tests/data/duplicate-decays.dec: DLW003 duplicate-cdecay: both Decay and CDecay defined: anti-Sigma(1775)0; CDecay ignored
+   tests/data/duplicate-decays.dec: DLW003 decay-cdecay-conflict: both Decay and CDecay defined: anti-Sigma(1775)0; CDecay ignored
    summary: DLW001=1, DLW003=1
 
 Use ``decaylanguage-validate --list-diagnostics`` to list the available

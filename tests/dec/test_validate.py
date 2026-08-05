@@ -13,6 +13,7 @@ import pytest
 
 import decaylanguage.dec.validate as validate_module
 from decaylanguage.dec.dec import (
+    DecayAndCDecayWarning,
     DuplicateCDecayWarning,
     DuplicateDecayWarning,
     MissingCDecaySourceWarning,
@@ -38,7 +39,7 @@ DIR = Path(__file__).parent.resolve()
             DuplicateDecayWarning,
             (
                 "The following particle(s) is(are) redefined in the input .dec file "
-                "with 'Decay': D0! All but the first occurrence will be "
+                "with 'Decay': D0! All but the first occurrence(s) will be "
                 "discarded/removed ..."
             ),
             "DLW001",
@@ -51,17 +52,27 @@ DIR = Path(__file__).parent.resolve()
                 "following particle(s) not found: D0. Skipping creation of these "
                 "copied decay trees."
             ),
-            "DLW002",
+            "DLW006",
             "missing Decay source for CopyDecay: D0",
         ),
         (
-            DuplicateCDecayWarning,
+            DecayAndCDecayWarning,
             (
                 "The following particles are defined in the input .dec file with both "
                 "'Decay' and 'CDecay': D0! The 'CDecay' definition(s) will be ignored ..."
             ),
             "DLW003",
             "both Decay and CDecay defined: D0; CDecay ignored",
+        ),
+        (
+            DuplicateCDecayWarning,
+            (
+                "The following particle(s) is(are) redefined in the input .dec file "
+                "with 'CDecay': D0! All but the first occurrence(s) will be "
+                "discarded/removed ..."
+            ),
+            "DLW002",
+            "duplicate CDecay statement(s): D0; later statements ignored",
         ),
         (
             MissingCDecaySourceWarning,
@@ -138,6 +149,66 @@ End
 
     assert [diagnostic.code for diagnostic in diagnostics] == ["DLW005"]
     assert diagnostics[0].message == "CDecay targets self-conjugate particle: pi0"
+
+
+def test_validate_files_reports_duplicate_cdecay(tmp_path: Path) -> None:
+    path = tmp_path / "duplicate-cdecay.dec"
+    path.write_text(
+        """Decay D0
+1.0 K- pi+ PHSP;
+Enddecay
+CDecay anti-D0
+CDecay anti-D0
+End
+""",
+        encoding="utf_8",
+    )
+
+    diagnostics = validate_files([path])
+
+    assert [diagnostic.code for diagnostic in diagnostics] == ["DLW002"]
+    assert diagnostics[0].message == (
+        "duplicate CDecay statement(s): anti-D0; later statements ignored"
+    )
+
+
+@pytest.mark.parametrize(
+    ("decay_file", "codes"),
+    [
+        (
+            """Decay D0
+1.0 K- pi+ PHSP;
+Enddecay
+Decay anti-D0
+1.0 K+ pi- PHSP;
+Enddecay
+CDecay anti-D0
+CDecay anti-D0
+End
+""",
+            ["DLW002", "DLW003"],
+        ),
+        (
+            """Decay D0
+1.0 K- pi+ PHSP;
+Enddecay
+CDecay B0
+CDecay B0
+End
+""",
+            ["DLW002", "DLW004"],
+        ),
+    ],
+)
+def test_duplicate_cdecay_is_independent_of_other_cdecay_diagnostics(
+    tmp_path: Path, decay_file: str, codes: list[str]
+) -> None:
+    path = tmp_path / "combined-cdecay-errors.dec"
+    path.write_text(decay_file, encoding="utf_8")
+
+    diagnostics = validate_files([path])
+
+    assert [diagnostic.code for diagnostic in diagnostics] == codes
 
 
 def test_validate_files_can_ignore_exact_code() -> None:
