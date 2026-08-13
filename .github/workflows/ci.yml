@@ -21,7 +21,7 @@ jobs:
       with:
         python-version: "3.x"
     - uses: astral-sh/setup-uv@v9.0.0
-    - uses: j178/prek-action@v2.0.6
+    - uses: j178/prek-action@v3.0.0
       with:
         extra-args: --all-files --hook-stage manual
     - name: Test published pre-commit hook
