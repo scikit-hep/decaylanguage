@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "hatchling",
+    "hatchling>=1.27",
     "hatch-vcs"
 ]
 build-backend = "hatchling.build"
@@ -18,6 +18,7 @@ maintainers = [
     { name = "Scikit-HEP", email = "scikit-hep-admins@googlegroups.com" },
 ]
 license = "BSD-3-Clause"
+license-files = ["LICENSE"]
 keywords = [
     "HEP",
     "chain",
