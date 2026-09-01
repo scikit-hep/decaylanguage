@@ -1,0 +1,31 @@
+// Copyright (c) 2018-2026, Eduardo Rodrigues and Henry Schreiner.
+//
+// Distributed under the 3-clause BSD license, see accompanying file LICENSE
+// or https://github.com/scikit-hep/decaylanguage for details.
+%import common.WS_INLINE
+
+start: _ws decay _ws
+
+decay: particle _ws ARROW _ws daughters
+
+daughters: daughter (_sep daughter)* _ws
+
+daughter: particle
+        | sub_decay
+
+particle: PHEAD psuffix*
+sub_decay: LPAR _ws decay RPAR
+
+// Terminals
+ARROW.2: "->"
+LPAR: "("
+RPAR: ")"
+
+psuffix: PCHUNK | pgroup_paren
+pgroup_paren: "(" _ws PCHUNK _ws ")"
+
+PHEAD: /[A-Za-z0-9~][A-Za-z0-9\/\-+*_.'~]*/
+PCHUNK: /[A-Za-z0-9\/\-+*_.'~]+/
+
+_sep: WS_INLINE+
+_ws: WS_INLINE*
