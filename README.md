@@ -100,7 +100,7 @@ Decay `.dec` files can be parsed simply with
 ```python
 from decaylanguage import DecFileParser
 
-parser = DecFileParser('my-decay-file.dec')
+parser = DecFileParser("my-decay-file.dec")
 parser.parse()
 
 # Inspect what decays are defined
@@ -141,10 +141,10 @@ rescaled, and the list can be sorted in ascending order:
 
 ```python
 # List of decay modes, each as a list of daughter names
-dfp.list_decay_modes('pi0')
+dfp.list_decay_modes("pi0")
 
 # Pretty print, here with branching fractions normalised to unity
-dfp.print_decay_modes('pi0', normalize=True)
+dfp.print_decay_modes("pi0", normalize=True)
 ```
 
 The fully expanded list of decay descriptors of a particle, with every
@@ -153,7 +153,7 @@ sub-decay resolved down to final states, is available via
 EvtGen names):
 
 ```python
-dfp.expand_decay_modes('D*+')
+dfp.expand_decay_modes("D*+")
 ```
 
 #### Advanced usage
@@ -171,7 +171,7 @@ Just call `load_additional_decay_models` with the models you'd like to add as ar
 before parsing the file:
 
 ```python
-dfp = DecFileParser('my_decfile.dec')
+dfp = DecFileParser("my_decfile.dec")
 dfp.load_additional_decay_models("MyModel1", "MyModel2")
 dfp.parse()
 ...
@@ -264,7 +264,7 @@ from decaylanguage import DecayChainViewer
 
 # Build the (dictionary-like) D*+ decay chain representation setting the
 # D+ and D0 mesons to stable, to avoid too cluttered an image
-d = dfp.build_decay_chains('D*+', stable_particles=('D+', 'D0'))
+d = dfp.build_decay_chains("D*+", stable_particles=("D+", "D0"))
 DecayChainViewer(d)  # works in a notebook
 ```
 
@@ -277,7 +277,7 @@ fractions from the mother down to the final states) falls below a threshold,
 keeping only the dominant paths:
 
 ```python
-d = dfp.build_decay_chains('D*+', minimum_effective_bf=1e-4)
+d = dfp.build_decay_chains("D*+", minimum_effective_bf=1e-4)
 ```
 
 `DecayChainViewer` can in turn annotate each node with its effective branching
@@ -298,14 +298,14 @@ dcv.graph
 making all `graphviz.Digraph` class properties and methods available, such as
 
 ```python
-dcv.graph.render(filename='mygraph', format='pdf', view=True, cleanup=True)
+dcv.graph.render(filename="mygraph", format="pdf", view=True, cleanup=True)
 ```
 
 In the same way, all `graphviz.Digraph` class attributes are settable
 upon instantiation of `DecayChainViewer`:
 
 ```python
-dcv = DecayChainViewer(chain, name='TEST', format='pdf')
+dcv = DecayChainViewer(chain, name="TEST", format="pdf")
 ```
 
 ### Universal representation of decay chains
@@ -384,7 +384,9 @@ style syntax from a file or a string. You can use:
 
 ```python
 from decaylanguage.modeling import AmplitudeChain
-lines, parameters, constants, states = AmplitudeChain.read_ampgen(text='''
+
+lines, parameters, constants, states = AmplitudeChain.read_ampgen(
+    text="""
 EventType D0 K- pi+ pi+ pi-
 
 D0[D]{K*(892)bar0{K-,pi+},rho(770)0{pi+,pi-}}                            0 1 0.1 0 1 0.1
@@ -395,7 +397,8 @@ K(1460)bar-_width 0  250 1
 a(1)(1260)+::Spline::Min 0.18412
 a(1)(1260)+::Spline::Max 1.86869
 a(1)(1260)+::Spline::N 34
-''')
+"""
+)
 ```
 
 Here, `lines` will be a list of AmplitudeChain lines (pretty print supported in Jupyter notebooks),
