@@ -1,6 +1,7 @@
 ci:
   autoupdate_commit_msg: "chore: update pre-commit hooks"
   autofix_commit_msg: "style: pre-commit fixes"
+  autoupdate_schedule: monthly
   skip: [decaylanguage-validate]
 
 repos:
@@ -19,7 +20,7 @@ repos:
   - id: end-of-file-fixer
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: "v0.16.7"
+  rev: "v0.16.8"
   hooks:
     - id: ruff-check
       args: ["--fix"]
