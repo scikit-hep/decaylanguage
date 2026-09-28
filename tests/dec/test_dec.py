@@ -20,6 +20,7 @@ from decaylanguage.dec.dec import (
     DecFileNotParsed,
     DecFileParser,
     DuplicateCDecayWarning,
+    SelfConjugateCDecayWarning,
     get_branching_fraction,
     get_decay_mother_name,
     get_final_state_particle_names,
@@ -553,6 +554,35 @@ def test_duplicate_decay_definitions():
     assert p.number_of_decays == 2
 
     assert p.list_decay_mother_names() == ["Sigma(1775)0", "anti-Sigma(1775)0"]
+
+
+def test_ChargeConj_minimalistic():
+    s = """ChargeConj   MyD_s*-   MyD_s*+
+End
+"""
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+
+def test_ChargeConj_self_conjugate():
+    s = """ChargeConj   phi   phi
+End
+"""
+    p = DecFileParser.from_string(s)
+
+    with pytest.warns(SelfConjugateCDecayWarning, match="Found 'CDecay' statement for self-conjugate particle") as w:
+        p.parse()
+
+
+def test_ChargeConj_self_conjugate_via_alias():
+    s = """Alias My_Phi phi
+ChargeConj My_Phi My_Phi
+End
+"""
+    p = DecFileParser.from_string(s)
+
+    with pytest.warns(SelfConjugateCDecayWarning, match="Found 'CDecay' statement for self-conjugate particle") as w:
+        p.parse()
 
 
 def test_duplicate_cdecay_definitions_are_only_applied_once():
