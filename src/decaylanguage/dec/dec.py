@@ -774,7 +774,9 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
 
         # Test ChargeConj statements not using aliases for the same key and value,
         # which states they refer to self-conjugate particles
-        redundants = [k for k, v in dict_cc_names.items() if k == v and _is_self_conj_non_alias(k)]
+        redundants = [
+            k for k, v in dict_cc_names.items() if k == v and _is_self_conj_non_alias(k)
+        ]
         if len(redundants) > 0:
             str_redundants = ", ".join(r for r in redundants)
             msg = f"""Found 'ChargeConj' statements for the following non-alias self-conjugate particles in the input .dec file: {str_redundants}!

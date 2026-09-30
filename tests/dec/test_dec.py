@@ -247,13 +247,15 @@ End
 
 
 def test_ChargeConj_self_conjugate():
-
     """A ChargeConj statement for a non-alias self-conjugate particle is redundant / a buglet."""
     s = """ChargeConj   phi   phi
 End
 """
     p = DecFileParser.from_string(s)
-    with pytest.warns(SelfChargeConjWarning, match="Found 'ChargeConj' statements for the following non-alias self-conjugate particles") as w:
+    with pytest.warns(
+        SelfChargeConjWarning,
+        match="Found 'ChargeConj' statements for the following non-alias self-conjugate particles",
+    ) as w:
         p.parse()
 
 
