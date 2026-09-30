@@ -101,6 +101,10 @@ class MissingCopyDecaySourceWarning(DecFileWarning):
     code = "DLW006"
 
 
+class SelfChargeConjWarning(DecFileWarning):
+    code = "DLW007"
+
+
 @cache
 def _build_lark_parser(
     grammar: str,
@@ -737,6 +741,7 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
         These are added to the internal list of decays stored in the class
         in variable 'self._parsed_decays', performing a charge conjugate (CC)
         transformation on each CC-related decay, which is cloned.
+        The CC transformations are based on particle ChargeConj statements.
 
         Note
         ----
@@ -748,6 +753,33 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
         - Else the decay file should be considered incomplete, hence buggy.
         2) Method not meant to be used directly!
         """
+        # Related cross-check - since the CC transformations make use of CC info
+        # specified by ChargeConj statements, catch immediately those that make no sense
+        # since refering to self-conjugate nparticles.
+        # Note that particle aliases are to be ignored since statements for them are necessary to have.
+
+        def _is_self_conj_non_alias(name) -> bool:
+            """
+            Only non-alias particles are checked in practice
+            since alias names are by construction unknown to EvtGen, and False is returned."""
+            try:
+                if Particle.from_evtgen_name(name).is_self_conjugate:
+                    return True
+                return False
+            except Exception:  # noqa: BLE001
+                return False
+
+        # Dictionary of all charge conjugate definitions, which are defined via ChargeConj statements
+        dict_cc_names = self.dict_charge_conjugates()
+
+        # Test ChargeConj statements not using aliases for the same key and value,
+        # which states they refer to self-conjugate particles
+        redundants = [k for k, v in dict_cc_names.items() if k == v and _is_self_conj_non_alias(k)]
+        if len(redundants) > 0:
+            str_redundants = ", ".join(r for r in redundants)
+            msg = f"""Found 'ChargeConj' statements for the following non-alias self-conjugate particles in the input .dec file: {str_redundants}!
+The 'ChargeConj' definition(s) will be ignored ..."""
+            warnings.warn(msg, SelfChargeConjWarning, stacklevel=2)
 
         # List of all charge conjugate decay definitions with CDecay statements
         mother_names_ccdecays = self.list_charge_conjugate_decays()
