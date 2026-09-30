@@ -779,7 +779,7 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
         ]
         if len(redundants) > 0:
             str_redundants = ", ".join(r for r in redundants)
-            msg = f"""Found 'ChargeConj' statements for the following non-alias self-conjugate particles in the input .dec file: {str_redundants}!
+            msg = f"""Found 'ChargeConj' statements for the following non-alias self-conjugate particles: {str_redundants}!
 The 'ChargeConj' definition(s) will be ignored ..."""
             warnings.warn(msg, SelfChargeConjWarning, stacklevel=2)
 

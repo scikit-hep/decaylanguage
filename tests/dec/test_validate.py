@@ -98,7 +98,7 @@ DIR = Path(__file__).parent.resolve()
             SelfChargeConjWarning,
             (
                 "Found 'ChargeConj' statements for the following non-alias "
-                "self-conjugate particles in the input .dec file: pi0 "
+                "self-conjugate particles: pi0! "
                 "The 'ChargeConj' definition(s) will be ignored ..."
             ),
             "DLW010",

@@ -281,7 +281,7 @@ def _compact_warning_message(rule: DiagnosticRule, message: str) -> str:
     if rule is DLW010:
         particles = _search_message(
             message,
-            r"self-conjugate particles (?P<particles>.*?)\.",
+            r"self-conjugate particles: (?P<particles>.*?)\!",
         )
         if particles is not None:
             return f"ChargeConj targets non-alias self-conjugate particles: {particles}"
