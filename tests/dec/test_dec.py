@@ -255,7 +255,7 @@ End
     with pytest.warns(
         SelfChargeConjWarning,
         match="Found 'ChargeConj' statements for the following non-alias self-conjugate particles",
-    ) as w:
+    ):
         p.parse()
 
 

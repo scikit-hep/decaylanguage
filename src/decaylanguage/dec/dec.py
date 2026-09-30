@@ -755,19 +755,19 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
         """
         # Related cross-check - since the CC transformations make use of CC info
         # specified by ChargeConj statements, catch immediately those that make no sense
-        # since refering to self-conjugate nparticles.
+        # since referring to self-conjugate particles.
         # Note that particle aliases are to be ignored since statements for them are necessary to have.
 
-        def _is_self_conj_non_alias(name) -> bool:
+        def _is_self_conj_non_alias(name: str) -> bool:
             """
             Only non-alias particles are checked in practice
             since alias names are by construction unknown to EvtGen, and False is returned."""
             try:
                 if Particle.from_evtgen_name(name).is_self_conjugate:
                     return True
-                return False
             except Exception:  # noqa: BLE001
                 return False
+            return False
 
         # Dictionary of all charge conjugate definitions, which are defined via ChargeConj statements
         dict_cc_names = self.dict_charge_conjugates()
