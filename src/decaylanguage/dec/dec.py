@@ -721,7 +721,7 @@ class DecFileParser:
                 copied_decay.children[0].children[0].value = decay2copy
                 copied_decays.append(copied_decay)
             except Exception:  # noqa: BLE001
-                misses.append(decay2copy)
+                misses.append(f"{decay2copy} (from {decay2becopied})")
         if misses:
             msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{}.
 Skipping creation of these copied decay trees.""".format("\n".join(misses))

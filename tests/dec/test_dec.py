@@ -20,6 +20,7 @@ from decaylanguage.dec.dec import (
     DecFileNotParsed,
     DecFileParser,
     DuplicateCDecayWarning,
+    MissingCopyDecaySourceWarning,
     SelfChargeConjWarning,
     get_branching_fraction,
     get_decay_mother_name,
@@ -150,6 +151,17 @@ def test_copydecay_statement_parsing():
     assert p.list_decay_modes("phi_copy") == p.list_decay_modes("phi")
 
 
+def test_copydecay_statement_with_missing_decay_statement():
+    s = """Alias phi_copy phi
+CopyDecay phi_copy phi
+End"""
+
+    dfp = DecFileParser.from_string(s)
+
+    with pytest.raises(MissingCopyDecaySourceWarning):
+        dfp.parse()
+
+
 def test_definitions_parsing():
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
@@ -193,9 +205,21 @@ def test_charge_conjugates_parsing():
     assert len(p.dict_charge_conjugates()) == 77
 
 
+def test_ChargeConj_minimalistic_and_incomplete():
+    """
+    ChargeConj statements for non-self-conjugate particles are unnecessary/irrrelevant
+    but is not wrong.
+    """
+    s = """ChargeConj   D-   D+
+End
+"""
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+
 def test_ChargeConj_with_related_Aliases():
     """
-    A ChargeConj statement for non-self-conjugate particles defined via aliases is necessary/relevant.
+    ChargeConj statements for non-self-conjugate particles defined via aliases are necessary/relevant.
     """
     s = """Alias   D+sig   D+
 Alias   D-sig   D-
@@ -206,7 +230,7 @@ End
     p.parse()
 
 
-def test_ChargeConj_minimalistic_and_incomplete():
+def test_ChargeConj_minimalistic_and_incomplete_with_Alias():
     """
     A ChargeConj statement for non-self-conjugate particles defined via aliases is necessary/relevant,
     though this file is of course incomplete since it misses Alias statements
