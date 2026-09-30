@@ -18,6 +18,7 @@ from decaylanguage.dec.dec import (
     DuplicateDecayWarning,
     MissingCDecaySourceWarning,
     MissingCopyDecaySourceWarning,
+    SelfChargeConjWarning,
     SelfConjugateCDecayWarning,
 )
 from decaylanguage.dec.validate import (
@@ -92,6 +93,16 @@ DIR = Path(__file__).parent.resolve()
             ),
             "DLW005",
             "CDecay targets self-conjugate particle: pi0",
+        ),
+        (
+            SelfChargeConjWarning,
+            (
+                "Found 'ChargeConj' statements for the following non-alias "
+                "self-conjugate particles in the input .dec file: pi0 "
+                "The 'ChargeConj' definition(s) will be ignored ..."
+            ),
+            "DLW010",
+            "ChargeConj targets non-alias self-conjugate particles: pi0",
         ),
         (
             UserWarning,
