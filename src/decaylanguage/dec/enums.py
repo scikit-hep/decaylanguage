@@ -148,6 +148,7 @@ known_decay_models = (
     "VSS_BMIX",
     "VSS_MIX",
     "VSS",
+    "VSSBMixNP",
     "VTOSLL",
     "VUB_BLNP",
     "VUB",
