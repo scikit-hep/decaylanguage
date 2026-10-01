@@ -101,6 +101,10 @@ class MissingCopyDecaySourceWarning(DecFileWarning):
     code = "DLW006"
 
 
+class SelfChargeConjWarning(DecFileWarning):
+    code = "DLW010"
+
+
 @cache
 def _build_lark_parser(
     grammar: str,
@@ -513,8 +517,8 @@ class DecFileParser:
     def dict_aliases(self) -> dict[str, str]:
         """
         Return a dictionary of all alias definitions in the input parsed file,
-        of the form "Alias <NAME> <ALIAS>",
-        as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
+        of the form "Alias <ALIAS> <NAME>",
+        as {'ALIAS1': NAME1, 'ALIAS2': NAME2, ...}.
         """
         self._check_parsing()
         return get_aliases(self._parsed_dec_file)
@@ -588,7 +592,10 @@ class DecFileParser:
         """
         Return a list of expanded decay descriptors for the given (mother) particle.
         The set of decay final states is effectively split and returned as a list.
-        NB: this implicitly reverts aliases back to the original (EvtGen) names.
+
+        Note
+        ----
+        This implicitly reverts aliases back to the original (EvtGen) names.
         """
         self._check_parsing()
         decay_chains = self.build_decay_chains(particle)
@@ -637,8 +644,9 @@ class DecFileParser:
         Return a boolean-like PhotosEnum enum specifying whether or not PHOTOS
         has been enabled.
 
-        Note: PHOTOS is turned on(off) for all decays with the global flag
-        yesPhotos(noPhotos).
+        Note
+        ----
+        PHOTOS is turned on(off) for all decays with the global flag yesPhotos(noPhotos).
 
         Returns
         -------
@@ -713,7 +721,7 @@ class DecFileParser:
                 copied_decay.children[0].children[0].value = decay2copy
                 copied_decays.append(copied_decay)
             except Exception:  # noqa: BLE001
-                misses.append(decay2copy)
+                misses.append(f"{decay2copy} (from {decay2becopied})")
         if misses:
             msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{}.
 Skipping creation of these copied decay trees.""".format("\n".join(misses))
@@ -733,21 +741,52 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
         These are added to the internal list of decays stored in the class
         in variable 'self._parsed_decays', performing a charge conjugate (CC)
         transformation on each CC-related decay, which is cloned.
+        The CC transformations are based on particle ChargeConj statements.
 
         Note
         ----
         1) If a decay file only defines 'Decay' decays and no 'CDecay',
         then no charge conjugate decays will be created!
         This seems correct given the "instructions" in the decay file:
-        - There is no 'CDecay' statement related to a 'Decay' statement
-          for a self-conjugate decaying particle such as the pi0.
+        - There should be no 'CDecay' statement related to a 'Decay' statement
+          for a self-conjugate decaying particle such as the pi0 (it would be a bug).
         - Else the decay file should be considered incomplete, hence buggy.
         2) Method not meant to be used directly!
         """
+        # Related cross-check - since the CC transformations make use of CC info
+        # specified by ChargeConj statements, catch immediately those that make no sense
+        # since referring to self-conjugate particles.
+        # Note that particle aliases are to be ignored since statements for them are necessary to have.
 
+        def _is_self_conj_non_alias(name: str) -> bool:
+            """
+            Only non-alias particles are checked in practice
+            since alias names are by construction unknown to EvtGen, and False is returned."""
+            try:
+                if Particle.from_evtgen_name(name).is_self_conjugate:
+                    return True
+            except Exception:  # noqa: BLE001
+                return False
+            return False
+
+        # Dictionary of all charge conjugate definitions, which are defined via ChargeConj statements
+        dict_cc_names = self.dict_charge_conjugates()
+
+        # Test ChargeConj statements not using aliases for the same key and value,
+        # which states they refer to self-conjugate particles
+        redundants = [
+            k for k, v in dict_cc_names.items() if k == v and _is_self_conj_non_alias(k)
+        ]
+        if len(redundants) > 0:
+            str_redundants = ", ".join(r for r in redundants)
+            msg = f"""Found 'ChargeConj' statements for the following non-alias self-conjugate particles: {str_redundants}!
+The 'ChargeConj' definition(s) will be ignored ..."""
+            warnings.warn(msg, SelfChargeConjWarning, stacklevel=2)
+
+        # List of all charge conjugate decay definitions with CDecay statements
+        mother_names_ccdecays = self.list_charge_conjugate_decays()
         # Do not add any charge conjugate decays if the input parsed file
         # does not define any!
-        mother_names_ccdecays = self.list_charge_conjugate_decays()
         if len(mother_names_ccdecays) == 0:
             return
 
@@ -788,11 +827,14 @@ The 'CDecay' definition(s) will be ignored ..."""
         if len(mother_names_ccdecays) == 0:
             return
 
-        # At last, create the charge conjugate decays:
+        # At last, create the charge conjugate decays.
         # First, make a (deep) copy of the list of relevant Tree instances.
         # Example:
         # if mother_names_ccdecays = ['anti-M10', 'anti-M2+'],
         # the relevant Trees are the ones describing the decays of ['M10', 'M2-'].
+
+        # Dictionary of all charge conjugate definitions,
+        # which are defined via ChargeConj statements
         dict_cc_names = self.dict_charge_conjugates()
 
         # match name -> position in list self._parsed_decays
@@ -1805,7 +1847,7 @@ def get_model_aliases(parsed_file: Tree) -> dict[str, list[str]]:
 def get_aliases(parsed_file: Tree) -> dict[str, str]:
     """
     Return a dictionary of all aliases in the input parsed file, of the form
-    "Alias <NAME> <ALIAS>", as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
+    "Alias <ALIAS> <NAME>", as {'ALIAS1': NAME1, 'ALIAS2': NAME2, ...}.
 
     Parameters
     ----------

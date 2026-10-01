@@ -20,6 +20,8 @@ from decaylanguage.dec.dec import (
     DecFileNotParsed,
     DecFileParser,
     DuplicateCDecayWarning,
+    MissingCopyDecaySourceWarning,
+    SelfChargeConjWarning,
     get_branching_fraction,
     get_decay_mother_name,
     get_final_state_particle_names,
@@ -149,6 +151,17 @@ def test_copydecay_statement_parsing():
     assert p.list_decay_modes("phi_copy") == p.list_decay_modes("phi")
 
 
+def test_copydecay_statement_with_missing_decay_statement():
+    s = """Alias phi_copy phi
+CopyDecay phi_copy phi
+End"""
+
+    dfp = DecFileParser.from_string(s)
+
+    with pytest.raises(MissingCopyDecaySourceWarning):
+        dfp.parse()
+
+
 def test_definitions_parsing():
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
@@ -190,6 +203,84 @@ def test_charge_conjugates_parsing():
     p.parse()
 
     assert len(p.dict_charge_conjugates()) == 77
+
+
+def test_ChargeConj_minimalistic_and_incomplete():
+    """
+    ChargeConj statements for non-self-conjugate particles are unnecessary/irrrelevant
+    but is not wrong.
+    """
+    s = """ChargeConj   D-   D+
+End
+"""
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+
+def test_ChargeConj_with_related_Aliases():
+    """
+    ChargeConj statements for non-self-conjugate particles defined via aliases are necessary/relevant.
+    """
+    s = """Alias   D+sig   D+
+Alias   D-sig   D-
+ChargeConj   D-sig   D+sig
+End
+"""
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+
+def test_ChargeConj_minimalistic_and_incomplete_with_Alias():
+    """
+    A ChargeConj statement for non-self-conjugate particles defined via aliases is necessary/relevant,
+    though this file is of course incomplete since it misses Alias statements
+    specifying to what the alias names in ChargeConj actually refer to.
+    """
+    s = """ChargeConj   D-sig   D+sig
+End
+"""
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+
+def test_ChargeConj_with_related_Alias_for_self_conjugate():
+    """
+    A ChargeConj statement for a self-conjugate particle defined via an alias is necessary/relevant
+    since the combination of the two statements is what specifies the self-conjugate nature
+    of the particle alias.
+    """
+    s = """Alias My_phi phi
+ChargeConj My_phi My_phi
+End
+"""
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+
+def test_ChargeConj_minimalistic_and_incomplete_for_self_conjugate():
+    """
+    A ChargeConj statement for a self-conjugate particle defined via an alias is necessary/relevant,
+    though this file is of course incomplete since it misses the Alias statement
+    specifying to what the alias name in ChargeConj actually refers to.
+    """
+    s = """ChargeConj My_phi My_phi
+End
+"""
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+
+def test_ChargeConj_self_conjugate():
+    """A ChargeConj statement for a non-alias self-conjugate particle is redundant / a buglet."""
+    s = """ChargeConj   phi   phi
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(
+        SelfChargeConjWarning,
+        match="Found 'ChargeConj' statements for the following non-alias self-conjugate particles",
+    ):
+        p.parse()
 
 
 def test_particle_property_definitions():
