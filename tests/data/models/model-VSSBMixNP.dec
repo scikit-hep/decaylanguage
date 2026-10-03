@@ -1,0 +1,11 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Define dm 0.507e12
+Define dgamma 3.97e-3
+Define lambda 0.02e12
+
+Decay Upsilon(4S)
+   1.0   B0sig   anti-B0sig   B0   anti-B0   VSSBMixNP   dm   dgamma   lambda;
+Enddecay
+
+End
