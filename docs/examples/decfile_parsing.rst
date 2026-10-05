@@ -105,7 +105,7 @@ available diagnostics, which are the following:
    * - ``DLW006``
      - ``missing-copydecay-source``
      - A ``CopyDecay`` statement references a missing ``Decay`` source.
-   * - ``DLW010``
+   * - ``DLW012``
      - ``self-conjugate-chargeconj``
      - A ``ChargeConj`` statement targets a non-alias self-conjugate particle.
    * - ``DLW999``

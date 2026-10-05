@@ -101,7 +101,7 @@ DIR = Path(__file__).parent.resolve()
                 "self-conjugate particles: pi0! "
                 "The 'ChargeConj' definition(s) will be ignored ..."
             ),
-            "DLW010",
+            "DLW012",
             "ChargeConj targets non-alias self-conjugate particles: pi0",
         ),
         (

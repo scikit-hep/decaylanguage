@@ -228,7 +228,7 @@ Available diagnostics:
 | `DLW004` | `missing-cdecay-source` | A `CDecay` statement has no corresponding `Decay` source. |
 | `DLW005` | `self-conjugate-cdecay` | A `CDecay` statement targets a self-conjugate particle. |
 | `DLW006` | `missing-copydecay-source` | A `CopyDecay` statement references a missing `Decay` source. |
-| `DLW010` | `self-conjugate-chargeconj` | A `ChargeConj` statement targets a non-alias self-conjugate particle. |
+| `DLW012` | `self-conjugate-chargeconj` | A `ChargeConj` statement targets a non-alias self-conjugate particle. |
 | `DLW999` | `parser-warning` | An otherwise unclassified warning was emitted by `DecFileParser`. |
 
 When the hook finds a problem, pre-commit prints the validator output. A parser

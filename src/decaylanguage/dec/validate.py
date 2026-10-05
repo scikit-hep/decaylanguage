@@ -87,8 +87,8 @@ DLW006 = DiagnosticRule(
     "missing-copydecay-source",
     "A CopyDecay statement references a missing Decay source.",
 )
-DLW010 = DiagnosticRule(
-    "DLW010",
+DLW012 = DiagnosticRule(
+    "DLW012",
     "self-conjugate-chargeconj",
     "A ChargeConj statement targets a non-alias self-conjugate particle.",
 )
@@ -106,7 +106,7 @@ DIAGNOSTIC_RULES = (
     DLW004,
     DLW005,
     DLW006,
-    DLW010,
+    DLW012,
     DLW999,
 )
 _RULES_BY_CODE = {rule.code: rule for rule in DIAGNOSTIC_RULES}
@@ -278,7 +278,7 @@ def _compact_warning_message(rule: DiagnosticRule, message: str) -> str:
         particles = _search_message(message, r"not found: (?P<particles>.*?)\.")
         if particles is not None:
             return f"missing Decay source for CopyDecay: {particles}"
-    if rule is DLW010:
+    if rule is DLW012:
         particles = _search_message(
             message,
             r"self-conjugate particles: (?P<particles>.*?)\!",

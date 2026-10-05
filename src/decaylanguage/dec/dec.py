@@ -102,7 +102,7 @@ class MissingCopyDecaySourceWarning(DecFileWarning):
 
 
 class SelfChargeConjWarning(DecFileWarning):
-    code = "DLW010"
+    code = "DLW012"
 
 
 @cache
