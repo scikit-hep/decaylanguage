@@ -138,14 +138,19 @@ def test_known_warning_with_unrecognized_message_is_not_rewritten() -> None:
 def test_validate_files_reports_duplicate_decay() -> None:
     diagnostics = validate_files([DIR / "../data/duplicate-decays.dec"])
 
-    assert [diagnostic.code for diagnostic in diagnostics] == ["DLW001", "DLW003"]
-    assert diagnostics[0].message.startswith("duplicate Decay block")
+    assert [diagnostic.code for diagnostic in diagnostics] == ["DLW003", "DLW001"]
+    assert diagnostics[0].message.startswith("both Decay and CDecay defined")
 
 
 def test_validate_files_reports_self_conjugate_cdecay(tmp_path: Path) -> None:
+    """
+    This file is for testing purposes only, the mismatches are awkward/wrong.
+    In short, such a decay file does not really make sense the way it configures things.
+    """
     path = tmp_path / "self-conjugate-cdecay.dec"
     path.write_text(
-        """Alias MyPi0 pi0
+        """
+Alias MyPi0 pi0
 ChargeConj MyPi0 pi0
 Decay pi0
 1.0 gamma gamma PHSP;
@@ -158,7 +163,7 @@ End
 
     diagnostics = validate_files([path])
 
-    assert [diagnostic.code for diagnostic in diagnostics] == ["DLW005"]
+    assert [diagnostic.code for diagnostic in diagnostics] == ["DLW005", "DLW001"]
     assert diagnostics[0].message == "CDecay targets self-conjugate particle: pi0"
 
 
