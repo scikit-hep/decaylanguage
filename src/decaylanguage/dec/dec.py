@@ -327,6 +327,10 @@ class DecFileParser:
         if self._include_ccdecays:
             self._add_charge_conjugate_decays()
 
+        # Once all decays are parsed and, if requested, all charge-conjugates are produced,
+        # check for duplicates - should in a way be considered a bug in the .dec file!
+        self._check_parsed_decays()
+
     def grammar(self) -> str:
         """
         Access the internal Lark grammar definition file,
@@ -683,9 +687,6 @@ class DecFileParser:
         """
         self._parsed_decays = get_decays(self._parsed_dec_file)
         self._decay_modes_index = None
-
-        # Check for duplicates - should be considered a bug in the .dec file!
-        self._check_parsed_decays()
 
     def _add_decays_to_be_copied(self) -> None:
         """
