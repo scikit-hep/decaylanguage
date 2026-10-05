@@ -101,6 +101,14 @@ class MissingCopyDecaySourceWarning(DecFileWarning):
     code = "DLW006"
 
 
+class MisconfiguredAliasWarning(DecFileWarning):
+    code = "DLW010"
+
+
+class MisconfiguredChargeConjWarning(DecFileWarning):
+    code = "DLW011"
+
+
 class SelfChargeConjWarning(DecFileWarning):
     code = "DLW012"
 
