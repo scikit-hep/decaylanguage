@@ -54,12 +54,13 @@ from hepunits import GeV
 from lark import Lark, Token, Transformer, Tree, Visitor
 from lark.lexer import TerminalDef
 from particle import Particle
-from particle.converters import PDG2EvtGenNameMap
+from particle.converters import EvtGenName2PDGIDBiMap, PDG2EvtGenNameMap
+from particle.exceptions import MatchingIDNotFound
 
 from .. import data
 from .._compat.typing import Self
 from ..decay.decay import DecayModeDict, _expand_decay_modes
-from ..utils import charge_conjugate_name
+from ..utils import charge_conjugate_name, evtgen_name_is_particle
 from .enums import PhotosEnum, known_decay_models
 
 
@@ -319,6 +320,12 @@ class DecFileParser:
             for tree in self._parsed_decays
         ]
         self._decay_modes_index = None
+
+        # Check Alias statements for misleading or misconfigured constructions
+        self._check_aliases()
+
+        # Check ChargeConj statements for misleading or misconfigured constructions
+        self._check_charge_conjugates()
 
         # Check whether certain decay model parameters are defined via
         # variable names with actual values provided via 'Define' statements,
@@ -770,13 +777,14 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
         def _is_self_conj_non_alias(name: str) -> bool:
             """
             Only non-alias particles are checked in practice
-            since alias names are by construction unknown to EvtGen, and False is returned."""
+            since alias names are by construction unknown to EvtGen, and False is returned.
+            """
             try:
                 if Particle.from_evtgen_name(name).is_self_conjugate:
                     return True
+                return False
             except Exception:  # noqa: BLE001
                 return False
-            return False
 
         # Dictionary of all charge conjugate definitions, which are defined via ChargeConj statements
         dict_cc_names = self.dict_charge_conjugates()
@@ -931,6 +939,36 @@ All but the first occurrence(s) will be discarded/removed ...""".format(
                 kept.append(tree)
             self._parsed_decays = kept
             self._decay_modes_index = None
+
+    def _check_aliases(self) -> None:
+        """Check "Alias" statements for misleading or misconfigured constructions."""
+        aliases = get_aliases(self._parsed_dec_file)
+
+        misconfs = [
+            k
+            for k, v in aliases.items()
+            if k == v or evtgen_name_is_particle(k) or not evtgen_name_is_particle(v)
+        ]
+        if len(misconfs) > 0:
+            str_misconfs = ", ".join(r for r in misconfs)
+            msg = f"""Found 'Alias' misleading/misconfigured statements for the following alias names: {str_misconfs}!
+Continuing but be warned of possible side effects ..."""
+            warnings.warn(msg, MisconfiguredAliasWarning, stacklevel=2)
+
+    def _check_charge_conjugates(self) -> None:
+        """Check "ChargeConj" statements for misleading or misconfigured constructions."""
+        charge_conj_defs = get_charge_conjugate_defs(self._parsed_dec_file)
+
+        misconfs = [
+            k
+            for k, v in charge_conj_defs.items()
+            if evtgen_name_is_particle(k) or evtgen_name_is_particle(v)
+        ]
+        if len(misconfs) > 0:
+            str_misconfs = ", ".join(r for r in misconfs)
+            msg = f"""Found 'ChargeConj' misleading/misconfigured statements for the following particle names: {str_misconfs}!
+Continuing but be warned of possible side effects ..."""
+            warnings.warn(msg, MisconfiguredChargeConjWarning, stacklevel=2)
 
     @property
     def number_of_decays(self) -> int:
