@@ -71,6 +71,27 @@ def charge_conjugate_name(name: str, pdg_name: bool = False) -> str:
             return f"ChargeConj({name})"
 
 
+@cacher
+def evtgen_name_is_particle(name: str) -> bool:
+    """
+    Check if an EvtGen name is known to the PDG.
+
+    Do not use from Particle.from_evtgen_name(name) because the particle
+    may not be known experimentally, though the EvtGen name - PDG ID match
+    is sufficient to check that name refers to an actualy particle name.
+
+    Parameters
+    ----------
+    name: str
+        Input particle EvtGen name.
+    """
+    try:
+        if EvtGenName2PDGIDBiMap[name]:
+            return True
+    except MatchingIDNotFound:
+        return False
+
+
 def particle_from_string_name(name: str) -> Particle:
     """
     Get a particle from an AmpGen style name.
