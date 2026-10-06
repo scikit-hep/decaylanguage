@@ -78,7 +78,7 @@ def evtgen_name_is_particle(name: str) -> bool:
 
     Do not use from Particle.from_evtgen_name(name) because the particle
     may not be known experimentally, though the EvtGen name - PDG ID match
-    is sufficient to check that name refers to an actualy particle name.
+    is sufficient to check that name refers to an actually particle name.
 
     Parameters
     ----------
@@ -86,8 +86,7 @@ def evtgen_name_is_particle(name: str) -> bool:
         Input particle EvtGen name.
     """
     try:
-        if EvtGenName2PDGIDBiMap[name]:
-            return True
+        return EvtGenName2PDGIDBiMap[name] is not None
     except MatchingIDNotFound:
         return False
 

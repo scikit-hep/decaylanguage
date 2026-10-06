@@ -779,9 +779,7 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
             since alias names are by construction unknown to EvtGen, and False is returned.
             """
             try:
-                if Particle.from_evtgen_name(name).is_self_conjugate:
-                    return True
-                return False
+                return Particle.from_evtgen_name(name).is_self_conjugate
             except Exception:  # noqa: BLE001
                 return False
 

@@ -1583,10 +1583,10 @@ def test_main_DECAYdotDEC_file() -> None:
     # to heavy particles such as B_c(2S)+ for which no PDG ID is yet available
     # in the Particle package.
     # To be fixed soon ...
-    with pytest.raises(MisconfiguredAliasWarning):
+    with pytest.raises(MisconfiguredAliasWarning) as _w:
         p.parse()
 
-        assert p.number_of_decays == 510
+    assert p.number_of_decays == 510
 
 
 def test_BELLE2_decfile() -> None:
