@@ -10,7 +10,11 @@ from pathlib import Path
 
 import pytest
 
-from decaylanguage.dec.dec import DecFileParser, MisconfiguredAliasWarning
+from decaylanguage.dec.dec import (
+    DecFileParser,
+    DuplicateDecayWarning,
+    MisconfiguredAliasWarning,
+)
 from decaylanguage.decay.decay import DecayChain
 from decaylanguage.decay.viewer import DecayChainViewer
 
@@ -82,7 +86,7 @@ def test_duplicate_arrows(decfilepath, signal_mother, dup):
     if dup:
         with (
             pytest.warns(MisconfiguredAliasWarning),
-            pytest.warns(UserWarning, match="pi0"),
+            pytest.warns(DuplicateDecayWarning, match="pi0"),
         ):
             p.parse()
     else:

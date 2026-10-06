@@ -20,6 +20,7 @@ from decaylanguage.dec.dec import (
     DecayNotFound,
     DecFileNotParsed,
     DecFileParser,
+    DecFileWarning,
     DuplicateCDecayWarning,
     DuplicateDecayWarning,
     MisconfiguredAliasWarning,
@@ -83,9 +84,8 @@ def test_double_parsing() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
     # The second call to parse() issues the warning
-    #   UserWarning: Input file being re-parsed ...
-    #     warnings.warn("Input file being re-parsed ...")
-    with pytest.warns(UserWarning, match="Input file being re-parsed ...") as record:
+    # DecFileWarning: Input file being re-parsed ...
+    with pytest.warns(DecFileWarning, match="Input file being re-parsed ...") as record:
         p.parse()
     assert len(record) == 1
 
@@ -484,10 +484,9 @@ def test_duplicated_global_photos_flag() -> None:
     p.parse()
 
     # The following call issues the warning
-    # UserWarning: PHOTOS flag re-set! Using flag set in last ...
-    #   warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
+    # DecFileWarning: PHOTOS flag re-set! Using flag set in last ...
     with pytest.warns(
-        UserWarning, match="PHOTOS flag re-set! Using flag set in last ..."
+        DecFileWarning, match="PHOTOS flag re-set! Using flag set in last ..."
     ) as record:
         assert p.global_photos_flag() == PhotosEnum.yes
     assert len(record) == 1
@@ -506,10 +505,9 @@ def test_duplicated_global_photos_flag_take_last() -> None:
     p = DecFileParser.from_string(s)
     p.parse()
     # The following call issues the warning
-    # UserWarning: PHOTOS flag re-set! Using flag set in last ...
-    #   warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
+    # DecFileWarning: PHOTOS flag re-set! Using flag set in last ...
     with pytest.warns(
-        UserWarning, match="PHOTOS flag re-set! Using flag set in last ..."
+        DecFileWarning, match="PHOTOS flag re-set! Using flag set in last ..."
     ) as record:
         assert p.global_photos_flag() == PhotosEnum.yes
     assert len(record) == 1
@@ -967,7 +965,7 @@ def test_load_additional_decay_models_too_late() -> None:
     assert p.grammar() is not None
     assert p.grammar_loaded
 
-    with pytest.warns(UserWarning, match="already been loaded"):
+    with pytest.warns(DecFileWarning, match="already been loaded"):
         p.load_additional_decay_models("CUSTOM_MODEL1")
 
 

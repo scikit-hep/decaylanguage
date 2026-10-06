@@ -269,7 +269,9 @@ class DecFileParser:
         """
         # Has a file been parsed already?
         if self._parsed_decays is not None:
-            warnings.warn("Input file being re-parsed ...", stacklevel=2)
+            warnings.warn(
+                "Input file being re-parsed ...", DecFileWarning, stacklevel=2
+            )
 
         # Override the parsing settings for charge conjugate decays
         self._include_ccdecays = include_ccdecays or False
@@ -398,6 +400,7 @@ class DecFileParser:
                 "The grammar has already been loaded; additional decay models "
                 "passed to ``load_additional_decay_models`` will be ignored. "
                 "Call this method before ``grammar``/``parse``.",
+                DecFileWarning,
                 stacklevel=2,
             )
 
@@ -2216,7 +2219,11 @@ def get_global_photos_flag(parsed_file: Tree) -> int:
     if not tree:
         return PhotosEnum.no
     if len(tree) > 1:
-        warnings.warn("PHOTOS flag re-set! Using flag set in last ...", stacklevel=2)
+        warnings.warn(
+            "PHOTOS flag re-set! Using flag set in last ...",
+            DecFileWarning,
+            stacklevel=2,
+        )
 
     end_item = tree[-1]  # Use the last one if several are present !
     val = end_item.children[0].data
