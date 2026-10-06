@@ -21,6 +21,9 @@ from decaylanguage.dec.dec import (
     DecFileNotParsed,
     DecFileParser,
     DuplicateCDecayWarning,
+    DuplicateDecayWarning,
+    MisconfiguredAliasWarning,
+    MisconfiguredChargeConjWarning,
     MissingCDecaySourceWarning,
     MissingCopyDecaySourceWarning,
     SelfChargeConjWarning,
@@ -53,10 +56,7 @@ def test_constructor_multiple_files() -> None:
         DIR / "../data/test_Xicc2XicPiPi.dec", DIR / "../data/test_Bc2BsPi_Bs2KK.dec"
     )
 
-    # The following parse() command issues the warning
-    #   UserWarning: Corresponding 'Decay' statement for 'CDecay' statement(s) of following particle(s) not found: anti-Xi_cc-sig.
-    #   Skipping creation of these charge-conjugate decay trees.
-    with pytest.warns(UserWarning, match="anti-Xi_cc-sig") as record:
+    with pytest.warns(MissingCDecaySourceWarning, match="anti-Xi_cc-sig") as record:
         p.parse()
     assert len(record) == 1
 
@@ -178,6 +178,42 @@ def test_aliases_parsing() -> None:
     assert len(p.dict_aliases()) == 136
 
 
+def test_alias_to_itself() -> None:
+    s = """Alias   B0sig   B0sig
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.raises(MisconfiguredAliasWarning):
+        p.parse()
+
+
+def test_alias_not_aliased_to_standard_particle_name() -> None:
+    s = """Alias   B0sig   B0Alias
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.raises(MisconfiguredAliasWarning):
+        p.parse()
+
+
+def test_alias_name_is_standard_particle_name() -> None:
+    s = """Alias   B0   B0
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.raises(MisconfiguredAliasWarning):
+        p.parse()
+
+
+def test_alias_statement_swapped() -> None:
+    s = """Alias   B0   B0sig
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.raises(MisconfiguredAliasWarning):
+        p.parse()
+
+
 def test_model_aliases_parsing() -> None:
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
@@ -216,7 +252,26 @@ def test_ChargeConj_minimalistic_and_incomplete() -> None:
 End
 """
     p = DecFileParser.from_string(s)
-    p.parse()
+    with pytest.raises(MisconfiguredChargeConjWarning):
+        p.parse()
+
+
+def test_ChargeConj_statement_mixed() -> None:
+    s = """ChargeConj   D+sig   D-
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.raises(MisconfiguredChargeConjWarning):
+        p.parse()
+
+
+def test_ChargeConj_statement_mixed_swapped() -> None:
+    s = """ChargeConj   D-   D+sig
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.raises(MisconfiguredChargeConjWarning):
+        p.parse()
 
 
 def test_ChargeConj_with_related_Aliases() -> None:
@@ -278,9 +333,12 @@ def test_ChargeConj_self_conjugate() -> None:
 End
 """
     p = DecFileParser.from_string(s)
-    with pytest.warns(
-        SelfChargeConjWarning,
-        match="Found 'ChargeConj' statements for the following non-alias self-conjugate particles",
+    with (
+        pytest.warns(MisconfiguredChargeConjWarning),
+        pytest.warns(
+            SelfChargeConjWarning,
+            match="Found 'ChargeConj' statements for the following non-alias self-conjugate particles",
+        ),
     ):
         p.parse()
 
@@ -491,8 +549,10 @@ def test_with_missing_info() -> None:
     ``
     """
     p = DecFileParser(DIR / "../data/test_Xicc2XicPiPi.dec")
-    with pytest.warns(UserWarning, match="anti-Xi_cc-sig") as record:
+
+    with pytest.warns(MissingCDecaySourceWarning, match="anti-Xi_cc-sig") as record:
         p.parse()
+
     assert len(record) == 1
 
     # Decay of anti-Xi_cc-sig missing
@@ -638,7 +698,7 @@ def test_custom_model_name() -> None:
 def test_duplicate_decay_definitions() -> None:
     p = DecFileParser(DIR / "../data/duplicate-decays.dec")
 
-    with pytest.warns(UserWarning, match="(1775)") as w:
+    with pytest.warns(DuplicateDecayWarning, match="(1775)"), pytest.warns(DecayAndCDecayWarning) as w:
         p.parse()
 
     assert len(w) == 2
@@ -761,7 +821,7 @@ def test_list_decay_modes_on_the_fly() -> None:
     on the fly from the non-CC. decay.
     """
     p = DecFileParser(DIR / "../data/test_Xicc2XicPiPi.dec")
-    with pytest.warns(UserWarning, match="anti-Xi_cc-sig") as record:
+    with pytest.warns(MissingCDecaySourceWarning, match="anti-Xi_cc-sig") as record:
         p.parse()
     assert len(record) == 1
 
@@ -1516,9 +1576,14 @@ def test_creation_charge_conjugate_decays_in_decfile_without_CDecay_defs() -> No
 
 def test_main_DECAYdotDEC_file() -> None:
     p = DecFileParser(DIR / "../../src/decaylanguage/data/DECAY_LHCB.DEC")
-    p.parse()
+    # This warning is issued because the file contains aliases
+    # to heavy particles such as B_c(2S)+ for which no PDG ID is yet available
+    # in the Particle package.
+    # To be fixed soon ...
+    with pytest.raises(MisconfiguredAliasWarning):
+        p.parse()
 
-    assert p.number_of_decays == 510
+        assert p.number_of_decays == 510
 
 
 def test_BELLE2_decfile() -> None:

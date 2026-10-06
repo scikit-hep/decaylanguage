@@ -16,6 +16,8 @@ from decaylanguage.dec.dec import (
     DecayAndCDecayWarning,
     DuplicateCDecayWarning,
     DuplicateDecayWarning,
+    MisconfiguredAliasWarning,
+    MisconfiguredChargeConjWarning,
     MissingCDecaySourceWarning,
     MissingCopyDecaySourceWarning,
     SelfChargeConjWarning,
@@ -95,6 +97,24 @@ DIR = Path(__file__).parent.resolve()
             "CDecay targets self-conjugate particle: pi0",
         ),
         (
+            MisconfiguredAliasWarning,
+            (
+                "Found 'Alias' misleading/misconfigured statements for the following alias names: pi0! "
+                "Continuing but be warned of possible side effects ..."
+            ),
+            "DLW010",
+            "Alias statement is misleading/misconfigured: pi0",
+        ),
+        (
+            MisconfiguredChargeConjWarning,
+            (
+                "Found 'ChargeConj' misleading/misconfigured statements for the following particle names: pi0! "
+                "Continuing but be warned of possible side effects ..."
+            ),
+            "DLW011",
+            "ChargeConj statement is misleading/misconfigured: pi0",
+        ),
+        (
             SelfChargeConjWarning,
             (
                 "Found 'ChargeConj' statements for the following non-alias "
@@ -163,8 +183,8 @@ End
 
     diagnostics = validate_files([path])
 
-    assert [diagnostic.code for diagnostic in diagnostics] == ["DLW005", "DLW001"]
-    assert diagnostics[0].message == "CDecay targets self-conjugate particle: pi0"
+    assert [diagnostic.code for diagnostic in diagnostics] == ["DLW011", "DLW005", "DLW001"]
+    assert diagnostics[0].message == "ChargeConj statement is misleading/misconfigured: MyPi0"
 
 
 def test_validate_files_reports_duplicate_cdecay(tmp_path: Path) -> None:
