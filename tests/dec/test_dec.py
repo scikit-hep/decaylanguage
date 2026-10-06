@@ -698,7 +698,10 @@ def test_custom_model_name() -> None:
 def test_duplicate_decay_definitions() -> None:
     p = DecFileParser(DIR / "../data/duplicate-decays.dec")
 
-    with pytest.warns(DuplicateDecayWarning, match="(1775)"), pytest.warns(DecayAndCDecayWarning) as w:
+    with (
+        pytest.warns(DuplicateDecayWarning, match="(1775)"),
+        pytest.warns(DecayAndCDecayWarning) as w,
+    ):
         p.parse()
 
     assert len(w) == 2

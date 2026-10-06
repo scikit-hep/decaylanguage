@@ -183,8 +183,15 @@ End
 
     diagnostics = validate_files([path])
 
-    assert [diagnostic.code for diagnostic in diagnostics] == ["DLW011", "DLW005", "DLW001"]
-    assert diagnostics[0].message == "ChargeConj statement is misleading/misconfigured: MyPi0"
+    assert [diagnostic.code for diagnostic in diagnostics] == [
+        "DLW011",
+        "DLW005",
+        "DLW001",
+    ]
+    assert (
+        diagnostics[0].message
+        == "ChargeConj statement is misleading/misconfigured: MyPi0"
+    )
 
 
 def test_validate_files_reports_duplicate_cdecay(tmp_path: Path) -> None:

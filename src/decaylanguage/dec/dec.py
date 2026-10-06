@@ -54,8 +54,7 @@ from hepunits import GeV
 from lark import Lark, Token, Transformer, Tree, Visitor
 from lark.lexer import TerminalDef
 from particle import Particle
-from particle.converters import EvtGenName2PDGIDBiMap, PDG2EvtGenNameMap
-from particle.exceptions import MatchingIDNotFound
+from particle.converters import PDG2EvtGenNameMap
 
 from .. import data
 from .._compat.typing import Self
