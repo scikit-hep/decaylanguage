@@ -81,12 +81,12 @@ def test_duplicate_arrows(decfilepath, signal_mother, dup):
 
     if dup:
         with (
-            pytest.raises(MisconfiguredAliasWarning),
+            pytest.warns(MisconfiguredAliasWarning),
             pytest.warns(UserWarning, match="pi0"),
         ):
             p.parse()
     else:
-        with pytest.raises(MisconfiguredAliasWarning):
+        with pytest.warns(MisconfiguredAliasWarning) as _record:
             p.parse()
 
     chain = p.build_decay_chains(signal_mother)
@@ -168,7 +168,7 @@ def test_init_non_defaults_attributes():
 def test_graphs_with_EvtGen_specific_names():
     p = DecFileParser(DIR / "../../src/decaylanguage/data/DECAY_LHCB.DEC")
 
-    with pytest.raises(MisconfiguredAliasWarning):
+    with pytest.warns(MisconfiguredAliasWarning):
         p.parse()
 
     # Not setting many of the particles as stable would result in a gargantuesque chain,

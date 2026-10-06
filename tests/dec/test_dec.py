@@ -160,7 +160,7 @@ End"""
 
     dfp = DecFileParser.from_string(s)
 
-    with pytest.raises(MissingCopyDecaySourceWarning):
+    with pytest.warns(MissingCopyDecaySourceWarning):
         dfp.parse()
 
 
@@ -183,7 +183,7 @@ def test_alias_to_itself() -> None:
 End
 """
     p = DecFileParser.from_string(s)
-    with pytest.raises(MisconfiguredAliasWarning):
+    with pytest.warns(MisconfiguredAliasWarning):
         p.parse()
 
 
@@ -192,7 +192,7 @@ def test_alias_not_aliased_to_standard_particle_name() -> None:
 End
 """
     p = DecFileParser.from_string(s)
-    with pytest.raises(MisconfiguredAliasWarning):
+    with pytest.warns(MisconfiguredAliasWarning):
         p.parse()
 
 
@@ -201,7 +201,7 @@ def test_alias_name_is_standard_particle_name() -> None:
 End
 """
     p = DecFileParser.from_string(s)
-    with pytest.raises(MisconfiguredAliasWarning):
+    with pytest.warns(MisconfiguredAliasWarning):
         p.parse()
 
 
@@ -210,7 +210,7 @@ def test_alias_statement_swapped() -> None:
 End
 """
     p = DecFileParser.from_string(s)
-    with pytest.raises(MisconfiguredAliasWarning):
+    with pytest.warns(MisconfiguredAliasWarning):
         p.parse()
 
 
@@ -252,7 +252,7 @@ def test_ChargeConj_minimalistic_and_incomplete() -> None:
 End
 """
     p = DecFileParser.from_string(s)
-    with pytest.raises(MisconfiguredChargeConjWarning):
+    with pytest.warns(MisconfiguredChargeConjWarning):
         p.parse()
 
 
@@ -261,7 +261,7 @@ def test_ChargeConj_statement_mixed() -> None:
 End
 """
     p = DecFileParser.from_string(s)
-    with pytest.raises(MisconfiguredChargeConjWarning):
+    with pytest.warns(MisconfiguredChargeConjWarning):
         p.parse()
 
 
@@ -270,7 +270,7 @@ def test_ChargeConj_statement_mixed_swapped() -> None:
 End
 """
     p = DecFileParser.from_string(s)
-    with pytest.raises(MisconfiguredChargeConjWarning):
+    with pytest.warns(MisconfiguredChargeConjWarning):
         p.parse()
 
 
@@ -1583,7 +1583,7 @@ def test_main_DECAYdotDEC_file() -> None:
     # to heavy particles such as B_c(2S)+ for which no PDG ID is yet available
     # in the Particle package.
     # To be fixed soon ...
-    with pytest.raises(MisconfiguredAliasWarning) as _w:
+    with pytest.warns(MisconfiguredAliasWarning) as _record:
         p.parse()
 
     assert p.number_of_decays == 510
