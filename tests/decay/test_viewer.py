@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from decaylanguage.dec.dec import DecFileParser
+from decaylanguage.dec.dec import DecFileParser, MisconfiguredAliasWarning
 from decaylanguage.decay.decay import DecayChain
 from decaylanguage.decay.viewer import DecayChainViewer
 
@@ -80,10 +80,14 @@ def test_duplicate_arrows(decfilepath, signal_mother, dup):
     p = DecFileParser(decfilepath, DIR / "../../src/decaylanguage/data/DECAY_LHCB.DEC")
 
     if dup:
-        with pytest.warns(UserWarning, match="pi0"):
+        with (
+            pytest.raises(MisconfiguredAliasWarning),
+            pytest.warns(UserWarning, match="pi0"),
+        ):
             p.parse()
     else:
-        p.parse()
+        with pytest.raises(MisconfiguredAliasWarning):
+            p.parse()
 
     chain = p.build_decay_chains(signal_mother)
 
@@ -163,7 +167,9 @@ def test_init_non_defaults_attributes():
 
 def test_graphs_with_EvtGen_specific_names():
     p = DecFileParser(DIR / "../../src/decaylanguage/data/DECAY_LHCB.DEC")
-    p.parse()
+
+    with pytest.raises(MisconfiguredAliasWarning):
+        p.parse()
 
     # Not setting many of the particles as stable would result in a gargantuesque chain,
     # which would also take a fair amount of time to build!
