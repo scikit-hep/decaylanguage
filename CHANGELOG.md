@@ -1,5 +1,20 @@
 # Changelog
 
+
+## Version 1.1.2 (2026-10-09)
+
+* Parsing of decay files (aka .dec files):
+  - Added latest EvtGen models from Belle-II and LHCb.
+  - Minor improvements to documentation.
+* Decay-file validation:
+  - Added new checks (warnings and diagnostics) for misleading/misconfigured Alias and ChargeConj statements, and for ChargeConj statements for self-conjugate particles.
+  - Added tests for all new functionality.
+* Dependencies:
+  - Added support for Python 3.15.
+* CI and tests:
+  - Improved typing in tests.
+  - Updates and improvements to pre-commit hooks and CI YAML files.
+
 ## Version 1.1.1 (2026-08-04)
 
 * Decay-file validation:
