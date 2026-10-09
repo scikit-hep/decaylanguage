@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 from .errors import LineFailure
-from .particleutils import charge_conjugate_name
+from .particleutils import charge_conjugate_name, evtgen_name_is_particle
 from .utilities import (
     DescriptorFormat,
     filter_lines,
@@ -18,6 +18,7 @@ __all__ = (
     "DescriptorFormat",
     "LineFailure",
     "charge_conjugate_name",
+    "evtgen_name_is_particle",
     "filter_lines",
     "iter_flatten",
     "split",

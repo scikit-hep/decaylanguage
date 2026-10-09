@@ -59,7 +59,7 @@ from particle.converters import PDG2EvtGenNameMap
 from .. import data
 from .._compat.typing import Self
 from ..decay.decay import DecayModeDict, _expand_decay_modes
-from ..utils import charge_conjugate_name
+from ..utils import charge_conjugate_name, evtgen_name_is_particle
 from .enums import PhotosEnum, known_decay_models
 
 
@@ -99,6 +99,18 @@ class SelfConjugateCDecayWarning(DecFileWarning):
 
 class MissingCopyDecaySourceWarning(DecFileWarning):
     code = "DLW006"
+
+
+class MisconfiguredAliasWarning(DecFileWarning):
+    code = "DLW010"
+
+
+class MisconfiguredChargeConjWarning(DecFileWarning):
+    code = "DLW011"
+
+
+class SelfChargeConjWarning(DecFileWarning):
+    code = "DLW012"
 
 
 @cache
@@ -257,7 +269,9 @@ class DecFileParser:
         """
         # Has a file been parsed already?
         if self._parsed_decays is not None:
-            warnings.warn("Input file being re-parsed ...", stacklevel=2)
+            warnings.warn(
+                "Input file being re-parsed ...", DecFileWarning, stacklevel=2
+            )
 
         # Override the parsing settings for charge conjugate decays
         self._include_ccdecays = include_ccdecays or False
@@ -308,6 +322,12 @@ class DecFileParser:
         ]
         self._decay_modes_index = None
 
+        # Check Alias statements for misleading or misconfigured constructions
+        self._check_aliases()
+
+        # Check ChargeConj statements for misleading or misconfigured constructions
+        self._check_charge_conjugates()
+
         # Check whether certain decay model parameters are defined via
         # variable names with actual values provided via 'Define' statements,
         # and perform the replacements name -> value where relevant.
@@ -322,6 +342,10 @@ class DecFileParser:
         # Create on the fly the charge conjugate decays, if requested
         if self._include_ccdecays:
             self._add_charge_conjugate_decays()
+
+        # Once all decays are parsed and, if requested, all charge-conjugates are produced,
+        # check for duplicates - should in a way be considered a bug in the .dec file!
+        self._check_parsed_decays()
 
     def grammar(self) -> str:
         """
@@ -376,6 +400,7 @@ class DecFileParser:
                 "The grammar has already been loaded; additional decay models "
                 "passed to ``load_additional_decay_models`` will be ignored. "
                 "Call this method before ``grammar``/``parse``.",
+                DecFileWarning,
                 stacklevel=2,
             )
 
@@ -513,8 +538,8 @@ class DecFileParser:
     def dict_aliases(self) -> dict[str, str]:
         """
         Return a dictionary of all alias definitions in the input parsed file,
-        of the form "Alias <NAME> <ALIAS>",
-        as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
+        of the form "Alias <ALIAS> <NAME>",
+        as {'ALIAS1': NAME1, 'ALIAS2': NAME2, ...}.
         """
         self._check_parsing()
         return get_aliases(self._parsed_dec_file)
@@ -588,7 +613,10 @@ class DecFileParser:
         """
         Return a list of expanded decay descriptors for the given (mother) particle.
         The set of decay final states is effectively split and returned as a list.
-        NB: this implicitly reverts aliases back to the original (EvtGen) names.
+
+        Note
+        ----
+        This implicitly reverts aliases back to the original (EvtGen) names.
         """
         self._check_parsing()
         decay_chains = self.build_decay_chains(particle)
@@ -637,8 +665,9 @@ class DecFileParser:
         Return a boolean-like PhotosEnum enum specifying whether or not PHOTOS
         has been enabled.
 
-        Note: PHOTOS is turned on(off) for all decays with the global flag
-        yesPhotos(noPhotos).
+        Note
+        ----
+        PHOTOS is turned on(off) for all decays with the global flag yesPhotos(noPhotos).
 
         Returns
         -------
@@ -676,9 +705,6 @@ class DecFileParser:
         self._parsed_decays = get_decays(self._parsed_dec_file)
         self._decay_modes_index = None
 
-        # Check for duplicates - should be considered a bug in the .dec file!
-        self._check_parsed_decays()
-
     def _add_decays_to_be_copied(self) -> None:
         """
         Create the copies of the Lark Tree instances of decays specified
@@ -713,7 +739,7 @@ class DecFileParser:
                 copied_decay.children[0].children[0].value = decay2copy
                 copied_decays.append(copied_decay)
             except Exception:  # noqa: BLE001
-                misses.append(decay2copy)
+                misses.append(f"{decay2copy} (from {decay2becopied})")
         if misses:
             msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{}.
 Skipping creation of these copied decay trees.""".format("\n".join(misses))
@@ -733,21 +759,51 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
         These are added to the internal list of decays stored in the class
         in variable 'self._parsed_decays', performing a charge conjugate (CC)
         transformation on each CC-related decay, which is cloned.
+        The CC transformations are based on particle ChargeConj statements.
 
         Note
         ----
         1) If a decay file only defines 'Decay' decays and no 'CDecay',
         then no charge conjugate decays will be created!
         This seems correct given the "instructions" in the decay file:
-        - There is no 'CDecay' statement related to a 'Decay' statement
-          for a self-conjugate decaying particle such as the pi0.
+        - There should be no 'CDecay' statement related to a 'Decay' statement
+          for a self-conjugate decaying particle such as the pi0 (it would be a bug).
         - Else the decay file should be considered incomplete, hence buggy.
         2) Method not meant to be used directly!
         """
+        # Related cross-check - since the CC transformations make use of CC info
+        # specified by ChargeConj statements, catch immediately those that make no sense
+        # since referring to self-conjugate particles.
+        # Note that particle aliases are to be ignored since statements for them are necessary to have.
 
+        def _is_self_conj_non_alias(name: str) -> bool:
+            """
+            Only non-alias particles are checked in practice
+            since alias names are by construction unknown to EvtGen, and False is returned.
+            """
+            try:
+                return Particle.from_evtgen_name(name).is_self_conjugate
+            except Exception:  # noqa: BLE001
+                return False
+
+        # Dictionary of all charge conjugate definitions, which are defined via ChargeConj statements
+        dict_cc_names = self.dict_charge_conjugates()
+
+        # Test ChargeConj statements not using aliases for the same key and value,
+        # which states they refer to self-conjugate particles
+        redundants = [
+            k for k, v in dict_cc_names.items() if k == v and _is_self_conj_non_alias(k)
+        ]
+        if len(redundants) > 0:
+            str_redundants = ", ".join(r for r in redundants)
+            msg = f"""Found 'ChargeConj' statements for the following non-alias self-conjugate particles: {str_redundants}!
+The 'ChargeConj' definition(s) will be ignored ..."""
+            warnings.warn(msg, SelfChargeConjWarning, stacklevel=2)
+
+        # List of all charge conjugate decay definitions with CDecay statements
+        mother_names_ccdecays = self.list_charge_conjugate_decays()
         # Do not add any charge conjugate decays if the input parsed file
         # does not define any!
-        mother_names_ccdecays = self.list_charge_conjugate_decays()
         if len(mother_names_ccdecays) == 0:
             return
 
@@ -788,11 +844,14 @@ The 'CDecay' definition(s) will be ignored ..."""
         if len(mother_names_ccdecays) == 0:
             return
 
-        # At last, create the charge conjugate decays:
+        # At last, create the charge conjugate decays.
         # First, make a (deep) copy of the list of relevant Tree instances.
         # Example:
         # if mother_names_ccdecays = ['anti-M10', 'anti-M2+'],
         # the relevant Trees are the ones describing the decays of ['M10', 'M2-'].
+
+        # Dictionary of all charge conjugate definitions,
+        # which are defined via ChargeConj statements
         dict_cc_names = self.dict_charge_conjugates()
 
         # match name -> position in list self._parsed_decays
@@ -880,6 +939,36 @@ All but the first occurrence(s) will be discarded/removed ...""".format(
                 kept.append(tree)
             self._parsed_decays = kept
             self._decay_modes_index = None
+
+    def _check_aliases(self) -> None:
+        """Check "Alias" statements for misleading or misconfigured constructions."""
+        aliases = get_aliases(self._parsed_dec_file)
+
+        misconfs = [
+            k
+            for k, v in aliases.items()
+            if k == v or evtgen_name_is_particle(k) or not evtgen_name_is_particle(v)
+        ]
+        if len(misconfs) > 0:
+            str_misconfs = ", ".join(r for r in misconfs)
+            msg = f"""Found 'Alias' misleading/misconfigured statements for the following alias names: {str_misconfs}!
+Continuing but be warned of possible side effects ..."""
+            warnings.warn(msg, MisconfiguredAliasWarning, stacklevel=2)
+
+    def _check_charge_conjugates(self) -> None:
+        """Check "ChargeConj" statements for misleading or misconfigured constructions."""
+        charge_conj_defs = get_charge_conjugate_defs(self._parsed_dec_file)
+
+        misconfs = [
+            k
+            for k, v in charge_conj_defs.items()
+            if evtgen_name_is_particle(k) or evtgen_name_is_particle(v)
+        ]
+        if len(misconfs) > 0:
+            str_misconfs = ", ".join(r for r in misconfs)
+            msg = f"""Found 'ChargeConj' misleading/misconfigured statements for the following particle names: {str_misconfs}!
+Continuing but be warned of possible side effects ..."""
+            warnings.warn(msg, MisconfiguredChargeConjWarning, stacklevel=2)
 
     @property
     def number_of_decays(self) -> int:
@@ -1805,7 +1894,7 @@ def get_model_aliases(parsed_file: Tree) -> dict[str, list[str]]:
 def get_aliases(parsed_file: Tree) -> dict[str, str]:
     """
     Return a dictionary of all aliases in the input parsed file, of the form
-    "Alias <NAME> <ALIAS>", as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
+    "Alias <ALIAS> <NAME>", as {'ALIAS1': NAME1, 'ALIAS2': NAME2, ...}.
 
     Parameters
     ----------
@@ -2130,7 +2219,11 @@ def get_global_photos_flag(parsed_file: Tree) -> int:
     if not tree:
         return PhotosEnum.no
     if len(tree) > 1:
-        warnings.warn("PHOTOS flag re-set! Using flag set in last ...", stacklevel=2)
+        warnings.warn(
+            "PHOTOS flag re-set! Using flag set in last ...",
+            DecFileWarning,
+            stacklevel=2,
+        )
 
     end_item = tree[-1]  # Use the last one if several are present !
     val = end_item.children[0].data
