@@ -1,0 +1,31 @@
+// Copyright (c) 2018-2026, Eduardo Rodrigues and Henry Schreiner.
+//
+// Distributed under the 3-clause BSD license, see accompanying file LICENSE
+// or https://github.com/scikit-hep/decaylanguage for details.
+
+// Alternative decay descriptor parsing grammar demonstrating different parentheses and arrows
+
+start: decay
+
+decay: particle ARROW daughters
+
+daughters: daughter+
+
+daughter: particle
+        | sub_decay
+
+particle: PARTICLE
+
+sub_decay: LPAR decay RPAR
+
+// Terminals
+ARROW: "=>"
+LPAR: "{"
+RPAR: "}"
+
+// Particle names start with alphanumeric/underscore and can then include
+// common descriptor suffix symbols such as +, -, *, ', and ~.
+PARTICLE: /[A-Za-z0-9_][A-Za-z0-9_+*'~̄-]*/
+
+%import common.WS
+%ignore WS
