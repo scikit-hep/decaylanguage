@@ -616,7 +616,9 @@ class DecFileParser:
 
         Note
         ----
-        This implicitly reverts aliases back to the original (EvtGen) names.
+        This implicitly reverts aliases to the original (EvtGen) names
+        according to the 'Alias' statements provided.
+        (alias names with unmatched 'Alias' statements will be unaffected.)
         """
         self._check_parsing()
         decay_chains = self.build_decay_chains(particle)

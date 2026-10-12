@@ -601,6 +601,11 @@ def _get_modes(decay_chain: dict[str, T]) -> T:
 
 
 def _get_fs(decay: DecayModeDict) -> list[Any]:
+    """
+    Note
+    ----
+    Helper function not meant to be used directly!
+    """
     fs = decay["fs"]
     if isinstance(fs, list):
         return fs
@@ -616,8 +621,14 @@ def _expand_decay_modes(
     top: bool = True,
     aliases: dict[str, str] | None = None,
 ) -> list[str]:
-    """Given a dict with 1 key (the mother particle) whose value is a list of
+    """
+    Given a dict with a single key -- the mother particle -- whose value is a list of
     decay modes, recursively replace all decay modes with decay descriptors.
+    The input ``decay_chain`` dict is updated in-place.
+
+    Note
+    ----
+    Helper function not meant to be used directly!
 
     Parameters
     ----------
@@ -627,9 +638,9 @@ def _expand_decay_modes(
     top: bool, optional, default=True
         Whether the passed decay chain is the top-level or not (should usually
         be True: only really set to False when recursing the function).
-    aliases: dict[str, str], optional, default={}
-        Mapping of names to replace. Useful when dealing with DecFiles that have
-        Alias statements.
+    aliases: dict[str, str], optional, default=None
+        Mapping of names to replace. Useful when dealing with DecFiles
+        that have 'Alias' statements.
 
     Examples
     --------
@@ -644,7 +655,7 @@ def _expand_decay_modes(
             }
         ]
     }
-    becomes the dict
+    becomes the ``decay_chain`` dict
     {
         "anti-D0": [
             "anti-D0 -> K+ pi-"
@@ -692,7 +703,7 @@ def _expand_decay_modes(
             }
         ]
     }
-    becomes the dict
+    becomes the ``decay_chain`` dict
     {
         "anti-D*0": [
             "anti-D*0 -> (anti-D0 -> K+ pi-) pi0",
@@ -700,7 +711,7 @@ def _expand_decay_modes(
         ]
     }
 
-    and an example alias dict:
+    And an example alias dict:
     {"MyAntiD0": "anti-D0"}
     can be used with
     {
@@ -715,7 +726,7 @@ def _expand_decay_modes(
     }
     to result in
     {
-        'MyAntiD0': [
+        'anti-D0': [
             'anti-D0 -> K+ pi-'
         ]
     }
@@ -739,7 +750,7 @@ def _expand_decay_modes(
             if isinstance(fsp, dict):
                 fsp_options.append(_get_modes(fsp))
             elif isinstance(fsp, str):
-                fsp_options.append([fsp])
+                fsp_options.append([aliases.get(fsp, fsp) if aliases else fsp])
         for expanded_mode in product(*fsp_options):
             # TODO: delegate descriptor-building to another function
             #       allow for different conventions?
