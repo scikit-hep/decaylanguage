@@ -15,6 +15,7 @@ from decaylanguage.decay.decay import (
     DecayChain,
     DecayMode,
     _build_decay_modes,
+    _expand_decay_modes,
 )
 
 
@@ -493,3 +494,218 @@ def test_build_decay_modes_RuntimeError(dc2):
     decay_modes = {}
     with pytest.raises(RuntimeError):
         _ = _build_decay_modes(decay_modes, bad_dc_of_mother_as_dict)
+
+
+def test_expand_decay_modes_simple() -> None:
+    dcd = {
+        "anti-D0": [
+            {"bf": 1.0, "fs": ["K+", "pi-"], "model": "PHSP", "model_params": ""}
+        ]
+    }
+    assert _expand_decay_modes(dcd) == ["anti-D0 -> K+ pi-"]
+
+
+def test_expand_decay_modes_simple_alias_mother() -> None:
+    dcd = {
+        "MyAntiD0": [
+            {"bf": 1.0, "fs": ["K+", "pi-"], "model": "PHSP", "model_params": ""}
+        ]
+    }
+    aliases = {"MyAntiD0": "anti-D0"}
+    assert _expand_decay_modes(dcd, aliases=aliases) == ["anti-D0 -> K+ pi-"]
+
+
+def test_expand_decay_modes_simple_alias_fsp() -> None:
+    dcd = {
+        "MyAntiD0": [
+            {"bf": 1.0, "fs": ["MyK+", "Mypi-"], "model": "PHSP", "model_params": ""}
+        ]
+    }
+    aliases = {"MyAntiD0": "anti-D0", "MyK+": "K+", "Mypi-": "pi-"}
+    assert _expand_decay_modes(dcd, aliases=aliases) == ["anti-D0 -> K+ pi-"]
+
+
+def test_expand_decay_modes_complex() -> None:
+    dcd = {
+        "Mypsi(3770)": [
+            {
+                "bf": 0.00193,
+                "fs": [
+                    {
+                        "MyJpsi": [
+                            {
+                                "bf": 0.0593,
+                                "fs": ["mu+", "mu-"],
+                                "model": "VLL",
+                                "model_params": "",
+                            }
+                        ]
+                    },
+                    "pi+",
+                    "pi-",
+                ],
+                "model": "PHSP",
+                "model_params": "",
+            },
+            {
+                "bf": 0.0009976,
+                "fs": [
+                    {
+                        "Mychi_c1": [
+                            {
+                                "bf": 0.344,
+                                "fs": [
+                                    {
+                                        "MyJpsi": [
+                                            {
+                                                "bf": 0.0593,
+                                                "fs": ["mu+", "mu-"],
+                                                "model": "VLL",
+                                                "model_params": "",
+                                            }
+                                        ]
+                                    },
+                                    "gamma",
+                                ],
+                                "model": "PHSP",
+                                "model_params": "",
+                            }
+                        ]
+                    },
+                    "gamma",
+                ],
+                "model": "PHSP",
+                "model_params": "",
+            },
+            {
+                "bf": 0.0009,
+                "fs": [
+                    {
+                        "MyJpsi": [
+                            {
+                                "bf": 0.0593,
+                                "fs": ["mu+", "mu-"],
+                                "model": "VLL",
+                                "model_params": "",
+                            }
+                        ]
+                    },
+                    "Myeta",
+                ],
+                "model": "PHSP",
+                "model_params": "",
+            },
+            {
+                "bf": 0.000163575,
+                "fs": ["mu+", "mu-"],
+                "model": "PHSP",
+                "model_params": "",
+            },
+        ]
+    }
+
+    aliases = {
+        "Mypsi(3770)": "psi(3770)",
+        "Mychi_c1": "chi_c1",
+        "MyJpsi": "J/psi",
+        "Myeta": "eta",
+    }
+
+    assert _expand_decay_modes(dcd, aliases=aliases) == [
+        "psi(3770) -> (J/psi -> mu+ mu-) pi+ pi-",
+        "psi(3770) -> (chi_c1 -> (J/psi -> mu+ mu-) gamma) gamma",
+        "psi(3770) -> (J/psi -> mu+ mu-) eta",
+        "psi(3770) -> mu+ mu-",
+    ]
+
+
+def test_expand_decay_modes_complex_missing_aliases() -> None:
+    dcd = {
+        "Mypsi(3770)": [
+            {
+                "bf": 0.00193,
+                "fs": [
+                    {
+                        "MyJpsi": [
+                            {
+                                "bf": 0.0593,
+                                "fs": ["mu+", "mu-"],
+                                "model": "VLL",
+                                "model_params": "",
+                            }
+                        ]
+                    },
+                    "pi+",
+                    "pi-",
+                ],
+                "model": "PHSP",
+                "model_params": "",
+            },
+            {
+                "bf": 0.0009976,
+                "fs": [
+                    {
+                        "Mychi_c1": [
+                            {
+                                "bf": 0.344,
+                                "fs": [
+                                    {
+                                        "MyJpsi": [
+                                            {
+                                                "bf": 0.0593,
+                                                "fs": ["mu+", "mu-"],
+                                                "model": "VLL",
+                                                "model_params": "",
+                                            }
+                                        ]
+                                    },
+                                    "gamma",
+                                ],
+                                "model": "PHSP",
+                                "model_params": "",
+                            }
+                        ]
+                    },
+                    "gamma",
+                ],
+                "model": "PHSP",
+                "model_params": "",
+            },
+            {
+                "bf": 0.0009,
+                "fs": [
+                    {
+                        "MyJpsi": [
+                            {
+                                "bf": 0.0593,
+                                "fs": ["mu+", "mu-"],
+                                "model": "VLL",
+                                "model_params": "",
+                            }
+                        ]
+                    },
+                    "Myeta",
+                ],
+                "model": "PHSP",
+                "model_params": "",
+            },
+            {
+                "bf": 0.000163575,
+                "fs": ["mu+", "mu-"],
+                "model": "PHSP",
+                "model_params": "",
+            },
+        ]
+    }
+
+    aliases = {
+        "Mypsi(3770)": "psi(3770)",
+        "Mychi_c1": "chi_c1",
+    }
+
+    assert _expand_decay_modes(dcd, aliases=aliases) == [
+        "psi(3770) -> (MyJpsi -> mu+ mu-) pi+ pi-",
+        "psi(3770) -> (chi_c1 -> (MyJpsi -> mu+ mu-) gamma) gamma",
+        "psi(3770) -> (MyJpsi -> mu+ mu-) Myeta",
+        "psi(3770) -> mu+ mu-",
+    ]
