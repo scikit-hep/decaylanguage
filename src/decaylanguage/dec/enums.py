@@ -49,6 +49,7 @@ known_decay_models = (
     "BTOSLLBALL",
     "BTOSLLMS",
     "BTOSLLMSEXT",
+    "BTOSLLNPR",
     "BTOVLNUBALL",
     "BTOXELNU",
     "BTOXSGAMMA",
