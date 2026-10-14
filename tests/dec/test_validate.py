@@ -10,7 +10,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
-from lark.exceptions import UnexpectedInput
+from lark.exceptions import UnexpectedEOF, UnexpectedInput
 
 import decaylanguage.dec.validate as validate_module
 from decaylanguage.dec.dec import (
@@ -364,6 +364,37 @@ def test_syntax_diagnostic_uses_active_grammar_literal(tmp_path: Path) -> None:
     diagnostic = _diagnostic_from_exception(path, caught.value)
     assert "'FinishDecay'" in diagnostic.message
     assert "'Enddecay'" not in diagnostic.message
+
+
+def test_earley_parser_eof_diagnostic(tmp_path: Path) -> None:
+    path = tmp_path / "incomplete-earley.dec"
+    path.write_text("Decay pi0\n1.0 gamma gamma PHSP;\n", encoding="utf_8")
+    parser = DecFileParser(path)
+    parser._load_grammar(parser="earley", lexer="basic")
+
+    with pytest.raises(UnexpectedEOF) as caught:
+        parser.parse()
+
+    diagnostic = _diagnostic_from_exception(path, caught.value)
+    assert diagnostic.code == "DLP001"
+    assert "Unexpected end of file" in diagnostic.message
+    assert "'Enddecay'" in diagnostic.message
+    assert diagnostic.line == 2
+    assert diagnostic.column == 22
+    assert diagnostic.source_line == "1.0 gamma gamma PHSP;"
+
+
+@pytest.mark.parametrize(
+    "message", ["", "extension-specific input error\nadditional detail"]
+)
+def test_unclassified_input_error_preserves_generic_diagnostic(message: str) -> None:
+    diagnostic = _diagnostic_from_exception(
+        Path("broken.dec"), UnexpectedInput(message)
+    )
+    expected = "UnexpectedInput"
+    if message:
+        expected += ": extension-specific input error"
+    assert diagnostic.message == expected
 
 
 @pytest.mark.parametrize("message", ["", "\n \t"])
