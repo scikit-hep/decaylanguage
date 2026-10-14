@@ -2,6 +2,10 @@
 
 ## Upcoming release
 
+* Decay-file parsing and validation:
+  - Preserve specific errors when a default particle width cannot be looked up,
+    with instructions for supplying an explicit width.
+  - Show readable unexpected tokens and expected decfile syntax in validator errors.
 * Dependencies:
   - Dropped support for Python 3.10.
 

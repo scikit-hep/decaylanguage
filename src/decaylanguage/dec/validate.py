@@ -17,6 +17,13 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
+from lark.exceptions import (
+    UnexpectedCharacters,
+    UnexpectedEOF,
+    UnexpectedInput,
+    UnexpectedToken,
+)
+
 from .dec import DecFileParser, DecFileWarning
 
 
@@ -214,18 +221,32 @@ def _diagnostic_from_exception(path: Path, exc: Exception) -> Diagnostic:
     line = getattr(exc, "line", None)
     column = getattr(exc, "column", None)
     source_line = None
-    if isinstance(line, int):
+    is_eof = isinstance(exc, UnexpectedEOF) or (
+        isinstance(exc, UnexpectedToken) and exc.token.type == "$END"
+    )
+    if isinstance(line, int) or is_eof:
         try:
             # Keep parse-error output useful even when the parser gives only
             # location attributes on the exception.
-            source_line = path.read_text(encoding="utf_8").splitlines()[line - 1]
+            source_lines = path.read_text(encoding="utf_8").splitlines()
+            if is_eof:
+                # The parser appends a separator newline to each file. Point
+                # EOF diagnostics at the original input, including empty files.
+                line = max(len(source_lines), 1)
+                source_line = source_lines[-1] if source_lines else ""
+                column = len(source_line) + 1
+            elif isinstance(line, int) and line > 0:
+                source_line = source_lines[line - 1]
         except Exception:  # noqa: BLE001
             source_line = None
 
-    message_lines = str(exc).strip().splitlines()
-    message = exc.__class__.__name__
-    if message_lines:
-        message += f": {message_lines[0]}"
+    if isinstance(exc, UnexpectedInput):
+        message = _format_syntax_error(exc)
+    else:
+        message_lines = str(exc).strip().splitlines()
+        message = exc.__class__.__name__
+        if message_lines:
+            message += f": {message_lines[0]}"
 
     return Diagnostic(
         code=DLP001.code,
@@ -236,6 +257,53 @@ def _diagnostic_from_exception(path: Path, exc: Exception) -> Diagnostic:
         column=column if isinstance(column, int) else None,
         source_line=source_line,
     )
+
+
+def _format_syntax_error(exc: UnexpectedInput) -> str:
+    """Translate Lark input failures and expected terminals into decfile syntax."""
+    expected: Iterable[str] = ()
+    if isinstance(exc, UnexpectedToken):
+        detail = (
+            "Unexpected end of file"
+            if exc.token.type == "$END"
+            else f"Unexpected token {str(exc.token)!r}"
+        )
+        expected = exc.expected
+    elif isinstance(exc, UnexpectedEOF):
+        detail = "Unexpected end of file"
+        expected = exc.expected
+    elif isinstance(exc, UnexpectedCharacters):
+        detail = f"Unexpected character {exc.char!r}"
+        expected = exc.allowed or ()
+    else:
+        lines = str(exc).strip().splitlines()
+        return type(exc).__name__ + (f": {lines[0]}" if lines else "")
+
+    # Literal keywords and punctuation come from the grammar. Only regex
+    # terminals and the synthetic EOF token need semantic descriptions.
+    token_labels = {
+        "$END": "end of file",
+        "_NEWLINE": "a newline",
+        "SIGNED_NUMBER": "a number",
+        "INT": "an integer",
+        "LABEL": "a name",
+        "MODEL_NAME": "a registered decay model",
+        "LABEL_PYTHIA8_COMMANDS": "a Pythia command",
+        "LABEL_LINESHAPE": "a lineshape setting",
+        "LABEL_INCLUDE_FACTOR": "a momentum-factor setting",
+        "BOOLEAN_INCLUDE_FACTOR": "a yes/no flag",
+        "LABEL_CHANGE_MASS": "a mass-limit setting",
+    }
+    literals = getattr(exc, "terminal_literals", {})
+    choices = sorted(
+        {
+            repr(literals[name]) if name in literals else token_labels.get(name, name)
+            for name in expected
+        }
+    )
+    if choices:
+        detail += f"; expected {', '.join(choices)}"
+    return f"{type(exc).__name__}: {detail}"
 
 
 def _diagnostic_from_warning(

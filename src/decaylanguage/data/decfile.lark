@@ -72,8 +72,8 @@ MODEL_NAME.2 : "MODEL_NAME_PLACEHOLDER"/\b/
 
 // Disregard comments, (multiple) newlines and whitespace in parser tree
 _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )
-_SEMICOLON: /;/
-_COMMA: /,/
+_SEMICOLON: ";"
+_COMMA: ","
 _WS: WS_INLINE
 
 LABEL : /[a-zA-Z0-9\/\-+*_().'~]+/
