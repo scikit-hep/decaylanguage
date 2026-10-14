@@ -20,7 +20,6 @@ from pathlib import Path
 from lark.exceptions import (
     UnexpectedCharacters,
     UnexpectedEOF,
-    UnexpectedInput,
     UnexpectedToken,
 )
 
@@ -240,7 +239,7 @@ def _diagnostic_from_exception(path: Path, exc: Exception) -> Diagnostic:
         except Exception:  # noqa: BLE001
             source_line = None
 
-    if isinstance(exc, UnexpectedInput):
+    if isinstance(exc, (UnexpectedToken, UnexpectedEOF, UnexpectedCharacters)):
         message = _format_syntax_error(exc)
     else:
         message_lines = str(exc).strip().splitlines()
@@ -259,7 +258,9 @@ def _diagnostic_from_exception(path: Path, exc: Exception) -> Diagnostic:
     )
 
 
-def _format_syntax_error(exc: UnexpectedInput) -> str:
+def _format_syntax_error(
+    exc: UnexpectedToken | UnexpectedEOF | UnexpectedCharacters,
+) -> str:
     """Translate Lark input failures and expected terminals into decfile syntax."""
     expected: Iterable[str] = ()
     if isinstance(exc, UnexpectedToken):
@@ -272,12 +273,9 @@ def _format_syntax_error(exc: UnexpectedInput) -> str:
     elif isinstance(exc, UnexpectedEOF):
         detail = "Unexpected end of file"
         expected = exc.expected
-    elif isinstance(exc, UnexpectedCharacters):
+    else:
         detail = f"Unexpected character {exc.char!r}"
         expected = exc.allowed or ()
-    else:
-        lines = str(exc).strip().splitlines()
-        return type(exc).__name__ + (f": {lines[0]}" if lines else "")
 
     # Literal keywords and punctuation come from the grammar. Only regex
     # terminals and the synthetic EOF token need semantic descriptions.
