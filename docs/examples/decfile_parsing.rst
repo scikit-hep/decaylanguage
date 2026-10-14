@@ -66,6 +66,43 @@ Experiment-specific and decay models not yet available in the package can be ena
 
    decaylanguage-validate --additional-decay-model=MYMODEL my-decay-file.dec
 
+Unknown decay model names and undefined ``ModelAlias`` names produce a
+``DLP001`` diagnostic with the name, source location, and instructions for
+registering a custom model. When using Python, these errors inherit from
+:class:`~decaylanguage.dec.dec.DecayModelError`, a ``ValueError`` subclass.
+:class:`~decaylanguage.dec.dec.UnknownDecayModelError` identifies a model name
+that cannot be resolved. Register a custom model before parsing:
+
+.. code-block:: python
+
+   parser = DecFileParser("my-decay-file.dec")
+   parser.load_additional_decay_models("MYMODEL")
+   parser.parse()
+
+An unregistered model with parameters can be indistinguishable from daughter
+particle names in the decfile grammar. These lines raise
+:class:`~decaylanguage.dec.dec.AmbiguousDecayModelError` with registration
+guidance, without suggesting that a parameter should be registered as a model.
+A line missing its model can also produce this diagnostic. Registering the
+intended model before parsing establishes its boundary. The parser accepts
+experiment-specific daughter names and string-valued parameters for registered
+models; it does not validate every daughter name against the particle table.
+
+All ``ModelAlias`` definitions are checked, including unused definitions.
+References between aliases are resolved, while cyclic references and additional
+parameters on an alias reference raise
+:class:`~decaylanguage.dec.dec.InvalidModelAliasError`. Define such aliases
+directly using the registered model and its parameters.
+
+Model errors expose ``model_name`` (``None`` for ambiguous input), ``line``,
+``column``, and ``path`` (``None`` for string input). File locations refer to the
+original input, including when intermediate ``End`` lines are ignored or several
+files are parsed together. These exceptions can be serialized with ``pickle``.
+
+To contribute a standard model, add its name to ``known_decay_models`` in
+`src/decaylanguage/dec/enums.py <https://github.com/scikit-hep/decaylanguage/blob/main/src/decaylanguage/dec/enums.py>`_
+and add a parsing test following the existing model tests.
+
 The validator reports stable diagnostic codes. Exact codes such as ``DLW004``
 or code families such as ``DLW`` can be disabled, which lets experiments choose
 their own validation policy:
@@ -152,6 +189,42 @@ pre-commit hook:
      rev: <version>
      hooks:
        - id: decaylanguage-validate
+
+For example, suppose ``decays/pi0.dec`` uses an unregistered model:
+
+.. code-block:: text
+
+   Decay pi0
+   1.0 gamma gamma MYMODEL;
+   Enddecay
+   End
+
+The hook fails and includes the following validator output. The long diagnostic
+is wrapped here for readability:
+
+.. code-block:: text
+
+   DecayLanguage: 1 diagnostic(s) in 1 file(s)
+   decays/pi0.dec:2:17: DLP001 parse-error: UnknownDecayModelError: Unknown decay model or undefined
+     ModelAlias 'MYMODEL'. Check the spelling or define a ModelAlias in the decay file. For a custom
+     model, call load_additional_decay_models('MYMODEL') before parse(), or pass
+     --additional-decay-model=MYMODEL to decaylanguage-validate. To add a standard model to
+     DecayLanguage's model registry, update known_decay_models in src/decaylanguage/dec/enums.py
+     (https://github.com/scikit-hep/decaylanguage/blob/main/src/decaylanguage/dec/enums.py).
+          2: 1.0 gamma gamma MYMODEL;
+                             ^
+   summary: DLP001=1
+
+After checking the spelling and any ``ModelAlias`` definition, enable an
+experiment-specific model by adding the registration option to the hook:
+
+.. code-block:: yaml
+
+   - id: decaylanguage-validate
+     args: ["--additional-decay-model=MYMODEL"]
+
+This example then passes validation. For a standard model missing from the
+default registry, follow the contribution guidance above.
 
 The hook accepts the same options as the command-line validator. For example,
 experiments can ignore exact diagnostic codes or whole code families:
