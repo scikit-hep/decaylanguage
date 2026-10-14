@@ -462,8 +462,6 @@ class DecFileParser:
                     line=token.line,
                     column=token.column,
                 )
-            if name not in raw:
-                raise UnknownDecayModelError.from_token(token)
             active.append(name)
             children = raw[name]
             if isinstance(children[0], Tree):
