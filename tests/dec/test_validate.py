@@ -14,6 +14,7 @@ import pytest
 import decaylanguage.dec.validate as validate_module
 from decaylanguage.dec.dec import (
     DecayAndCDecayWarning,
+    DecFileParser,
     DuplicateCDecayWarning,
     DuplicateDecayWarning,
     MisconfiguredAliasWarning,
@@ -22,6 +23,7 @@ from decaylanguage.dec.dec import (
     MissingCopyDecaySourceWarning,
     SelfChargeConjWarning,
     SelfConjugateCDecayWarning,
+    UnknownDecayModelError,
 )
 from decaylanguage.dec.validate import (
     Diagnostic,
@@ -307,6 +309,88 @@ def test_validate_files_reports_parse_errors(tmp_path: Path) -> None:
     assert len(diagnostics) == 1
     assert diagnostics[0].code == "DLP001"
     assert diagnostics[0].line is not None
+
+
+def test_unknown_model_diagnostic(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    path = tmp_path / "unknown-model.dec"
+    source_line = "1.0 gamma gamma UNKNOWN_MODEL;"
+    path.write_text(f"Decay pi0\n{source_line}\nEnddecay\nEnd\n", encoding="utf_8")
+
+    diagnostics = validate_files([path])
+
+    assert len(diagnostics) == 1
+    diagnostic = diagnostics[0]
+    assert (diagnostic.code, diagnostic.name) == ("DLP001", "parse-error")
+    assert (diagnostic.line, diagnostic.column) == (2, 17)
+    assert diagnostic.source_line == source_line
+    assert "Unknown decay model or undefined ModelAlias 'UNKNOWN_MODEL'" in (
+        diagnostic.message
+    )
+
+    assert main(["--color=never", str(path)]) == 1
+    output = capsys.readouterr().err
+    assert "unknown-model.dec:2:17: DLP001 parse-error" in output
+    assert "VisitError" not in output
+    assert "--additional-decay-model=UNKNOWN_MODEL" in output
+    assert "src/decaylanguage/dec/enums.py" in output
+    lines = output.splitlines()
+    rendered_source = next(line for line in lines if source_line in line)
+    pointer = next(line for line in lines if line.endswith("^"))
+    assert pointer.index("^") == rendered_source.index("UNKNOWN_MODEL")
+
+    assert main(["--additional-decay-model=UNKNOWN_MODEL", str(path)]) == 0
+    assert capsys.readouterr().err == ""
+
+
+def test_model_diagnostic_preserves_intermediate_end_location(tmp_path: Path) -> None:
+    path = tmp_path / "intermediate-end.dec"
+    source = "1.0 gamma gamma XYZ;"
+    path.write_text(f"End\nDecay pi0\n{source}\nEnddecay\nEnd\n", encoding="utf_8")
+    diagnostic = validate_files([path])[0]
+    assert (diagnostic.line, diagnostic.column) == (3, 17)
+    assert diagnostic.source_line == source
+
+
+@pytest.mark.parametrize("used", [False, True])
+def test_validator_rejects_unknown_model_alias_target(
+    tmp_path: Path, used: bool
+) -> None:
+    path = tmp_path / "unknown-alias-target.dec"
+    content = "ModelAlias A XYZ 1 2;\n"
+    if used:
+        content += "Decay pi0\n1.0 gamma gamma A;\nEnddecay\n"
+    path.write_text(content, encoding="utf_8")
+    diagnostic = validate_files([path])[0]
+    assert diagnostic.code == "DLP001"
+    assert "'XYZ'" in diagnostic.message
+    assert (diagnostic.line, diagnostic.column) == (1, 14)
+
+
+def test_ambiguous_model_diagnostic_does_not_suggest_registering_parameter(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "ambiguous-model.dec"
+    path.write_text("Decay pi0\n1.0 gamma gamma XYZ 1 2;\nEnddecay\n", encoding="utf_8")
+    diagnostic = validate_files([path])[0]
+    assert "Cannot identify the decay model" in diagnostic.message
+    assert "--additional-decay-model=2" not in diagnostic.message
+    assert (diagnostic.line, diagnostic.column) == (2, 17)
+    assert validate_files([path], additional_decay_models=["XYZ"]) == []
+
+
+def test_exception_diagnostic_uses_originating_file(tmp_path: Path) -> None:
+    first = tmp_path / "first.dec"
+    second = tmp_path / "second.dec"
+    first.write_text("End\n", encoding="utf_8")
+    second.write_text("Decay pi0\n1.0 gamma gamma XYZ;\nEnddecay\n", encoding="utf_8")
+    with pytest.raises(UnknownDecayModelError) as caught:
+        DecFileParser(first, second).parse()
+    diagnostic = _diagnostic_from_exception(first, caught.value)
+    assert diagnostic.path == second
+    assert diagnostic.line == 2
+    assert diagnostic.source_line == "1.0 gamma gamma XYZ;"
 
 
 @pytest.mark.parametrize("message", ["", "\n \t"])

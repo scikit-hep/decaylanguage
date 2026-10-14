@@ -211,6 +211,9 @@ def _validate_file(
 
 
 def _diagnostic_from_exception(path: Path, exc: Exception) -> Diagnostic:
+    source_path = getattr(exc, "path", None)
+    if source_path is not None:
+        path = Path(source_path)
     line = getattr(exc, "line", None)
     column = getattr(exc, "column", None)
     source_line = None

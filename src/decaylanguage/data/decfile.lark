@@ -53,7 +53,10 @@ label : LABEL
 particle : LABEL // Add full particle parsing here
 model_label : LABEL
 
-model_alias : "ModelAlias" model_label model
+model_alias : "ModelAlias" model_label alias_model
+// Here the model begins immediately after the alias name, so an unregistered
+// model and its parameters can be captured without guessing a decay boundary.
+alias_model : (model_label | MODEL_NAME) model_options? _SEMICOLON+ -> model
 
 model : (model_label  | MODEL_NAME model_options?) _SEMICOLON+
 model_options : (value | LABEL | _NEWLINE | _COMMA)+
