@@ -17,6 +17,13 @@ all generic particle decays.
 Lark parser grammar definition file for parsing .dec decay files.
 
 
+``descriptor.lark``
+------------------
+Lark parser grammar definition file for parsing decay descriptors, e.g. with ``DecayChain.from_string``.
+Note that alternative ``.lark`` files can be provided.
+See an example in ``tests/data/descriptor_alt.lark`` and ``tests/decay/test_descriptor.py``.
+
+
 ``MintDalitzSpecialParticles.fwf``
 ----------------------------------
 
