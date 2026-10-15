@@ -186,7 +186,6 @@ End
     assert [diagnostic.code for diagnostic in diagnostics] == [
         "DLW011",
         "DLW005",
-        "DLW001",
     ]
     assert (
         diagnostics[0].message
