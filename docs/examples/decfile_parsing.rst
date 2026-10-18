@@ -30,6 +30,20 @@ Basic usage
    # Get branching fractions
    parser.print_decay_modes("D*+")
 
+Particle properties
+-------------------
+
+``parser.get_particle_property_definitions()`` uses the particle table's width
+when a ``Particle`` statement supplies only a mass. An unknown particle or a
+particle without a known width raises
+:class:`~decaylanguage.dec.dec.ParticlePropertyError`, a ``RuntimeError`` subclass,
+with the particle name and instructions. Check the name and any ``Alias``
+definition, or supply both mass and width explicitly in GeV:
+
+.. code-block:: text
+
+   Particle MyParticle 1.0 0.25
+
 Building decay chains
 ---------------------
 
@@ -123,10 +137,14 @@ Parser errors include the source location and a pointer:
 .. code-block:: text
 
    DecayLanguage: 1 diagnostic(s) in 1 file(s)
-   tests/data/test_issue90.dec:13:68: DLP001 parse-error: UnexpectedToken: Unexpected token Token('SIGNED_NUMBER', '2') at line 13, column 68.
+   tests/data/test_issue90.dec:13:68: DLP001 parse-error: UnexpectedToken: Unexpected token '2'; expected a newline
           13: 0.000044342 Upsilon pi0     pi0                             VVPIPI;2 #[Reconstructed PDG2011]
                                                                                  ^
    summary: DLP001=1
+
+Syntax diagnostics also retain expected tokens. For example, an incomplete
+decay block reports ``Unexpected end of file; expected 'Enddecay', ...``;
+an unterminated model specification includes ``';'`` among the expected tokens.
 
 Parser warnings are reported more compactly:
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+* Decay-file parsing and validation:
+  - Preserve specific errors when a default particle width cannot be looked up,
+    with instructions for supplying an explicit width.
+  - Show readable unexpected tokens and expected decfile syntax in validator errors.
 
 ## Version 1.1.2 (2026-10-09)
 

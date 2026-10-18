@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import io
+import pickle
 import sys
 from pathlib import Path
 
@@ -27,6 +28,7 @@ from decaylanguage.dec.dec import (
     MisconfiguredChargeConjWarning,
     MissingCDecaySourceWarning,
     MissingCopyDecaySourceWarning,
+    ParticlePropertyError,
     SelfChargeConjWarning,
     SelfConjugateCDecayWarning,
     get_branching_fraction,
@@ -44,6 +46,44 @@ DIR = Path(__file__).parent.resolve()
 def test_default_constructor() -> None:
     p = DecFileParser()
     assert p is not None
+
+
+@pytest.mark.parametrize("alias", [False, True])
+def test_unknown_particle_default_width_error(alias: bool) -> None:
+    content = "Alias MyParticle UNKNOWN_PARTICLE\n" if alias else ""
+    name = "MyParticle" if alias else "UNKNOWN_PARTICLE"
+    parser = DecFileParser.from_string(content + f"Particle {name} 1.0\nEnd\n")
+    if alias:
+        with pytest.warns(MisconfiguredAliasWarning, match="MyParticle"):
+            parser.parse()
+    else:
+        parser.parse()
+    with pytest.raises(
+        ParticlePropertyError, match="unknown to the particle table"
+    ) as caught:
+        parser.get_particle_property_definitions()
+    assert caught.value.particle_name == name
+    assert "UNKNOWN_PARTICLE" in str(caught.value)
+    assert "explicit width" in str(caught.value)
+    restored = pickle.loads(pickle.dumps(caught.value))
+    assert str(restored) == str(caught.value)
+    assert restored.__dict__ == caught.value.__dict__
+
+
+def test_particle_with_unavailable_default_width() -> None:
+    parser = DecFileParser.from_string("Particle d 1.0\nEnd\n")
+    parser.parse()
+    with pytest.raises(ParticlePropertyError, match="has no known width"):
+        parser.get_particle_property_definitions()
+
+
+@pytest.mark.parametrize("name", ["UNKNOWN_PARTICLE", "d"])
+def test_explicit_particle_width_does_not_require_table_properties(name: str) -> None:
+    parser = DecFileParser.from_string(f"Particle {name} 1.0 0.25\nEnd\n")
+    parser.parse()
+    assert parser.get_particle_property_definitions() == {
+        name: {"mass": 1.0, "width": 0.25}
+    }
 
 
 def test_constructor_1_file() -> None:
