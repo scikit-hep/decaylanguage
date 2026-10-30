@@ -48,7 +48,7 @@ from functools import cache
 from io import StringIO
 from itertools import chain, zip_longest
 from pathlib import Path
-from typing import Any
+from typing import Any, Self
 
 from hepunits import GeV
 from lark import Lark, Token, Transformer, Tree, Visitor
@@ -57,7 +57,6 @@ from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
 
 from .. import data
-from .._compat.typing import Self
 from ..decay.decay import DecayModeDict, _expand_decay_modes
 from ..utils import charge_conjugate_name, evtgen_name_is_particle
 from .enums import PhotosEnum, known_decay_models
