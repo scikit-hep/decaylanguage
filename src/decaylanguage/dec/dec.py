@@ -52,6 +52,7 @@ from typing import Any, Self
 
 from hepunits import GeV
 from lark import Lark, Token, Transformer, Tree, Visitor
+from lark.exceptions import UnexpectedInput, VisitError
 from lark.lexer import TerminalDef
 from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
@@ -68,6 +69,54 @@ class DecFileNotParsed(RuntimeError):
 
 class DecayNotFound(RuntimeError):
     pass
+
+
+class DecayModelError(ValueError):
+    """Invalid or ambiguous decay model input, with its source location."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        model_name: str | None = None,
+        line: int | None = None,
+        column: int | None = None,
+        path: str | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.model_name = model_name
+        self.line = line
+        self.column = column
+        self.path = path
+
+
+class UnknownDecayModelError(DecayModelError):
+    """A decay model is unregistered and has no matching ModelAlias definition."""
+
+    @classmethod
+    def from_token(cls, token: Token) -> Self:
+        name = str(token)
+        return cls(
+            f"Unknown decay model or undefined ModelAlias {name!r}. "
+            "Check the spelling or define a ModelAlias in the decay file. "
+            f"For a custom model, call load_additional_decay_models({name!r}) "
+            f"before parse(), or pass --additional-decay-model={name} "
+            "to decaylanguage-validate. "
+            "To add a standard model to DecayLanguage's model registry, update "
+            "known_decay_models in src/decaylanguage/dec/enums.py "
+            "(https://github.com/scikit-hep/decaylanguage/blob/main/src/decaylanguage/dec/enums.py).",
+            model_name=name,
+            line=token.line,
+            column=token.column,
+        )
+
+
+class AmbiguousDecayModelError(DecayModelError):
+    """The decay model cannot be distinguished from particles or parameters."""
+
+
+class InvalidModelAliasError(DecayModelError):
+    """A ModelAlias definition cannot be resolved to a registered model."""
 
 
 class DecFileWarning(UserWarning):
@@ -166,6 +215,7 @@ class DecFileParser:
         "_include_ccdecays",
         "_parsed_dec_file",
         "_parsed_decays",
+        "_source_ranges",
     )
 
     def __init__(self, *filenames: str | os.PathLike[str]) -> None:
@@ -184,18 +234,29 @@ class DecFileParser:
 
         # Name(s) of the input decay file(s)
         self._dec_file: str | None = None  # Content of input file(s)
+        self._source_ranges: list[tuple[int, int, str]] = []
         if filenames:
             self._dec_file_names = list(filenames)
 
             stream = StringIO()
+            line_offset = 0
             for filename in map(Path, self._dec_file_names):
                 # Check input file
                 if not filename.is_file():
                     raise FileNotFoundError(f"{str(filename)!r}!")
 
                 with filename.open(encoding="utf_8") as file:
-                    stream.write(self._filter_lines(file))
+                    content = self._filter_lines(file)
+                    self._source_ranges.append(
+                        (
+                            line_offset + 1,
+                            line_offset + len(content.splitlines()),
+                            str(filename),
+                        )
+                    )
+                    stream.write(content)
                     stream.write("\n")
+                    line_offset += content.count("\n") + 1
 
             stream.seek(0)
             self._dec_file = stream.read()
@@ -230,6 +291,9 @@ class DecFileParser:
             beg = line.lstrip("﻿").lstrip()
             if not (beg.startswith("End") and not beg.startswith("Enddecay")):
                 stream.write(line)
+            else:
+                # Keep token locations aligned with the original source.
+                stream.write("\n")
         return stream.getvalue()
 
     @classmethod
@@ -265,6 +329,11 @@ class DecFileParser:
             which are specified via "CDecay <MOTHER>".
             Make sure you understand the consequences of ignoring
             charge conjugate decays - you won't have a complete picture otherwise!
+
+        Raises
+        ------
+        DecayModelError
+            A decay model or ModelAlias is unknown, ambiguous, or cyclic.
         """
         # Has a file been parsed already?
         if self._parsed_decays is not None:
@@ -303,7 +372,11 @@ class DecFileParser:
                 opts["lexer"],
                 self._decay_models_tuple(),
             )
-        self._parsed_dec_file = parser.parse(self._dec_file)
+        try:
+            self._parsed_dec_file = parser.parse(self._dec_file)
+        except UnexpectedInput as exc:
+            self._set_exception_source(exc)
+            raise
 
         # At last, find all particle decays defined in the .dec decay file ...
         self._find_parsed_decays()
@@ -312,13 +385,25 @@ class DecFileParser:
         # DecayModelAliasReplacement deep-copies each subtree at replacement
         # time, so the in-place mutations later done by
         # DecayModelParamValueReplacement do not leak across decay trees.
-        dict_model_aliases = self._dict_raw_model_aliases()
-        self._parsed_decays = [
-            DecayModelAliasReplacement(model_alias_defs=dict_model_aliases).transform(
-                tree
-            )
-            for tree in self._parsed_decays
-        ]
+        try:
+            dict_model_aliases = self._resolve_model_aliases()
+            self._check_unresolved_models(set(dict_model_aliases))
+            self._parsed_decays = [
+                DecayModelAliasReplacement(
+                    model_alias_defs=dict_model_aliases
+                ).transform(tree)
+                for tree in self._parsed_decays
+            ]
+        except VisitError as exc:
+            # Expose the actionable input error rather than Lark's transformer
+            # wrapper, retaining the model token's location for diagnostics.
+            if isinstance(exc.orig_exc, DecayModelError):
+                self._set_exception_source(exc.orig_exc)
+                raise exc.orig_exc from None
+            raise
+        except DecayModelError as exc:
+            self._set_exception_source(exc)
+            raise
         self._decay_modes_index = None
 
         # Check Alias statements for misleading or misconfigured constructions
@@ -345,6 +430,107 @@ class DecFileParser:
         # Once all decays are parsed and, if requested, all charge-conjugates are produced,
         # check for duplicates - should in a way be considered a bug in the .dec file!
         self._check_parsed_decays()
+
+    def _set_exception_source(self, exc: Exception) -> None:
+        """Translate a combined-input location back to its originating file."""
+        line = getattr(exc, "line", None)
+        if isinstance(line, int):
+            for start, end, path in reversed(self._source_ranges):
+                if start <= line:
+                    # A synthetic separator or EOF belongs to the preceding
+                    # file, at most one line beyond its original content.
+                    exc.line = min(line, end + 1) - start + 1  # type: ignore[attr-defined]
+                    exc.path = path  # type: ignore[attr-defined]
+                    break
+
+    def _resolve_model_aliases(self) -> dict[str, list[Token | Tree[Any]]]:
+        """Validate all ModelAlias definitions and resolve references between them."""
+        assert self._parsed_dec_file is not None
+        raw = self._dict_raw_model_aliases()
+        resolved: dict[str, list[Token | Tree[Any]]] = {}
+        active: list[str] = []
+
+        def resolve(name: str, token: Token) -> list[Token | Tree[Any]]:
+            if name in resolved:
+                return resolved[name]
+            if name in active:
+                raise InvalidModelAliasError(
+                    f"Cyclic ModelAlias definitions: {' -> '.join([*active, name])}. "
+                    "Define the aliases using a registered decay model.",
+                    model_name=name,
+                    line=token.line,
+                    column=token.column,
+                )
+            active.append(name)
+            children = raw[name]
+            if isinstance(children[0], Tree):
+                target = children[0].children[0]
+                assert isinstance(target, Token)
+                if str(target) not in raw:
+                    raise UnknownDecayModelError.from_token(target)
+                if len(children) > 1:
+                    raise InvalidModelAliasError(
+                        f"ModelAlias {name!r} adds parameters to another ModelAlias. "
+                        "Define it using a registered decay model and its parameters directly.",
+                        model_name=name,
+                        line=target.line,
+                        column=target.column,
+                    )
+                children = resolve(str(target), target)
+            active.pop()
+            resolved[name] = children
+            return children
+
+        for definition in self._parsed_dec_file.find_data("model_alias"):
+            token = definition.children[0].children[0]
+            assert isinstance(token, Token)
+            resolve(str(token), token)
+        return resolved
+
+    def _check_unresolved_models(self, model_aliases: set[str]) -> None:
+        """Avoid treating a parameter or daughter as an unknown model name."""
+        assert self._parsed_decays is not None
+        assert self._parsed_dec_file is not None
+        declared_particles = set(self.dict_aliases()) | {
+            str(tree.children[0])
+            for tree in self._parsed_dec_file.find_data("particle_def")
+        }
+
+        def is_particle(token: Token) -> bool:
+            return str(token) in declared_particles or evtgen_name_is_particle(
+                str(token)
+            )
+
+        for decay in self._parsed_decays:
+            for line in decay.find_data("decayline"):
+                model = next(line.find_data("model"))
+                if not isinstance(model.children[0], Tree):
+                    continue
+                token = model.children[0].children[0]
+                assert isinstance(token, Token)
+                # A defined alias has a known boundary, even when daughters
+                # include experiment-specific names absent from the PDG table.
+                if str(token) in model_aliases:
+                    continue
+                uncertain = None
+                for daughter in line.find_data("particle"):
+                    daughter_token = daughter.children[0]
+                    assert isinstance(daughter_token, Token)
+                    if not is_particle(daughter_token):
+                        uncertain = daughter_token
+                        break
+                if uncertain is not None or is_particle(token):
+                    location = uncertain if uncertain is not None else token
+                    raise AmbiguousDecayModelError(
+                        "Cannot identify the decay model in this decay line. "
+                        "A model may be missing or unregistered, or its parameters may have "
+                        "been read as particle names. Register the intended model with "
+                        "load_additional_decay_models(...) before parse(), or pass "
+                        "--additional-decay-model=NAME to decaylanguage-validate; "
+                        "also check the daughter names and ModelAlias definitions.",
+                        line=location.line,
+                        column=location.column,
+                    )
 
     def grammar(self) -> str:
         """
@@ -1417,10 +1603,7 @@ class DecayModelAliasReplacement(Transformer):  # type: ignore[misc]
 
     def _replacement(self, t: Token) -> Token:
         if t.value not in self.define_defs:
-            raise ValueError(
-                f"Decay model or ModelAlias {t.value} is not defined. Please load the decay model with "
-                "``load_additional_decay_models`` or define a ModelAlias in the decayfile."
-            )
+            raise UnknownDecayModelError.from_token(t)
         # Deep-copy so that every use of a model alias gets its own Token/Tree
         # instances. Otherwise all decay trees using the alias would share the
         # same children, and the in-place mutations done by

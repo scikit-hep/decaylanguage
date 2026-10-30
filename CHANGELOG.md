@@ -1,7 +1,16 @@
 # Changelog
 
-## Upcoming release
+## Unreleased
 
+* Decay-file parsing and validation:
+  - Report unknown decay models and undefined ModelAlias names with a specific
+    error, source location, registration guidance, and a link to the model registry
+    instead of Lark's generic VisitError wrapper.
+  - Diagnose ambiguous decay lines without identifying model parameters as models.
+  - Validate unused ModelAlias definitions, resolve alias references, and report
+    cyclic definitions.
+  - Preserve original model-error locations across intermediate End lines and
+    multiple input files, and support serialization of model exceptions.
 * Dependencies:
   - Dropped support for Python 3.10.
 
