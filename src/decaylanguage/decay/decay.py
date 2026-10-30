@@ -11,13 +11,12 @@ from collections import Counter
 from collections.abc import Collection, Iterator, Sequence
 from copy import deepcopy
 from itertools import product
-from typing import Any, NoReturn, TypedDict
+from typing import Any, NoReturn, Self, TypedDict
 
 from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
 from particle.exceptions import MatchingIDNotFound
 
-from .._compat.typing import Self
 from ..utils import DescriptorFormat, charge_conjugate_name
 
 

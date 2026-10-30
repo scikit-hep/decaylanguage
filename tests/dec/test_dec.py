@@ -33,6 +33,7 @@ from decaylanguage.dec.dec import (
     MissingCDecaySourceWarning,
     MissingCopyDecaySourceWarning,
     SelfChargeConjWarning,
+    SelfConjugateCDecayWarning,
     UnknownDecayModelError,
     get_branching_fraction,
     get_decay_mother_name,
@@ -927,6 +928,30 @@ End
     p.parse()
 
 
+def test_CDecay_minimalistic_wrong_conjugate() -> None:
+    s = """Alias        MyD_s*+        D_s*+
+Alias        MyD_s*-        D_s*-
+ChargeConj   MyD_s*-        MyD_s*+
+
+
+Decay MyD_s*+
+  1.0   D_s+   pi0   VSS;
+Enddecay
+
+CDecay MyD_s*+
+
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(
+        DecayAndCDecayWarning,
+        match="The following particles are defined in the input .dec file with both 'Decay' and 'CDecay'",
+    ):
+        p.parse()
+
+    assert p.number_of_decays == 1
+
+
 def test_CDecay_self_conjugate() -> None:
     """
     The issue that the phi is in fact self-conjugate is not even checked
@@ -968,6 +993,39 @@ End
         match="The following particles are defined in the input .dec file with both 'Decay' and 'CDecay'",
     ):
         p.parse()
+
+
+def test_CDecay_self_conjugate_with_Aliases() -> None:
+    """
+    Similar to the test above but this decay file does not make sense overall,
+    especially that 2 aliases are created to the same self-conjugate particle,
+    hence it is not immediately obvious that 'Decay' and 'CDecay' in the end
+    refer to the same self-conjugate particle.
+    """
+    s = """
+Alias MyPi0 pi0
+Alias Myanti-pi0 pi0
+
+ChargeConj Myanti-pi0 MyPi0
+
+Decay MyPi0
+1.0   gamma   gamma   PHSP;
+Enddecay
+
+CDecay Myanti-pi0
+
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(
+        SelfConjugateCDecayWarning,
+        match="Found 'CDecay' statement for self-conjugate particle",
+    ):
+        p.parse()
+
+    assert p.number_of_decays == 1
+
+    assert p.list_decay_mother_names() == ["MyPi0"]
 
 
 def test_duplicate_CDecay_definitions_are_only_applied_once() -> None:

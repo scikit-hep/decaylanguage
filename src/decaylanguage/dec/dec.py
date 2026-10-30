@@ -48,7 +48,7 @@ from functools import cache
 from io import StringIO
 from itertools import chain, zip_longest
 from pathlib import Path
-from typing import Any
+from typing import Any, Self
 
 from hepunits import GeV
 from lark import Lark, Token, Transformer, Tree, Visitor
@@ -58,7 +58,6 @@ from particle import Particle
 from particle.converters import PDG2EvtGenNameMap
 
 from .. import data
-from .._compat.typing import Self
 from ..decay.decay import DecayModeDict, _expand_decay_modes
 from ..utils import charge_conjugate_name, evtgen_name_is_particle
 from .enums import PhotosEnum, known_decay_models
@@ -1069,11 +1068,17 @@ Skipping creation of these charge-conjugate decay trees.""".format(
         # Finally, perform all particle -> anti(particle) replacements,
         # taking care of charge conjugate decays defined via aliases,
         # passing them as charge conjugates to be processed manually.
+        aliases = get_aliases(self._parsed_dec_file)
+
         def _is_not_self_conj(t: Tree) -> bool:
             try:
+                # Check not only the Lark Tree (string) name itself
+                # but also the actual alias name pointed at by the alias, if it exists
                 mname = t.children[0].children[0].value
-                if Particle.from_evtgen_name(mname).is_self_conjugate:
-                    msg = f"""Found 'CDecay' statement for self-conjugate particle {mname}. This is a bug!
+                aname = aliases.get(mname, mname) if aliases else mname
+                if Particle.from_evtgen_name(aname).is_self_conjugate:
+                    printname = f"{mname} (aliased to {aname})" if aliases else mname
+                    msg = f"""Found 'CDecay' statement for self-conjugate particle {printname}. This is a bug!
 Skipping creation of charge-conjugate decay Tree."""
                     warnings.warn(msg, SelfConjugateCDecayWarning, stacklevel=2)
                     return False
@@ -1081,10 +1086,16 @@ Skipping creation of charge-conjugate decay Tree."""
             except Exception:  # noqa: BLE001
                 return True
 
-        for t in cdecays:
+        not_conjugated: list[int] = []
+        for i, t in enumerate(cdecays):
             if _is_not_self_conj(t):
                 ChargeConjugateReplacement(charge_conj_defs=dict_cc_names).visit(t)
+            else:
+                not_conjugated.append(i)
 
+        # ... do not forget to remove from the list those Trees that did not get CC replaced above
+        for i in not_conjugated:
+            del cdecays[i]
         # ... and add all these charge-conjugate decays to the list of decays!
         self._parsed_decays.extend(cdecays)
         self._decay_modes_index = None

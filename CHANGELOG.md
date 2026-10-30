@@ -11,6 +11,16 @@
     cyclic definitions.
   - Preserve original model-error locations across intermediate End lines and
     multiple input files, and support serialization of model exceptions.
+* Dependencies:
+  - Dropped support for Python 3.10.
+
+## Version 1.1.3 (2026-10-30)
+
+* Parsing of decay files (aka .dec files):
+  - Added very new Belle-II EvtGen model.
+  - Fixed `DecFileParser.expand_decay_modes` method.
+* Decay-file validation:
+  - Minor improvements to warnings.
 
 ## Version 1.1.2 (2026-10-09)
 
