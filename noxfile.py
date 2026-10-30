@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import nox
 
-nox.needs_version = ">=2025.02.09"
+nox.needs_version = ">=2026.8.10"
 nox.options.default_venv_backend = "uv|virtualenv"
 
 PYPROJECT = nox.project.load_toml("pyproject.toml")
@@ -15,7 +15,8 @@ def lint(session):
     session.run("prek", "run", "--all-files", *session.posargs)
 
 
-@nox.session
+# pylint does not support 3.15 yet
+@nox.session(python="<3.15")
 def pylint(session: nox.Session) -> None:
     """
     Run pylint.
