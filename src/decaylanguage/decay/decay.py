@@ -118,7 +118,7 @@ class DaughtersDict(Counter[str]):
 
         Parameters
         ----------
-        pdg_name: str, optional, default=False
+        pdg_name: bool, optional, default=False
             Input particle name is the PDG name,
             not the (default) EvtGen name.
 
@@ -426,7 +426,7 @@ class DecayMode:
 
         Parameters
         ----------
-        pdg_name: str, optional, default=False
+        pdg_name: bool, optional, default=False
             Input particle name is the PDG name,
             not the (default) EvtGen name.
 
@@ -792,7 +792,7 @@ class DecayChain:
         ----------
         mother: str
             Input mother particle of the top-level decay.
-        decays: iterable
+        decays: dict[str, DecayMode]
             The decay modes.
 
         Examples
