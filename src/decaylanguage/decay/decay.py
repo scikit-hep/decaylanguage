@@ -593,6 +593,8 @@ def _has_no_subdecay(ds: list[Any]) -> bool:
         end-of-chain final state.
         False if any element is a sub-decay.
 
+    Examples
+    --------
     Example end-of-chain final state:
         ['pi+', 'pi-']
 
