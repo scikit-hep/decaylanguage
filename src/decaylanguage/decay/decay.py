@@ -98,10 +98,12 @@ class DaughtersDict(Counter[str]):
     @classmethod
     def fromkeys(cls, iterable: Any, v: Any = None) -> NoReturn:
         """
+        Not implemented, since particle counts cannot be set from only keys.
+
         Parameters
         ----------
         iterable: any
-            Ignored
+            Ignored.
         v: any, optional, default=None
             Ignored.
 
