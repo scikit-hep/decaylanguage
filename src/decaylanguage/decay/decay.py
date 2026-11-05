@@ -88,6 +88,12 @@ class DaughtersDict(Counter[str]):
 
     @classmethod
     def fromkeys(cls, iterable: Any, v: Any = None) -> NoReturn:
+        """
+        Raises
+        ------
+        NotImplementedError
+            Always. Use ``DaughtersDict(iterable)`` instead.
+        """
         # ==> Comment copied from Counter.fromkeys():
         # There is no equivalent method for counters because the semantics
         # would be ambiguous in cases such as Counter.fromkeys('aaabbc', v=2).
@@ -324,6 +330,11 @@ class DecayMode:
         out: DecayMode
             The decay mode built from the input dictionary.
 
+        Raises
+        ------
+        RuntimeError
+            If the input dictionary is missing the ``'bf'`` or ``'fs'`` key.
+
         Note
         ----
         This class assumes EvtGen particle names, though this assumption is only
@@ -383,6 +394,11 @@ class DecayMode:
         -------
         out: DecayMode
             Decay mode with daughters stored as EvtGen names.
+
+        Raises
+        ------
+        ParticleNotFound
+            If any of the input PDG IDs has no matching EvtGen name.
 
         Note
         ----
@@ -569,6 +585,12 @@ def _build_decay_modes(
     dc_dict: dict
         The input decay chain dictionary.
 
+    Raises
+    ------
+    RuntimeError
+        If a decay mode has no ``'fs'`` key, or if a particle is given
+        more than one different decay mode.
+
     Note
     ----
     Only single chains are supported, meaning every decaying particle
@@ -687,6 +709,11 @@ def _get_fs(decay: DecayModeDict) -> list[Any]:
     out: list
         The final-state list (``'fs'`` entry), whose elements are particle
         names or sub-decay dicts.
+
+    Raises
+    ------
+    TypeError
+        If the ``'fs'`` entry is not a list.
 
     Note
     ----
@@ -887,6 +914,11 @@ class DecayChain:
         decays: dict[str, DecayMode]
             The decay modes.
 
+        Raises
+        ------
+        RuntimeError
+            If decays does not contain the mother particle.
+
         Examples
         --------
         >>> dm1 = DecayMode(0.0124, 'K_S0 pi0', model='PHSP')
@@ -911,6 +943,12 @@ class DecayChain:
         -------
         out: DecayChain
             The decay chain built from the input dictionary.
+
+        Raises
+        ------
+        RuntimeError
+            If the input dictionary does not have exactly one key (the mother
+            particle), or if it is not a single decay chain.
         """
         try:
             assert len(decay_chain_dict.keys()) == 1
