@@ -4,6 +4,8 @@
 
 * Dependencies:
   - Dropped support for Python 3.10.
+* Documentation:
+  - Improved docstrings of the `decay` module (Parameters, Returns, Raises).
 
 ## Version 1.1.3 (2026-10-30)
 
