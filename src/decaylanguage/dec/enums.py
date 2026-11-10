@@ -70,6 +70,7 @@ known_decay_models = (
     "ETA_FULLDALITZ",
     "ETA_LLPIPI",
     "ETA_PI0DALITZ",
+    "FLAT3BODYM12COSHEL12",
     "FLATQ2FLATM",
     "FLATQ2",
     "FLATSQDALITZ",
