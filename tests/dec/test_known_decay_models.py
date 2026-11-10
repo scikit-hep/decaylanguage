@@ -134,7 +134,7 @@ parsed_models = (
     ("ETA_FULLDALITZ", [-1.128, 0.153, 0.0, 0.085, 0.0, 0.173]),
     ("ETA_LLPIPI", ""),
     ("ETA_PI0DALITZ", [-0.0135]),
-    ("FLAT3BODYM12COSHEL12", [0.80 1.40]),
+    ("FLAT3BODYM12COSHEL12", [0.80, 1.40]),
     ("FLATQ2FLATM", [1.046, 1.338]),
     ("FLATQ2", [1.0]),
     ("FLATSQDALITZ", ""),
