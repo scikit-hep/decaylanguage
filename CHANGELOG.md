@@ -2,6 +2,8 @@
 
 ## Upcoming release
 
+* Parsing of decay files (aka .dec files):
+  - Added Belle II/BESIII-specific D decay models.
 * Dependencies:
   - Dropped support for Python 3.10.
 
