@@ -1,5 +1,8 @@
 # File for testing purposes. Contains a single decay mode with a specific model.
 
+Define   minMKPi   0.80
+Define   maxMKPi   1.40
+
 Decay B_s0sig
-  1.0    K+     pi-        MyK0s         FLAT3BODYM12COSHEL12 0.80 1.40;
+   1.0   K+   pi-   MyK0s   FLAT3BODYM12COSHEL12   minMKPi   maxMKPi;
 Enddecay
