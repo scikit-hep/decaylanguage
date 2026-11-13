@@ -66,6 +66,13 @@ Experiment-specific and decay models not yet available in the package can be ena
 
    decaylanguage-validate --additional-decay-model=MYMODEL my-decay-file.dec
 
+Unknown or ambiguous decay models raise
+:class:`~decaylanguage.dec.dec.DecayModelError` with source locations; the
+validator reports these as ``DLP001``. Register custom models with
+``parser.load_additional_decay_models("MYMODEL")`` before ``parse()`` to resolve
+ambiguities. All ``ModelAlias`` definitions are validated, including unused
+definitions and cyclic references.
+
 The validator reports stable diagnostic codes. Exact codes such as ``DLW004``
 or code families such as ``DLW`` can be disabled, which lets experiments choose
 their own validation policy:
