@@ -30,19 +30,10 @@ Basic usage
    # Get branching fractions
    parser.print_decay_modes("D*+")
 
-Particle properties
--------------------
-
-``parser.get_particle_property_definitions()`` uses the particle table's width
-when a ``Particle`` statement supplies only a mass. An unknown particle or a
-particle without a known width raises
-:class:`~decaylanguage.dec.dec.ParticlePropertyError`, a ``RuntimeError`` subclass,
-with the particle name and instructions. Check the name and any ``Alias``
-definition, or supply both mass and width explicitly in GeV:
-
-.. code-block:: text
-
-   Particle MyParticle 1.0 0.25
+If the particle table cannot provide a default width,
+``parser.get_particle_property_definitions()`` raises
+:class:`~decaylanguage.dec.dec.ParticlePropertyError`. Supply an explicit width
+in GeV, for example ``Particle MyParticle 1.0 0.25``.
 
 Building decay chains
 ---------------------
@@ -141,10 +132,6 @@ Parser errors include the source location and a pointer:
           13: 0.000044342 Upsilon pi0     pi0                             VVPIPI;2 #[Reconstructed PDG2011]
                                                                                  ^
    summary: DLP001=1
-
-Syntax diagnostics also retain expected tokens. For example, an incomplete
-decay block reports ``Unexpected end of file; expected 'Enddecay', ...``;
-an unterminated model specification includes ``';'`` among the expected tokens.
 
 Parser warnings are reported more compactly:
 
