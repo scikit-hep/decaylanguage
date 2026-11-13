@@ -91,20 +91,18 @@ class DecayModelError(ValueError):
 
 
 class UnknownDecayModelError(DecayModelError):
-    """A decay model is unregistered and has no matching ModelAlias definition."""
+    """A model name matches neither a registered model nor a ModelAlias."""
 
     @classmethod
     def from_token(cls, token: Token) -> Self:
         name = str(token)
         return cls(
             f"Unknown decay model or undefined ModelAlias {name!r}. "
-            "Check the spelling or define a ModelAlias in the decay file. "
-            f"For a custom model, call load_additional_decay_models({name!r}) "
-            f"before parse(), or pass --additional-decay-model={name} "
-            "to decaylanguage-validate. "
-            "To add a standard model to DecayLanguage's model registry, update "
-            "known_decay_models in src/decaylanguage/dec/enums.py "
-            "(https://github.com/scikit-hep/decaylanguage/blob/main/src/decaylanguage/dec/enums.py).",
+            "Check the spelling or ModelAlias definition. "
+            f"Register custom models with load_additional_decay_models({name!r}) "
+            f"before parse() or --additional-decay-model={name}. "
+            "Standard models belong in known_decay_models: "
+            "https://github.com/scikit-hep/decaylanguage/blob/main/src/decaylanguage/dec/enums.py.",
             model_name=name,
             line=token.line,
             column=token.column,
@@ -215,7 +213,7 @@ class DecFileParser:
         "_include_ccdecays",
         "_parsed_dec_file",
         "_parsed_decays",
-        "_source_ranges",
+        "_source_line_ranges",
     )
 
     def __init__(self, *filenames: str | os.PathLike[str]) -> None:
@@ -234,7 +232,8 @@ class DecFileParser:
 
         # Name(s) of the input decay file(s)
         self._dec_file: str | None = None  # Content of input file(s)
-        self._source_ranges: list[tuple[int, int, str]] = []
+        # Combined-input line ranges (start, end, path) for error locations.
+        self._source_line_ranges: list[tuple[int, int, str]] = []
         if filenames:
             self._dec_file_names = list(filenames)
 
@@ -247,7 +246,7 @@ class DecFileParser:
 
                 with filename.open(encoding="utf_8") as file:
                     content = self._filter_lines(file)
-                    self._source_ranges.append(
+                    self._source_line_ranges.append(
                         (
                             line_offset + 1,
                             line_offset + len(content.splitlines()),
@@ -435,7 +434,7 @@ class DecFileParser:
         """Translate a combined-input location back to its originating file."""
         line = getattr(exc, "line", None)
         if isinstance(line, int):
-            for start, end, path in reversed(self._source_ranges):
+            for start, end, path in reversed(self._source_line_ranges):
                 if start <= line:
                     # A synthetic separator or EOF belongs to the preceding
                     # file, at most one line beyond its original content.
@@ -523,11 +522,10 @@ class DecFileParser:
                     location = uncertain if uncertain is not None else token
                     raise AmbiguousDecayModelError(
                         "Cannot identify the decay model in this decay line. "
-                        "A model may be missing or unregistered, or its parameters may have "
-                        "been read as particle names. Register the intended model with "
-                        "load_additional_decay_models(...) before parse(), or pass "
-                        "--additional-decay-model=NAME to decaylanguage-validate; "
-                        "also check the daughter names and ModelAlias definitions.",
+                        "A model may be missing or unregistered. "
+                        "Check daughter names and ModelAlias definitions. "
+                        "Register custom models with load_additional_decay_models(...) "
+                        "before parse() or --additional-decay-model=NAME.",
                         line=location.line,
                         column=location.column,
                     )
