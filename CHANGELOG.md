@@ -3,8 +3,8 @@
 ## Upcoming release
 
 * Decay-file parsing and validation:
-  - Report unknown or ambiguous decay models with source locations and validate
-    ModelAlias definitions.
+  - Added Belle-II/BES-III specific D decay models.
+  - Report unknown or ambiguous decay models with source locations and validate ModelAlias definitions.
 * Dependencies:
   - Dropped support for Python 3.10.
 
@@ -22,7 +22,8 @@
   - Added latest EvtGen models from Belle-II and LHCb.
   - Minor improvements to documentation.
 * Decay-file validation:
-  - Added new checks (warnings and diagnostics) for misleading/misconfigured Alias and ChargeConj statements, and for ChargeConj statements for self-conjugate particles.
+  - Added new checks (warnings and diagnostics) for misleading/misconfigured Alias and ChargeConj statements,
+    and for ChargeConj statements for self-conjugate particles.
   - Added tests for all new functionality.
 * Dependencies:
   - Added support for Python 3.15.
