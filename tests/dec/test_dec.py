@@ -6,16 +6,20 @@
 from __future__ import annotations
 
 import io
+import pickle
 import sys
 from pathlib import Path
 
 import pytest
-from lark import Token, Tree
+from lark import Token, Tree, UnexpectedToken
+from lark.exceptions import VisitError
 
 from decaylanguage.dec.dec import (
+    AmbiguousDecayModelError,
     ChargeConjugateReplacement,
     DecayAndCDecayWarning,
     DecayModelAliasReplacement,
+    DecayModelError,
     DecayModelParamValueReplacement,
     DecayNotFound,
     DecFileNotParsed,
@@ -23,12 +27,14 @@ from decaylanguage.dec.dec import (
     DecFileWarning,
     DuplicateCDecayWarning,
     DuplicateDecayWarning,
+    InvalidModelAliasError,
     MisconfiguredAliasWarning,
     MisconfiguredChargeConjWarning,
     MissingCDecaySourceWarning,
     MissingCopyDecaySourceWarning,
     SelfChargeConjWarning,
     SelfConjugateCDecayWarning,
+    UnknownDecayModelError,
     get_branching_fraction,
     get_decay_mother_name,
     get_final_state_particle_names,
@@ -692,6 +698,188 @@ def test_custom_model_name() -> None:
     dl = p._parsed_decays[0].children[2]  # 'D*+' Tree
     assert get_model_name(dl) == "CUSTOM_MODEL2"
     assert get_model_parameters(dl) == [1.0, 2.0, 3.0, 4.0]
+
+
+@pytest.mark.parametrize("model_name", ["UNKNOWN_MODEL", "UndefinedAlias"])
+def test_unknown_model_error(model_name: str) -> None:
+    p = DecFileParser.from_string(
+        f"Decay pi0\n1.0 gamma gamma {model_name};\nEnddecay\nEnd\n"
+    )
+
+    with pytest.raises(UnknownDecayModelError) as caught:
+        p.parse()
+
+    error = caught.value
+    assert isinstance(error, ValueError)
+    assert error.model_name == model_name
+    assert (error.line, error.column) == (2, 17)
+    message = str(error)
+    assert f"Unknown decay model or undefined ModelAlias '{model_name}'" in message
+    assert f"load_additional_decay_models('{model_name}')" in message
+    assert f"--additional-decay-model={model_name}" in message
+    assert "known_decay_models" in message
+    assert (
+        "https://github.com/scikit-hep/decaylanguage/blob/main/src/decaylanguage/dec/enums.py"
+        in message
+    )
+
+
+def test_unrelated_transformer_error_is_preserved(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail_replacement(_self: DecayModelAliasReplacement, _token: Token) -> Token:
+        raise RuntimeError("unexpected transformer failure")
+
+    monkeypatch.setattr(DecayModelAliasReplacement, "_replacement", fail_replacement)
+    p = DecFileParser.from_string(
+        "ModelAlias MyModel PHSP;\nDecay pi0\n1.0 gamma gamma MyModel;\nEnddecay\nEnd\n"
+    )
+
+    with pytest.raises(VisitError) as caught:
+        p.parse()
+
+    assert isinstance(caught.value.orig_exc, RuntimeError)
+    assert str(caught.value.orig_exc) == "unexpected transformer failure"
+
+
+@pytest.mark.parametrize("parameters", ["1 2", "0.746 1.046", "-1 2", "OPTION"])
+def test_unknown_model_with_parameters_is_ambiguous(parameters: str) -> None:
+    parser = DecFileParser.from_string(
+        f"Decay pi0\n1.0 gamma gamma XYZ {parameters};\nEnddecay\n"
+    )
+    with pytest.raises(AmbiguousDecayModelError) as caught:
+        parser.parse()
+    assert caught.value.model_name is None
+    assert (caught.value.line, caught.value.column) == (2, 17)
+    assert "--additional-decay-model=NAME" in str(caught.value)
+
+    parser = DecFileParser.from_string(
+        f"Decay pi0\n1.0 gamma gamma XYZ {parameters};\nEnddecay\n"
+    )
+    parser.load_additional_decay_models("XYZ")
+    parser.parse()
+    mode = parser._find_decay_modes("pi0")[0]
+    assert get_model_name(mode) == "XYZ"
+    assert get_final_state_particle_names(mode) == ["gamma", "gamma"]
+
+
+def test_missing_model_is_not_reported_as_unknown_particle_model() -> None:
+    parser = DecFileParser.from_string("Decay pi0\n1.0 gamma gamma;\nEnddecay\n")
+    with pytest.raises(AmbiguousDecayModelError, match="model may be missing"):
+        parser.parse()
+
+
+@pytest.mark.parametrize(
+    "definition",
+    ["Alias CustomParticle gamma\n", "Particle CustomParticle 1.0 0.0\n"],
+)
+def test_declared_particle_names_do_not_make_model_ambiguous(definition: str) -> None:
+    parser = DecFileParser.from_string(
+        definition + "Decay pi0\n1.0 CustomParticle gamma XYZ;\nEnddecay\n"
+    )
+    with pytest.raises(UnknownDecayModelError) as caught:
+        parser.parse()
+    assert caught.value.model_name == "XYZ"
+
+
+def test_registered_model_preserves_experiment_specific_daughters() -> None:
+    parser = DecFileParser.from_string(
+        "Decay pi0\n1.0 CustomParticle gamma PHSP;\nEnddecay\n"
+    )
+    parser.parse()
+    mode = parser._find_decay_modes("pi0")[0]
+    assert get_final_state_particle_names(mode) == ["CustomParticle", "gamma"]
+
+
+@pytest.mark.parametrize("used", [False, True])
+@pytest.mark.parametrize("parameters", ["", " 1 2", " OPTION"])
+def test_unknown_model_in_alias_definition(used: bool, parameters: str) -> None:
+    content = f"ModelAlias A XYZ{parameters};\n"
+    if used:
+        content += "Decay pi0\n1.0 gamma gamma A;\nEnddecay\n"
+    parser = DecFileParser.from_string(content)
+    with pytest.raises(UnknownDecayModelError) as caught:
+        parser.parse()
+    assert caught.value.model_name == "XYZ"
+    assert (caught.value.line, caught.value.column) == (1, 14)
+
+
+def test_model_alias_chain_resolves_parameters_independently() -> None:
+    parser = DecFileParser.from_string(
+        "Define dm 0.507e12\nModelAlias A B;\nModelAlias B VSS_BMIX dm;\n"
+        "Decay B0\n1.0 pi+ pi- A;\nEnddecay\n"
+        "Decay anti-B0\n1.0 pi+ pi- B;\nEnddecay\n"
+    )
+    parser.parse()
+    for mother in ("B0", "anti-B0"):
+        mode = parser._find_decay_modes(mother)[0]
+        assert get_model_name(mode) == "VSS_BMIX"
+        assert get_model_parameters(mode) == [0.507e12]
+
+
+@pytest.mark.parametrize(
+    "content", ["ModelAlias A A;\n", "ModelAlias A B;\nModelAlias B A;\n"]
+)
+def test_model_alias_cycles(content: str) -> None:
+    parser = DecFileParser.from_string(content)
+    with pytest.raises(InvalidModelAliasError, match="Cyclic ModelAlias"):
+        parser.parse()
+
+
+def test_alias_cannot_add_parameters_to_another_alias() -> None:
+    parser = DecFileParser.from_string("ModelAlias A B 1;\nModelAlias B PHSP;\n")
+    with pytest.raises(InvalidModelAliasError, match="adds parameters"):
+        parser.parse()
+
+
+@pytest.mark.parametrize(
+    "content",
+    [
+        "Decay pi0\n1.0 gamma gamma XYZ;\nEnddecay\n",
+        "Decay pi0\n1.0 gamma gamma XYZ 1 2;\nEnddecay\n",
+        "ModelAlias A A;\n",
+    ],
+)
+def test_model_errors_can_be_pickled(content: str) -> None:
+    parser = DecFileParser.from_string(content)
+    with pytest.raises(DecayModelError) as caught:
+        parser.parse()
+    original = caught.value
+    restored = pickle.loads(pickle.dumps(original))
+    assert type(restored) is type(original)
+    assert str(restored) == str(original)
+    assert restored.__dict__ == original.__dict__
+
+
+@pytest.mark.parametrize("trailing_newline", ["", "\n"])
+def test_model_error_location_in_multiple_files(
+    tmp_path: Path, trailing_newline: str
+) -> None:
+    first = tmp_path / "first.dec"
+    second = tmp_path / "second.dec"
+    first.write_text("Decay D0\n1.0 K- pi+ PHSP;\nEnddecay\nEnd" + trailing_newline)
+    second.write_text("End\nDecay pi0\n1.0 gamma gamma XYZ;\nEnddecay\nEnd\n")
+    parser = DecFileParser(first, second)
+    with pytest.raises(UnknownDecayModelError) as caught:
+        parser.parse()
+    assert caught.value.path == str(second)
+    assert (caught.value.line, caught.value.column) == (3, 17)
+    restored = pickle.loads(pickle.dumps(caught.value))
+    assert restored.path == str(second)
+    assert restored.line == 3
+
+
+def test_syntax_error_location_in_multiple_files(tmp_path: Path) -> None:
+    first = tmp_path / "first.dec"
+    second = tmp_path / "second.dec"
+    first.write_text("End\n", encoding="utf_8")
+    second.write_text(
+        "End\nDecay pi0\n1.0 gamma gamma PHSP;2\nEnddecay\n", encoding="utf_8"
+    )
+    with pytest.raises(UnexpectedToken) as caught:
+        DecFileParser(first, second).parse()
+    assert caught.value.path == str(second)
+    assert caught.value.line == 3
 
 
 def test_duplicate_decay_definitions() -> None:
