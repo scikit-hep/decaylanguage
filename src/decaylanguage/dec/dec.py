@@ -54,8 +54,9 @@ from hepunits import GeV
 from lark import Lark, Token, Transformer, Tree, Visitor
 from lark.exceptions import UnexpectedInput, VisitError
 from lark.lexer import TerminalDef
-from particle import Particle
+from particle import Particle, ParticleNotFound
 from particle.converters import PDG2EvtGenNameMap
+from particle.exceptions import MatchingIDNotFound
 
 from .. import data
 from ..decay.decay import DecayModeDict, _expand_decay_modes
@@ -69,6 +70,19 @@ class DecFileNotParsed(RuntimeError):
 
 class DecayNotFound(RuntimeError):
     pass
+
+
+class ParticlePropertyError(RuntimeError):
+    """A particle's default properties cannot be obtained from the particle table."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        particle_name: str | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.particle_name = particle_name
 
 
 class DecayModelError(ValueError):
@@ -374,6 +388,13 @@ class DecFileParser:
         try:
             self._parsed_dec_file = parser.parse(self._dec_file)
         except UnexpectedInput as exc:
+            # Preserve the active grammar's literal spellings for diagnostics,
+            # including custom grammars, without relying on Lark's private state.
+            exc.__dict__["terminal_literals"] = {
+                terminal.name: terminal.pattern.value
+                for terminal in parser.terminals
+                if terminal.pattern.type == "str"
+            }
             self._set_exception_source(exc)
             raise
 
@@ -2147,14 +2168,24 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
 
         # Get the particle name or the alias
         token_name: str = children[0].value
+        pname: str = aliases.get(token_name, token_name) if aliases else token_name
         try:
-            pname: str = aliases.get(token_name, token_name) if aliases else token_name
-            # Convert the width to GeV !
-            return Particle.from_evtgen_name(pname).width / GeV  # type: ignore[operator]
-        except Exception as err:
-            raise RuntimeError(
-                f"Particle name/alias {token_name!r} not found! Check your dec file(s)!"
+            particle = Particle.from_evtgen_name(pname)
+        except (ParticleNotFound, MatchingIDNotFound) as err:
+            raise ParticlePropertyError(
+                f"Particle {pname!r} (referenced as {token_name!r}) is unknown to the particle table. "
+                "Check the particle name or Alias definition, or supply an explicit width "
+                "in the Particle statement (in GeV).",
+                particle_name=token_name,
             ) from err
+        if particle.width is None:
+            raise ParticlePropertyError(
+                f"Particle {pname!r} (referenced as {token_name!r}) has no known width. "
+                "Supply an explicit width in the Particle statement (in GeV).",
+                particle_name=token_name,
+            )
+        # Convert the particle table's width from MeV to the decfile's GeV.
+        return particle.width / GeV
 
     try:
         return {
@@ -2164,6 +2195,8 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
             }
             for tree in parsed_file.find_data("particle_def")
         }
+    except ParticlePropertyError:
+        raise
     except Exception as err:
         raise RuntimeError(
             "Input parsed file does not seem to have the expected structure."

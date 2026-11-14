@@ -4,6 +4,7 @@
 
 * Decay-file parsing and validation:
   - Added Belle-II/BES-III specific D decay models.
+  - Preserve particle-property lookup errors and clarify validator syntax diagnostics.
   - Report unknown or ambiguous decay models with source locations and validate ModelAlias definitions.
 * Dependencies:
   - Dropped support for Python 3.10.
