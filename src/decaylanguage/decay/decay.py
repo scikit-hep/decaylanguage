@@ -56,6 +56,15 @@ class DaughtersDict(Counter[str]):
         """
         Default constructor.
 
+        Parameters
+        ----------
+        iterable: dict, collection of str or str, optional, default=None
+            The final-state particles, given as a dictionary of particle names and their multiplicities,
+            a collection of particle names, or a single space-separated string.
+        kwds: keyword arguments, optional
+            Extra particles and their multiplicities.
+            Only names that are valid Python identifiers can be given this way.
+
         Note
         ----
         This class assumes EvtGen particle names, though this assumption is only relevant
@@ -88,6 +97,21 @@ class DaughtersDict(Counter[str]):
 
     @classmethod
     def fromkeys(cls, iterable: Any, v: Any = None) -> NoReturn:
+        """
+        Not implemented, since particle counts cannot be set from only keys.
+
+        Parameters
+        ----------
+        iterable: any
+            Ignored.
+        v: any, optional, default=None
+            Ignored.
+
+        Raises
+        ------
+        NotImplementedError
+            Always. Use ``DaughtersDict(iterable)`` instead.
+        """
         # ==> Comment copied from Counter.fromkeys():
         # There is no equivalent method for counters because the semantics
         # would be ambiguous in cases such as Counter.fromkeys('aaabbc', v=2).
@@ -103,12 +127,23 @@ class DaughtersDict(Counter[str]):
     def to_string(self) -> str:
         """
         Return the daughters as a string representation (ordered list of names).
+
+        Returns
+        -------
+        out: str
+            Alphabetically sorted, space-separated particle names.
         """
         return " ".join(sorted(self.elements()))
 
     def to_list(self) -> list[str]:
         """
         Return the daughters as an ordered list of names.
+
+        Returns
+        -------
+        out: list[str]
+            List of particle names sorted alphabetically, each repeated according
+            to its multiplicity.
         """
         return sorted(self.elements())
 
@@ -118,9 +153,15 @@ class DaughtersDict(Counter[str]):
 
         Parameters
         ----------
-        pdg_name: str, optional, default=False
+        pdg_name: bool, optional, default=False
             Input particle name is the PDG name,
             not the (default) EvtGen name.
+
+        Returns
+        -------
+        out: DaughtersDict
+            New instance with every particle replaced by its charge conjugate.
+            Unrecognised names are returned as "ChargeConj(name)".
 
         Examples
         --------
@@ -153,6 +194,11 @@ class DaughtersDict(Counter[str]):
         """
         Return the length, i.e. the number of final-state particles.
 
+        Returns
+        -------
+        out: int
+            Total number of final-state particles.
+
         Note
         ----
         This is generally *not* the number of dictionary elements.
@@ -162,6 +208,16 @@ class DaughtersDict(Counter[str]):
     def __add__(self, other: Self) -> Self:  # type: ignore[override]
         """
         Add two final states, particle-type-wise.
+
+        Parameters
+        ----------
+        other: DaughtersDict
+            The final state to add.
+
+        Returns
+        -------
+        out: DaughtersDict
+            New instance with the sum of particle counts of both final states.
 
         Examples
         --------
@@ -176,6 +232,16 @@ class DaughtersDict(Counter[str]):
     def __sub__(self, other: Self) -> Self:  # type: ignore[override]
         """
         Subtract two final states, particle-type-wise.
+
+        Parameters
+        ----------
+        other: DaughtersDict
+            The final state to subtract.
+
+        Returns
+        -------
+        out: DaughtersDict
+            New instance with the particle counts of ``other`` subtracted.
 
         Examples
         --------
@@ -287,6 +353,21 @@ class DecayMode:
         These two keys are mandatory. All others are interpreted as
         model information or metadata, see the constructor signature and doc.
 
+        Parameters
+        ----------
+        decay_mode_dict: dict
+            Decay mode dictionary with the mandatory keys ``'bf'`` and ``'fs'``.
+
+        Returns
+        -------
+        out: DecayMode
+            The decay mode built from the input dictionary.
+
+        Raises
+        ------
+        RuntimeError
+            If the input dictionary is missing the ``'bf'`` or ``'fs'`` key.
+
         Note
         ----
         This class assumes EvtGen particle names, though this assumption is only
@@ -342,6 +423,16 @@ class DecayMode:
             dict(model='', model_params='').
             The user can provide any metadata, see the examples below.
 
+        Returns
+        -------
+        out: DecayMode
+            Decay mode with daughters stored as EvtGen names.
+
+        Raises
+        ------
+        ParticleNotFound
+            If any of the input PDG IDs has no matching EvtGen name.
+
         Note
         ----
         All particle names are internally saved as EvtGen names,
@@ -377,6 +468,12 @@ class DecayMode:
     def describe(self) -> str:
         """
         Make a nice high-density string for all decay-mode properties and info.
+
+        Returns
+        -------
+        out: str
+            Description with the daughters, branching fraction,
+            decay model and model parameters, followed by any extra metadata.
         """
         _daughters = " ".join(self.daughters)
         _model = self.metadata["model"]
@@ -403,6 +500,12 @@ class DecayMode:
         Return the decay mode as a dictionary in the format understood
         by the ``DecayChainViewer`` class.
 
+        Returns
+        -------
+        out: dict
+            Dictionary with keys ``'bf'``, ``'fs'``, ``'model'`` and
+            ``'model_params'``, plus any extra metadata.
+
         Examples
         --------
         >>> dm = DecayMode(0.5, 'K+ K- K- pi- pi0 nu_tau', model='PHSP', study='toy', year=2019)
@@ -426,9 +529,15 @@ class DecayMode:
 
         Parameters
         ----------
-        pdg_name: str, optional, default=False
+        pdg_name: bool, optional, default=False
             Input particle name is the PDG name,
             not the (default) EvtGen name.
+
+        Returns
+        -------
+        out: DecayMode
+            New instance with daughters that are charge-conjugated and the same
+            branching fraction and metadata.
 
         Examples
         --------
@@ -451,6 +560,11 @@ class DecayMode:
     def __len__(self) -> int:
         """
         The "length" of a decay mode is the number of final-state particles.
+
+        Returns
+        -------
+        out: int
+            Number of final-state particles.
         """
         return len(self.daughters)
 
@@ -467,6 +581,20 @@ def _has_no_subdecay(ds: list[Any]) -> bool:
     Internal function to check whether the input list
     is an end-of-chain final state or a final state with further sub-decays.
 
+    Parameters
+    ----------
+    ds: list[Any]
+        Final-state list, whose elements are particle names or sub-decay dicts.
+
+    Returns
+    -------
+    out: bool
+        True if every element is a particle name (``str``), i.e. an
+        end-of-chain final state.
+        False if any element is a sub-decay.
+
+    Examples
+    --------
     Example end-of-chain final state:
         ['pi+', 'pi-']
 
@@ -496,6 +624,12 @@ def _build_decay_modes(
         built from the input decay chain dictionary.
     dc_dict: dict
         The input decay chain dictionary.
+
+    Raises
+    ------
+    RuntimeError
+        If a decay mode has no ``'fs'`` key, or if a particle is given
+        more than one different decay mode.
 
     Note
     ----
@@ -594,6 +728,21 @@ T = typing.TypeVar("T")
 
 def _get_modes(decay_chain: dict[str, T]) -> T:
     # The list of decay modes is the first (and only) value of the dict
+    """
+    Decay modes of the single mother particle in a decay chain dict.
+
+    Parameters
+    ----------
+    decay_chain: dict
+        A dict with a single key, the mother particle, whose value
+        is its list of decay modes.
+
+    Returns
+    -------
+    out: T
+        The single value of the dict, typically the list of decay modes
+        of the mother particle.
+    """
     assert len(decay_chain.values()) == 1
     modes = list(decay_chain.values())
     return modes[0]
@@ -601,6 +750,24 @@ def _get_modes(decay_chain: dict[str, T]) -> T:
 
 def _get_fs(decay: DecayModeDict) -> list[Any]:
     """
+    Final-state list of a decay mode dict.
+
+    Parameters
+    ----------
+    decay: dict
+        A decay mode dictionary with an ``'fs'`` key.
+
+    Returns
+    -------
+    out: list
+        The final-state list (``'fs'`` entry), whose elements are particle
+        names or sub-decay dicts.
+
+    Raises
+    ------
+    TypeError
+        If the ``'fs'`` entry is not a list.
+
     Note
     ----
     Helper function not meant to be used directly!
@@ -640,6 +807,11 @@ def _expand_decay_modes(
     aliases: dict[str, str], optional, default=None
         Mapping of names to replace. Useful when dealing with DecFiles
         that have 'Alias' statements.
+
+    Returns
+    -------
+    out: list[str]
+        The decay descriptors, one per expanded decay mode.
 
     Examples
     --------
@@ -792,8 +964,13 @@ class DecayChain:
         ----------
         mother: str
             Input mother particle of the top-level decay.
-        decays: iterable
+        decays: dict[str, DecayMode]
             The decay modes.
+
+        Raises
+        ------
+        RuntimeError
+            If decays does not contain the mother particle.
 
         Examples
         --------
@@ -814,6 +991,23 @@ class DecayChain:
         Constructor from a decay chain represented as a dictionary.
         The format is the same as that returned by
         ``DecFileParser.build_decay_chains(...)``.
+
+        Parameters
+        ----------
+        decay_chain_dict: dict
+            Decay chain dictionary with the mother particle as its single key,
+            in the format returned by ``DecFileParser.build_decay_chains(...)``.
+
+        Returns
+        -------
+        out: DecayChain
+            The decay chain built from the input dictionary.
+
+        Raises
+        ------
+        RuntimeError
+            If the input dictionary does not have exactly one key (the mother
+            particle), or if it is not a single decay chain.
         """
         try:
             assert len(decay_chain_dict.keys()) == 1
@@ -829,6 +1023,11 @@ class DecayChain:
     def top_level_decay(self) -> DecayMode:
         """
         Return the top-level decay as a ``DecayMode`` instance.
+
+        Returns
+        -------
+        out: DecayMode
+            The decay mode of the mother particle.
         """
         return self.decays[self.mother]
 
@@ -861,6 +1060,11 @@ class DecayChain:
         """
         One-line string representation of the entire decay chain.
         Sub-decays are enclosed in round parentheses.
+
+        Returns
+        -------
+        out: str
+            One-line decay descriptor.
 
         Examples
         --------
@@ -966,6 +1170,11 @@ class DecayChain:
         Return the decay chain as a dictionary representation.
         The format is the same as ``DecFileParser.build_decay_chains(...)``.
 
+        Returns
+        -------
+        out: dict
+            Nested dictionary with the mother particle as its single key.
+
         Examples
         --------
         >>> dm1 = DecayMode(0.028, 'K_S0 pi+ pi-')
@@ -1015,6 +1224,11 @@ class DecayChain:
             considering them as stable. The mother particle is always
             decayed (flattening its own decay is the whole point), so it
             is ignored even if present in this collection.
+
+        Returns
+        -------
+        out: DecayChain
+            The flattened decay chain.
 
         Note
         ----
