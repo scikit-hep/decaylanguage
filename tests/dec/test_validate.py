@@ -395,6 +395,8 @@ def test_unclassified_input_error_preserves_generic_diagnostic(message: str) -> 
     if message:
         expected += ": extension-specific input error"
     assert diagnostic.message == expected
+
+
 def test_unknown_model_diagnostic(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
