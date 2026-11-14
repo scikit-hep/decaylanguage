@@ -75,10 +75,6 @@ class DecayNotFound(RuntimeError):
 class ParticlePropertyError(RuntimeError):
     """A particle's default properties cannot be obtained from the particle table."""
 
-
-class DecayModelError(ValueError):
-    """Invalid or ambiguous decay model input, with its source location."""
-
     def __init__(
         self,
         message: str,
@@ -87,6 +83,15 @@ class DecayModelError(ValueError):
     ) -> None:
         super().__init__(message)
         self.particle_name = particle_name
+
+
+class DecayModelError(ValueError):
+    """Invalid or ambiguous decay model input, with its source location."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
         model_name: str | None = None,
         line: int | None = None,
         column: int | None = None,
