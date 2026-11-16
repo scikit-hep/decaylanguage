@@ -445,6 +445,9 @@ We hereby acknowledge the contributors that made this project possible ([emoji k
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jpwgnr"><img src="https://avatars.githubusercontent.com/u/41512963?v=4&size=100" width="100px" height="100px" alt="Jan Wagner"/><br /><sub><b>Jan Wagner</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=jpwgnr" title="Code">💻</a> <a href="https://github.com/scikit-hep/decaylanguage/commits?author=jpwgnr" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/dlanci"><img src="https://avatars.githubusercontent.com/u/33418551?v=4&size=100" width="100px" height="100px" alt="dlanci"/><br /><sub><b>dlanci</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=dlanci" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/shreyasethu"><img src="https://avatars.githubusercontent.com/u/121268262?v=4&size=100" width="100px" height="100px" alt="shreyasethu"/><br /><sub><b>shreyasethu</b></sub></a><br /><a href="https://github.com/scikit-hep/decaylanguage/commits?author=shreyasethu" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
