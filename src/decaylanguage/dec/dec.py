@@ -73,7 +73,7 @@ class DecayNotFound(RuntimeError):
 
 
 class ParticlePropertyError(RuntimeError):
-    """A particle's default properties cannot be obtained from the particle table."""
+    """Particle's default property(ies) cannot be obtained from the particle table."""
 
     def __init__(
         self,
