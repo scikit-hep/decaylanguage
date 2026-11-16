@@ -2,6 +2,8 @@
 
 ## Upcoming release
 
+* API change:
+  - Renamed the `pdg_name` argument to `is_pdg_name` in `DaughtersDict.charge_conjugate`, `DecayMode.charge_conjugate`, `charge_conjugate_name`, `DecFileParser.list_decay_modes` and `DecFileParser.print_decay_modes`.
 * Dependencies:
   - Dropped support for Python 3.10.
 * Documentation:

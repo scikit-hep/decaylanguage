@@ -167,13 +167,13 @@ class DaughtersDict(Counter[str]):
         """
         return sorted(self.elements())
 
-    def charge_conjugate(self, pdg_name: bool = False) -> Self:
+    def charge_conjugate(self, is_pdg_name: bool = False) -> Self:
         """
         Return the charge-conjugate final state.
 
         Parameters
         ----------
-        pdg_name: bool, optional, default=False
+        is_pdg_name: bool, optional, default=False
             Input particle name is the PDG name,
             not the (default) EvtGen name.
 
@@ -197,11 +197,11 @@ class DaughtersDict(Counter[str]):
         >>> # 'K(S)0' unrecognised in charge conjugation unless specified that these are PDG names
         >>> dd.charge_conjugate()
         <DaughtersDict: ['ChargeConj(K(S)0)', 'pi-']>
-        >>> dd.charge_conjugate(pdg_name=True)
+        >>> dd.charge_conjugate(is_pdg_name=True)
         <DaughtersDict: ['K(S)0', 'pi-']>
         """
         return self.__class__(
-            {charge_conjugate_name(p, pdg_name=pdg_name): n for p, n in self.items()}
+            {charge_conjugate_name(p, is_pdg_name=is_pdg_name): n for p, n in self.items()}
         )
 
     def __repr__(self) -> str:
@@ -543,13 +543,13 @@ class DecayMode:
             d["model_params"] = ""
         return d  # type: ignore[return-value]
 
-    def charge_conjugate(self, pdg_name: bool = False) -> Self:
+    def charge_conjugate(self, is_pdg_name: bool = False) -> Self:
         """
         Return the charge-conjugate decay mode.
 
         Parameters
         ----------
-        pdg_name: bool, optional, default=False
+        is_pdg_name: bool, optional, default=False
             Input particle name is the PDG name,
             not the (default) EvtGen name.
 
@@ -570,11 +570,11 @@ class DecayMode:
         <DecayMode: daughters=K_S0 pi-, BF=1.0>
         >>>
         >>> dm = DecayMode(1.0, 'K(S)0 pi+')  # PDG names!
-        >>> dm.charge_conjugate(pdg_name=True)
+        >>> dm.charge_conjugate(is_pdg_name=True)
         <DecayMode: daughters=K(S)0 pi-, BF=1.0>
         """
         return self.__class__(
-            self.bf, self.daughters.charge_conjugate(pdg_name), **self.metadata
+            self.bf, self.daughters.charge_conjugate(is_pdg_name), **self.metadata
         )
 
     def __len__(self) -> int:

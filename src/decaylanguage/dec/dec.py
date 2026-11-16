@@ -1032,7 +1032,7 @@ Continuing but be warned of possible side effects ..."""
                 f"Decays of particle '{mother}' not found in .dec file!"
             ) from None
 
-    def list_decay_modes(self, mother: str, pdg_name: bool = False) -> list[list[str]]:
+    def list_decay_modes(self, mother: str, is_pdg_name: bool = False) -> list[list[str]]:
         """
         Return a list of decay modes for the given mother particle.
 
@@ -1040,7 +1040,7 @@ Continuing but be warned of possible side effects ..."""
         ----------
         mother: str
             Input mother particle name.
-        pdg_name: bool, optional, default=False
+        is_pdg_name: bool, optional, default=False
             Input mother particle name is the PDG name,
             not the (default) EvtGen name.
 
@@ -1052,7 +1052,7 @@ Continuing but be warned of possible side effects ..."""
         >>> parser.list_decay_mother_names()    # doctest: +SKIP
         >>> parser.list_decay_modes('pi0')    # doctest: +SKIP
         """
-        if pdg_name:
+        if is_pdg_name:
             mother = PDG2EvtGenNameMap[mother]
 
         return [
@@ -1090,7 +1090,7 @@ Continuing but be warned of possible side effects ..."""
     def print_decay_modes(
         self,
         mother: str,
-        pdg_name: bool = False,
+        is_pdg_name: bool = False,
         print_model: bool = True,
         display_photos_keyword: bool = True,
         ascending: bool = False,
@@ -1110,7 +1110,7 @@ Continuing but be warned of possible side effects ..."""
         ----------
         mother: str
             Input mother particle name.
-        pdg_name: bool, optional, default=False
+        is_pdg_name: bool, optional, default=False
             Input mother particle name is the PDG name,
             not the (default) EvtGen name.
         print_model: bool, optional, default=True
@@ -1178,7 +1178,7 @@ Continuing but be warned of possible side effects ..."""
                     f"A branching fraction must be in the range ]0, 1]! You set scale = {scale}."
                 )
 
-        if pdg_name:
+        if is_pdg_name:
             mother = PDG2EvtGenNameMap[mother]
 
         dms = self._find_decay_modes(mother)

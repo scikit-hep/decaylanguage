@@ -867,7 +867,7 @@ def test_list_decay_modes() -> None:
         ["D-", "pi0"],
         ["D-", "gamma"],
     ]
-    assert p.list_decay_modes("D*(2010)-", pdg_name=True) == [
+    assert p.list_decay_modes("D*(2010)-", is_pdg_name=True) == [
         ["anti-D0", "pi-"],
         ["D-", "pi0"],
         ["D-", "gamma"],
@@ -898,7 +898,7 @@ def test_print_decay_modes_basics() -> None:
     with pytest.raises(DecayNotFound):
         p.print_decay_modes("D*(2010)-")
 
-    p.print_decay_modes("D*(2010)-", pdg_name=True)
+    p.print_decay_modes("D*(2010)-", is_pdg_name=True)
 
 
 def list_complement(l_m: list[str], l_s: list[str]) -> list[str]:

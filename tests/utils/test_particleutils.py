@@ -38,7 +38,7 @@ def test_charge_conjugate_name_defaults(p_name, ccp_name):
 
 @pytest.mark.parametrize(("p_name", "ccp_name"), matches_pdg)
 def test_charge_conjugate_name_with_pdg_name(p_name, ccp_name):
-    assert charge_conjugate_name(p_name, pdg_name=True) == ccp_name
+    assert charge_conjugate_name(p_name, is_pdg_name=True) == ccp_name
 
 
 def test_particle_from_string_name():
