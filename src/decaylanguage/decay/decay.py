@@ -21,6 +21,25 @@ from ..utils import DescriptorFormat, charge_conjugate_name
 
 
 class DecayModeDict(TypedDict):
+    """
+    Dictionary representation of a single decay mode.
+
+    This is the format used for each decay mode in the output of
+    ``DecFileParser.build_decay_chains(...)`` and ``DecayChain.to_dict()``.
+
+    Attributes
+    ----------
+    bf: float
+        Branching fraction of the decay mode.
+    fs: list
+        Final-state particles, given as particle names or as
+        sub-decay dicts for particles that decay further.
+    model: str
+        Name of the decay model, e.g. ``'PHSP'``.
+    model_params: str or list
+        Parameters of the decay model, or ``''`` if there are none.
+    """
+
     bf: float
     fs: Sequence[str | DecayChainDict]
     model: str
@@ -111,15 +130,16 @@ class DaughtersDict(Counter[str]):
         ------
         NotImplementedError
             Always. Use ``DaughtersDict(iterable)`` instead.
+
+        Note
+        ----
+        As for ``Counter.fromkeys()``, there is no equivalent method, since the
+        meaning would be ambiguous, such as ``DaughtersDict.fromkeys(['K+', 'K+'], v=2)``.
+        Setting counts to zero is not needed, as missing particles already count as zero.
+        To count each particle once, use ``DaughtersDict(set(iterable))``.
+        For anything else, build a dictionary first and pass it to ``DaughtersDict``.
         """
-        # ==> Comment copied from Counter.fromkeys():
-        # There is no equivalent method for counters because the semantics
-        # would be ambiguous in cases such as Counter.fromkeys('aaabbc', v=2).
-        # Initializing counters to zero values isn't necessary because zero
-        # is already the default value for counter lookups.  Initializing
-        # to one is easily accomplished with Counter(set(iterable)).  For
-        # more exotic cases, create a dictionary first using a dictionary
-        # comprehension or dict.fromkeys().
+
         raise NotImplementedError(
             "DaughtersDict.fromkeys() is undefined, just as Counter.fromkeys(). Use DaughtersDict(iterable) instead."
         )
@@ -355,7 +375,7 @@ class DecayMode:
 
         Parameters
         ----------
-        decay_mode_dict: dict
+        decay_mode_dict: DecayModeDict
             Decay mode dictionary with the mandatory keys ``'bf'`` and ``'fs'``.
 
         Returns
@@ -593,6 +613,10 @@ def _has_no_subdecay(ds: list[Any]) -> bool:
         end-of-chain final state.
         False if any element is a sub-decay.
 
+    Note
+    ----
+    Helper function not meant to be used directly!
+
     Examples
     --------
     Example end-of-chain final state:
@@ -633,6 +657,7 @@ def _build_decay_modes(
 
     Note
     ----
+    Helper function not meant to be used directly!
     Only single chains are supported, meaning every decaying particle
     can only define a single decay mode.
 
@@ -727,9 +752,9 @@ T = typing.TypeVar("T")
 
 
 def _get_modes(decay_chain: dict[str, T]) -> T:
-    # The list of decay modes is the first (and only) value of the dict
     """
     Decay modes of the single mother particle in a decay chain dict.
+    The list of decay modes is the first (and only) value of the dict
 
     Parameters
     ----------
@@ -742,6 +767,10 @@ def _get_modes(decay_chain: dict[str, T]) -> T:
     out: T
         The single value of the dict, typically the list of decay modes
         of the mother particle.
+
+    Note
+    ----
+    Helper function not meant to be used directly!
     """
     assert len(decay_chain.values()) == 1
     modes = list(decay_chain.values())
@@ -754,7 +783,7 @@ def _get_fs(decay: DecayModeDict) -> list[Any]:
 
     Parameters
     ----------
-    decay: dict
+    decay: DecayModeDict
         A decay mode dictionary with an ``'fs'`` key.
 
     Returns
@@ -970,7 +999,7 @@ class DecayChain:
         Raises
         ------
         RuntimeError
-            If decays does not contain the mother particle.
+             If the decays dict does not contain the mother particle as a key.
 
         Examples
         --------
@@ -994,7 +1023,7 @@ class DecayChain:
 
         Parameters
         ----------
-        decay_chain_dict: dict
+        decay_chain_dict: DecayChainDict
             Decay chain dictionary with the mother particle as its single key,
             in the format returned by ``DecFileParser.build_decay_chains(...)``.
 
