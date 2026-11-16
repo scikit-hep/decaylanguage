@@ -2,6 +2,8 @@
 
 ## Upcoming release
 
+* API change:
+  - Renamed the `pdg_name` argument to `is_pdg_name` in `DaughtersDict.charge_conjugate`, `DecayMode.charge_conjugate`, `charge_conjugate_name`, `DecFileParser.list_decay_modes` and `DecFileParser.print_decay_modes`.
 * Decay-file parsing and validation:
   - Added Belle-II/BES-III specific D decay models.
   - Preserve particle-property lookup errors and clarify validator syntax diagnostics.
@@ -9,6 +11,8 @@
   - Enhanced `DescriptorFormat` context manager to deal with nested formatters.
 * Dependencies:
   - Dropped support for Python 3.10.
+* Documentation:
+  - Improved docstrings of the `decay` module (Parameters, Returns, Raises).
 
 ## Version 1.1.3 (2026-10-30)
 

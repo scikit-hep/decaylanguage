@@ -83,7 +83,7 @@ def test_DaughtersDict_charge_conjugate_pdg_names():
     dd = DaughtersDict({"K(S)0": 1, "pi+": 1})  # PDG names!
     assert dd == {"K(S)0": 1, "pi+": 1}  # PDG names kept as-is
     assert dd.charge_conjugate() == {"ChargeConj(K(S)0)": 1, "pi-": 1}
-    assert dd.charge_conjugate(pdg_name=True) == {"K(S)0": 1, "pi-": 1}
+    assert dd.charge_conjugate(is_pdg_name=True) == {"K(S)0": 1, "pi-": 1}
 
 
 def test_DecayMode_constructor_default():
@@ -239,7 +239,7 @@ def test_DecayMode_charge_conjugate():
     assert "Decay model: TAUHADNU [-0.108, 0.775, 0.149, 1.364, 0.4]" in dm.describe()
 
     dd = DaughtersDict("pi- pi0 nu(tau)")
-    assert dd.charge_conjugate(pdg_name=True) == DaughtersDict("pi+ pi0 nu(tau)~")
+    assert dd.charge_conjugate(is_pdg_name=True) == DaughtersDict("pi+ pi0 nu(tau)~")
 
 
 def test_DecayMode_string_repr():
