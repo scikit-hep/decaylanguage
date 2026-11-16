@@ -1237,7 +1237,9 @@ Continuing but be warned of possible side effects ..."""
                 f"Decays of particle '{mother}' not found in .dec file!"
             ) from None
 
-    def list_decay_modes(self, mother: str, is_pdg_name: bool = False) -> list[list[str]]:
+    def list_decay_modes(
+        self, mother: str, is_pdg_name: bool = False
+    ) -> list[list[str]]:
         """
         Return a list of decay modes for the given mother particle.
 

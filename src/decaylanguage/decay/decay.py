@@ -201,7 +201,10 @@ class DaughtersDict(Counter[str]):
         <DaughtersDict: ['K(S)0', 'pi-']>
         """
         return self.__class__(
-            {charge_conjugate_name(p, is_pdg_name=is_pdg_name): n for p, n in self.items()}
+            {
+                charge_conjugate_name(p, is_pdg_name=is_pdg_name): n
+                for p, n in self.items()
+            }
         )
 
     def __repr__(self) -> str:
