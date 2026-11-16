@@ -754,7 +754,7 @@ T = typing.TypeVar("T")
 def _get_modes(decay_chain: dict[str, T]) -> T:
     """
     Decay modes of the single mother particle in a decay chain dict.
-    The list of decay modes is the first (and only) value of the dict
+    The list of decay modes is the first (and only) value of the dict.
 
     Parameters
     ----------
@@ -827,7 +827,7 @@ def _expand_decay_modes(
 
     Parameters
     ----------
-    decay_chain: dict
+    decay_chain: DecayChainDict
         A dict representing decay chains, such as returned by DecayChain.to_dict
         or DecFileParser.build_decay_chains.
     top: bool, optional, default=True
@@ -999,7 +999,7 @@ class DecayChain:
         Raises
         ------
         RuntimeError
-             If the decays dict does not contain the mother particle as a key.
+            If the decays dict does not contain the mother particle as a key.
 
         Examples
         --------
