@@ -76,7 +76,7 @@ test = [
     "decaylanguage[modeling]",
     "pytest-benchmark>=5.2.0",
     "pytest-cov",
-    "pytest>=7,<9.2",  # pytest-benchmark#321
+    "pytest>=7",
 ]
 
 [project.urls]

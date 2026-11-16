@@ -94,3 +94,17 @@ def test_set_descriptor_pattern(
     with DescriptorFormat(decay_pattern, sub_decay_pattern):
         descriptor = dc.to_string()
         assert descriptor == expected
+
+
+def test_descriptor_format_restores_config_at_enter():
+    dc = DecayChain("D*+", {"D*+": dm1, "D0": dm2, "K_S0": dm3, "pi0": dm4})
+    outer = DescriptorFormat("{mother} --> {daughters}", "[{mother} --> {daughters}]")
+    inner = DescriptorFormat("{mother} => {daughters}", "{mother} (=> {daughters})")
+    with outer:
+        with inner:
+            pass
+        assert (
+            dc.to_string()
+            == "D*+ --> [D0 --> [K_S0 --> pi+ pi-] [pi0 --> gamma gamma]] pi+"
+        )
+    assert dc.to_string() == "D*+ -> (D0 -> (K_S0 -> pi+ pi-) (pi0 -> gamma gamma)) pi+"

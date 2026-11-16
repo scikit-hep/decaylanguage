@@ -30,6 +30,11 @@ Basic usage
    # Get branching fractions
    parser.print_decay_modes("D*+")
 
+If the particle table cannot provide a default width,
+``parser.get_particle_property_definitions()`` raises
+:class:`~decaylanguage.dec.dec.ParticlePropertyError`. Supply an explicit width
+in GeV, for example ``Particle MyParticle 1.0 0.25``.
+
 Building decay chains
 ---------------------
 
@@ -65,6 +70,13 @@ Experiment-specific and decay models not yet available in the package can be ena
 .. code-block:: bash
 
    decaylanguage-validate --additional-decay-model=MYMODEL my-decay-file.dec
+
+Unknown or ambiguous decay models raise
+:class:`~decaylanguage.dec.dec.DecayModelError` with source locations; the
+validator reports these as ``DLP001``. Register custom models with
+``parser.load_additional_decay_models("MYMODEL")`` before ``parse()`` to resolve
+ambiguities. All ``ModelAlias`` definitions are validated, including unused
+definitions and cyclic references.
 
 The validator reports stable diagnostic codes. Exact codes such as ``DLW004``
 or code families such as ``DLW`` can be disabled, which lets experiments choose
@@ -123,7 +135,7 @@ Parser errors include the source location and a pointer:
 .. code-block:: text
 
    DecayLanguage: 1 diagnostic(s) in 1 file(s)
-   tests/data/test_issue90.dec:13:68: DLP001 parse-error: UnexpectedToken: Unexpected token Token('SIGNED_NUMBER', '2') at line 13, column 68.
+   tests/data/test_issue90.dec:13:68: DLP001 parse-error: UnexpectedToken: Unexpected token '2'; expected a newline
           13: 0.000044342 Upsilon pi0     pi0                             VVPIPI;2 #[Reconstructed PDG2011]
                                                                                  ^
    summary: DLP001=1
