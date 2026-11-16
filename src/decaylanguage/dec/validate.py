@@ -232,8 +232,8 @@ def _diagnostic_from_exception(path: Path, exc: Exception) -> Diagnostic:
             # location attributes on the exception.
             source_lines = path.read_text(encoding="utf_8").splitlines()
             if is_eof:
-                # The parser appends a separator newline to each file. Point
-                # EOF diagnostics at the original input, including empty files.
+                # The parser appends a separator newline to each file.
+                # Point EOF diagnostics at the original input, including empty files.
                 line = max(len(source_lines), 1)
                 source_line = source_lines[-1] if source_lines else ""
                 column = len(source_line) + 1
