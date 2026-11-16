@@ -97,9 +97,10 @@ class DescriptorFormat:
             "decay_pattern": decay_pattern,
             "sub_decay_pattern": sub_decay_pattern,
         }
-        self.old_config = copy(DescriptorFormat.config)
+        self.old_config: dict[str, str] = {}
 
     def __enter__(self) -> None:
+        self.old_config = copy(DescriptorFormat.config)
         self.set_config(**self.new_config)
 
     def __exit__(self, *args: object) -> None:

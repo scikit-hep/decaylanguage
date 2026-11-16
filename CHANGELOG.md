@@ -5,6 +5,7 @@
 * Decay-file parsing and validation:
   - Added Belle-II/BES-III specific D decay models.
   - Report unknown or ambiguous decay models with source locations and validate ModelAlias definitions.
+  - Enhanced `DescriptorFormat` context manager to deal with nested formatters.
 * Dependencies:
   - Dropped support for Python 3.10.
 
