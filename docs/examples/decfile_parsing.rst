@@ -30,6 +30,11 @@ Basic usage
    # Get branching fractions
    parser.print_decay_modes("D*+")
 
+If the particle table cannot provide a default width,
+``parser.get_particle_property_definitions()`` raises
+:class:`~decaylanguage.dec.dec.ParticlePropertyError`. Supply an explicit width
+in GeV, for example ``Particle MyParticle 1.0 0.25``.
+
 Building decay chains
 ---------------------
 
@@ -130,7 +135,7 @@ Parser errors include the source location and a pointer:
 .. code-block:: text
 
    DecayLanguage: 1 diagnostic(s) in 1 file(s)
-   tests/data/test_issue90.dec:13:68: DLP001 parse-error: UnexpectedToken: Unexpected token Token('SIGNED_NUMBER', '2') at line 13, column 68.
+   tests/data/test_issue90.dec:13:68: DLP001 parse-error: UnexpectedToken: Unexpected token '2'; expected a newline
           13: 0.000044342 Upsilon pi0     pi0                             VVPIPI;2 #[Reconstructed PDG2011]
                                                                                  ^
    summary: DLP001=1
