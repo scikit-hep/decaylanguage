@@ -1201,7 +1201,7 @@ class DecayChain:
 
         Returns
         -------
-        out: dict
+        out: DecayChainDict
             Nested dictionary with the mother particle as its single key.
 
         Examples
