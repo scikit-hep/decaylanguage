@@ -19,6 +19,7 @@ from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
 from particle.exceptions import MatchingIDNotFound
 
+from .. import data
 from ..utils import DescriptorFormat, charge_conjugate_name
 
 
