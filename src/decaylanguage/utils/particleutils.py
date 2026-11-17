@@ -23,7 +23,7 @@ cacher = lru_cache(maxsize=None)
 
 
 @cacher
-def charge_conjugate_name(name: str, pdg_name: bool = False) -> str:
+def charge_conjugate_name(name: str, is_pdg_name: bool = False) -> str:
     """
     Return the charge-conjugate particle name matching the given name.
     If no matching is found, return "ChargeConj(pname)".
@@ -43,7 +43,7 @@ def charge_conjugate_name(name: str, pdg_name: bool = False) -> str:
     ----------
     name: str
         Input particle name.
-    pdg_name: str, optional, default=False
+    is_pdg_name: bool, optional, default=False
         Input particle name is the PDG name,
         not the (default) EvtGen name.
 
@@ -51,9 +51,9 @@ def charge_conjugate_name(name: str, pdg_name: bool = False) -> str:
     -------
     out: str
         Either the EvtGen or PDG charge-conjugate particle name
-        depending on the value of parameter ``pdg_name``.
+        depending on the value of parameter ``is_pdg_name``.
     """
-    if pdg_name:
+    if is_pdg_name:
         try:
             ccname = charge_conjugate_name(PDG2EvtGenNameMap[name])
             # Convert the EvtGen name back to a PDG name, to match input type
@@ -69,6 +69,26 @@ def charge_conjugate_name(name: str, pdg_name: bool = False) -> str:
             return EvtGenName2PDGIDBiMap[-EvtGenName2PDGIDBiMap[name]]
         except Exception:  # noqa: BLE001
             return f"ChargeConj({name})"
+
+
+@cacher
+def evtgen_name_is_particle(name: str) -> bool:
+    """
+    Check if an EvtGen name is known to the PDG.
+
+    Do not use from Particle.from_evtgen_name(name) because the particle
+    may not be known experimentally, though the EvtGen name - PDG ID match
+    is sufficient to check that name refers to an actually particle name.
+
+    Parameters
+    ----------
+    name: str
+        Input particle EvtGen name.
+    """
+    try:
+        return EvtGenName2PDGIDBiMap[name] is not None
+    except MatchingIDNotFound:
+        return False
 
 
 def particle_from_string_name(name: str) -> Particle:

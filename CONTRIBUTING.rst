@@ -80,4 +80,4 @@ Tips
 
 To run a subset of tests::
 
-    nox -s tests-3.9 -- -k test_myfeature
+    nox -s tests-3.11 -- -k test_myfeature

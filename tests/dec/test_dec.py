@@ -6,20 +6,36 @@
 from __future__ import annotations
 
 import io
+import pickle
 import sys
 from pathlib import Path
 
 import pytest
-from lark import Token, Tree
+from lark import Token, Tree, UnexpectedToken
+from lark.exceptions import VisitError
 
 from decaylanguage.dec.dec import (
+    AmbiguousDecayModelError,
     ChargeConjugateReplacement,
+    DecayAndCDecayWarning,
     DecayModelAliasReplacement,
+    DecayModelError,
     DecayModelParamValueReplacement,
     DecayNotFound,
     DecFileNotParsed,
     DecFileParser,
+    DecFileWarning,
     DuplicateCDecayWarning,
+    DuplicateDecayWarning,
+    InvalidModelAliasError,
+    MisconfiguredAliasWarning,
+    MisconfiguredChargeConjWarning,
+    MissingCDecaySourceWarning,
+    MissingCopyDecaySourceWarning,
+    ParticlePropertyError,
+    SelfChargeConjWarning,
+    SelfConjugateCDecayWarning,
+    UnknownDecayModelError,
     get_branching_fraction,
     get_decay_mother_name,
     get_final_state_particle_names,
@@ -32,27 +48,62 @@ from decaylanguage.dec.enums import PhotosEnum
 DIR = Path(__file__).parent.resolve()
 
 
-def test_default_constructor():
+def test_default_constructor() -> None:
     p = DecFileParser()
     assert p is not None
 
 
-def test_constructor_1_file():
+@pytest.mark.parametrize("alias", [False, True])
+def test_unknown_particle_default_width_error(alias: bool) -> None:
+    content = "Alias MyParticle UNKNOWN_PARTICLE\n" if alias else ""
+    name = "MyParticle" if alias else "UNKNOWN_PARTICLE"
+    parser = DecFileParser.from_string(content + f"Particle {name} 1.0\nEnd\n")
+    if alias:
+        with pytest.warns(MisconfiguredAliasWarning, match="MyParticle"):
+            parser.parse()
+    else:
+        parser.parse()
+    with pytest.raises(
+        ParticlePropertyError, match="unknown to the particle table"
+    ) as caught:
+        parser.get_particle_property_definitions()
+    assert caught.value.particle_name == name
+    assert "UNKNOWN_PARTICLE" in str(caught.value)
+    assert "explicit width" in str(caught.value)
+    restored = pickle.loads(pickle.dumps(caught.value))
+    assert str(restored) == str(caught.value)
+    assert restored.__dict__ == caught.value.__dict__
+
+
+def test_particle_with_unavailable_default_width() -> None:
+    parser = DecFileParser.from_string("Particle d 1.0\nEnd\n")
+    parser.parse()
+    with pytest.raises(ParticlePropertyError, match="has no known width"):
+        parser.get_particle_property_definitions()
+
+
+@pytest.mark.parametrize("name", ["UNKNOWN_PARTICLE", "d"])
+def test_explicit_particle_width_does_not_require_table_properties(name: str) -> None:
+    parser = DecFileParser.from_string(f"Particle {name} 1.0 0.25\nEnd\n")
+    parser.parse()
+    assert parser.get_particle_property_definitions() == {
+        name: {"mass": 1.0, "width": 0.25}
+    }
+
+
+def test_constructor_1_file() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
 
     assert p is not None
     assert len(p._dec_file_names) == 1
 
 
-def test_constructor_multiple_files():
+def test_constructor_multiple_files() -> None:
     p = DecFileParser(
         DIR / "../data/test_Xicc2XicPiPi.dec", DIR / "../data/test_Bc2BsPi_Bs2KK.dec"
     )
 
-    # The following parse() command issues the warning
-    #   UserWarning: Corresponding 'Decay' statement for 'CDecay' statement(s) of following particle(s) not found: anti-Xi_cc-sig.
-    #   Skipping creation of these charge-conjugate decay trees.
-    with pytest.warns(UserWarning, match="anti-Xi_cc-sig") as record:
+    with pytest.warns(MissingCDecaySourceWarning, match="anti-Xi_cc-sig") as record:
         p.parse()
     assert len(record) == 1
 
@@ -60,7 +111,7 @@ def test_constructor_multiple_files():
     assert p.number_of_decays == 7
 
 
-def test_from_string():
+def test_from_string() -> None:
     s = """Decay pi0
 0.988228297   gamma   gamma                   PHSP;
 0.011738247   e+      e-      gamma           PI0_DALITZ;
@@ -75,35 +126,34 @@ Enddecay
     assert p.number_of_decays == 1
 
 
-def test_double_parsing():
+def test_double_parsing() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
     # The second call to parse() issues the warning
-    #   UserWarning: Input file being re-parsed ...
-    #     warnings.warn("Input file being re-parsed ...")
-    with pytest.warns(UserWarning, match="Input file being re-parsed ...") as record:
+    # DecFileWarning: Input file being re-parsed ...
+    with pytest.warns(DecFileWarning, match="Input file being re-parsed ...") as record:
         p.parse()
     assert len(record) == 1
 
 
-def test_unknown_decfile():
+def test_unknown_decfile() -> None:
     with pytest.raises(FileNotFoundError):
         DecFileParser("non-existent.dec")
 
 
-def test_minimalistic_decfile():
+def test_minimalistic_decfile() -> None:
     p = DecFileParser(DIR / "../data/minimalistic.dec")
     p.parse()
     assert p.number_of_decays == 0
 
 
-def test_non_parsed_decfile():
+def test_non_parsed_decfile() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     with pytest.raises(DecFileNotParsed):
         p.list_decay_mother_names()
 
 
-def test_decfile_defining_stable_particle():
+def test_decfile_defining_stable_particle() -> None:
     p = DecFileParser(DIR / "../data/test_stable-particle.dec")
     p.parse()
 
@@ -113,25 +163,25 @@ def test_decfile_defining_stable_particle():
     assert p.list_decay_modes("K_S0") == []
 
 
-def test_non_existent_decay():
+def test_non_existent_decay() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
     with pytest.raises(DecayNotFound):
         p.list_decay_modes("XYZ")
 
 
-def test_no_grammar_loading_by_default():
+def test_no_grammar_loading_by_default() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     assert not p.grammar_loaded
 
 
-def test_default_grammar_loading():
+def test_default_grammar_loading() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     assert p.grammar() is not None
     assert p.grammar_loaded
 
 
-def test_string_representation():
+def test_string_representation() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
 
     assert "n_decays" not in p.__str__()
@@ -140,7 +190,7 @@ def test_string_representation():
     assert "n_decays=5" in p.__str__()
 
 
-def test_copydecay_statement_parsing():
+def test_copydecay_statement_parsing() -> None:
     p = DecFileParser(DIR / "../data/test_CopyDecay_RemoveDecay.dec")
     p.parse()
 
@@ -149,21 +199,68 @@ def test_copydecay_statement_parsing():
     assert p.list_decay_modes("phi_copy") == p.list_decay_modes("phi")
 
 
-def test_definitions_parsing():
+def test_copydecay_statement_with_missing_decay_statement() -> None:
+    s = """Alias phi_copy phi
+CopyDecay phi_copy phi
+End"""
+
+    dfp = DecFileParser.from_string(s)
+
+    with pytest.warns(MissingCopyDecaySourceWarning):
+        dfp.parse()
+
+
+def test_definitions_parsing() -> None:
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
     assert len(p.dict_definitions()) == 24
 
 
-def test_aliases_parsing():
+def test_aliases_parsing() -> None:
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
     assert len(p.dict_aliases()) == 136
 
 
-def test_model_aliases_parsing():
+def test_alias_to_itself() -> None:
+    s = """Alias   B0sig   B0sig
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(MisconfiguredAliasWarning):
+        p.parse()
+
+
+def test_alias_not_aliased_to_standard_particle_name() -> None:
+    s = """Alias   B0sig   B0Alias
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(MisconfiguredAliasWarning):
+        p.parse()
+
+
+def test_alias_name_is_standard_particle_name() -> None:
+    s = """Alias   B0   B0
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(MisconfiguredAliasWarning):
+        p.parse()
+
+
+def test_alias_statement_swapped() -> None:
+    s = """Alias   B0   B0sig
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(MisconfiguredAliasWarning):
+        p.parse()
+
+
+def test_model_aliases_parsing() -> None:
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
@@ -185,14 +282,114 @@ def test_model_aliases_parsing():
     ]
 
 
-def test_charge_conjugates_parsing():
+def test_charge_conjugates_parsing() -> None:
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
     assert len(p.dict_charge_conjugates()) == 77
 
 
-def test_particle_property_definitions():
+def test_ChargeConj_minimalistic_and_incomplete() -> None:
+    """
+    ChargeConj statements for non-self-conjugate particles are unnecessary/irrrelevant
+    but are not wrong.
+    """
+    s = """ChargeConj   D-   D+
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(MisconfiguredChargeConjWarning):
+        p.parse()
+
+
+def test_ChargeConj_statement_mixed() -> None:
+    s = """ChargeConj   D+sig   D-
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(MisconfiguredChargeConjWarning):
+        p.parse()
+
+
+def test_ChargeConj_statement_mixed_swapped() -> None:
+    s = """ChargeConj   D-   D+sig
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(MisconfiguredChargeConjWarning):
+        p.parse()
+
+
+def test_ChargeConj_with_related_Aliases() -> None:
+    """
+    ChargeConj statements for non-self-conjugate particles defined via aliases are necessary/relevant.
+    """
+    s = """Alias   D+sig   D+
+Alias   D-sig   D-
+ChargeConj   D-sig   D+sig
+End
+"""
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+
+def test_ChargeConj_minimalistic_and_incomplete_with_Alias() -> None:
+    """
+    A ChargeConj statement for non-self-conjugate particles defined via aliases is necessary/relevant,
+    though this file is of course incomplete since it misses Alias statements
+    specifying to what the alias names in ChargeConj actually refer to.
+    """
+    s = """ChargeConj   D-sig   D+sig
+End
+"""
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+
+def test_ChargeConj_with_related_Alias_for_self_conjugate() -> None:
+    """
+    A ChargeConj statement for a self-conjugate particle defined via an alias is necessary/relevant
+    since the combination of the two statements is what specifies the self-conjugate nature
+    of the particle alias.
+    """
+    s = """Alias My_phi phi
+ChargeConj My_phi My_phi
+End
+"""
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+
+def test_ChargeConj_minimalistic_and_incomplete_for_self_conjugate() -> None:
+    """
+    A ChargeConj statement for a self-conjugate particle defined via an alias is necessary/relevant,
+    though this file is of course incomplete since it misses the Alias statement
+    specifying to what the alias name in ChargeConj actually refers to.
+    """
+    s = """ChargeConj My_phi My_phi
+End
+"""
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+
+def test_ChargeConj_self_conjugate() -> None:
+    """A ChargeConj statement for a non-alias self-conjugate particle is redundant / a buglet."""
+    s = """ChargeConj   phi   phi
+End
+"""
+    p = DecFileParser.from_string(s)
+    with (
+        pytest.warns(MisconfiguredChargeConjWarning),
+        pytest.warns(
+            SelfChargeConjWarning,
+            match="Found 'ChargeConj' statements for the following non-alias self-conjugate particles",
+        ),
+    ):
+        p.parse()
+
+
+def test_particle_property_definitions() -> None:
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
@@ -205,7 +402,7 @@ def test_particle_property_definitions():
     }
 
 
-def test_pythia_definitions_parsing():
+def test_pythia_definitions_parsing() -> None:
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
@@ -223,7 +420,7 @@ def test_pythia_definitions_parsing():
     }
 
 
-def test_jetset_definitions_parsing():
+def test_jetset_definitions_parsing() -> None:
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
@@ -235,7 +432,7 @@ def test_jetset_definitions_parsing():
     }
 
 
-def test_dict_lineshape_settings():
+def test_dict_lineshape_settings() -> None:
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
@@ -268,7 +465,7 @@ def test_dict_lineshape_settings():
     }
 
 
-def test_list_lineshapePW_definitions():
+def test_list_lineshapePW_definitions() -> None:
     p = DecFileParser(DIR / "../data/defs-aliases-chargeconj.dec")
     p.parse()
 
@@ -284,7 +481,7 @@ def test_list_lineshapePW_definitions():
     ]
 
 
-def test_global_photos_flag():
+def test_global_photos_flag() -> None:
     """
     Check that PHOTOS is on for all decays.
     """
@@ -294,7 +491,7 @@ def test_global_photos_flag():
     assert p.global_photos_flag()
 
 
-def test_global_photos_off():
+def test_global_photos_off() -> None:
     """
     Check that PHOTOS is off for all decays.
     """
@@ -312,14 +509,14 @@ def test_global_photos_off():
     assert p.global_photos_flag() == PhotosEnum.no
 
 
-def test_missing_global_photos_flag():
+def test_missing_global_photos_flag() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
     assert not p.global_photos_flag()
 
 
-def test_duplicated_global_photos_flag():
+def test_duplicated_global_photos_flag() -> None:
     s = """
     # Turn on PHOTOS for all decays
     yesPhotos
@@ -333,16 +530,15 @@ def test_duplicated_global_photos_flag():
     p.parse()
 
     # The following call issues the warning
-    # UserWarning: PHOTOS flag re-set! Using flag set in last ...
-    #   warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
+    # DecFileWarning: PHOTOS flag re-set! Using flag set in last ...
     with pytest.warns(
-        UserWarning, match="PHOTOS flag re-set! Using flag set in last ..."
+        DecFileWarning, match="PHOTOS flag re-set! Using flag set in last ..."
     ) as record:
         assert p.global_photos_flag() == PhotosEnum.yes
     assert len(record) == 1
 
 
-def test_duplicated_global_photos_flag_take_last():
+def test_duplicated_global_photos_flag_take_last() -> None:
     s = """
     # Turn on PHOTOS for all decays
     noPhotos
@@ -355,16 +551,15 @@ def test_duplicated_global_photos_flag_take_last():
     p = DecFileParser.from_string(s)
     p.parse()
     # The following call issues the warning
-    # UserWarning: PHOTOS flag re-set! Using flag set in last ...
-    #   warnings.warn("PHOTOS flag re-set! Using flag set in last ...")
+    # DecFileWarning: PHOTOS flag re-set! Using flag set in last ...
     with pytest.warns(
-        UserWarning, match="PHOTOS flag re-set! Using flag set in last ..."
+        DecFileWarning, match="PHOTOS flag re-set! Using flag set in last ..."
     ) as record:
         assert p.global_photos_flag() == PhotosEnum.yes
     assert len(record) == 1
 
 
-def test_list_charge_conjugate_decays():
+def test_list_charge_conjugate_decays() -> None:
     p = DecFileParser(DIR / "../data/test_Bd2DmTauNu_Dm23PiPi0_Tau2MuNu.dec")
     p.parse()
 
@@ -376,7 +571,7 @@ def test_list_charge_conjugate_decays():
     ]
 
 
-def test_simple_dec():
+def test_simple_dec() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
@@ -385,7 +580,7 @@ def test_simple_dec():
     assert p.list_decay_modes("D0") == [["K-", "pi+"]]
 
 
-def test_with_missing_info():
+def test_with_missing_info() -> None:
     """
     This decay file misses a ChargeConj statement relating the particle aliases
     Xi_cc+sig and anti-Xi_cc-sig. As a consequence, only 3 decays are parsed
@@ -398,8 +593,10 @@ def test_with_missing_info():
     ``
     """
     p = DecFileParser(DIR / "../data/test_Xicc2XicPiPi.dec")
-    with pytest.warns(UserWarning, match="anti-Xi_cc-sig") as record:
+
+    with pytest.warns(MissingCDecaySourceWarning, match="anti-Xi_cc-sig") as record:
         p.parse()
+
     assert len(record) == 1
 
     # Decay of anti-Xi_cc-sig missing
@@ -410,7 +607,7 @@ def test_with_missing_info():
     assert "anti-Xi_cc-sig" in p.list_charge_conjugate_decays()
 
 
-def test_decay_mode_details():
+def test_decay_mode_details() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
@@ -424,7 +621,7 @@ def test_decay_mode_details():
     assert p._decay_mode_details(tree_Dp, display_photos_keyword=False) == output
 
 
-def test_decay_model_parsing():
+def test_decay_model_parsing() -> None:
     """
     This module tests building blocks rather than the API,
     hence the "strange" way to access parsed Lark Tree instances.
@@ -449,7 +646,7 @@ def test_decay_model_parsing():
     assert get_model_parameters(dl) == ["DtoKpipipi_v1"]
 
 
-def test_decay_model_parsing_with_model_name_substring():
+def test_decay_model_parsing_with_model_name_substring() -> None:
     """
     This module tests if a model name can be a substring of another
     model name (without respecting the order in the Lark grammar).
@@ -466,7 +663,7 @@ def test_decay_model_parsing_with_model_name_substring():
     assert get_model_parameters(dl) == [-0.753, 0.0]
 
 
-def test_decay_model_parsing_with_variable_defs():
+def test_decay_model_parsing_with_variable_defs() -> None:
     """
     In this example the decay model details are "VSS_BMIX dm",
     where dm stands for a variable name whose value is defined via the statement
@@ -483,7 +680,7 @@ def test_decay_model_parsing_with_variable_defs():
     assert get_model_parameters(dl) == [0.507e12]
 
 
-def test_decay_model_parsing_with_model_alias():
+def test_decay_model_parsing_with_model_alias() -> None:
     """
     In this example the decay model details are "SLBKPOLE_DtoKlnu",
     where SLBKPOLE_DtoKlnu stands for an alias whose value is defined via the statement
@@ -513,7 +710,7 @@ def test_decay_model_parsing_with_model_alias():
     assert get_model_parameters(dl) == [1.0, -0.303]
 
 
-def test_multiline_model():
+def test_multiline_model() -> None:
     p = DecFileParser(DIR / "../data/test_multiline_model.dec")
     p.parse()
 
@@ -522,7 +719,7 @@ def test_multiline_model():
     assert len(get_model_parameters(dl)) == 96
 
 
-def test_custom_model_name():
+def test_custom_model_name() -> None:
     p = DecFileParser(DIR / "../data/test_custom_decay_model.dec")
     p.load_additional_decay_models("CUSTOM_MODEL1", "CUSTOM_MODEL2")
 
@@ -542,10 +739,195 @@ def test_custom_model_name():
     assert get_model_parameters(dl) == [1.0, 2.0, 3.0, 4.0]
 
 
-def test_duplicate_decay_definitions():
+@pytest.mark.parametrize("model_name", ["UNKNOWN_MODEL", "UndefinedAlias"])
+def test_unknown_model_error(model_name: str) -> None:
+    p = DecFileParser.from_string(
+        f"Decay pi0\n1.0 gamma gamma {model_name};\nEnddecay\nEnd\n"
+    )
+
+    with pytest.raises(UnknownDecayModelError) as caught:
+        p.parse()
+
+    error = caught.value
+    assert isinstance(error, ValueError)
+    assert error.model_name == model_name
+    assert (error.line, error.column) == (2, 17)
+    message = str(error)
+    assert f"Unknown decay model or undefined ModelAlias '{model_name}'" in message
+    assert f"load_additional_decay_models('{model_name}')" in message
+    assert f"--additional-decay-model={model_name}" in message
+    assert "known_decay_models" in message
+    assert (
+        "https://github.com/scikit-hep/decaylanguage/blob/main/src/decaylanguage/dec/enums.py"
+        in message
+    )
+
+
+def test_unrelated_transformer_error_is_preserved(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail_replacement(_self: DecayModelAliasReplacement, _token: Token) -> Token:
+        raise RuntimeError("unexpected transformer failure")
+
+    monkeypatch.setattr(DecayModelAliasReplacement, "_replacement", fail_replacement)
+    p = DecFileParser.from_string(
+        "ModelAlias MyModel PHSP;\nDecay pi0\n1.0 gamma gamma MyModel;\nEnddecay\nEnd\n"
+    )
+
+    with pytest.raises(VisitError) as caught:
+        p.parse()
+
+    assert isinstance(caught.value.orig_exc, RuntimeError)
+    assert str(caught.value.orig_exc) == "unexpected transformer failure"
+
+
+@pytest.mark.parametrize("parameters", ["1 2", "0.746 1.046", "-1 2", "OPTION"])
+def test_unknown_model_with_parameters_is_ambiguous(parameters: str) -> None:
+    parser = DecFileParser.from_string(
+        f"Decay pi0\n1.0 gamma gamma XYZ {parameters};\nEnddecay\n"
+    )
+    with pytest.raises(AmbiguousDecayModelError) as caught:
+        parser.parse()
+    assert caught.value.model_name is None
+    assert (caught.value.line, caught.value.column) == (2, 17)
+    assert "--additional-decay-model=NAME" in str(caught.value)
+
+    parser = DecFileParser.from_string(
+        f"Decay pi0\n1.0 gamma gamma XYZ {parameters};\nEnddecay\n"
+    )
+    parser.load_additional_decay_models("XYZ")
+    parser.parse()
+    mode = parser._find_decay_modes("pi0")[0]
+    assert get_model_name(mode) == "XYZ"
+    assert get_final_state_particle_names(mode) == ["gamma", "gamma"]
+
+
+def test_missing_model_is_not_reported_as_unknown_particle_model() -> None:
+    parser = DecFileParser.from_string("Decay pi0\n1.0 gamma gamma;\nEnddecay\n")
+    with pytest.raises(AmbiguousDecayModelError, match="model may be missing"):
+        parser.parse()
+
+
+@pytest.mark.parametrize(
+    "definition",
+    ["Alias CustomParticle gamma\n", "Particle CustomParticle 1.0 0.0\n"],
+)
+def test_declared_particle_names_do_not_make_model_ambiguous(definition: str) -> None:
+    parser = DecFileParser.from_string(
+        definition + "Decay pi0\n1.0 CustomParticle gamma XYZ;\nEnddecay\n"
+    )
+    with pytest.raises(UnknownDecayModelError) as caught:
+        parser.parse()
+    assert caught.value.model_name == "XYZ"
+
+
+def test_registered_model_preserves_experiment_specific_daughters() -> None:
+    parser = DecFileParser.from_string(
+        "Decay pi0\n1.0 CustomParticle gamma PHSP;\nEnddecay\n"
+    )
+    parser.parse()
+    mode = parser._find_decay_modes("pi0")[0]
+    assert get_final_state_particle_names(mode) == ["CustomParticle", "gamma"]
+
+
+@pytest.mark.parametrize("used", [False, True])
+@pytest.mark.parametrize("parameters", ["", " 1 2", " OPTION"])
+def test_unknown_model_in_alias_definition(used: bool, parameters: str) -> None:
+    content = f"ModelAlias A XYZ{parameters};\n"
+    if used:
+        content += "Decay pi0\n1.0 gamma gamma A;\nEnddecay\n"
+    parser = DecFileParser.from_string(content)
+    with pytest.raises(UnknownDecayModelError) as caught:
+        parser.parse()
+    assert caught.value.model_name == "XYZ"
+    assert (caught.value.line, caught.value.column) == (1, 14)
+
+
+def test_model_alias_chain_resolves_parameters_independently() -> None:
+    parser = DecFileParser.from_string(
+        "Define dm 0.507e12\nModelAlias A B;\nModelAlias B VSS_BMIX dm;\n"
+        "Decay B0\n1.0 pi+ pi- A;\nEnddecay\n"
+        "Decay anti-B0\n1.0 pi+ pi- B;\nEnddecay\n"
+    )
+    parser.parse()
+    for mother in ("B0", "anti-B0"):
+        mode = parser._find_decay_modes(mother)[0]
+        assert get_model_name(mode) == "VSS_BMIX"
+        assert get_model_parameters(mode) == [0.507e12]
+
+
+@pytest.mark.parametrize(
+    "content", ["ModelAlias A A;\n", "ModelAlias A B;\nModelAlias B A;\n"]
+)
+def test_model_alias_cycles(content: str) -> None:
+    parser = DecFileParser.from_string(content)
+    with pytest.raises(InvalidModelAliasError, match="Cyclic ModelAlias"):
+        parser.parse()
+
+
+def test_alias_cannot_add_parameters_to_another_alias() -> None:
+    parser = DecFileParser.from_string("ModelAlias A B 1;\nModelAlias B PHSP;\n")
+    with pytest.raises(InvalidModelAliasError, match="adds parameters"):
+        parser.parse()
+
+
+@pytest.mark.parametrize(
+    "content",
+    [
+        "Decay pi0\n1.0 gamma gamma XYZ;\nEnddecay\n",
+        "Decay pi0\n1.0 gamma gamma XYZ 1 2;\nEnddecay\n",
+        "ModelAlias A A;\n",
+    ],
+)
+def test_model_errors_can_be_pickled(content: str) -> None:
+    parser = DecFileParser.from_string(content)
+    with pytest.raises(DecayModelError) as caught:
+        parser.parse()
+    original = caught.value
+    restored = pickle.loads(pickle.dumps(original))
+    assert type(restored) is type(original)
+    assert str(restored) == str(original)
+    assert restored.__dict__ == original.__dict__
+
+
+@pytest.mark.parametrize("trailing_newline", ["", "\n"])
+def test_model_error_location_in_multiple_files(
+    tmp_path: Path, trailing_newline: str
+) -> None:
+    first = tmp_path / "first.dec"
+    second = tmp_path / "second.dec"
+    first.write_text("Decay D0\n1.0 K- pi+ PHSP;\nEnddecay\nEnd" + trailing_newline)
+    second.write_text("End\nDecay pi0\n1.0 gamma gamma XYZ;\nEnddecay\nEnd\n")
+    parser = DecFileParser(first, second)
+    with pytest.raises(UnknownDecayModelError) as caught:
+        parser.parse()
+    assert caught.value.path == str(second)
+    assert (caught.value.line, caught.value.column) == (3, 17)
+    restored = pickle.loads(pickle.dumps(caught.value))
+    assert restored.path == str(second)
+    assert restored.line == 3
+
+
+def test_syntax_error_location_in_multiple_files(tmp_path: Path) -> None:
+    first = tmp_path / "first.dec"
+    second = tmp_path / "second.dec"
+    first.write_text("End\n", encoding="utf_8")
+    second.write_text(
+        "End\nDecay pi0\n1.0 gamma gamma PHSP;2\nEnddecay\n", encoding="utf_8"
+    )
+    with pytest.raises(UnexpectedToken) as caught:
+        DecFileParser(first, second).parse()
+    assert caught.value.path == str(second)
+    assert caught.value.line == 3
+
+
+def test_duplicate_decay_definitions() -> None:
     p = DecFileParser(DIR / "../data/duplicate-decays.dec")
 
-    with pytest.warns(UserWarning, match="(1775)") as w:
+    with (
+        pytest.warns(DuplicateDecayWarning, match="(1775)"),
+        pytest.warns(DecayAndCDecayWarning) as w,
+    ):
         p.parse()
 
     assert len(w) == 2
@@ -555,7 +937,137 @@ def test_duplicate_decay_definitions():
     assert p.list_decay_mother_names() == ["Sigma(1775)0", "anti-Sigma(1775)0"]
 
 
-def test_duplicate_cdecay_definitions_are_only_applied_once():
+def test_CDecay_minimalistic_and_incomplete() -> None:
+    s = """CDecay   D-
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(
+        MissingCDecaySourceWarning,
+        match="Corresponding 'Decay' statement for 'CDecay' statement",
+    ):
+        p.parse()
+
+
+def test_CDecay_minimalistic() -> None:
+    s = """Alias        MyD_s*+        D_s*+
+Alias        MyD_s*-        D_s*-
+ChargeConj   MyD_s*-        MyD_s*+
+
+
+Decay MyD_s*+
+  1.0   D_s+   pi0   VSS;
+Enddecay
+
+CDecay MyD_s*-
+
+End
+"""
+    p = DecFileParser.from_string(s)
+    p.parse()
+
+
+def test_CDecay_minimalistic_wrong_conjugate() -> None:
+    s = """Alias        MyD_s*+        D_s*+
+Alias        MyD_s*-        D_s*-
+ChargeConj   MyD_s*-        MyD_s*+
+
+
+Decay MyD_s*+
+  1.0   D_s+   pi0   VSS;
+Enddecay
+
+CDecay MyD_s*+
+
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(
+        DecayAndCDecayWarning,
+        match="The following particles are defined in the input .dec file with both 'Decay' and 'CDecay'",
+    ):
+        p.parse()
+
+    assert p.number_of_decays == 1
+
+
+def test_CDecay_self_conjugate() -> None:
+    """
+    The issue that the phi is in fact self-conjugate is not even checked
+    because the 'CDecay' definition is ignored given the 'Decay' statement for the same particle.
+    """
+    s = """
+Decay phi
+ 1.0   K+   K-   VSS;
+Enddecay
+
+CDecay phi
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(
+        DecayAndCDecayWarning,
+        match="The following particles are defined in the input .dec file with both 'Decay' and 'CDecay'",
+    ):
+        p.parse()
+
+    assert p.number_of_decays == 1
+
+
+def test_CDecay_self_conjugate_with_Alias() -> None:
+    s = """Alias My_phi phi
+ChargeConj My_phi My_phi
+
+Decay My_phi
+ 1.0   K+   K-   VSS;
+Enddecay
+
+CDecay My_phi
+
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(
+        DecayAndCDecayWarning,
+        match="The following particles are defined in the input .dec file with both 'Decay' and 'CDecay'",
+    ):
+        p.parse()
+
+
+def test_CDecay_self_conjugate_with_Aliases() -> None:
+    """
+    Similar to the test above but this decay file does not make sense overall,
+    especially that 2 aliases are created to the same self-conjugate particle,
+    hence it is not immediately obvious that 'Decay' and 'CDecay' in the end
+    refer to the same self-conjugate particle.
+    """
+    s = """
+Alias MyPi0 pi0
+Alias Myanti-pi0 pi0
+
+ChargeConj Myanti-pi0 MyPi0
+
+Decay MyPi0
+1.0   gamma   gamma   PHSP;
+Enddecay
+
+CDecay Myanti-pi0
+
+End
+"""
+    p = DecFileParser.from_string(s)
+    with pytest.warns(
+        SelfConjugateCDecayWarning,
+        match="Found 'CDecay' statement for self-conjugate particle",
+    ):
+        p.parse()
+
+    assert p.number_of_decays == 1
+
+    assert p.list_decay_mother_names() == ["MyPi0"]
+
+
+def test_duplicate_CDecay_definitions_are_only_applied_once() -> None:
     p = DecFileParser.from_string(
         """Decay D0
 1.0 K- pi+ PHSP;
@@ -573,7 +1085,7 @@ End
     assert p.list_decay_mother_names() == ["D0", "anti-D0"]
 
 
-def test_list_decay_modes():
+def test_list_decay_modes() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
@@ -582,20 +1094,20 @@ def test_list_decay_modes():
         ["D-", "pi0"],
         ["D-", "gamma"],
     ]
-    assert p.list_decay_modes("D*(2010)-", pdg_name=True) == [
+    assert p.list_decay_modes("D*(2010)-", is_pdg_name=True) == [
         ["anti-D0", "pi-"],
         ["D-", "pi0"],
         ["D-", "gamma"],
     ]
 
 
-def test_list_decay_modes_on_the_fly():
+def test_list_decay_modes_on_the_fly() -> None:
     """
     Unlike in the example above the charge conjugate decay modes are created
     on the fly from the non-CC. decay.
     """
     p = DecFileParser(DIR / "../data/test_Xicc2XicPiPi.dec")
-    with pytest.warns(UserWarning, match="anti-Xi_cc-sig") as record:
+    with pytest.warns(MissingCDecaySourceWarning, match="anti-Xi_cc-sig") as record:
         p.parse()
     assert len(record) == 1
 
@@ -606,21 +1118,21 @@ def test_list_decay_modes_on_the_fly():
     assert p.list_decay_modes("MyantiXic-") == [["anti-p-", "K+", "pi-"]]
 
 
-def test_print_decay_modes_basics():
+def test_print_decay_modes_basics() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
     with pytest.raises(DecayNotFound):
         p.print_decay_modes("D*(2010)-")
 
-    p.print_decay_modes("D*(2010)-", pdg_name=True)
+    p.print_decay_modes("D*(2010)-", is_pdg_name=True)
 
 
-def list_complement(l_m, l_s):
+def list_complement(l_m: list[str], l_s: list[str]) -> list[str]:
     return [i for i in l_m if i not in l_s]
 
 
-def test_print_decay_modes_full():
+def test_print_decay_modes_full() -> None:
     p = DecFileParser(DIR / "../data/test_Bd2Dst0X_D02KPi.dec")
     p.parse()
 
@@ -633,7 +1145,7 @@ def test_print_decay_modes_full():
         p.print_decay_modes(d, normalize=True)
 
 
-def test_print_decay_modes_options():
+def test_print_decay_modes_options() -> None:
     p1 = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p1.parse()
 
@@ -724,7 +1236,7 @@ def test_print_decay_modes_scale_uses_largest_bf(capsys):
     assert max(asc) == pytest.approx(0.5)
 
 
-def test_print_decay_modes_forbidden_scale():
+def test_print_decay_modes_forbidden_scale() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
@@ -732,17 +1244,17 @@ def test_print_decay_modes_forbidden_scale():
         p.print_decay_modes("D*+", scale=5.0)
 
 
-def test_load_additional_decay_models_too_late():
+def test_load_additional_decay_models_too_late() -> None:
     p = DecFileParser(DIR / "../data/test_custom_decay_model.dec")
     # Force the grammar to load.
     assert p.grammar() is not None
     assert p.grammar_loaded
 
-    with pytest.warns(UserWarning, match="already been loaded"):
+    with pytest.warns(DecFileWarning, match="already been loaded"):
         p.load_additional_decay_models("CUSTOM_MODEL1")
 
 
-def test_load_additional_decay_models_repeated_calls():
+def test_load_additional_decay_models_repeated_calls() -> None:
     # Regression test: the second call used to store a one-shot itertools.chain
     # iterator that was exhausted the first time the grammar callback consumed
     # it, so the grammar silently lost the additional models.
@@ -757,7 +1269,7 @@ def test_load_additional_decay_models_repeated_calls():
     assert get_model_name(p._parsed_decays[0].children[2]) == "CUSTOM_MODEL2"
 
 
-def test_build_decay_chains():
+def test_build_decay_chains() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
@@ -774,7 +1286,7 @@ def test_build_decay_chains():
     assert p.build_decay_chains("D+", stable_particles=["pi0"]) == output
 
 
-def test_build_decay_chains_minimum_effective_bf_zero_is_no_filter():
+def test_build_decay_chains_minimum_effective_bf_zero_is_no_filter() -> None:
     """minimum_effective_bf=0.0 is a no-op, equivalent to not filtering at all."""
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
@@ -783,7 +1295,7 @@ def test_build_decay_chains_minimum_effective_bf_zero_is_no_filter():
     ) == p.build_decay_chains("D*+")
 
 
-def test_build_decay_chains_minimum_effective_bf_none_is_no_filter():
+def test_build_decay_chains_minimum_effective_bf_none_is_no_filter() -> None:
     """minimum_effective_bf=None (the default) applies no filtering at all."""
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
@@ -793,7 +1305,7 @@ def test_build_decay_chains_minimum_effective_bf_none_is_no_filter():
     ) == p.build_decay_chains("D*+")
 
 
-def test_build_decay_chains_minimum_effective_bf_no_output():
+def test_build_decay_chains_minimum_effective_bf_no_output() -> None:
     """Too stringent a threshold - no chain survives."""
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
@@ -801,7 +1313,7 @@ def test_build_decay_chains_minimum_effective_bf_no_output():
     assert p.build_decay_chains("D*+", minimum_effective_bf=0.8) == {"D*+": []}
 
 
-def test_build_decay_chains_minimum_effective_bf_unit_threshold():
+def test_build_decay_chains_minimum_effective_bf_unit_threshold() -> None:
     """minimum_effective_bf=1.0 filters every mode with BF < 1.0.
 
     Also tests the boundary condition: a mode with BF exactly 1.0 must survive
@@ -819,7 +1331,7 @@ def test_build_decay_chains_minimum_effective_bf_unit_threshold():
     }
 
 
-def test_build_decay_chains_minimum_effective_bf_cache_cleared_between_calls():
+def test_build_decay_chains_minimum_effective_bf_cache_cleared_between_calls() -> None:
     """Results are independent across successive calls with different thresholds.
 
     The internal LRU cache is cleared at the start of each build_decay_chains call.
@@ -855,7 +1367,7 @@ def test_build_decay_chains_minimum_effective_bf_cache_cleared_between_calls():
     }
 
 
-def test_build_decay_chains_minimum_effective_bf_single_chain():
+def test_build_decay_chains_minimum_effective_bf_single_chain() -> None:
     """At min_bf=0.6, only the D0 pi+ chain (BF 0.677) passes; D+ pi0 (0.307) is filtered.
     Setting D0 as stable just simplifies to a leaf"""
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
@@ -900,7 +1412,7 @@ def test_build_decay_chains_minimum_effective_bf_single_chain():
     }
 
 
-def test_build_decay_chains_minimum_effective_bf_exact_boundary():
+def test_build_decay_chains_minimum_effective_bf_exact_boundary() -> None:
     """BF product exactly equal to minimum_effective_bf (not strictly less) should pass.
 
     The filter condition is ``effective_bf < minimum_effective_bf``, so equality must pass.
@@ -937,7 +1449,9 @@ def test_build_decay_chains_minimum_effective_bf_exact_boundary():
     assert p.build_decay_chains("D*+", minimum_effective_bf=0.678) == {"D*+": []}
 
 
-def test_build_decay_chains_minimum_effective_bf_partial_pi0_and_stable_comparison():
+def test_build_decay_chains_minimum_effective_bf_partial_pi0_and_stable_comparison() -> (
+    None
+):
     """Partial filtering of pi0 modes and effect of treating pi0 as stable.
 
     At min_bf=0.3 with D0 and D+ stable:
@@ -983,7 +1497,7 @@ def test_build_decay_chains_minimum_effective_bf_partial_pi0_and_stable_comparis
     }
 
 
-def test_build_decay_chains_minimum_effective_bf_stable_pi0_rescues_chain():
+def test_build_decay_chains_minimum_effective_bf_stable_pi0_rescues_chain() -> None:
     """Treating pi0 as stable rescues the D+ pi0 chain that would otherwise be cut.
 
     At min_bf=0.304 the pi0 gamma-gamma effective BF (0.307 * 0.988... = 0.303) falls just
@@ -1008,7 +1522,7 @@ def test_build_decay_chains_minimum_effective_bf_stable_pi0_rescues_chain():
     }
 
 
-def test_build_decay_chains_minimum_effective_bf_first_daughter_filtered():
+def test_build_decay_chains_minimum_effective_bf_first_daughter_filtered() -> None:
     """Chain is skipped when the first daughter's sub-decays are all filtered.
 
     In D*+ → D+ Mypi0, D+ is the first daughter (index 0).
@@ -1063,7 +1577,7 @@ def test_build_decay_chains_minimum_effective_bf_first_daughter_filtered():
     )
 
 
-def test_expand_decay_chains():
+def test_expand_decay_chains() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()
 
@@ -1105,7 +1619,7 @@ def test_expand_decay_chains():
         assert set(all_decays) == set(descriptors)
 
 
-def test_Lark_DecayModelAliasReplacement_Transformer():
+def test_Lark_DecayModelAliasReplacement_Transformer() -> None:
     t = Tree(
         "decay",
         [
@@ -1149,7 +1663,7 @@ def test_Lark_DecayModelAliasReplacement_Transformer():
     assert get_model_parameters(tree_decayline) == ["1.0", "0.303", "1.0", "2.112"]
 
 
-def test_Lark_DecayModelParamValueReplacement_Visitor_no_params():
+def test_Lark_DecayModelParamValueReplacement_Visitor_no_params() -> None:
     t = Tree(
         "decay",
         [
@@ -1174,7 +1688,7 @@ def test_Lark_DecayModelParamValueReplacement_Visitor_no_params():
     assert get_model_parameters(tree_decayline) == ""
 
 
-def test_Lark_DecayModelParamValueReplacement_Visitor_single_value():
+def test_Lark_DecayModelParamValueReplacement_Visitor_single_value() -> None:
     t = Tree(
         "decay",
         [
@@ -1214,7 +1728,7 @@ def test_Lark_DecayModelParamValueReplacement_Visitor_single_value():
     assert get_model_parameters(tree_decayline) == [507000000000.0]
 
 
-def test_Lark_DecayModelParamValueReplacement_Visitor_list():
+def test_Lark_DecayModelParamValueReplacement_Visitor_list() -> None:
     t = Tree(
         "decay",
         [
@@ -1255,7 +1769,7 @@ def test_Lark_DecayModelParamValueReplacement_Visitor_list():
     assert get_model_parameters(tree_decayline) == [0.0, 0.0, 0.0, 0.0, 1.0, 0.0]
 
 
-def test_Lark_ChargeConjugateReplacement_Visitor():
+def test_Lark_ChargeConjugateReplacement_Visitor() -> None:
     """
     A simple example usage of the ChargeConjugateReplacement implementation
     of a Lark's Visitor, here replacing all particles in a 'decay' Tree
@@ -1283,7 +1797,7 @@ def test_Lark_ChargeConjugateReplacement_Visitor():
     assert get_final_state_particle_names(t.children[1]) == ["K+", "pi-"]
 
 
-def test_Lark_ChargeConjugateReplacement_Visitor_with_aliases():
+def test_Lark_ChargeConjugateReplacement_Visitor_with_aliases() -> None:
     """
     Example with a D0 decay specified via an alias (MyD0).
     As such, it is necessary to state what the particle-antiparticle match is,
@@ -1317,7 +1831,7 @@ def test_Lark_ChargeConjugateReplacement_Visitor_with_aliases():
     assert get_final_state_particle_names(t.children[1]) == ["K+", "pi-"]
 
 
-def test_creation_charge_conjugate_decays_in_decfile_with_aliases():
+def test_creation_charge_conjugate_decays_in_decfile_with_aliases() -> None:
     """
     Decay file contains 5 particle decays defined via a 'Decay' statement
     and the 5 charge-conjugate decays defined via a 'CDecay' statement.
@@ -1330,7 +1844,7 @@ def test_creation_charge_conjugate_decays_in_decfile_with_aliases():
     assert p.number_of_decays == 10
 
 
-def test_creation_charge_conjugate_decays_in_decfile_without_CDecay_defs():
+def test_creation_charge_conjugate_decays_in_decfile_without_CDecay_defs() -> None:
     """
     Decay file contains 5 particle decays defined via a 'Decay' statement,
     but no related charge-conjugate (CC) decays defined via a 'CDecay' statement
@@ -1346,71 +1860,76 @@ def test_creation_charge_conjugate_decays_in_decfile_without_CDecay_defs():
     assert p.number_of_decays == 5
 
 
-def test_main_DECAYdotDEC_file():
+def test_main_DECAYdotDEC_file() -> None:
     p = DecFileParser(DIR / "../../src/decaylanguage/data/DECAY_LHCB.DEC")
-    p.parse()
+    # This warning is issued because the file contains aliases
+    # to heavy particles such as B_c(2S)+ for which no PDG ID is yet available
+    # in the Particle package.
+    # To be fixed soon ...
+    with pytest.warns(MisconfiguredAliasWarning) as _record:
+        p.parse()
 
     assert p.number_of_decays == 510
 
 
-def test_BELLE2_decfile():
+def test_BELLE2_decfile() -> None:
     p = DecFileParser(DIR / "../../src/decaylanguage/data/DECAY_BELLE2.DEC")
     p.parse()
 
     assert p.number_of_decays == 363
 
 
-def test_get_decay_mother_name_wrong_Tree():
+def test_get_decay_mother_name_wrong_Tree() -> None:
     bad = Tree("decayline", [Tree("value", [Token("SIGNED_NUMBER", "1.0")])])
     with pytest.raises(RuntimeError):
         get_decay_mother_name(bad)
 
 
-def test_get_branching_fraction_wrong_Tree():
+def test_get_branching_fraction_wrong_Tree() -> None:
     bad = Tree("particle", [Token("LABEL", "B0sig")])
     with pytest.raises(RuntimeError):
         get_branching_fraction(bad)
 
 
-def test_get_final_state_particles_wrong_Treem():
+def test_get_final_state_particles_wrong_Treem() -> None:
     bad = Tree("particle", [Token("LABEL", "B0sig")])
     with pytest.raises(RuntimeError):
         get_final_state_particles(bad)
 
 
-def test_get_final_state_particle_names_wrong_Tree():
+def test_get_final_state_particle_names_wrong_Tree() -> None:
     bad = Tree("particle", [Token("LABEL", "B0sig")])
     with pytest.raises(RuntimeError):
         get_final_state_particle_names(bad)
 
 
-def test_get_model_name_wrong_Tree():
+def test_get_model_name_wrong_Tree() -> None:
     bad = Tree("particle", [Token("LABEL", "B0sig")])
     with pytest.raises(RuntimeError):
         get_model_name(bad)
 
 
-def test_get_model_parameters_wrong_Tree():
+def test_get_model_parameters_wrong_Tree() -> None:
     bad = Tree("particle", [Token("LABEL", "B0sig")])
     with pytest.raises(RuntimeError):
         get_model_parameters(bad)
 
 
-def test_align_items_simple():
+def test_align_items_simple() -> None:
     to_align = ["a", "quick", "brown", "fox"]
     aligned = DecFileParser._align_items(to_align)
 
     assert aligned == ["a    ", "quick", "brown", "fox  "]
 
 
-def test_align_items_simple_right_align():
+def test_align_items_simple_right_align() -> None:
     to_align = ["a", "quick", "brown", "fox"]
     aligned = DecFileParser._align_items(to_align, align_mode="right")
 
     assert aligned == ["    a", "quick", "brown", "  fox"]
 
 
-def test_align_items_complex():
+def test_align_items_complex() -> None:
     to_align = [
         ("alpha", "beta", "gamma"),
         ("a", "b", "c"),
@@ -1422,7 +1941,7 @@ def test_align_items_complex():
     assert aligned == ["alpha beta gamma", "a     b    c    ", "01    02   03   "]
 
 
-def test_align_items_complex_right_align():
+def test_align_items_complex_right_align() -> None:
     to_align = [
         ("alpha", "beta", "gamma"),
         ("a", "b", "c"),
@@ -1434,14 +1953,14 @@ def test_align_items_complex_right_align():
     assert aligned == ["alpha beta gamma", "    a    b     c", "   01   02    03"]
 
 
-def test_align_items_simple_wrong_align_mode():
+def test_align_items_simple_wrong_align_mode() -> None:
     to_align = ["a", "quick", "brown", "fox"]
 
     with pytest.raises(ValueError, match="Unknown align mode"):
         _ = DecFileParser._align_items(to_align, align_mode="nonexistent")
 
 
-def test_align_items_complex_wrong_align_mode():
+def test_align_items_complex_wrong_align_mode() -> None:
     to_align = [
         ("alpha", "beta", "gamma"),
         ("a", "b", "c"),

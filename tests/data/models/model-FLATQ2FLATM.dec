@@ -1,0 +1,7 @@
+# File for testing purposes. Contains a single decay mode with a specific model.
+
+Decay B0sig
+ 1.0     K+   pi-   mu+   mu-   FLATQ2FLATM 1.046 1.338;
+Enddecay
+
+End

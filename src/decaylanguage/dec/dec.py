@@ -48,18 +48,19 @@ from functools import cache
 from io import StringIO
 from itertools import chain, zip_longest
 from pathlib import Path
-from typing import Any
+from typing import Any, Self
 
 from hepunits import GeV
 from lark import Lark, Token, Transformer, Tree, Visitor
+from lark.exceptions import UnexpectedInput, VisitError
 from lark.lexer import TerminalDef
-from particle import Particle
+from particle import Particle, ParticleNotFound
 from particle.converters import PDG2EvtGenNameMap
+from particle.exceptions import MatchingIDNotFound
 
 from .. import data
-from .._compat.typing import Self
 from ..decay.decay import DecayModeDict, _expand_decay_modes
-from ..utils import charge_conjugate_name
+from ..utils import charge_conjugate_name, evtgen_name_is_particle
 from .enums import PhotosEnum, known_decay_models
 
 
@@ -69,6 +70,65 @@ class DecFileNotParsed(RuntimeError):
 
 class DecayNotFound(RuntimeError):
     pass
+
+
+class ParticlePropertyError(RuntimeError):
+    """Particle's default property(ies) cannot be obtained from the particle table."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        particle_name: str | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.particle_name = particle_name
+
+
+class DecayModelError(ValueError):
+    """Invalid or ambiguous decay model input, with its source location."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        model_name: str | None = None,
+        line: int | None = None,
+        column: int | None = None,
+        path: str | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.model_name = model_name
+        self.line = line
+        self.column = column
+        self.path = path
+
+
+class UnknownDecayModelError(DecayModelError):
+    """A model name matches neither a registered model nor a ModelAlias."""
+
+    @classmethod
+    def from_token(cls, token: Token) -> Self:
+        name = str(token)
+        return cls(
+            f"Unknown decay model or undefined ModelAlias {name!r}. "
+            "Check the spelling or ModelAlias definition. "
+            f"Register custom models with load_additional_decay_models({name!r}) "
+            f"before parse() or --additional-decay-model={name}. "
+            "Standard models belong in known_decay_models: "
+            "https://github.com/scikit-hep/decaylanguage/blob/main/src/decaylanguage/dec/enums.py.",
+            model_name=name,
+            line=token.line,
+            column=token.column,
+        )
+
+
+class AmbiguousDecayModelError(DecayModelError):
+    """The decay model cannot be distinguished from particles or parameters."""
+
+
+class InvalidModelAliasError(DecayModelError):
+    """A ModelAlias definition cannot be resolved to a registered model."""
 
 
 class DecFileWarning(UserWarning):
@@ -99,6 +159,18 @@ class SelfConjugateCDecayWarning(DecFileWarning):
 
 class MissingCopyDecaySourceWarning(DecFileWarning):
     code = "DLW006"
+
+
+class MisconfiguredAliasWarning(DecFileWarning):
+    code = "DLW010"
+
+
+class MisconfiguredChargeConjWarning(DecFileWarning):
+    code = "DLW011"
+
+
+class SelfChargeConjWarning(DecFileWarning):
+    code = "DLW012"
 
 
 @cache
@@ -155,6 +227,7 @@ class DecFileParser:
         "_include_ccdecays",
         "_parsed_dec_file",
         "_parsed_decays",
+        "_source_line_ranges",
     )
 
     def __init__(self, *filenames: str | os.PathLike[str]) -> None:
@@ -173,18 +246,30 @@ class DecFileParser:
 
         # Name(s) of the input decay file(s)
         self._dec_file: str | None = None  # Content of input file(s)
+        # Combined-input line ranges (start, end, path) for error locations.
+        self._source_line_ranges: list[tuple[int, int, str]] = []
         if filenames:
             self._dec_file_names = list(filenames)
 
             stream = StringIO()
+            line_offset = 0
             for filename in map(Path, self._dec_file_names):
                 # Check input file
                 if not filename.is_file():
                     raise FileNotFoundError(f"{str(filename)!r}!")
 
                 with filename.open(encoding="utf_8") as file:
-                    stream.write(self._filter_lines(file))
+                    content = self._filter_lines(file)
+                    self._source_line_ranges.append(
+                        (
+                            line_offset + 1,
+                            line_offset + len(content.splitlines()),
+                            str(filename),
+                        )
+                    )
+                    stream.write(content)
                     stream.write("\n")
+                    line_offset += content.count("\n") + 1
 
             stream.seek(0)
             self._dec_file = stream.read()
@@ -219,6 +304,9 @@ class DecFileParser:
             beg = line.lstrip("﻿").lstrip()
             if not (beg.startswith("End") and not beg.startswith("Enddecay")):
                 stream.write(line)
+            else:
+                # Keep token locations aligned with the original source.
+                stream.write("\n")
         return stream.getvalue()
 
     @classmethod
@@ -254,10 +342,17 @@ class DecFileParser:
             which are specified via "CDecay <MOTHER>".
             Make sure you understand the consequences of ignoring
             charge conjugate decays - you won't have a complete picture otherwise!
+
+        Raises
+        ------
+        DecayModelError
+            A decay model or ModelAlias is unknown, ambiguous, or cyclic.
         """
         # Has a file been parsed already?
         if self._parsed_decays is not None:
-            warnings.warn("Input file being re-parsed ...", stacklevel=2)
+            warnings.warn(
+                "Input file being re-parsed ...", DecFileWarning, stacklevel=2
+            )
 
         # Override the parsing settings for charge conjugate decays
         self._include_ccdecays = include_ccdecays or False
@@ -290,7 +385,18 @@ class DecFileParser:
                 opts["lexer"],
                 self._decay_models_tuple(),
             )
-        self._parsed_dec_file = parser.parse(self._dec_file)
+        try:
+            self._parsed_dec_file = parser.parse(self._dec_file)
+        except UnexpectedInput as exc:
+            # Preserve the active grammar's literal spellings for diagnostics,
+            # including custom grammars, without relying on Lark's private state.
+            exc.__dict__["terminal_literals"] = {
+                terminal.name: terminal.pattern.value
+                for terminal in parser.terminals
+                if terminal.pattern.type == "str"
+            }
+            self._set_exception_source(exc)
+            raise
 
         # At last, find all particle decays defined in the .dec decay file ...
         self._find_parsed_decays()
@@ -299,14 +405,32 @@ class DecFileParser:
         # DecayModelAliasReplacement deep-copies each subtree at replacement
         # time, so the in-place mutations later done by
         # DecayModelParamValueReplacement do not leak across decay trees.
-        dict_model_aliases = self._dict_raw_model_aliases()
-        self._parsed_decays = [
-            DecayModelAliasReplacement(model_alias_defs=dict_model_aliases).transform(
-                tree
-            )
-            for tree in self._parsed_decays
-        ]
+        try:
+            dict_model_aliases = self._resolve_model_aliases()
+            self._check_unresolved_models(set(dict_model_aliases))
+            self._parsed_decays = [
+                DecayModelAliasReplacement(
+                    model_alias_defs=dict_model_aliases
+                ).transform(tree)
+                for tree in self._parsed_decays
+            ]
+        except VisitError as exc:
+            # Expose the actionable input error rather than Lark's transformer
+            # wrapper, retaining the model token's location for diagnostics.
+            if isinstance(exc.orig_exc, DecayModelError):
+                self._set_exception_source(exc.orig_exc)
+                raise exc.orig_exc from None
+            raise
+        except DecayModelError as exc:
+            self._set_exception_source(exc)
+            raise
         self._decay_modes_index = None
+
+        # Check Alias statements for misleading or misconfigured constructions
+        self._check_aliases()
+
+        # Check ChargeConj statements for misleading or misconfigured constructions
+        self._check_charge_conjugates()
 
         # Check whether certain decay model parameters are defined via
         # variable names with actual values provided via 'Define' statements,
@@ -322,6 +446,110 @@ class DecFileParser:
         # Create on the fly the charge conjugate decays, if requested
         if self._include_ccdecays:
             self._add_charge_conjugate_decays()
+
+        # Once all decays are parsed and, if requested, all charge-conjugates are produced,
+        # check for duplicates - should in a way be considered a bug in the .dec file!
+        self._check_parsed_decays()
+
+    def _set_exception_source(self, exc: Exception) -> None:
+        """Translate a combined-input location back to its originating file."""
+        line = getattr(exc, "line", None)
+        if isinstance(line, int):
+            for start, end, path in reversed(self._source_line_ranges):
+                if start <= line:
+                    # A synthetic separator or EOF belongs to the preceding
+                    # file, at most one line beyond its original content.
+                    exc.line = min(line, end + 1) - start + 1  # type: ignore[attr-defined]
+                    exc.path = path  # type: ignore[attr-defined]
+                    break
+
+    def _resolve_model_aliases(self) -> dict[str, list[Token | Tree[Any]]]:
+        """Validate all ModelAlias definitions and resolve references between them."""
+        assert self._parsed_dec_file is not None
+        raw = self._dict_raw_model_aliases()
+        resolved: dict[str, list[Token | Tree[Any]]] = {}
+        active: list[str] = []
+
+        def resolve(name: str, token: Token) -> list[Token | Tree[Any]]:
+            if name in resolved:
+                return resolved[name]
+            if name in active:
+                raise InvalidModelAliasError(
+                    f"Cyclic ModelAlias definitions: {' -> '.join([*active, name])}. "
+                    "Define the aliases using a registered decay model.",
+                    model_name=name,
+                    line=token.line,
+                    column=token.column,
+                )
+            active.append(name)
+            children = raw[name]
+            if isinstance(children[0], Tree):
+                target = children[0].children[0]
+                assert isinstance(target, Token)
+                if str(target) not in raw:
+                    raise UnknownDecayModelError.from_token(target)
+                if len(children) > 1:
+                    raise InvalidModelAliasError(
+                        f"ModelAlias {name!r} adds parameters to another ModelAlias. "
+                        "Define it using a registered decay model and its parameters directly.",
+                        model_name=name,
+                        line=target.line,
+                        column=target.column,
+                    )
+                children = resolve(str(target), target)
+            active.pop()
+            resolved[name] = children
+            return children
+
+        for definition in self._parsed_dec_file.find_data("model_alias"):
+            token = definition.children[0].children[0]
+            assert isinstance(token, Token)
+            resolve(str(token), token)
+        return resolved
+
+    def _check_unresolved_models(self, model_aliases: set[str]) -> None:
+        """Avoid treating a parameter or daughter as an unknown model name."""
+        assert self._parsed_decays is not None
+        assert self._parsed_dec_file is not None
+        declared_particles = set(self.dict_aliases()) | {
+            str(tree.children[0])
+            for tree in self._parsed_dec_file.find_data("particle_def")
+        }
+
+        def is_particle(token: Token) -> bool:
+            return str(token) in declared_particles or evtgen_name_is_particle(
+                str(token)
+            )
+
+        for decay in self._parsed_decays:
+            for line in decay.find_data("decayline"):
+                model = next(line.find_data("model"))
+                if not isinstance(model.children[0], Tree):
+                    continue
+                token = model.children[0].children[0]
+                assert isinstance(token, Token)
+                # A defined alias has a known boundary, even when daughters
+                # include experiment-specific names absent from the PDG table.
+                if str(token) in model_aliases:
+                    continue
+                uncertain = None
+                for daughter in line.find_data("particle"):
+                    daughter_token = daughter.children[0]
+                    assert isinstance(daughter_token, Token)
+                    if not is_particle(daughter_token):
+                        uncertain = daughter_token
+                        break
+                if uncertain is not None or is_particle(token):
+                    location = uncertain if uncertain is not None else token
+                    raise AmbiguousDecayModelError(
+                        "Cannot identify the decay model in this decay line. "
+                        "A model may be missing or unregistered. "
+                        "Check daughter names and ModelAlias definitions. "
+                        "Register custom models with load_additional_decay_models(...) "
+                        "before parse() or --additional-decay-model=NAME.",
+                        line=location.line,
+                        column=location.column,
+                    )
 
     def grammar(self) -> str:
         """
@@ -376,6 +604,7 @@ class DecFileParser:
                 "The grammar has already been loaded; additional decay models "
                 "passed to ``load_additional_decay_models`` will be ignored. "
                 "Call this method before ``grammar``/``parse``.",
+                DecFileWarning,
                 stacklevel=2,
             )
 
@@ -513,8 +742,8 @@ class DecFileParser:
     def dict_aliases(self) -> dict[str, str]:
         """
         Return a dictionary of all alias definitions in the input parsed file,
-        of the form "Alias <NAME> <ALIAS>",
-        as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
+        of the form "Alias <ALIAS> <NAME>",
+        as {'ALIAS1': NAME1, 'ALIAS2': NAME2, ...}.
         """
         self._check_parsing()
         return get_aliases(self._parsed_dec_file)
@@ -588,7 +817,12 @@ class DecFileParser:
         """
         Return a list of expanded decay descriptors for the given (mother) particle.
         The set of decay final states is effectively split and returned as a list.
-        NB: this implicitly reverts aliases back to the original (EvtGen) names.
+
+        Note
+        ----
+        This implicitly reverts aliases to the original (EvtGen) names
+        according to the 'Alias' statements provided.
+        (alias names with unmatched 'Alias' statements will be unaffected.)
         """
         self._check_parsing()
         decay_chains = self.build_decay_chains(particle)
@@ -637,8 +871,9 @@ class DecFileParser:
         Return a boolean-like PhotosEnum enum specifying whether or not PHOTOS
         has been enabled.
 
-        Note: PHOTOS is turned on(off) for all decays with the global flag
-        yesPhotos(noPhotos).
+        Note
+        ----
+        PHOTOS is turned on(off) for all decays with the global flag yesPhotos(noPhotos).
 
         Returns
         -------
@@ -676,9 +911,6 @@ class DecFileParser:
         self._parsed_decays = get_decays(self._parsed_dec_file)
         self._decay_modes_index = None
 
-        # Check for duplicates - should be considered a bug in the .dec file!
-        self._check_parsed_decays()
-
     def _add_decays_to_be_copied(self) -> None:
         """
         Create the copies of the Lark Tree instances of decays specified
@@ -713,7 +945,7 @@ class DecFileParser:
                 copied_decay.children[0].children[0].value = decay2copy
                 copied_decays.append(copied_decay)
             except Exception:  # noqa: BLE001
-                misses.append(decay2copy)
+                misses.append(f"{decay2copy} (from {decay2becopied})")
         if misses:
             msg = """\nCorresponding 'Decay' statement for 'CopyDecay' statement(s) of following particle(s) not found:\n{}.
 Skipping creation of these copied decay trees.""".format("\n".join(misses))
@@ -733,21 +965,51 @@ Skipping creation of these copied decay trees.""".format("\n".join(misses))
         These are added to the internal list of decays stored in the class
         in variable 'self._parsed_decays', performing a charge conjugate (CC)
         transformation on each CC-related decay, which is cloned.
+        The CC transformations are based on particle ChargeConj statements.
 
         Note
         ----
         1) If a decay file only defines 'Decay' decays and no 'CDecay',
         then no charge conjugate decays will be created!
         This seems correct given the "instructions" in the decay file:
-        - There is no 'CDecay' statement related to a 'Decay' statement
-          for a self-conjugate decaying particle such as the pi0.
+        - There should be no 'CDecay' statement related to a 'Decay' statement
+          for a self-conjugate decaying particle such as the pi0 (it would be a bug).
         - Else the decay file should be considered incomplete, hence buggy.
         2) Method not meant to be used directly!
         """
+        # Related cross-check - since the CC transformations make use of CC info
+        # specified by ChargeConj statements, catch immediately those that make no sense
+        # since referring to self-conjugate particles.
+        # Note that particle aliases are to be ignored since statements for them are necessary to have.
 
+        def _is_self_conj_non_alias(name: str) -> bool:
+            """
+            Only non-alias particles are checked in practice
+            since alias names are by construction unknown to EvtGen, and False is returned.
+            """
+            try:
+                return Particle.from_evtgen_name(name).is_self_conjugate
+            except Exception:  # noqa: BLE001
+                return False
+
+        # Dictionary of all charge conjugate definitions, which are defined via ChargeConj statements
+        dict_cc_names = self.dict_charge_conjugates()
+
+        # Test ChargeConj statements not using aliases for the same key and value,
+        # which states they refer to self-conjugate particles
+        redundants = [
+            k for k, v in dict_cc_names.items() if k == v and _is_self_conj_non_alias(k)
+        ]
+        if len(redundants) > 0:
+            str_redundants = ", ".join(r for r in redundants)
+            msg = f"""Found 'ChargeConj' statements for the following non-alias self-conjugate particles: {str_redundants}!
+The 'ChargeConj' definition(s) will be ignored ..."""
+            warnings.warn(msg, SelfChargeConjWarning, stacklevel=2)
+
+        # List of all charge conjugate decay definitions with CDecay statements
+        mother_names_ccdecays = self.list_charge_conjugate_decays()
         # Do not add any charge conjugate decays if the input parsed file
         # does not define any!
-        mother_names_ccdecays = self.list_charge_conjugate_decays()
         if len(mother_names_ccdecays) == 0:
             return
 
@@ -788,11 +1050,14 @@ The 'CDecay' definition(s) will be ignored ..."""
         if len(mother_names_ccdecays) == 0:
             return
 
-        # At last, create the charge conjugate decays:
+        # At last, create the charge conjugate decays.
         # First, make a (deep) copy of the list of relevant Tree instances.
         # Example:
         # if mother_names_ccdecays = ['anti-M10', 'anti-M2+'],
         # the relevant Trees are the ones describing the decays of ['M10', 'M2-'].
+
+        # Dictionary of all charge conjugate definitions,
+        # which are defined via ChargeConj statements
         dict_cc_names = self.dict_charge_conjugates()
 
         # match name -> position in list self._parsed_decays
@@ -822,11 +1087,17 @@ Skipping creation of these charge-conjugate decay trees.""".format(
         # Finally, perform all particle -> anti(particle) replacements,
         # taking care of charge conjugate decays defined via aliases,
         # passing them as charge conjugates to be processed manually.
+        aliases = get_aliases(self._parsed_dec_file)
+
         def _is_not_self_conj(t: Tree) -> bool:
             try:
+                # Check not only the Lark Tree (string) name itself
+                # but also the actual alias name pointed at by the alias, if it exists
                 mname = t.children[0].children[0].value
-                if Particle.from_evtgen_name(mname).is_self_conjugate:
-                    msg = f"""Found 'CDecay' statement for self-conjugate particle {mname}. This is a bug!
+                aname = aliases.get(mname, mname) if aliases else mname
+                if Particle.from_evtgen_name(aname).is_self_conjugate:
+                    printname = f"{mname} (aliased to {aname})" if aliases else mname
+                    msg = f"""Found 'CDecay' statement for self-conjugate particle {printname}. This is a bug!
 Skipping creation of charge-conjugate decay Tree."""
                     warnings.warn(msg, SelfConjugateCDecayWarning, stacklevel=2)
                     return False
@@ -834,10 +1105,16 @@ Skipping creation of charge-conjugate decay Tree."""
             except Exception:  # noqa: BLE001
                 return True
 
-        for t in cdecays:
+        not_conjugated: list[int] = []
+        for i, t in enumerate(cdecays):
             if _is_not_self_conj(t):
                 ChargeConjugateReplacement(charge_conj_defs=dict_cc_names).visit(t)
+            else:
+                not_conjugated.append(i)
 
+        # ... do not forget to remove from the list those Trees that did not get CC replaced above
+        for i in not_conjugated:
+            del cdecays[i]
         # ... and add all these charge-conjugate decays to the list of decays!
         self._parsed_decays.extend(cdecays)
         self._decay_modes_index = None
@@ -880,6 +1157,36 @@ All but the first occurrence(s) will be discarded/removed ...""".format(
                 kept.append(tree)
             self._parsed_decays = kept
             self._decay_modes_index = None
+
+    def _check_aliases(self) -> None:
+        """Check "Alias" statements for misleading or misconfigured constructions."""
+        aliases = get_aliases(self._parsed_dec_file)
+
+        misconfs = [
+            k
+            for k, v in aliases.items()
+            if k == v or evtgen_name_is_particle(k) or not evtgen_name_is_particle(v)
+        ]
+        if len(misconfs) > 0:
+            str_misconfs = ", ".join(r for r in misconfs)
+            msg = f"""Found 'Alias' misleading/misconfigured statements for the following alias names: {str_misconfs}!
+Continuing but be warned of possible side effects ..."""
+            warnings.warn(msg, MisconfiguredAliasWarning, stacklevel=2)
+
+    def _check_charge_conjugates(self) -> None:
+        """Check "ChargeConj" statements for misleading or misconfigured constructions."""
+        charge_conj_defs = get_charge_conjugate_defs(self._parsed_dec_file)
+
+        misconfs = [
+            k
+            for k, v in charge_conj_defs.items()
+            if evtgen_name_is_particle(k) or evtgen_name_is_particle(v)
+        ]
+        if len(misconfs) > 0:
+            str_misconfs = ", ".join(r for r in misconfs)
+            msg = f"""Found 'ChargeConj' misleading/misconfigured statements for the following particle names: {str_misconfs}!
+Continuing but be warned of possible side effects ..."""
+            warnings.warn(msg, MisconfiguredChargeConjWarning, stacklevel=2)
 
     @property
     def number_of_decays(self) -> int:
@@ -930,7 +1237,9 @@ All but the first occurrence(s) will be discarded/removed ...""".format(
                 f"Decays of particle '{mother}' not found in .dec file!"
             ) from None
 
-    def list_decay_modes(self, mother: str, pdg_name: bool = False) -> list[list[str]]:
+    def list_decay_modes(
+        self, mother: str, is_pdg_name: bool = False
+    ) -> list[list[str]]:
         """
         Return a list of decay modes for the given mother particle.
 
@@ -938,7 +1247,7 @@ All but the first occurrence(s) will be discarded/removed ...""".format(
         ----------
         mother: str
             Input mother particle name.
-        pdg_name: bool, optional, default=False
+        is_pdg_name: bool, optional, default=False
             Input mother particle name is the PDG name,
             not the (default) EvtGen name.
 
@@ -950,7 +1259,7 @@ All but the first occurrence(s) will be discarded/removed ...""".format(
         >>> parser.list_decay_mother_names()    # doctest: +SKIP
         >>> parser.list_decay_modes('pi0')    # doctest: +SKIP
         """
-        if pdg_name:
+        if is_pdg_name:
             mother = PDG2EvtGenNameMap[mother]
 
         return [
@@ -988,7 +1297,7 @@ All but the first occurrence(s) will be discarded/removed ...""".format(
     def print_decay_modes(
         self,
         mother: str,
-        pdg_name: bool = False,
+        is_pdg_name: bool = False,
         print_model: bool = True,
         display_photos_keyword: bool = True,
         ascending: bool = False,
@@ -1008,7 +1317,7 @@ All but the first occurrence(s) will be discarded/removed ...""".format(
         ----------
         mother: str
             Input mother particle name.
-        pdg_name: bool, optional, default=False
+        is_pdg_name: bool, optional, default=False
             Input mother particle name is the PDG name,
             not the (default) EvtGen name.
         print_model: bool, optional, default=True
@@ -1076,7 +1385,7 @@ All but the first occurrence(s) will be discarded/removed ...""".format(
                     f"A branching fraction must be in the range ]0, 1]! You set scale = {scale}."
                 )
 
-        if pdg_name:
+        if is_pdg_name:
             mother = PDG2EvtGenNameMap[mother]
 
         dms = self._find_decay_modes(mother)
@@ -1315,10 +1624,7 @@ class DecayModelAliasReplacement(Transformer):  # type: ignore[misc]
 
     def _replacement(self, t: Token) -> Token:
         if t.value not in self.define_defs:
-            raise ValueError(
-                f"Decay model or ModelAlias {t.value} is not defined. Please load the decay model with "
-                "``load_additional_decay_models`` or define a ModelAlias in the decayfile."
-            )
+            raise UnknownDecayModelError.from_token(t)
         # Deep-copy so that every use of a model alias gets its own Token/Tree
         # instances. Otherwise all decay trees using the alias would share the
         # same children, and the in-place mutations done by
@@ -1805,7 +2111,7 @@ def get_model_aliases(parsed_file: Tree) -> dict[str, list[str]]:
 def get_aliases(parsed_file: Tree) -> dict[str, str]:
     """
     Return a dictionary of all aliases in the input parsed file, of the form
-    "Alias <NAME> <ALIAS>", as {'NAME1': ALIAS1, 'NAME2': ALIAS2, ...}.
+    "Alias <ALIAS> <NAME>", as {'ALIAS1': NAME1, 'ALIAS2': NAME2, ...}.
 
     Parameters
     ----------
@@ -1864,14 +2170,24 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
 
         # Get the particle name or the alias
         token_name: str = children[0].value
+        pname: str = aliases.get(token_name, token_name) if aliases else token_name
         try:
-            pname: str = aliases.get(token_name, token_name) if aliases else token_name
-            # Convert the width to GeV !
-            return Particle.from_evtgen_name(pname).width / GeV  # type: ignore[operator]
-        except Exception as err:
-            raise RuntimeError(
-                f"Particle name/alias {token_name!r} not found! Check your dec file(s)!"
+            particle = Particle.from_evtgen_name(pname)
+        except (ParticleNotFound, MatchingIDNotFound) as err:
+            raise ParticlePropertyError(
+                f"Particle {pname!r} (referenced as {token_name!r}) is unknown to the particle table. "
+                "Check the particle name or Alias definition, or supply an explicit width "
+                "in the Particle statement (in GeV).",
+                particle_name=token_name,
             ) from err
+        if particle.width is None:
+            raise ParticlePropertyError(
+                f"Particle {pname!r} (referenced as {token_name!r}) has no known width. "
+                "Supply an explicit width in the Particle statement (in GeV).",
+                particle_name=token_name,
+            )
+        # Convert the particle table's width from MeV to the decfile's GeV.
+        return particle.width / GeV
 
     try:
         return {
@@ -1881,6 +2197,8 @@ def get_particle_property_definitions(parsed_file: Tree) -> dict[str, dict[str, 
             }
             for tree in parsed_file.find_data("particle_def")
         }
+    except ParticlePropertyError:
+        raise
     except Exception as err:
         raise RuntimeError(
             "Input parsed file does not seem to have the expected structure."
@@ -2130,7 +2448,11 @@ def get_global_photos_flag(parsed_file: Tree) -> int:
     if not tree:
         return PhotosEnum.no
     if len(tree) > 1:
-        warnings.warn("PHOTOS flag re-set! Using flag set in last ...", stacklevel=2)
+        warnings.warn(
+            "PHOTOS flag re-set! Using flag set in last ...",
+            DecFileWarning,
+            stacklevel=2,
+        )
 
     end_item = tree[-1]  # Use the last one if several are present !
     val = end_item.children[0].data
