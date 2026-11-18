@@ -1,5 +1,11 @@
 # Changelog
 
+## WIP - UNRELEASED
+
+* Dependencies:
+  - Require dependency on ``Particle`` >= 1.1.0
+    to pick up the PDG ID scheme changes for tetraquarks and pentaquarks.
+
 ## Version 1.1.4 (2026-11-17)
 
 * API change:
