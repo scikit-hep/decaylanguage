@@ -1305,6 +1305,43 @@ def test_build_decay_chains_minimum_effective_bf_none_is_no_filter() -> None:
     ) == p.build_decay_chains("D*+")
 
 
+def test_build_decay_chains_minimum_effective_bf_preserves_source_order() -> None:
+    """Pruning sorts modes internally but must return them in file order."""
+    p = DecFileParser.from_string(
+        """Decay D0
+  0.1   K-  pi+   PHSP;
+  0.25  pi+ pi-   PHSP;
+  0.6   mu+ mu-   PHSP;
+Enddecay
+"""
+    )
+    p.parse()
+
+    chains = p.build_decay_chains("D0", minimum_effective_bf=0.2)
+
+    # 0.1 is pruned; the two survivors are *not* in descending-BF order.
+    assert [mode["bf"] for mode in chains["D0"]] == [0.25, 0.6]
+
+
+@pytest.mark.parametrize("threshold", [None, 0.0, 0.5])
+def test_build_decay_chains_empty_daughter_is_stable(
+    threshold: float | None,
+) -> None:
+    p = DecFileParser.from_string(
+        """Decay D+
+1.0 K_S0 pi+ PHSP;
+Enddecay
+Decay K_S0
+Enddecay
+"""
+    )
+    p.parse()
+
+    assert p.build_decay_chains("D+", minimum_effective_bf=threshold) == {
+        "D+": [{"bf": 1.0, "fs": ["K_S0", "pi+"], "model": "PHSP", "model_params": ""}]
+    }
+
+
 def test_build_decay_chains_minimum_effective_bf_no_output() -> None:
     """Too stringent a threshold - no chain survives."""
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")

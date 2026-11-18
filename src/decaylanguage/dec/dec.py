@@ -1486,6 +1486,8 @@ Continuing but be warned of possible side effects ..."""
             fractions from the mother down to the stable particles
             (the "effective branching fraction") is above this value will be
             returned. This prunes less likely or negligible decay paths.
+            The filtering does not reorder the modes: returned decay chains
+            keep the order in which they appear in the .dec file.
 
         Returns
         -------
@@ -1529,6 +1531,11 @@ Continuing but be warned of possible side effects ..."""
         # Standardize inputs for hashing
         stable_set = frozenset(stable_particles)
 
+        # Only a positive threshold permits early termination in descending BF
+        # order. For other thresholds, signed BFs can still be filtered, and
+        # a daughter whose decay modes are all filtered invalidates its parent.
+        sort_for_pruning = minimum_effective_bf is not None and minimum_effective_bf > 0
+
         # When no branching-fraction cut is requested, the decay subtree of a
         # given particle is independent of the path taken to reach it, so we can
         # key the cache on the particle name alone. This makes a particle that
@@ -1537,6 +1544,31 @@ Continuing but be warned of possible side effects ..."""
         # accumulated along the path, so that value must remain part of the key.
         cache_on_name_only = minimum_effective_bf is None
 
+        # Cache the modes of each mother in pruning order. The same mother is
+        # revisited under many effective-BF cache keys, so sorting it only once
+        # avoids repeated branching-fraction extraction and sorting.
+        ordered_modes: dict[str, tuple[tuple[int, Any], ...]] = {}
+
+        def _modes_in_pruning_order(p_name: str) -> tuple[tuple[int, Any], ...]:
+            try:
+                return ordered_modes[p_name]
+            except KeyError:
+                modes = self._find_decay_modes(p_name)
+                if not sort_for_pruning:
+                    ordered = tuple(enumerate(modes))
+                else:
+                    # Descending BF lets the loop below stop at the first mode
+                    # failing the cut, since all following ones fail too.
+                    ordered = tuple(
+                        sorted(
+                            enumerate(modes),
+                            key=lambda item: get_branching_fraction(item[1]),
+                            reverse=True,
+                        )
+                    )
+                ordered_modes[p_name] = ordered
+                return ordered
+
         # Define the actual computation logic within a helper function.
         # This function returns the raw, mutable result, which is cached.
         @cache
@@ -1544,15 +1576,17 @@ Continuing but be warned of possible side effects ..."""
             p_name: str,
             current_effective_bf: float = 1.0,
         ) -> dict[str, list[DecayModeDict]]:
-            info = []
+            info: list[tuple[int, DecayModeDict]] = []
 
-            for dm in self._find_decay_modes(p_name):
+            for index, dm in _modes_in_pruning_order(p_name):
                 # Fetch details
                 d = self._decay_mode_details(dm, display_photos_keyword=False)
 
                 if (minimum_effective_bf is not None) and (
                     d["bf"] * current_effective_bf < minimum_effective_bf
                 ):
+                    if sort_for_pruning:
+                        break
                     continue
 
                 for i, fs in enumerate(d["fs"]):
@@ -1567,16 +1601,24 @@ Continuing but be warned of possible side effects ..."""
                             fs,
                             current_effective_bf=current_effective_bf * d["bf"],
                         )
+                        if _info[fs] == []:
+                            if not _modes_in_pruning_order(fs):
+                                continue  # an empty decay table means stable
+                            if minimum_effective_bf is not None:
+                                break  # daughter had decays but all were filtered
                         d["fs"][i] = _info  # type: ignore[index]
-                        if (minimum_effective_bf is not None) and (_info[fs] == []):
-                            break  # daughter had decays but all filtered, so skip
                     # if fs does not have decays defined in the parsed file
                     except DecayNotFound:
                         pass
                 else:
-                    info.append(d)
+                    info.append((index, d))
 
-            return {p_name: info}
+            if sort_for_pruning:
+                # Sorting is an implementation detail: restore the source-file
+                # order so that the returned chain is unaffected by it.
+                info.sort(key=lambda item: item[0])
+
+            return {p_name: [d for _, d in info]}
 
         # This is the wrapper function that external callers (and recursive calls) will use.
         # It always returns a deepcopy of the (potentially cached) raw result,

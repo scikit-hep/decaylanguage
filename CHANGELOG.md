@@ -2,6 +2,14 @@
 
 ## WIP - UNRELEASED
 
+* Parsing of decay files (aka .dec files):
+  - Speed up `DecFileParser.build_decay_chains` when `minimum_effective_bf` is
+    set by sorting decay modes in descending branching-fraction order
+    internally, allowing early pruning of modes below the threshold,
+    while preserving the source-file order in the returned chains.
+  - Fixed `DecFileParser.build_decay_chains` treating a daughter with an empty
+    decay table as invalidating its parent mode when `minimum_effective_bf` is
+    set; such a daughter is now correctly treated as stable.
 * Dependencies:
   - Require dependency on ``Particle`` >= 1.1.0
     to pick up the PDG ID scheme changes for tetraquarks and pentaquarks.
