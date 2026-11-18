@@ -11,6 +11,6 @@ dependencies:
   - lark>=1.0.0
   - RISE
   - hepunits>=2.4.0
-  - particle>=1.0.0
+  - particle>=1.1.0
   - pip:
     - .
