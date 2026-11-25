@@ -173,6 +173,10 @@ class SelfChargeConjWarning(DecFileWarning):
     code = "DLW012"
 
 
+class NegativeBranchingFractionWarning(DecFileWarning):
+    code = "DLW013"
+
+
 @cache
 def _build_lark_parser(
     grammar: str,
@@ -439,6 +443,14 @@ class DecFileParser:
         dict_define_defs = self.dict_definitions()
         for tree in self._parsed_decays:
             DecayModelParamValueReplacement(define_defs=dict_define_defs).visit(tree)
+
+        # Check the branching fractions of the decays as written in the file
+        # before any decays are generated on the fly (via CopyDecay or CDecay
+        # statements): negative values are physically meaningless and would
+        # silently corrupt effective branching fractions downstream, and only
+        # the decay modes actually written by the user should be reported.
+        self._check_branching_fractions()
+
         # Create on the fly the decays to be copied, if requested
         if self.dict_decays2copy():
             self._add_decays_to_be_copied()
@@ -1157,6 +1169,25 @@ All but the first occurrence(s) will be discarded/removed ...""".format(
                 kept.append(tree)
             self._parsed_decays = kept
             self._decay_modes_index = None
+
+    def _check_branching_fractions(self) -> None:
+        """Check decays as written in the file for negative branching fractions."""
+        assert self._parsed_decays is not None
+
+        negatives = []
+        for tree in self._parsed_decays:
+            mother = get_decay_mother_name(tree)
+            for decayline in tree.find_data("decayline"):
+                bf = get_branching_fraction(decayline)
+                if bf < 0:
+                    final_state = " ".join(get_final_state_particle_names(decayline))
+                    negatives.append(f"{mother} -> {final_state} ({bf})")
+
+        if negatives:
+            str_negatives = ", ".join(negatives)
+            msg = f"""Found negative branching fraction(s) in the following decay mode(s): {str_negatives}!
+Branching fractions must be non-negative; continuing but be warned of possible side effects ..."""
+            warnings.warn(msg, NegativeBranchingFractionWarning, stacklevel=2)
 
     def _check_aliases(self) -> None:
         """Check "Alias" statements for misleading or misconfigured constructions."""

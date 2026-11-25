@@ -32,6 +32,7 @@ from decaylanguage.dec.dec import (
     MisconfiguredChargeConjWarning,
     MissingCDecaySourceWarning,
     MissingCopyDecaySourceWarning,
+    NegativeBranchingFractionWarning,
     ParticlePropertyError,
     SelfChargeConjWarning,
     SelfConjugateCDecayWarning,
@@ -124,6 +125,96 @@ Enddecay
     p.parse()
 
     assert p.number_of_decays == 1
+
+
+def test_negative_branching_fraction_warning() -> None:
+    p = DecFileParser.from_string(
+        """Decay pi0
+0.988228297   gamma   gamma                   PHSP;
+-0.011738247  e+      e-      gamma           PI0_DALITZ;
+Enddecay
+"""
+    )
+    with pytest.warns(
+        NegativeBranchingFractionWarning,
+        match=r"pi0 -> e\+ e- gamma \(-0\.011738247\)",
+    ) as record:
+        p.parse()
+    assert len(record) == 1
+    # Parsing continues and the (invalid) value is preserved
+    decaylines = list(p._parsed_decays[0].find_data("decayline"))
+    assert get_branching_fraction(decaylines[1]) == pytest.approx(-0.011738247)
+
+
+def test_multiple_negative_branching_fractions_warning() -> None:
+    p = DecFileParser.from_string(
+        """Decay D0
+0.6   K-      pi+     PHSP;
+-0.3  K-      pi+     pi0     PHSP;
+-0.1  K-      pi+     pi+     pi-     PHSP;
+Enddecay
+"""
+    )
+    with pytest.warns(NegativeBranchingFractionWarning) as record:
+        p.parse()
+    assert len(record) == 1
+    message = str(record[0].message)
+    assert "D0 -> K- pi+ pi0 (-0.3)" in message
+    assert "D0 -> K- pi+ pi+ pi- (-0.1)" in message
+    # Negative branching fractions are reported in file order
+    assert message.index("(-0.3)") < message.index("(-0.1)")
+
+
+def test_negative_branching_fraction_warning_before_charge_conjugation() -> None:
+    # Only the decay mode written in the file is reported, not the
+    # charge-conjugate decay generated from the CDecay statement.
+    p = DecFileParser.from_string(
+        """Decay B+
+-0.5  K-      pi+     PHSP;
+Enddecay
+CDecay B-
+"""
+    )
+    with pytest.warns(NegativeBranchingFractionWarning) as record:
+        p.parse()
+    assert len(record) == 1
+    message = str(record[0].message)
+    assert "B+ -> K- pi+ (-0.5)" in message
+    assert "B- -> K+ pi-" not in message
+    assert p.number_of_decays == 2
+
+
+def test_negative_model_parameter_no_branching_fraction_warning(
+    recwarn: pytest.WarningsRecorder,
+) -> None:
+    # Negative decay-model parameters are legitimate and must not be
+    # mistaken for negative branching fractions.
+    p = DecFileParser.from_string(
+        """Decay MyB_s0
+1.000     K+     K-     SSD_CP 20.e12 0.1 1.0 0.04 9.6 -0.8 8.4 -0.6;
+Enddecay
+"""
+    )
+    p.parse()
+    assert not any(
+        issubclass(w.category, NegativeBranchingFractionWarning) for w in recwarn
+    )
+    assert p.number_of_decays == 1
+
+
+def test_zero_branching_fraction_no_warning(
+    recwarn: pytest.WarningsRecorder,
+) -> None:
+    p = DecFileParser.from_string(
+        """Decay pi0
+-0.0    gamma   gamma                   PHSP;
+Enddecay
+"""
+    )
+    p.parse()
+    assert not any(
+        issubclass(w.category, NegativeBranchingFractionWarning) for w in recwarn
+    )
 
 
 def test_double_parsing() -> None:

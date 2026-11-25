@@ -22,6 +22,7 @@ from decaylanguage.dec.dec import (
     MisconfiguredChargeConjWarning,
     MissingCDecaySourceWarning,
     MissingCopyDecaySourceWarning,
+    NegativeBranchingFractionWarning,
     SelfChargeConjWarning,
     SelfConjugateCDecayWarning,
     UnknownDecayModelError,
@@ -128,6 +129,17 @@ DIR = Path(__file__).parent.resolve()
             "ChargeConj targets non-alias self-conjugate particles: pi0",
         ),
         (
+            NegativeBranchingFractionWarning,
+            (
+                "Found negative branching fraction(s) in the following decay "
+                "mode(s): D0 -> K- pi+ (-0.5)! Branching fractions must be "
+                "non-negative; continuing but be warned of possible side "
+                "effects ..."
+            ),
+            "DLW013",
+            "negative branching fraction(s): D0 -> K- pi+ (-0.5)",
+        ),
+        (
             UserWarning,
             "An unclassified parser warning.",
             "DLW999",
@@ -163,6 +175,29 @@ def test_validate_files_reports_duplicate_decay() -> None:
 
     assert [diagnostic.code for diagnostic in diagnostics] == ["DLW003", "DLW001"]
     assert diagnostics[0].message.startswith("both Decay and CDecay defined")
+
+
+def test_validate_files_reports_negative_branching_fraction(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "negative-bf.dec"
+    path.write_text(
+        """Decay D0
+-0.5 K- pi+ PHSP;
+Enddecay
+End
+""",
+        encoding="utf_8",
+    )
+
+    diagnostics = validate_files([path])
+
+    assert [diagnostic.code for diagnostic in diagnostics] == ["DLW013"]
+    assert diagnostics[0].message == (
+        "negative branching fraction(s): D0 -> K- pi+ (-0.5)"
+    )
+    # The diagnostic can be suppressed via its code
+    assert validate_files([path], ignore=["DLW013"]) == []
 
 
 def test_validate_files_reports_self_conjugate_cdecay(tmp_path: Path) -> None:
