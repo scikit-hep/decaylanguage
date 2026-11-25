@@ -126,6 +126,54 @@ Enddecay
     assert p.number_of_decays == 1
 
 
+def test_negative_branching_fraction_is_a_parse_error() -> None:
+    p = DecFileParser.from_string(
+        """Decay pi0
+0.988228297   gamma   gamma                   PHSP;
+-0.011738247  e+      e-      gamma           PI0_DALITZ;
+Enddecay
+"""
+    )
+    with pytest.raises(UnexpectedToken) as caught:
+        p.parse()
+    # The offending decay mode is rejected, with a pointer to the sign
+    assert (caught.value.line, caught.value.column) == (3, 1)
+    assert "NON_NEG_NUMBER" in caught.value.expected
+
+
+@pytest.mark.parametrize("branching_fraction", ["-0.5", "-.5", "-0.0"])
+def test_negative_branching_fraction_forms_are_rejected(
+    branching_fraction: str,
+) -> None:
+    p = DecFileParser.from_string(
+        f"""Decay pi0
+{branching_fraction} gamma gamma PHSP;
+Enddecay
+"""
+    )
+    with pytest.raises(UnexpectedToken) as caught:
+        p.parse()
+    assert (caught.value.line, caught.value.column) == (2, 1)
+
+
+@pytest.mark.parametrize(
+    ("branching_fraction", "expected"),
+    [("0.5", 0.5), ("+0.5", 0.5), (".5", 0.5), ("5.", 5.0)],
+)
+def test_non_negative_branching_fraction_forms_are_accepted(
+    branching_fraction: str, expected: float
+) -> None:
+    p = DecFileParser.from_string(
+        f"""Decay pi0
+{branching_fraction} gamma gamma PHSP;
+Enddecay
+"""
+    )
+    p.parse()
+    decayline = next(iter(p._parsed_decays[0].find_data("decayline")))
+    assert get_branching_fraction(decayline) == pytest.approx(expected)
+
+
 def test_double_parsing() -> None:
     p = DecFileParser(DIR / "../data/test_example_Dst.dec")
     p.parse()

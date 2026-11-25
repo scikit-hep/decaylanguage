@@ -635,7 +635,10 @@ class DecFileParser:
         parser: str, optional, default='lalr'
             The Lark parser engine name.
         lexer: str, optional, default='auto'
-            The Lark parser lexer mode to use.
+            The Lark parser lexer mode to use. Note that the grammar
+            distinguishes signed from non-negative numbers, so a lexer aware
+            of the parser state is required: 'contextual' (the 'auto' default
+            for LALR) or 'dynamic'. The 'basic' lexer is not supported.
         options: keyword arguments, optional
             Extra options to pass on to the parsing algorithm.
 

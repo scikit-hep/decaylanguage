@@ -266,6 +266,7 @@ def _format_syntax_error(
 ) -> str:
     """Translate Lark input failures and expected terminals into decfile syntax."""
     expected: Iterable[str] = ()
+    offending: str | None = None
     if isinstance(exc, UnexpectedToken):
         detail = (
             "Unexpected end of file"
@@ -273,12 +274,27 @@ def _format_syntax_error(
             else f"Unexpected token {str(exc.token)!r}"
         )
         expected = exc.expected
+        offending = exc.token.value
     elif isinstance(exc, UnexpectedEOF):
         detail = "Unexpected end of file"
         expected = exc.expected
     else:
         detail = f"Unexpected character {exc.char!r}"
         expected = exc.allowed or ()
+        offending = exc.char
+
+    # A negative branching fraction fails at the start of a decay line, where
+    # many other statements could begin; name the actual problem instead of
+    # listing every alternative.
+    if (
+        offending is not None
+        and offending.startswith("-")
+        and "NON_NEG_NUMBER" in set(expected)
+    ):
+        return (
+            f"{type(exc).__name__}: {detail}; "
+            "a branching fraction must be a non-negative number"
+        )
 
     # Literal keywords and punctuation come from the grammar. Only regex
     # terminals and the synthetic EOF token need semantic descriptions.
@@ -286,6 +302,7 @@ def _format_syntax_error(
         "$END": "end of file",
         "_NEWLINE": "a newline",
         "SIGNED_NUMBER": "a number",
+        "NON_NEG_NUMBER": "a non-negative number",
         "INT": "an integer",
         "LABEL": "a name",
         "MODEL_NAME": "a registered decay model",

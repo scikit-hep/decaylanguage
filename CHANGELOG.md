@@ -2,6 +2,8 @@
 
 ## WIP - UNRELEASED
 
+* Decay-file parsing and validation:
+  - Reject decay modes with a negative branching fraction as a parse error.
 * Dependencies:
   - Require dependency on ``Particle`` >= 1.1.0
     to pick up the PDG ID scheme changes for tetraquarks and pentaquarks.
