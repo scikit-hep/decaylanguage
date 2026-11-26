@@ -231,6 +231,7 @@ Available diagnostics:
 | `DLW010` | `misconfigured-alias` | An `Alias` statement is misleading/misconfigured. |
 | `DLW011` | `misconfigured-chargeconj` | A `ChargeConj` statement is misleading/misconfigured. |
 | `DLW012` | `self-conjugate-chargeconj` | A `ChargeConj` statement targets a non-alias self-conjugate particle. |
+| `DLW013` | `negative-branching-fraction` | A decay mode has a negative branching fraction. |
 | `DLW999` | `parser-warning` | An otherwise unclassified warning was emitted by `DecFileParser`. |
 
 When the hook finds a problem, pre-commit prints the validator output. A parser

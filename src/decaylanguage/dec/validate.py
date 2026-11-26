@@ -108,6 +108,11 @@ DLW012 = DiagnosticRule(
     "self-conjugate-chargeconj",
     "A ChargeConj statement targets a non-alias self-conjugate particle.",
 )
+DLW013 = DiagnosticRule(
+    "DLW013",
+    "negative-branching-fraction",
+    "A decay mode has a negative branching fraction.",
+)
 DLW999 = DiagnosticRule(
     "DLW999",
     "parser-warning",
@@ -125,6 +130,7 @@ DIAGNOSTIC_RULES = (
     DLW010,
     DLW011,
     DLW012,
+    DLW013,
     DLW999,
 )
 _RULES_BY_CODE = {rule.code: rule for rule in DIAGNOSTIC_RULES}
@@ -374,6 +380,13 @@ def _compact_warning_message(rule: DiagnosticRule, message: str) -> str:
         )
         if particles is not None:
             return f"ChargeConj targets non-alias self-conjugate particles: {particles}"
+    if rule is DLW013:
+        modes = _search_message(
+            message,
+            r"following decay mode\(s\): (?P<particles>.*?)!",
+        )
+        if modes is not None:
+            return f"negative branching fraction(s): {modes}"
     return message
 
 

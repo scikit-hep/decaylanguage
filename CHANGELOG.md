@@ -2,6 +2,8 @@
 
 ## WIP - UNRELEASED
 
+* Decay-file parsing and validation:
+  - `DecFileParser.parse()` now warns (`DLW013`, `NegativeBranchingFractionWarning`) on decay modes with negative branching fractions.
 * Dependencies:
   - Require dependency on ``Particle`` >= 1.1.0
     to pick up the PDG ID scheme changes for tetraquarks and pentaquarks.

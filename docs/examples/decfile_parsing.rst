@@ -126,6 +126,9 @@ available diagnostics, which are the following:
    * - ``DLW012``
      - ``self-conjugate-chargeconj``
      - A ``ChargeConj`` statement targets a non-alias self-conjugate particle.
+   * - ``DLW013``
+     - ``negative-branching-fraction``
+     - A decay mode has a negative branching fraction.
    * - ``DLW999``
      - ``parser-warning``
      - An otherwise unclassified warning was emitted by ``DecFileParser``.
