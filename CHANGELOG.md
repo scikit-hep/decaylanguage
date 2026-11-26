@@ -2,6 +2,12 @@
 
 ## WIP - UNRELEASED
 
+* Decay-file parsing and validation:
+  - Reject decay modes with a negative branching fraction as a parse error.
+  - The branching fraction of a ``decayline`` tree is now stored in a
+    ``branching_fraction`` node (with a ``NON_NEG_NUMBER`` token) instead of
+    a ``value`` node (with a ``SIGNED_NUMBER`` token); ``value`` nodes remain
+    for model parameters.
 * Dependencies:
   - Require dependency on ``Particle`` >= 1.1.0
     to pick up the PDG ID scheme changes for tetraquarks and pentaquarks.

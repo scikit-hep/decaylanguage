@@ -165,6 +165,30 @@ def test_validate_files_reports_duplicate_decay() -> None:
     assert diagnostics[0].message.startswith("both Decay and CDecay defined")
 
 
+def test_validate_files_reports_negative_branching_fraction(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "negative-bf.dec"
+    path.write_text(
+        """Decay D0
+-0.5 K- pi+ PHSP;
+Enddecay
+End
+""",
+        encoding="utf_8",
+    )
+
+    diagnostics = validate_files([path])
+
+    assert [diagnostic.code for diagnostic in diagnostics] == ["DLP001"]
+    assert diagnostics[0].message == (
+        "UnexpectedToken: Unexpected token '-0.5'; "
+        "a branching fraction must be a non-negative number"
+    )
+    assert diagnostics[0].line == 2
+    assert diagnostics[0].source_line == "-0.5 K- pi+ PHSP;"
+
+
 def test_validate_files_reports_self_conjugate_cdecay(tmp_path: Path) -> None:
     """
     This file is for testing purposes only, the mismatches are awkward/wrong.
@@ -370,7 +394,7 @@ def test_earley_parser_eof_diagnostic(tmp_path: Path) -> None:
     path = tmp_path / "incomplete-earley.dec"
     path.write_text("Decay pi0\n1.0 gamma gamma PHSP;\n", encoding="utf_8")
     parser = DecFileParser(path)
-    parser._load_grammar(parser="earley", lexer="basic")
+    parser._load_grammar(parser="earley", lexer="dynamic")
 
     with pytest.raises(UnexpectedEOF) as caught:
         parser.parse()

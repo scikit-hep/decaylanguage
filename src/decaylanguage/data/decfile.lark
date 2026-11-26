@@ -43,8 +43,11 @@ boolean_photos : "yesPhotos" -> yes
                 | "noPhotos"  -> no
 
 decay : "Decay" particle _NEWLINE+ decayline* "Enddecay"
-decayline : value particle* photos? model _NEWLINE+
+decayline : branching_fraction particle* photos? model _NEWLINE+
 value : SIGNED_NUMBER
+// A branching fraction is physically non-negative; the optional leading '+'
+// keeps formats such as '+0.5' valid, while a '-' cannot be matched here.
+branching_fraction : NON_NEG_NUMBER
 photos : "PHOTOS"
 
 copydecay : "CopyDecay" label label
@@ -72,6 +75,13 @@ MODEL_NAME.2 : "MODEL_NAME_PLACEHOLDER"/\b/
 %import common.WS_INLINE
 %import common.INT
 %import common.SIGNED_NUMBER
+%import common.NUMBER
+
+NON_NEG_NUMBER: ["+"] NUMBER
+
+// Note: NON_NEG_NUMBER is a strict subset of SIGNED_NUMBER, so distinguishing
+// the two requires a lexer that knows the parser context ('contextual', the
+// 'auto' default for LALR, or 'dynamic'); the 'basic' lexer cannot.
 
 // Disregard comments, (multiple) newlines and whitespace in parser tree
 _NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )
