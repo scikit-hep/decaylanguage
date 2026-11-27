@@ -11,13 +11,17 @@ from collections import Counter
 from collections.abc import Collection, Iterator, Sequence
 from copy import deepcopy
 from itertools import product
-from typing import Any, NoReturn, Self, TypedDict
+from typing import TYPE_CHECKING, Any, NoReturn, Self, TypedDict
 
 from particle import PDGID, ParticleNotFound
 from particle.converters import EvtGenName2PDGIDBiMap
 from particle.exceptions import MatchingIDNotFound
 
 from ..utils import DescriptorFormat, charge_conjugate_name
+from .table import decay_chain_to_dataframe
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 class DecayModeDict(TypedDict):
@@ -1240,6 +1244,29 @@ class DecayChain:
             return {mother: result}
 
         return recursively_replace(self.mother)
+
+    def to_dataframe(
+        self, *, show_models: bool = True, show_model_params: bool = True
+    ) -> pd.DataFrame:
+        """
+        Return the decay chain as a ``pandas.DataFrame`` table.
+
+        See :func:`decaylanguage.decay_chain_to_dataframe` for details.
+
+        Examples
+        --------
+        >>> dm1 = DecayMode(0.028, 'K_S0 pi+ pi-', model='PHSP')
+        >>> dm2 = DecayMode(0.692, 'pi+ pi-')
+        >>> dc = DecayChain('D0', {'D0': dm1, 'K_S0': dm2})
+        >>> df = dc.to_dataframe(show_models=False, show_model_params=False)
+        >>> df["Decay"].tolist()
+        ['D0 --> K_S0 pi+ pi- ; K_S0 --> pi+ pi-']
+        >>> df["BF"].round(6).tolist()
+        [0.019376]
+        """
+        return decay_chain_to_dataframe(
+            self, show_models=show_models, show_model_params=show_model_params
+        )
 
     def flatten(
         self,
