@@ -5,8 +5,11 @@
 
 from __future__ import annotations
 
+import builtins
+import sys
 from pathlib import Path
 
+import pytest
 from pytest import approx
 
 from decaylanguage import DecayChain, DecayMode, DecFileParser, decay_chain_to_dataframe
@@ -153,3 +156,34 @@ def test_table_empty_chain_gives_empty_table_with_columns():
 
     assert list(table.columns) == ["Decay", "BF", "Model", "Model params"]
     assert len(table) == 0
+
+
+def test_table_without_pandas(monkeypatch: pytest.MonkeyPatch):
+    # Simulate pandas being unavailable, as in an install without the
+    # ``modeling`` extra. Setting ``sys.modules["pandas"]`` to None makes
+    # ``import pandas`` raise ModuleNotFoundError with name == "pandas".
+    monkeypatch.setitem(sys.modules, "pandas", None)
+
+    with pytest.raises(ModuleNotFoundError, match="requires pandas") as excinfo:
+        decay_chain_to_dataframe({})
+
+    assert "decaylanguage[modeling]" in str(excinfo.value)
+    assert excinfo.value.__cause__ is not None
+
+
+def test_table_reraises_unrelated_module_not_found(monkeypatch: pytest.MonkeyPatch):
+    # A ModuleNotFoundError for a module other than pandas must not be
+    # masked by the helpful message above; it is re-raised unchanged.
+    real_import = builtins.__import__
+
+    def fake_import(name, *args, **kwargs):
+        if name == "pandas":
+            raise ModuleNotFoundError("No module named 'other'", name="other")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+
+    with pytest.raises(ModuleNotFoundError, match="other") as excinfo:
+        decay_chain_to_dataframe({})
+
+    assert excinfo.value.name == "other"
